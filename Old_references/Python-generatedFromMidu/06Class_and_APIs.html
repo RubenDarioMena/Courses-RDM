@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 06: Clases y APIs</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        /* Custom font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        pre, code {
+            font-family: 'Fira Code', monospace;
+        }
+        /* Style for smooth transitions */
+        body, h1, h2, p, li, strong, a, div, button, svg, pre {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        /* Accordion styles */
+        .accordion {
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            border: none;
+            outline: none;
+            transition: background-color 0.4s ease;
+            position: relative;
+        }
+        .accordion:after {
+            content: '\002B'; /* Plus sign */
+            font-size: 1.5em;
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.3s ease;
+        }
+        .accordion.active:after {
+            content: "\2212"; /* Minus sign */
+            transform: translateY(-50%) rotate(180deg);
+        }
+        .panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        /* Syntax Highlighting Styles */
+        .code-comment { color: #6a9955; }
+        .dark .code-comment { color: #6A9955; }
+        .code-string { color: #ce9178; }
+        .dark .code-string { color: #CE9178; }
+        .code-function { color: #dcdcaa; }
+        .dark .code-function { color: #DCDCAA; }
+        .code-keyword { color: #569cd6; }
+        .dark .code-keyword { color: #569CD6; }
+        .code-number { color: #b5cea8; }
+        .dark .code-number { color: #B5CEA8; }
+        .code-variable { color: #9cdcfe; }
+        .dark .code-variable { color: #9CDCFE; }
+    </style>
+    <script>
+        // Tailwind dark mode configuration
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased">
+
+    <!-- Dark Mode Toggle Button -->
+    <div class="fixed top-4 right-4 z-10">
+        <button id="darkModeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900 focus:ring-indigo-500">
+            <svg id="sunIcon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <svg id="moonIcon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        </button>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        
+        <header class="text-center mb-10">
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white">Clases y APIs </h1>
+        </header>
+
+        <main class="space-y-4">
+            
+            <!-- Accordion Item 1 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 00: Introducción a las Clases y Objetos</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <p>¡Empezamos nuestro viaje! La Programación Orientada a Objetos (POO) es un paradigma que nos permite estructurar nuestro código de una manera que se asemeja al mundo real. En lugar de tener datos y funciones por separado, los agrupamos en "objetos". Una <strong>clase</strong> es como un plano o una plantilla para crear esos objetos. Define qué datos (llamados atributos) tendrán y qué cosas podrán hacer (llamados métodos). Un <strong>objeto</strong> (o instancia) es el elemento concreto que construimos a partir de ese plano.</p>
+                        
+                        <p>En este primer ejemplo, crearemos la plantilla más simple posible: una clase <code>Coche</code>.</p>
+                        
+                        <h4 class="text-xl font-semibold text-indigo-600 dark:text-indigo-400">Lección 00: Clase Coche</h4>
+                        
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># 00_Clases_y_Objetos/coche_basico.py</span>
+
+<span class="code-comment"># --- 1. Definición de la Clase ---</span>
+<span class="code-comment"># Usamos la palabra clave 'class' seguida del nombre de la clase (por convención, en CamelCase).</span>
+<span class="code-keyword">class</span> <span class="code-function">Coche</span>:
+    <span class="code-comment"># --- 2. El Método Constructor: __init__ ---</span>
+    <span class="code-comment"># Este método especial se ejecuta AUTOMÁTICAMENTE cada vez que creamos un nuevo objeto de esta clase.</span>
+    <span class="code-comment"># 'self' es una referencia al objeto que se está creando. Siempre es el primer parámetro.</span>
+    <span class="code-comment"># 'marca' y 'modelo' son los argumentos que pasaremos al crear el coche.</span>
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-variable">self</span>, <span class="code-variable">marca</span>, <span class="code-variable">modelo</span>, <span class="code-variable">anio</span>):
+        <span class="code-comment"># --- 3. Atributos de Instancia ---</span>
+        <span class="code-comment"># Estos son los datos que pertenecerán a cada objeto 'Coche' específico.</span>
+        <span class="code-comment"># Asignamos los valores recibidos a los atributos del objeto usando 'self'.</span>
+        <span class="code-variable">self</span>.marca = <span class="code-variable">marca</span>
+        <span class="code-variable">self</span>.modelo = <span class="code-variable">modelo</span>
+        <span class="code-variable">self</span>.anio = <span class="code-variable">anio</span>
+        <span class="code-variable">self</span>.encendido = <span class="code-keyword">False</span> <span class="code-comment"># Por defecto, un coche nuevo está apagado.</span>
+
+    <span class="code-comment"># Un método para describir el coche</span>
+    <span class="code-keyword">def</span> <span class="code-function">descripcion</span>(<span class="code-variable">self</span>):
+        <span class="code-keyword">return</span> f<span class="code-string">"Coche: {self.marca} {self.modelo} del año {self.anio}"</span>
+
+<span class="code-comment"># --- 4. Creación de Objetos (Instancias) ---</span>
+<span class="code-comment"># Ahora usamos nuestra clase 'Coche' como si fuera una función para crear objetos concretos.</span>
+
+<span class="code-comment"># Creamos nuestro primer objeto coche.</span>
+<span class="code-comment"># Esto llama a __init__ con marca="Toyota", modelo="Corolla" y anio=2021</span>
+<span class="code-variable">mi_coche</span> = <span class="code-function">Coche</span>(<span class="code-string">"Toyota"</span>, <span class="code-string">"Corolla"</span>, <span class="code-number">2021</span>)
+
+<span class="code-comment"># Creamos otro objeto, completamente independiente del primero.</span>
+<span class="code-variable">otro_coche</span> = <span class="code-function">Coche</span>(<span class="code-string">"Ford"</span>, <span class="code-string">"Mustang"</span>, <span class="code-number">1968</span>)
+
+
+<span class="code-comment"># --- 5. Accediendo a los Atributos y Métodos ---</span>
+<span class="code-comment"># Usamos la notación de punto para acceder a los datos y las funciones del objeto.</span>
+
+<span class="code-function">print</span>(<span class="code-string">"--- Información de mis coches ---"</span>)
+<span class="code-comment"># Accedemos a los atributos directamente</span>
+<span class="code-function">print</span>(f<span class="code-string">"Mi coche es un {mi_coche.marca} {mi_coche.modelo}."</span>) <span class="code-comment"># Salida: Mi coche es un Toyota Corolla.</span>
+<span class="code-function">print</span>(f<span class="code-string">"El otro coche es un {otro_coche.marca} fabricado en {otro_coche.anio}."</span>) <span class="code-comment"># Salida: El otro coche es un Ford fabricado en 1968.</span>
+
+<span class="code-comment"># Llamamos al método descripcion()</span>
+<span class="code-function">print</span>(<span class="code-variable">mi_coche</span>.<span class="code-function">descripcion</span>()) <span class="code-comment"># Salida: Coche: Toyota Corolla del año 2021</span>
+<span class="code-function">print</span>(<span class="code-variable">otro_coche</span>.<span class="code-function">descripcion</span>()) <span class="code-comment"># Salida: Coche: Ford Mustang del año 1968</span></code></pre>
+                        
+                        <p>¡Y eso es todo por ahora! Ya has creado tu primera clase y dos objetos a partir de ella. Has aprendido a definir sus características iniciales con <code>__init__</code> y a acceder a sus datos.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 2 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 01: Atributos y Métodos</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <p>En la lección anterior, definimos los <strong>atributos de instancia</strong> (<code>marca</code>, <code>modelo</code>, etc.) dentro de <code>__init__</code>. Estos son datos únicos para cada objeto. Ahora, introduciremos dos conceptos clave:</p>
+                        
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li><strong>Atributos de Clase:</strong> Son atributos que pertenecen a la clase en sí, no a un objeto en particular. <strong>Todos los objetos</strong> de esa clase compartirán el mismo valor para este atributo. Por ejemplo, todos nuestros coches tendrán 4 ruedas. Se definen directamente dentro de la clase, fuera de cualquier método.</li>
+                            <li><strong>Métodos:</strong> Son las funciones que definen el <strong>comportamiento</strong> de un objeto. Ya creamos el método <code>descripcion()</code>, que solo leía datos. Ahora crearemos métodos que <em>modifican</em> el estado del objeto, como <code>encender()</code>, <code>apagar()</code> o <code>acelerar()</code>. La palabra <code>self</code> es crucial aquí, ya que le permite a un método acceder y cambiar los atributos del propio objeto que lo está llamando.</li>
+                        </ol>
+                        
+                        <p>Vamos a mejorar nuestra clase <code>Coche</code>.</p>
+                        
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># 01_Atributos_y_Metodos/coche_mejorado.py</span>
+
+<span class="code-keyword">class</span> <span class="code-function">Coche</span>:
+    <span class="code-comment"># --- 1. Atributo de Clase ---</span>
+    <span class="code-comment"># Este atributo es compartido por TODAS las instancias de la clase Coche.</span>
+    <span class="code-variable">ruedas</span> = <span class="code-number">4</span>
+
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-variable">self</span>, <span class="code-variable">marca</span>, <span class="code-variable">modelo</span>, <span class="code-variable">anio</span>):
+        <span class="code-comment"># --- Atributos de Instancia ---</span>
+        <span class="code-comment"># Estos son únicos para cada objeto Coche.</span>
+        <span class="code-variable">self</span>.marca = <span class="code-variable">marca</span>
+        <span class="code-variable">self</span>.modelo = <span class="code-variable">modelo</span>
+        <span class="code-variable">self</span>.anio = <span class="code-variable">anio</span>
+        <span class="code-variable">self</span>.encendido = <span class="code-keyword">False</span> <span class="code-comment"># Estado inicial</span>
+        <span class="code-variable">self</span>.velocidad = <span class="code-number">0</span>     <span class="code-comment"># Estado inicial</span>
+
+    <span class="code-comment"># --- 2. Métodos que modifican el estado ---</span>
+
+    <span class="code-keyword">def</span> <span class="code-function">encender</span>(<span class="code-variable">self</span>):
+        <span class="code-string">"""Cambia el estado de 'encendido' a True."""</span>
+        <span class="code-keyword">if</span> <span class="code-keyword">not</span> <span class="code-variable">self</span>.encendido:
+            <span class="code-variable">self</span>.encendido = <span class="code-keyword">True</span>
+            <span class="code-function">print</span>(f<span class="code-string">"El {self.modelo} ha sido encendido."</span>)
+        <span class="code-keyword">else</span>:
+            <span class="code-function">print</span>(f<span class="code-string">"El {self.modelo} ya estaba encendido."</span>)
+
+    <span class="code-keyword">def</span> <span class="code-function">apagar</span>(<span class="code-variable">self</span>):
+        <span class="code-string">"""Cambia el estado de 'encendido' a False y resetea la velocidad."""</span>
+        <span class="code-keyword">if</span> <span class="code-variable">self</span>.encendido:
+            <span class="code-variable">self</span>.encendido = <span class="code-keyword">False</span>
+            <span class="code-variable">self</span>.velocidad = <span class="code-number">0</span>
+            <span class="code-function">print</span>(f<span class="code-string">"El {self.modelo} ha sido apagado."</span>)
+        <span class="code-keyword">else</span>:
+            <span class="code-function">print</span>(f<span class="code-string">"El {self.modelo} ya estaba apagado."</span>)
+
+    <span class="code-keyword">def</span> <span class="code-function">acelerar</span>(<span class="code-variable">self</span>, <span class="code-variable">kmh</span>):
+        <span class="code-string">"""Aumenta la velocidad del coche si está encendido."""</span>
+        <span class="code-keyword">if</span> <span class="code-variable">self</span>.encendido:
+            <span class="code-variable">self</span>.velocidad += <span class="code-variable">kmh</span>
+            <span class="code-function">print</span>(f<span class="code-string">"Acelerando. Velocidad actual: {self.velocidad} km/h."</span>)
+        <span class="code-keyword">else</span>:
+            <span class="code-function">print</span>(<span class="code-string">"No puedes acelerar, el coche está apagado."</span>)
+    
+    <span class="code-keyword">def</span> <span class="code-function">frenar</span>(<span class="code-variable">self</span>, <span class="code-variable">kmh</span>):
+        <span class="code-string">"""Reduce la velocidad del coche sin bajar de 0."""</span>
+        <span class="code-keyword">if</span> <span class="code-variable">self</span>.velocidad > <span class="code-number">0</span>:
+            <span class="code-variable">self</span>.velocidad -= <span class="code-variable">kmh</span>
+            <span class="code-keyword">if</span> <span class="code-variable">self</span>.velocidad < <span class="code-number">0</span>:
+                <span class="code-variable">self</span>.velocidad = <span class="code-number">0</span>
+            <span class="code-function">print</span>(f<span class="code-string">"Frenando. Velocidad actual: {self.velocidad} km/h."</span>)
+        <span class="code-keyword">else</span>:
+            <span class="code-function">print</span>(<span class="code-string">"El coche ya está detenido."</span>)
+
+    <span class="code-keyword">def</span> <span class="code-function">descripcion</span>(<span class="code-variable">self</span>):
+        <span class="code-string">"""Devuelve una descripción completa del estado actual del coche."""</span>
+        <span class="code-variable">estado</span> = <span class="code-string">"encendido"</span> <span class="code-keyword">if</span> <span class="code-variable">self</span>.encendido <span class="code-keyword">else</span> <span class="code-string">"apagado"</span>
+        <span class="code-keyword">return</span> (f<span class="code-string">"Coche: {self.marca} {self.modelo} ({self.anio}). "</span>
+                f<span class="code-string">"Ruedas: {self.ruedas}. Estado: {estado}. "</span>
+                f<span class="code-string">"Velocidad: {self.velocidad} km/h."</span>)
+
+
+<span class="code-comment"># --- Uso de la clase mejorada ---</span>
+<span class="code-variable">mi_mustang</span> = <span class="code-function">Coche</span>(<span class="code-string">"Ford"</span>, <span class="code-string">"Mustang"</span>, <span class="code-number">2023</span>)
+
+<span class="code-comment"># Accediendo al atributo de clase</span>
+<span class="code-function">print</span>(f<span class="code-string">"Mi coche tiene {mi_mustang.ruedas} ruedas."</span>) <span class="code-comment"># A través de la instancia</span>
+<span class="code-function">print</span>(f<span class="code-string">"La clase Coche define que los coches tienen {Coche.ruedas} ruedas."</span>) <span class="code-comment"># A través de la clase</span>
+
+<span class="code-function">print</span>(<span class="code-string">"\n--- Comportamiento del Coche ---"</span>)
+<span class="code-function">print</span>(<span class="code-variable">mi_mustang</span>.<span class="code-function">descripcion</span>())
+
+<span class="code-variable">mi_mustang</span>.<span class="code-function">acelerar</span>(<span class="code-number">50</span>) <span class="code-comment"># No funciona, está apagado</span>
+<span class="code-variable">mi_mustang</span>.<span class="code-function">encender</span>()
+<span class="code-variable">mi_mustang</span>.<span class="code-function">acelerar</span>(<span class="code-number">50</span>)
+<span class="code-variable">mi_mustang</span>.<span class="code-function">acelerar</span>(<span class="code-number">30</span>)
+<span class="code-variable">mi_mustang</span>.<span class="code-function">frenar</span>(<span class="code-number">20</span>)
+<span class="code-function">print</span>(<span class="code-variable">mi_mustang</span>.<span class="code-function">descripcion</span>())
+<span class="code-variable">mi_mustang</span>.<span class="code-function">apagar</span>()
+<span class="code-function">print</span>(<span class="code-variable">mi_mustang</span>.<span class="code-function">descripcion</span>())</code></pre>
+                        
+                        <p>Como puedes ver, ahora nuestros objetos <code>Coche</code> tienen un comportamiento mucho más rico y realista. Podemos cambiar su estado interno (sus atributos) a través de sus métodos.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 3 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 02: Encapsulamiento y Abstracción</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <p>Hasta ahora, cualquiera podía modificar los atributos de nuestro coche directamente. Por ejemplo, <code>mi_coche.velocidad = 500</code> podría asignar una velocidad irreal sin que el coche esté encendido. Esto rompe la lógica que hemos construido.</p>
+                        
+                        <p>El <strong>encapsulamiento</strong> es el principio de restringir el acceso directo a los atributos de un objeto y agruparlos con los métodos que operan sobre ellos. En Python, logramos esto por convención usando un guion bajo (<code>_</code>) al principio del nombre de un atributo (ej. <code>_velocidad</code>). Esto le dice a otros programadores: "No deberías tocar esto directamente desde fuera de la clase".</p>
+                        
+                        <p>La <strong>abstracción</strong> consiste en ocultar la complejidad interna y exponer solo una interfaz simple. En nuestro caso, el conductor no necesita saber cómo funciona el motor; solo necesita un pedal para <code>acelerar()</code> y una llave para <code>encender()</code>. Nuestros métodos públicos (<code>encender</code>, <code>apagar</code>, etc.) son nuestra interfaz abstracta.</p>
+                        
+                        <p>Para controlar cómo se leen y modifican nuestros atributos "privados", usamos una herramienta muy elegante de Python: el decorador <code>@property</code>.</p>
+                        
+                        <h4 class="text-xl font-semibold text-indigo-600 dark:text-indigo-400">Lección 02: Encapsulamiento y Abstracción</h4>
+                        
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># 02_Encapsulamiento_y_Abstraccion/coche_protegido.py</span>
+
+<span class="code-keyword">class</span> <span class="code-function">Coche</span>:
+    <span class="code-variable">ruedas</span> = <span class="code-number">4</span>
+
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-variable">self</span>, <span class="code-variable">marca</span>, <span class="code-variable">modelo</span>, <span class="code-variable">anio</span>):
+        <span class="code-comment"># --- 1. Atributos "Privados" ---</span>
+        <span class="code-comment"># Usamos un guion bajo para indicar que estos atributos</span>
+        <span class="code-comment"># no deben ser modificados directamente desde fuera de la clase.</span>
+        <span class="code-variable">self</span>.marca = <span class="code-variable">marca</span>
+        <span class="code-variable">self</span>.modelo = <span class="code-variable">modelo</span>
+        <span class="code-variable">self</span>.anio = <span class="code-variable">anio</span>
+        <span class="code-variable">self</span>._encendido = <span class="code-keyword">False</span> <span class="code-comment"># Atributo protegido</span>
+        <span class="code-variable">self</span>._velocidad = <span class="code-number">0</span>     <span class="code-comment"># Atributo protegido</span>
+
+    <span class="code-comment"># --- 2. Getter con @property ---</span>
+    <span class="code-comment"># Este método permite LEER el valor de _velocidad como si fuera un atributo normal.</span>
+    <span class="code-comment"># mi_coche.velocidad -> ejecutará este código.</span>
+    <span class="code-keyword">@property</span>
+    <span class="code-keyword">def</span> <span class="code-function">velocidad</span>(<span class="code-variable">self</span>):
+        <span class="code-keyword">return</span> <span class="code-variable">self</span>._velocidad
+
+    <span class="code-comment"># --- 3. Setter para la propiedad 'velocidad' ---</span>
+    <span class="code-comment"># Este método permite ASIGNAR un valor a la velocidad, pero con control.</span>
+    <span class="code-comment"># mi_coche.velocidad = 100 -> ejecutará este código.</span>
+    <span class="code-keyword">@velocidad.setter</span>
+    <span class="code-keyword">def</span> <span class="code-function">velocidad</span>(<span class="code-variable">self</span>, <span class="code-variable">nuevo_valor</span>):
+        <span class="code-keyword">if</span> <span class="code-keyword">not</span> <span class="code-variable">self</span>._encendido:
+            <span class="code-function">print</span>(<span class="code-string">"No puedes cambiar la velocidad con el coche apagado."</span>)
+        <span class="code-keyword">elif</span> <span class="code-variable">nuevo_valor</span> < <span class="code-number">0</span>:
+            <span class="code-function">print</span>(<span class="code-string">"La velocidad no puede ser negativa. Se establecerá en 0."</span>)
+            <span class="code-variable">self</span>._velocidad = <span class="code-number">0</span>
+        <span class="code-keyword">else</span>:
+            <span class="code-variable">self</span>._velocidad = <span class="code-variable">nuevo_valor</span>
+            <span class="code-function">print</span>(f<span class="code-string">"Velocidad establecida en {self._velocidad} km/h."</span>)
+    
+    <span class="code-comment"># --- 4. Interfaz Pública (Métodos) ---</span>
+    <span class="code-comment"># Estos son los métodos que el usuario de la clase debe utilizar.</span>
+    <span class="code-keyword">def</span> <span class="code-function">encender</span>(<span class="code-variable">self</span>):
+        <span class="code-keyword">if</span> <span class="code-keyword">not</span> <span class="code-variable">self</span>._encendido:
+            <span class="code-variable">self</span>._encendido = <span class="code-keyword">True</span>
+            <span class="code-function">print</span>(f<span class="code-string">"El {self.modelo} ha sido encendido."</span>)
+        <span class="code-keyword">else</span>:
+            <span class="code-function">print</span>(f<span class="code-string">"El {self.modelo} ya estaba encendido."</span>)
+
+    <span class="code-keyword">def</span> <span class="code-function">apagar</span>(<span class="code-variable">self</span>):
+        <span class="code-keyword">if</span> <span class="code-variable">self</span>._encendido:
+            <span class="code-variable">self</span>._encendido = <span class="code-keyword">False</span>
+            <span class="code-variable">self</span>._velocidad = <span class="code-number">0</span> <span class="code-comment"># Usamos el atributo interno directamente</span>
+            <span class="code-function">print</span>(f<span class="code-string">"El {self.modelo} ha sido apagado."</span>)
+        <span class="code-keyword">else</span>:
+            <span class="code-function">print</span>(f<span class="code-string">"El {self.modelo} ya estaba apagado."</span>)
+
+    <span class="code-keyword">def</span> <span class="code-function">acelerar</span>(<span class="code-variable">self</span>, <span class="code-variable">kmh</span>):
+        <span class="code-keyword">if</span> <span class="code-variable">self</span>._encendido:
+            <span class="code-comment"># Usamos el setter implícitamente al asignar un valor</span>
+            <span class="code-variable">self</span>.velocidad += <span class="code-variable">kmh</span> 
+        <span class="code-keyword">else</span>:
+            <span class="code-function">print</span>(<span class="code-string">"No puedes acelerar, el coche está apagado."</span>)
+    
+    <span class="code-keyword">def</span> <span class="code-function">descripcion</span>(<span class="code-variable">self</span>):
+        <span class="code-variable">estado</span> = <span class="code-string">"encendido"</span> <span class="code-keyword">if</span> <span class="code-variable">self</span>._encendido <span class="code-keyword">else</span> <span class="code-string">"apagado"</span>
+        <span class="code-keyword">return</span> (f<span class="code-string">"Coche: {self.marca} {self.modelo} ({self.anio}). "</span>
+                f<span class="code-string">"Estado: {estado}. Velocidad: {self._velocidad} km/h."</span>)
+
+
+<span class="code-comment"># --- Uso de la clase protegida ---</span>
+<span class="code-variable">mi_tesla</span> = <span class="code-function">Coche</span>(<span class="code-string">"Tesla"</span>, <span class="code-string">"Model 3"</span>, <span class="code-number">2024</span>)
+
+<span class="code-function">print</span>(<span class="code-string">"--- Intentando modificar atributos directamente ---"</span>)
+<span class="code-comment"># Intentamos asignar una velocidad con el coche apagado</span>
+<span class="code-variable">mi_tesla</span>.velocidad = <span class="code-number">50</span> <span class="code-comment"># El setter lo impedirá</span>
+<span class="code-function">print</span>(<span class="code-variable">mi_tesla</span>.<span class="code-function">descripcion</span>())
+
+<span class="code-function">print</span>(<span class="code-string">"\n--- Usando la interfaz pública ---"</span>)
+<span class="code-variable">mi_tesla</span>.<span class="code-function">encender</span>()
+<span class="code-variable">mi_tesla</span>.<span class="code-function">acelerar</span>(<span class="code-number">80</span>)
+<span class="code-comment"># Leemos la velocidad a través del @property (getter)</span>
+<span class="code-function">print</span>(f<span class="code-string">"Leyendo la velocidad: {mi_tesla.velocidad} km/h."</span>)
+<span class="code-function">print</span>(<span class="code-variable">mi_tesla</span>.<span class="code-function">descripcion</span>())
+
+<span class="code-function">print</span>(<span class="code-string">"\n--- Probando la validación del setter ---"</span>)
+<span class="code-comment"># Intentamos asignar una velocidad negativa</span>
+<span class="code-variable">mi_tesla</span>.velocidad = -<span class="code-number">30</span> <span class="code-comment"># El setter lo corregirá</span>
+<span class="code-function">print</span>(f<span class="code-string">"Leyendo la velocidad después de intentar ponerla negativa: {mi_tesla.velocidad} km/h."</span>)
+
+<span class="code-comment"># Aunque la convención es no hacerlo, Python aún permite el acceso si insistes.</span>
+<span class="code-comment"># ESTO SE CONSIDERA UNA MALA PRÁCTICA.</span>
+<span class="code-comment"># mi_tesla._velocidad = -100</span>
+<span class="code-comment"># print(f"\nVelocidad modificada a la fuerza: {mi_tesla._velocidad}")</span></code></pre>
+                        
+                        <p>Ahora nuestro objeto <code>Coche</code> es más robusto. Protege sus datos internos y solo permite modificarlos de manera controlada a través de sus métodos y propiedades, ocultando la complejidad interna.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 4 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 03: Herencia</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <p>La <strong>herencia</strong> nos permite crear una nueva clase que "hereda" todas las propiedades (atributos) y comportamientos (métodos) de una clase ya existente. Esto es increíblemente útil para reutilizar código y crear una jerarquía lógica entre nuestras clases.</p>
+                        
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>La clase original se conoce como <strong>clase padre</strong> o <strong>superclase</strong>.</li>
+                            <li>La nueva clase se conoce como <strong>clase hija</strong> o <strong>subclase</strong>.</li>
+                        </ul>
+                        
+                        <p>Imagina que queremos representar un coche eléctrico. Un coche eléctrico es, en esencia, un coche, por lo que comparte muchas características: tiene marca, modelo, se puede encender, apagar y acelerar. Sin embargo, tiene características únicas, como una batería en lugar de un tanque de gasolina.</p>
+                        
+                        <p>En lugar de crear una clase <code>CocheElectrico</code> desde cero, podemos hacer que herede de nuestra clase <code>Coche</code> y luego añadirle sus particularidades.</p>
+                        
+                        <p>En el siguiente código, haremos tres cosas clave:</p>
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>Crearemos una clase <code>CocheElectrico</code> que hereda de <code>Coche</code>.</li>
+                            <li>Extenderemos el constructor <code>__init__</code> para añadir atributos específicos (como la capacidad de la batería).</li>
+                            <li>Añadiremos nuevos métodos específicos de la clase hija y sobrescribiremos algunos métodos del padre para darles un comportamiento especializado.</li>
+                        </ol>
+                        
+                        <h4 class="text-xl font-semibold text-indigo-600 dark:text-indigo-400">Lección 03: Herencia</h4>
+                        
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># 03_Herencia/herencia_basica.py</span>
+
+<span class="code-comment"># --- 1. Clase Padre (Superclase) ---</span>
+<span class="code-comment"># Usaremos una versión ligeramente simplificada de nuestra clase Coche.</span>
+<span class="code-keyword">class</span> <span class="code-function">Coche</span>:
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-variable">self</span>, <span class="code-variable">marca</span>, <span class="code-variable">modelo</span>):
+        <span class="code-variable">self</span>.marca = <span class="code-variable">marca</span>
+        <span class="code-variable">self</span>.modelo = <span class="code-variable">modelo</span>
+        <span class="code-variable">self</span>._encendido = <span class="code-keyword">False</span>
+        <span class="code-variable">self</span>._velocidad = <span class="code-number">0</span>
+
+    <span class="code-keyword">def</span> <span class="code-function">encender</span>(<span class="code-variable">self</span>):
+        <span class="code-variable">self</span>._encendido = <span class="code-keyword">True</span>
+        <span class="code-function">print</span>(f<span class="code-string">"El {self.modelo} está encendido."</span>)
+
+    <span class="code-keyword">def</span> <span class="code-function">apagar</span>(<span class="code-variable">self</span>):
+        <span class="code-variable">self</span>._encendido = <span class="code-keyword">False</span>
+        <span class="code-variable">self</span>._velocidad = <span class="code-number">0</span>
+        <span class="code-function">print</span>(f<span class="code-string">"El {self.modelo} está apagado."</span>)
+
+    <span class="code-keyword">def</span> <span class="code-function">acelerar</span>(<span class="code-variable">self</span>, <span class="code-variable">kmh</span>):
+        <span class="code-keyword">if</span> <span class="code-variable">self</span>._encendido:
+            <span class="code-variable">self</span>._velocidad += <span class="code-variable">kmh</span>
+            <span class="code-function">print</span>(f<span class="code-string">"Velocidad: {self._velocidad} km/h."</span>)
+        <span class="code-keyword">else</span>:
+            <span class="code-function">print</span>(<span class="code-string">"El coche está apagado."</span>)
+    
+    <span class="code-keyword">def</span> <span class="code-function">descripcion</span>(<span class="code-variable">self</span>):
+        <span class="code-keyword">return</span> f<span class="code-string">"Vehículo: {self.marca} {self.modelo}."</span>
+
+
+<span class="code-comment"># --- 2. Clase Hija (Subclase) ---</span>
+<span class="code-comment"># Para heredar, ponemos el nombre de la clase padre entre paréntesis.</span>
+<span class="code-keyword">class</span> <span class="code-function">CocheElectrico</span>(<span class="code-function">Coche</span>):
+    
+    <span class="code-comment"># --- 3. Extendiendo el constructor __init__ ---</span>
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-variable">self</span>, <span class="code-variable">marca</span>, <span class="code-variable">modelo</span>, <span class="code-variable">bateria_kwh</span>):
+        <span class="code-comment"># --- 4. Llamando al constructor del padre con super() ---</span>
+        <span class="code-comment"># Es crucial llamar al __init__ de la clase padre para que</span>
+        <span class="code-comment"># inicialice sus propios atributos (marca, modelo).</span>
+        <span class="code-function">super</span>().__init__(<span class="code-variable">marca</span>, <span class="code-variable">modelo</span>)
+        
+        <span class="code-comment"># Atributo específico de la clase hija</span>
+        <span class="code-variable">self</span>.bateria_kwh = <span class="code-variable">bateria_kwh</span>
+        <span class="code-variable">self</span>.nivel_bateria = <span class="code-number">100</span> <span class="code-comment"># %</span>
+
+    <span class="code-comment"># --- 5. Nuevo método específico de la clase hija ---</span>
+    <span class="code-keyword">def</span> <span class="code-function">cargar_bateria</span>(<span class="code-variable">self</span>):
+        <span class="code-variable">self</span>.nivel_bateria = <span class="code-number">100</span>
+        <span class="code-function">print</span>(f<span class="code-string">"El {self.modelo} ha sido cargado. Batería al {self.nivel_bateria}%."</span>)
+
+    <span class="code-comment"># --- 6. Sobrescribiendo un método del padre ---</span>
+    <span class="code-comment"># Esta clase proporciona su propia versión del método descripcion.</span>
+    <span class="code-keyword">def</span> <span class="code-function">descripcion</span>(<span class="code-variable">self</span>):
+        <span class="code-comment"># Llamamos al método original del padre con super() para reutilizarlo</span>
+        <span class="code-variable">descripcion_padre</span> = <span class="code-function">super</span>().<span class="code-function">descripcion</span>()
+        <span class="code-comment"># Y le añadimos la información específica de la clase hija</span>
+        <span class="code-keyword">return</span> f<span class="code-string">"{descripcion_padre} Es eléctrico con {self.bateria_kwh} kWh. Batería: {self.nivel_bateria}%."</span>
+
+
+<span class="code-comment"># --- Uso de las clases ---</span>
+
+<span class="code-function">print</span>(<span class="code-string">"--- Usando el objeto de la clase Padre ---"</span>)
+<span class="code-variable">coche_normal</span> = <span class="code-function">Coche</span>(<span class="code-string">"Honda"</span>, <span class="code-string">"Civic"</span>)
+<span class="code-function">print</span>(<span class="code-variable">coche_normal</span>.<span class="code-function">descripcion</span>())
+<span class="code-variable">coche_normal</span>.<span class="code-function">encender</span>()
+<span class="code-variable">coche_normal</span>.<span class="code-function">acelerar</span>(<span class="code-number">40</span>)
+
+<span class="code-function">print</span>(<span class="code-string">"\n--- Usando el objeto de la clase Hija ---"</span>)
+<span class="code-variable">mi_tesla</span> = <span class="code-function">CocheElectrico</span>(<span class="code-string">"Tesla"</span>, <span class="code-string">"Model S"</span>, <span class="code-number">100</span>)
+
+<span class="code-comment"># El Tesla puede usar métodos heredados del Coche...</span>
+<span class="code-variable">mi_tesla</span>.<span class="code-function">encender</span>()
+<span class="code-variable">mi_tesla</span>.<span class="code-function">acelerar</span>(<span class="code-number">120</span>)
+
+<span class="code-comment"># ...y también sus propios métodos.</span>
+<span class="code-variable">mi_tesla</span>.<span class="code-function">cargar_bateria</span>()
+
+<span class="code-comment"># Cuando llamamos a descripcion(), se ejecuta la versión de CocheElectrico (la sobrescrita).</span>
+<span class="code-function">print</span>(<span class="code-variable">mi_tesla</span>.<span class="code-function">descripcion</span>())</code></pre>
+                        
+                        <p>Gracias a la herencia, hemos creado una clase más especializada (<code>CocheElectrico</code>) reutilizando toda la lógica de la clase <code>Coche</code> y sin tener que repetir código. Este es un concepto fundamental para construir software escalable y bien organizado.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 5 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 04: Polimorfismo y Duck Typing</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <p><strong>Polimorfismo</strong> (del griego, "muchas formas") es la capacidad que tienen objetos de diferentes clases para responder a la misma llamada de método. La herencia es una forma de lograr polimorfismo, pero no la única.</p>
+                        
+                        <p>Python utiliza un concepto llamado <strong>Duck Typing</strong>, que encapsula esta idea de una forma muy pragmática. La frase dice:</p>
+                        
+                        <blockquote class="border-l-4 border-indigo-500 pl-4 italic text-gray-600 dark:text-gray-400">
+                            "Si camina como un pato (walks like a duck) y grazna como un pato (quacks like a duck), entonces debe ser un pato."
+                        </blockquote>
+                        
+                        <p>En programación, esto significa que a Python no le interesa la clase o el tipo de un objeto, sino los <strong>métodos que tiene</strong>. Si un objeto tiene el método que intentamos llamar, Python lo ejecutará sin problemas, sin importar si hereda de una clase específica o no.</p>
+                        
+                        <p>En este ejemplo, crearemos varias clases de "vehículos". Algunas heredarán entre sí y otras no. Luego, crearemos una función que puede trabajar con una lista de cualquiera de estos vehículos, siempre y cuando tengan un método en común (<code>avanzar</code>), demostrando el polimorfismo en acción.</p>
+                        
+                        <h4 class="text-xl font-semibold text-indigo-600 dark:text-indigo-400">Lección 04: Polimorfismo y Duck Typing</h4>
+                        
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># 04_Polimorfismo_y_Duck_Typing/polimorfismo_ejemplo.py</span>
+
+<span class="code-keyword">class</span> <span class="code-function">Coche</span>:
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-variable">self</span>, <span class="code-variable">marca</span>):
+        <span class="code-variable">self</span>.marca = <span class="code-variable">marca</span>
+
+    <span class="code-keyword">def</span> <span class="code-function">avanzar</span>(<span class="code-variable">self</span>):
+        <span class="code-function">print</span>(f<span class="code-string">"El coche {self.marca} avanza por la carretera."</span>)
+
+<span class="code-keyword">class</span> <span class="code-function">CocheElectrico</span>(<span class="code-function">Coche</span>):
+    <span class="code-comment"># Esta clase hereda de Coche.</span>
+    <span class="code-keyword">def</span> <span class="code-function">avanzar</span>(<span class="code-variable">self</span>):
+        <span class="code-comment"># Sobrescribe el método del padre para darle un comportamiento específico.</span>
+        <span class="code-function">print</span>(f<span class="code-string">"El coche eléctrico {self.marca} se desliza silenciosamente."</span>)
+
+<span class="code-keyword">class</span> <span class="code-function">Bicicleta</span>:
+    <span class="code-comment"># Esta clase NO hereda de Coche, es completamente independiente.</span>
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-variable">self</span>, <span class="code-variable">tipo</span>):
+        <span class="code-variable">self</span>.tipo = <span class="code-variable">tipo</span>
+
+    <span class="code-comment"># Pero TIENE un método que se llama igual: avanzar.</span>
+    <span class="code-keyword">def</span> <span class="code-function">avanzar</span>(<span class="code-variable">self</span>):
+        <span class="code-function">print</span>(f<span class="code-string">"La bicicleta de tipo '{self.tipo}' avanza pedaleando."</span>)
+
+<span class="code-comment"># --- Función Polimórfica ---</span>
+<span class="code-comment"># A esta función no le importa el tipo de objetos que recibe.</span>
+<span class="code-comment"># Solo le importa que cada objeto en la lista TENGA un método llamado .avanzar()</span>
+<span class="code-keyword">def</span> <span class="code-function">mover_vehiculos</span>(<span class="code-variable">lista_vehiculos</span>):
+    <span class="code-function">print</span>(<span class="code-string">"--- Iniciando el movimiento de todos los vehículos ---"</span>)
+    <span class="code-keyword">for</span> <span class="code-variable">vehiculo</span> <span class="code-keyword">in</span> <span class="code-variable">lista_vehiculos</span>:
+        <span class="code-comment"># Aquí ocurre la magia del polimorfismo y el duck typing.</span>
+        <span class="code-comment"># Python simplemente llama al método .avanzar() del objeto 'vehiculo',</span>
+        <span class="code-comment"># sea cual sea su clase.</span>
+        <span class="code-variable">vehiculo</span>.<span class="code-function">avanzar</span>()
+    <span class="code-function">print</span>(<span class="code-string">"--- Todos los vehículos se han movido ---"</span>)
+
+
+<span class="code-comment"># --- Creando los objetos ---</span>
+<span class="code-variable">mi_civic</span> = <span class="code-function">Coche</span>(<span class="code-string">"Honda Civic"</span>)
+<span class="code-variable">mi_tesla</span> = <span class="code-function">CocheElectrico</span>(<span class="code-string">"Tesla Model Y"</span>)
+<span class="code-variable">mi_bici</span> = <span class="code-function">Bicicleta</span>(<span class="code-string">"Montaña"</span>)
+
+<span class="code-comment"># Creamos una lista con objetos de diferentes clases.</span>
+<span class="code-variable">vehiculos</span> = [<span class="code-variable">mi_civic</span>, <span class="code-variable">mi_tesla</span>, <span class="code-variable">mi_bici</span>]
+
+
+<span class="code-comment"># --- Ejecutando la función ---</span>
+<span class="code-comment"># Le pasamos la lista heterogénea a nuestra función.</span>
+<span class="code-comment"># Ella sabrá qué hacer con cada objeto.</span>
+<span class="code-function">mover_vehiculos</span>(<span class="code-variable">vehiculos</span>)</code></pre>
+                        
+                        <p>Como puedes ver, la función <code>mover_vehiculos</code> funciona perfectamente con una mezcla de objetos de clases <code>Coche</code>, <code>CocheElectrico</code> y <code>Bicicleta</code>. No necesita ninguna lógica <code>if</code> o <code>elif</code> para comprobar el tipo de cada objeto. Simplemente confía en que cada "vehículo" sabrá cómo "avanzar" a su manera. Este es un principio de diseño muy poderoso que hace que el código sea más flexible y reutilizable.</p>
+                        
+                        <p>Ahora que hemos cubierto los pilares de la Programación Orientada a Objetos, ¿estás listo para dar el salto al mundo de las APIs en la <strong>lección 05: Introducción a las APIs y HTTP</strong>?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 6 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 05: Introducción a las APIs y HTTP</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <p>Ahora que sabemos cómo crear y organizar nuestros propios objetos, el siguiente paso es hacer que nuestros programas se comuniquen con otros sistemas a través de internet. Aquí es donde entran las APIs.</p>
+                        
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">¿Qué es una API?</h3>
+                        
+                        <p><strong>API</strong> son las siglas de <strong>I</strong>nterfaz de <strong>P</strong>rogramación de <strong>A</strong>plicaciones (<em>Application Programming Interface</em>). Piensa en ella como un <strong>camarero en un restaurante</strong>:</p>
+                        
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Tú (el cliente)</strong>: Eres tu programa, que necesita datos o quiere realizar una acción.</li>
+                            <li><strong>La cocina (el servidor)</strong>: Es donde están los datos o donde se procesan las acciones.</li>
+                            <li><strong>El camarero (la API)</strong>: Es el intermediario que toma tu pedido (petición), se lo lleva a la cocina, y te trae de vuelta la comida (respuesta).</li>
+                        </ul>
+                        
+                        <p>Las APIs web funcionan a través del protocolo <strong>HTTP</strong> (HyperText Transfer Protocol), el mismo que usan los navegadores web. Cuando tu programa quiere comunicarse con una API, envía una <strong>petición HTTP</strong> y recibe una <strong>respuesta HTTP</strong>.</p>
+                        
+                        <h4 class="text-xl font-semibold">Los Métodos HTTP Más Comunes</h4>
+                        
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>GET</strong>: "Dame información". Es como preguntar "¿Qué hay en el menú?"</li>
+                            <li><strong>POST</strong>: "Crea algo nuevo". Es como decir "Quiero hacer un pedido".</li>
+                            <li><strong>PUT</strong>: "Actualiza algo completamente".</li>
+                            <li><strong>DELETE</strong>: "Elimina algo".</li>
+                        </ul>
+                        
+                        <h4 class="text-xl font-semibold">Códigos de Estado HTTP</h4>
+                        
+                        <p>Cada respuesta HTTP incluye un código de estado que te dice cómo fue la petición:</p>
+                        
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>200 OK</strong>: Todo salió perfecto.</li>
+                            <li><strong>404 Not Found</strong>: Lo que pediste no existe.</li>
+                            <li><strong>401 Unauthorized</strong>: No tienes permiso.</li>
+                            <li><strong>500 Internal Server Error</strong>: Algo se rompió en el servidor.</li>
+                        </ul>
+                        
+                        <h4 class="text-xl font-semibold">Formato JSON</h4>
+                        
+                        <p>La mayoría de las APIs modernas intercambian datos en formato <strong>JSON</strong> (JavaScript Object Notation). JSON es muy similar a los diccionarios de Python:</p>
+                        
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-json">{
+  "nombre": "Pikachu",
+  "tipo": "Eléctrico",
+  "id": 25,
+  "habilidades": [
+    "Impactrueno",
+    "Ataque Rápido"
+  ]
+}</code></pre>
+                        
+                        <p>Hemos sentado las bases teóricas. Ahora ya sabes qué es una API, cómo funciona la comunicación HTTP y en qué formato recibiremos los datos.</p>
+                        
+                        <p>¿Estás listo para escribir código en la <strong>lección 06 y realizar tu primera petición real a una API</strong>?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 7 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 06: Realizando tu primera petición con <code>requests</code></button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <p>Para interactuar con APIs en Python, la librería <code>requests</code> es el estándar de oro. No forma parte de la biblioteca estándar de Python, por lo que si no la tienes, necesitarás instalarla abriendo tu terminal o línea de comandos y ejecutando:<br/><code>pip install requests</code></p>
+                        
+                        <p>Una vez instalada, usarla es increíblemente sencillo. En esta lección, haremos nuestra primera petición <code>GET</code> a <strong>JSONPlaceholder</strong>, una API gratuita y falsa, perfecta para practicar. Solicitaremos un único "to-do" (tarea pendiente) y mostraremos los datos que nos devuelva.</p>
+                        
+                        <p>El proceso es simple:</p>
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>Importar la librería <code>requests</code>.</li>
+                            <li>Definir la URL del <em>endpoint</em> al que queremos acceder.</li>
+                            <li>Usar <code>requests.get()</code> para enviar la petición.</li>
+                            <li>Verificar el código de estado de la respuesta para asegurarnos de que todo fue bien (<code>200 OK</code>).</li>
+                            <li>Si la respuesta es exitosa, convertir el cuerpo de la respuesta (que viene en formato JSON) a un diccionario de Python usando el método <code>.json()</code>.</li>
+                            <li>¡Usar los datos!</li>
+                        </ol>
+                        
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># 06_Realizando_tu_primera_peticion/primera_peticion.py</span>
+
+<span class="code-keyword">import</span> <span class="code-variable">requests</span> <span class="code-comment"># 1. Importar la librería</span>
+
+<span class="code-comment"># 2. Definir la URL del endpoint</span>
+<span class="code-comment"># Este endpoint de JSONPlaceholder nos devuelve una única tarea (to-do).</span>
+<span class="code-variable">url</span> = <span class="code-string">"https://jsonplaceholder.typicode.com/todos/1"</span>
+
+<span class="code-function">print</span>(f<span class="code-string">"Realizando una petición GET a: {url}"</span>)
+
+<span class="code-keyword">try</span>:
+    <span class="code-comment"># 3. Realizar la petición GET</span>
+    <span class="code-variable">response</span> = <span class="code-variable">requests</span>.<span class="code-function">get</span>(<span class="code-variable">url</span>)
+
+    <span class="code-comment"># 4. Verificar el código de estado de la respuesta</span>
+    <span class="code-comment"># response.raise_for_status() es una forma útil de generar un error</span>
+    <span class="code-comment"># si el código de estado no es exitoso (ej. 404, 500).</span>
+    <span class="code-variable">response</span>.<span class="code-function">raise_for_status</span>() 
+
+    <span class="code-function">print</span>(f<span class="code-string">"¡Éxito! Código de estado: {response.status_code}"</span>) <span class="code-comment"># Debería ser 200</span>
+
+    <span class="code-comment"># 5. Convertir la respuesta JSON a un diccionario de Python</span>
+    <span class="code-variable">data</span> = <span class="code-variable">response</span>.<span class="code-function">json</span>()
+
+    <span class="code-comment"># 6. ¡Usar los datos!</span>
+    <span class="code-function">print</span>(<span class="code-string">"\n--- Datos recibidos de la API ---"</span>)
+    <span class="code-function">print</span>(f<span class="code-string">"ID de Usuario: {data['userId']}"</span>)
+    <span class="code-function">print</span>(f<span class="code-string">"ID de la Tarea: {data['id']}"</span>)
+    <span class="code-function">print</span>(f<span class="code-string">"Título: {data['title']}"</span>)
+    <span class="code-function">print</span>(f<span class="code-string">"¿Completada?: {'Sí' if data['completed'] else 'No'}"</span>)
+
+<span class="code-keyword">except</span> <span class="code-variable">requests</span>.exceptions.<span class="code-function">RequestException</span> <span class="code-keyword">as</span> <span class="code-variable">e</span>:
+    <span class="code-comment"># Este bloque se ejecutará si hay un problema de red,</span>
+    <span class="code-comment"># un código de estado de error (como 404 o 500), etc.</span>
+    <span class="code-function">print</span>(f<span class="code-string">"Ha ocurrido un error al realizar la petición: {e}"</span>)</code></pre>
+                        
+                        <p>¡Felicidades! Acabas de escribir un programa que se conecta a un servidor en internet, solicita datos, los recibe y los procesa. Has dado un paso gigante, pasando de programas que solo existen en tu ordenador a programas que pueden interactuar con el mundo.</p>
+                        
+                        <p>Ahora que sabes cómo obtener datos, ¿te parece que unamos nuestros conocimientos de Clases y APIs en la <strong>lección 07: Proyecto Práctico: Consulta de API de Pokémon</strong>?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 8 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 07: Proyecto Práctico: Consulta de API de Pokémon</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <p>Ahora que sabemos hacer peticiones básicas a APIs, vamos a crear un proyecto más ambicioso: una clase <code>Pokemon</code> que automáticamente obtenga sus datos de la PokéAPI cuando se instancie.</p>
+                        
+                        <p>Este proyecto combina todo lo que hemos aprendido:</p>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Clases y objetos</strong>: Crearemos una clase <code>Pokemon</code></li>
+                            <li><strong>APIs</strong>: Obtendremos datos de la PokéAPI</li>
+                            <li><strong>Manejo de errores</strong>: Gestionaremos posibles fallos en la conexión</li>
+                            <li><strong>Encapsulación</strong>: Ocultaremos la lógica de la API dentro de la clase</li>
+                        </ul>
+                        
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">La Clase Pokemon</h3>
+                        
+                        <p>Nuestra clase <code>Pokemon</code> será especial: cuando creemos una instancia, automáticamente buscará la información del Pokémon en la API y la almacenará en sus atributos.</p>
+                        
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># 07_Proyecto_Practico_Pokemon/pokemon.py</span>
+
+<span class="code-keyword">import</span> <span class="code-variable">requests</span>
+
+<span class="code-keyword">class</span> <span class="code-function">Pokemon</span>:
+    <span class="code-string">"""
+    Clase que representa un Pokémon y obtiene automáticamente sus datos de la PokéAPI
+    """</span>
+    
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-variable">self</span>, <span class="code-variable">name_or_id</span>):
+        <span class="code-string">"""</span>
+<span class="code-string">        Inicializa un Pokémon obteniendo sus datos de la API</span>
+<span class="code-string">        </span>
+<span class="code-string">        Args:</span>
+<span class="code-string">            name_or_id (str|int): Nombre o ID del Pokémon</span>
+<span class="code-string">        """</span>
+        <span class="code-variable">self</span>.name_or_id = <span class="code-variable">name_or_id</span>
+        <span class="code-variable">self</span>.data = <span class="code-keyword">None</span>
+        <span class="code-variable">self</span>.name = <span class="code-keyword">None</span>
+        <span class="code-variable">self</span>.id = <span class="code-keyword">None</span>
+        <span class="code-variable">self</span>.height = <span class="code-keyword">None</span>
+        <span class="code-variable">self</span>.weight = <span class="code-keyword">None</span>
+        <span class="code-variable">self</span>.types = []
+        <span class="code-variable">self</span>.abilities = []
+        <span class="code-variable">self</span>.base_experience = <span class="code-keyword">None</span>
+        
+        <span class="code-comment"># Automáticamente obtener los datos al crear la instancia</span>
+        <span class="code-variable">self</span>.<span class="code-function">_fetch_data</span>()
+    
+    <span class="code-keyword">def</span> <span class="code-function">_fetch_data</span>(<span class="code-variable">self</span>):
+        <span class="code-string">"""
+        Método privado que obtiene los datos del Pokémon de la API
+        """</span>
+        <span class="code-variable">url</span> = f<span class="code-string">"https://pokeapi.co/api/v2/pokemon/{str(self.name_or_id).lower()}"</span>
+        
+        <span class="code-keyword">try</span>:
+            <span class="code-variable">response</span> = <span class="code-variable">requests</span>.<span class="code-function">get</span>(<span class="code-variable">url</span>)
+            <span class="code-variable">response</span>.<span class="code-function">raise_for_status</span>()
+            
+            <span class="code-variable">self</span>.data = <span class="code-variable">response</span>.<span class="code-function">json</span>()
+            
+            <span class="code-comment"># Extraer y almacenar la información relevante</span>
+            <span class="code-variable">self</span>.name = <span class="code-variable">self</span>.data[<span class="code-string">'name'</span>]
+            <span class="code-variable">self</span>.id = <span class="code-variable">self</span>.data[<span class="code-string">'id'</span>]
+            <span class="code-variable">self</span>.height = <span class="code-variable">self</span>.data[<span class="code-string">'height'</span>]
+            <span class="code-variable">self</span>.weight = <span class="code-variable">self</span>.data[<span class="code-string">'weight'</span>]
+            <span class="code-variable">self</span>.base_experience = <span class="code-variable">self</span>.data[<span class="code-string">'base_experience'</span>]
+            
+            <span class="code-comment"># Extraer tipos</span>
+            <span class="code-variable">self</span>.types = [<span class="code-variable">type_info</span>[<span class="code-string">'type'</span>][<span class="code-string">'name'</span>] <span class="code-keyword">for</span> <span class="code-variable">type_info</span> <span class="code-keyword">in</span> <span class="code-variable">self</span>.data[<span class="code-string">'types'</span>]]
+            
+            <span class="code-comment"># Extraer habilidades</span>
+            <span class="code-variable">self</span>.abilities = [<span class="code-variable">ability_info</span>[<span class="code-string">'ability'</span>][<span class="code-string">'name'</span>] <span class="code-keyword">for</span> <span class="code-variable">ability_info</span> <span class="code-keyword">in</span> <span class="code-variable">self</span>.data[<span class="code-string">'abilities'</span>]]
+            
+        <span class="code-keyword">except</span> <span class="code-variable">requests</span>.exceptions.<span class="code-function">RequestException</span> <span class="code-keyword">as</span> <span class="code-variable">e</span>:
+            <span class="code-function">print</span>(f<span class="code-string">"Error al obtener datos del Pokémon: {e}"</span>)
+        <span class="code-keyword">except</span> <span class="code-function">KeyError</span> <span class="code-keyword">as</span> <span class="code-variable">e</span>:
+            <span class="code-function">print</span>(f<span class="code-string">"Error al procesar los datos: clave faltante {e}"</span>)
+    
+    <span class="code-keyword">def</span> <span class="code-function">describe</span>(<span class="code-variable">self</span>):
+        <span class="code-string">"""
+        Muestra una descripción completa del Pokémon
+        """</span>
+        <span class="code-keyword">if</span> <span class="code-keyword">not</span> <span class="code-variable">self</span>.data:
+            <span class="code-function">print</span>(<span class="code-string">"No se pudieron obtener los datos del Pokémon."</span>)
+            <span class="code-keyword">return</span>
+        
+        <span class="code-function">print</span>(f<span class="code-string">"\n--- {self.name.title()} ---"</span>)
+        <span class="code-function">print</span>(f<span class="code-string">"ID: #{self.id}"</span>)
+        <span class="code-function">print</span>(f<span class="code-string">"Altura: {self.height / 10} m"</span>)  <span class="code-comment"># La API devuelve en decímetros</span>
+        <span class="code-function">print</span>(f<span class="code-string">"Peso: {self.weight / 10} kg"</span>)     <span class="code-comment"># La API devuelve en hectogramos</span>
+        <span class="code-function">print</span>(f<span class="code-string">"Experiencia base: {self.base_experience}"</span>)
+        <span class="code-function">print</span>(f<span class="code-string">"Tipos: {', '.join(self.types)}"</span>)
+        <span class="code-function">print</span>(f<span class="code-string">"Habilidades: {', '.join(self.abilities)}"</span>)
+
+
+<span class="code-comment"># --- Ejemplo de uso ---</span>
+<span class="code-keyword">if</span> <span class="code-variable">__name__</span> == <span class="code-string">"__main__"</span>:
+    <span class="code-function">print</span>(<span class="code-string">"=== Creando Pokémon ==="</span>)
+    
+    <span class="code-comment"># Crear instancias - automáticamente obtienen sus datos</span>
+    <span class="code-variable">pikachu</span> = <span class="code-function">Pokemon</span>(<span class="code-string">"pikachu"</span>)
+    <span class="code-variable">charizard</span> = <span class="code-function">Pokemon</span>(<span class="code-number">6</span>)  <span class="code-comment"># Por ID</span>
+    
+    <span class="code-comment"># Mostrar información</span>
+    <span class="code-variable">pikachu</span>.<span class="code-function">describe</span>()
+    <span class="code-variable">charizard</span>.<span class="code-function">describe</span>()
+    
+    <span class="code-comment"># También podemos acceder a los atributos directamente</span>
+    <span class="code-function">print</span>(f<span class="code-string">"\n{pikachu.name.title()} es de tipo {', '.join(pikachu.types)}"</span>)
+    <span class="code-function">print</span>(f<span class="code-string">{charizard.name.title()} pesa {charizard.weight / 10} kg"</span>)</code></pre>
+                        
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">¿Qué Hace Especial a Esta Clase?</h3>
+                        
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Auto-inicialización</strong>: Los datos se obtienen automáticamente al crear la instancia.</li>
+                            <li><strong>Encapsulación</strong>: El método <code>_fetch_data</code> es privado y maneja toda la lógica de la API.</li>
+                            <li><strong>Atributos accesibles</strong>: Una vez creado, puedes acceder directamente a <code>pokemon.name</code>, <code>pokemon.types</code>, etc.</li>
+                            <li><strong>Método de presentación</strong>: <code>describe()</code> muestra la información de forma organizada.</li>
+                            <li><strong>Manejo de errores</strong>: Si algo falla, los atributos quedan como <code>None</code> o listas vacías.</li>
+                        </ul>
+                        
+                        <p>¡Increíble! Hemos combinado clases y APIs para crear una herramienta muy poderosa. En la siguiente lección aprenderemos sobre manejo de errores más avanzado.</p>
+                        
+                        <p>En la siguiente lección, veremos cómo trabajar con APIs que requieren autenticación y cómo manejar diferentes tipos de respuestas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 9 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 08: Manejo de Errores y Excepciones</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <p>En la lección anterior creamos una clase <code>Pokemon</code> básica, pero ¿qué pasa cuando algo sale mal? ¿Qué ocurre si el Pokémon no existe o si hay problemas de conexión? En esta lección aprenderemos a manejar errores de forma más elegante y profesional.</p>
+                        
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Creando Excepciones Personalizadas</h3>
+                        
+                        <p>Python nos permite crear nuestras propias excepciones para manejar errores específicos de nuestra aplicación. Esto hace que nuestro código sea más claro y fácil de debuggear.</p>
+                        
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># 08_Manejo_de_Errores/excepciones_pokemon.py</span>
+
+<span class="code-keyword">import</span> <span class="code-variable">requests</span>
+
+<span class="code-comment"># Definimos nuestras excepciones personalizadas</span>
+<span class="code-keyword">class</span> <span class="code-function">PokemonNotFoundException</span>(<span class="code-function">Exception</span>):
+    <span class="code-string">"""Excepción que se lanza cuando no se encuentra un Pokémon"""</span>
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-variable">self</span>, <span class="code-variable">pokemon_name</span>):
+        <span class="code-variable">self</span>.pokemon_name = <span class="code-variable">pokemon_name</span>
+        <span class="code-variable">super</span>().<span class="code-function">__init__</span>(f<span class="code-string">"No se encontró el Pokémon: {pokemon_name}"</span>)
+
+<span class="code-keyword">class</span> <span class="code-function">APIConnectionError</span>(<span class="code-function">Exception</span>):
+    <span class="code-string">"""Excepción que se lanza cuando hay problemas de conexión con la API"""</span>
+    <span class="code-keyword">pass</span>
+
+<span class="code-keyword">class</span> <span class="code-function">Pokemon</span>:
+    <span class="code-string">"""
+    Clase Pokemon mejorada con manejo de errores robusto
+    """</span>
+    
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-variable">self</span>, <span class="code-variable">name_or_id</span>):
+        <span class="code-variable">self</span>.name_or_id = <span class="code-variable">name_or_id</span>
+        <span class="code-variable">self</span>.data = <span class="code-keyword">None</span>
+        <span class="code-variable">self</span>.name = <span class="code-keyword">None</span>
+        <span class="code-variable">self</span>.id = <span class="code-keyword">None</span>
+        <span class="code-variable">self</span>.height = <span class="code-keyword">None</span>
+        <span class="code-variable">self</span>.weight = <span class="code-keyword">None</span>
+        <span class="code-variable">self</span>.types = []
+        <span class="code-variable">self</span>.abilities = []
+        <span class="code-variable">self</span>.base_experience = <span class="code-keyword">None</span>
+        
+        <span class="code-comment"># Intentar obtener los datos, pero manejar errores apropiadamente</span>
+        <span class="code-variable">self</span>.<span class="code-function">_fetch_data</span>()
+    
+    <span class="code-keyword">def</span> <span class="code-function">_fetch_data</span>(<span class="code-variable">self</span>):
+        <span class="code-string">"""
+        Método privado que obtiene los datos del Pokémon con manejo de errores mejorado
+        """</span>
+        <span class="code-variable">url</span> = f<span class="code-string">"https://pokeapi.co/api/v2/pokemon/{str(self.name_or_id).lower()}"</span>
+        
+        <span class="code-keyword">try</span>:
+            <span class="code-variable">response</span> = <span class="code-variable">requests</span>.<span class="code-function">get</span>(<span class="code-variable">url</span>, <span class="code-variable">timeout</span>=<span class="code-number">10</span>)
+            
+            <span class="code-comment"># Verificar si el Pokémon fue encontrado</span>
+            <span class="code-keyword">if</span> <span class="code-variable">response</span>.status_code == <span class="code-number">404</span>:
+                <span class="code-keyword">raise</span> <span class="code-function">PokemonNotFoundException</span>(<span class="code-variable">self</span>.name_or_id)
+            
+            <span class="code-comment"># Verificar otros errores HTTP</span>
+            <span class="code-variable">response</span>.<span class="code-function">raise_for_status</span>()
+            
+            <span class="code-variable">self</span>.data = <span class="code-variable">response</span>.<span class="code-function">json</span>()
+            <span class="code-variable">self</span>.<span class="code-function">_parse_data</span>()
+            
+        <span class="code-keyword">except</span> <span class="code-variable">requests</span>.exceptions.<span class="code-function">Timeout</span>:
+            <span class="code-keyword">raise</span> <span class="code-function">APIConnectionError</span>(<span class="code-string">"Timeout: La API tardó demasiado en responder"</span>)
+        <span class="code-keyword">except</span> <span class="code-variable">requests</span>.exceptions.<span class="code-function">ConnectionError</span>:
+            <span class="code-keyword">raise</span> <span class="code-function">APIConnectionError</span>(<span class="code-string">"Error de conexión: No se pudo conectar con la API"</span>)
+        <span class="code-keyword">except</span> <span class="code-variable">requests</span>.exceptions.<span class="code-function">HTTPError</span> <span class="code-keyword">as</span> <span class="code-variable">e</span>:
+            <span class="code-keyword">raise</span> <span class="code-function">APIConnectionError</span>(f<span class="code-string">"Error HTTP: {e}"</span>)
+        <span class="code-keyword">except</span> <span class="code-function">PokemonNotFoundException</span>:
+            <span class="code-comment"># Re-lanzar la excepción personalizada</span>
+            <span class="code-keyword">raise</span>
+        <span class="code-keyword">except</span> <span class="code-function">Exception</span> <span class="code-keyword">as</span> <span class="code-variable">e</span>:
+            <span class="code-keyword">raise</span> <span class="code-function">APIConnectionError</span>(f<span class="code-string">"Error inesperado: {e}"</span>)
+    
+    <span class="code-keyword">def</span> <span class="code-function">_parse_data</span>(<span class="code-variable">self</span>):
+        <span class="code-string">"""
+        Método privado para extraer y procesar los datos de la respuesta
+        """</span>
+        <span class="code-keyword">try</span>:
+            <span class="code-variable">self</span>.name = <span class="code-variable">self</span>.data[<span class="code-string">'name'</span>]
+            <span class="code-variable">self</span>.id = <span class="code-variable">self</span>.data[<span class="code-string">'id'</span>]
+            <span class="code-variable">self</span>.height = <span class="code-variable">self</span>.data[<span class="code-string">'height'</span>]
+            <span class="code-variable">self</span>.weight = <span class="code-variable">self</span>.data[<span class="code-string">'weight'</span>]
+            <span class="code-variable">self</span>.base_experience = <span class="code-variable">self</span>.data.<span class="code-function">get</span>(<span class="code-string">'base_experience'</span>, <span class="code-number">0</span>)
+            
+            <span class="code-comment"># Extraer tipos de forma segura</span>
+            <span class="code-variable">self</span>.types = [
+                <span class="code-variable">type_info</span>[<span class="code-string">'type'</span>][<span class="code-string">'name'</span>] 
+                <span class="code-keyword">for</span> <span class="code-variable">type_info</span> <span class="code-keyword">in</span> <span class="code-variable">self</span>.data.<span class="code-function">get</span>(<span class="code-string">'types'</span>, [])
+            ]
+            
+            <span class="code-comment"># Extraer habilidades de forma segura</span>
+            <span class="code-variable">self</span>.abilities = [
+                <span class="code-variable">ability_info</span>[<span class="code-string">'ability'</span>][<span class="code-string">'name'</span>] 
+                <span class="code-keyword">for</span> <span class="code-variable">ability_info</span> <span class="code-keyword">in</span> <span class="code-variable">self</span>.data.<span class="code-function">get</span>(<span class="code-string">'abilities'</span>, [])
+            ]
+            
+        <span class="code-keyword">except</span> <span class="code-function">KeyError</span> <span class="code-keyword">as</span> <span class="code-variable">e</span>:
+            <span class="code-keyword">raise</span> <span class="code-function">APIConnectionError</span>(f<span class="code-string">"Datos incompletos de la API: falta la clave {e}"</span>)
+    
+    <span class="code-keyword">def</span> <span class="code-function">describe</span>(<span class="code-variable">self</span>):
+        <span class="code-string">"""
+        Muestra una descripción completa del Pokémon
+        """</span>
+        <span class="code-keyword">if</span> <span class="code-keyword">not</span> <span class="code-variable">self</span>.data:
+            <span class="code-function">print</span>(<span class="code-string">"No se pudieron obtener los datos del Pokémon."</span>)
+            <span class="code-keyword">return</span>
+        
+        <span class="code-function">print</span>(f<span class="code-string">"\n--- {self.name.title()} ---"</span>)
+        <span class="code-function">print</span>(f<span class="code-string">"ID: #{self.id}"</span>)
+        <span class="code-function">print</span>(f<span class="code-string">"Altura: {self.height / 10} m"</span>)
+        <span class="code-function">print</span>(f<span class="code-string">"Peso: {self.weight / 10} kg"</span>)
+        <span class="code-function">print</span>(f<span class="code-string">"Experiencia base: {self.base_experience}"</span>)
+        <span class="code-function">print</span>(f<span class="code-string">"Tipos: {', '.join(self.types)}"</span>)
+        <span class="code-function">print</span>(f<span class="code-string">"Habilidades: {', '.join(self.abilities)}"</span>)</code></pre>
+                        
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Ejemplo de Uso con Manejo de Errores</h3>
+                        
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># Ejemplo de cómo usar la clase con manejo de errores</span>
+<span class="code-keyword">def</span> <span class="code-function">buscar_pokemon</span>(<span class="code-variable">nombre</span>):
+    <span class="code-keyword">try</span>:
+        <span class="code-variable">pokemon</span> = <span class="code-function">Pokemon</span>(<span class="code-variable">nombre</span>)
+        <span class="code-variable">pokemon</span>.<span class="code-function">describe</span>()
+        <span class="code-keyword">return</span> <span class="code-variable">pokemon</span>
+        
+    <span class="code-keyword">except</span> <span class="code-function">PokemonNotFoundException</span> <span class="code-keyword">as</span> <span class="code-variable">e</span>:
+        <span class="code-function">print</span>(f<span class="code-string">"❌ {e}"</span>)
+        <span class="code-function">print</span>(<span class="code-string">"💡 Sugerencia: Verifica que el nombre esté bien escrito."</span>)
+        <span class="code-keyword">return</span> <span class="code-keyword">None</span>
+        
+    <span class="code-keyword">except</span> <span class="code-function">APIConnectionError</span> <span class="code-keyword">as</span> <span class="code-variable">e</span>:
+        <span class="code-function">print</span>(f<span class="code-string">"🌐 Problema de conexión: {e}"</span>)
+        <span class="code-function">print</span>(<span class="code-string">"💡 Sugerencia: Verifica tu conexión a internet e inténtalo de nuevo."</span>)
+        <span class="code-keyword">return</span> <span class="code-keyword">None</span>
+
+<span class="code-comment"># Probar con diferentes casos</span>
+<span class="code-keyword">if</span> <span class="code-variable">__name__</span> == <span class="code-string">"__main__"</span>:
+    <span class="code-function">print</span>(<span class="code-string">"=== Probando manejo de errores ==="</span>)
+    
+    <span class="code-comment"># Caso exitoso</span>
+    <span class="code-function">buscar_pokemon</span>(<span class="code-string">"pikachu"</span>)
+    
+    <span class="code-comment"># Caso de Pokémon no encontrado</span>
+    <span class="code-function">buscar_pokemon</span>(<span class="code-string">"pokemonquenoexiste"</span>)
+    
+    <span class="code-comment"># Probar con múltiples Pokémon</span>
+    <span class="code-variable">nombres</span> = [<span class="code-string">"charizard"</span>, <span class="code-string">"blastoise"</span>, <span class="code-string">"venusaur"</span>, <span class="code-string">"pokemoninvalido"</span>]
+    <span class="code-variable">pokemon_encontrados</span> = []
+    
+    <span class="code-keyword">for</span> <span class="code-variable">nombre</span> <span class="code-keyword">in</span> <span class="code-variable">nombres</span>:
+        <span class="code-function">print</span>(f<span class="code-string">"\n--- Buscando {nombre} ---"</span>)
+        <span class="code-variable">pokemon</span> = <span class="code-function">buscar_pokemon</span>(<span class="code-variable">nombre</span>)
+        <span class="code-keyword">if</span> <span class="code-variable">pokemon</span>:
+            <span class="code-variable">pokemon_encontrados</span>.<span class="code-function">append</span>(<span class="code-variable">pokemon</span>)
+    
+    <span class="code-function">print</span>(f<span class="code-string">"\n✅ Se encontraron {len(pokemon_encontrados)} Pokémon exitosamente."</span>)</code></pre>
+                        
+                        <p>Con este enfoque, nuestro código es mucho más robusto y proporciona información útil cuando algo sale mal. ¡En la siguiente lección veremos cómo trabajar con APIs que requieren autenticación!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 10 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 09: Autenticación en APIs (con API Key)</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <p>Muchas APIs requieren autenticación para acceder a sus datos. En esta lección aprenderemos cómo trabajar con APIs que requieren una <strong>API Key</strong> usando el ejemplo de OpenWeatherMap.</p>
+                        
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">¿Qué es una API Key?</h3>
+                        
+                        <p>Una <strong>API Key</strong> es como una "llave" o "contraseña" que identifica tu aplicación ante el servicio de la API. Las empresas usan API Keys para:</p>
+                        
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Controlar el acceso</strong>: Solo usuarios registrados pueden usar la API.</li>
+                            <li><strong>Limitar el uso</strong>: Pueden establecer límites de peticiones por día/hora.</li>
+                            <li><strong>Rastrear el uso</strong>: Saben qué aplicaciones están usando su servicio.</li>
+                            <li><strong>Monetización</strong>: Pueden cobrar por el uso excesivo.</li>
+                        </ul>
+                        
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Ejemplo: OpenWeatherMap API</h3>
+                        
+                        <p>Usaremos la API de <strong>OpenWeatherMap</strong> (https://openweathermap.org/api) que es gratuita hasta cierto límite de peticiones.</p>
+                        
+                        <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4">
+                            <p class="text-yellow-800 dark:text-yellow-200"><strong>Nota importante:</strong> Para usar este ejemplo, necesitas registrarte en OpenWeatherMap y obtener una API Key gratuita. El proceso toma solo unos minutos.</p>
+                        </div>
+                        
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># 09_Autenticacion_APIs/clima_api.py</span>
+
+<span class="code-keyword">import</span> <span class="code-variable">requests</span>
+<span class="code-keyword">import</span> <span class="code-variable">os</span>
+
+<span class="code-keyword">class</span> <span class="code-function">ClimaAPI</span>:
+    <span class="code-string">"""
+    Clase para interactuar con la API de OpenWeatherMap
+    """</span>
+    
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-variable">self</span>, <span class="code-variable">api_key</span>):
+        <span class="code-variable">self</span>.api_key = <span class="code-variable">api_key</span>
+        <span class="code-variable">self</span>.url_base = <span class="code-string">"https://api.openweathermap.org/data/2.5/"</span>
+    
+    <span class="code-keyword">def</span> <span class="code-function">_hacer_peticion</span>(<span class="code-variable">self</span>, <span class="code-variable">endpoint</span>, <span class="code-variable">parametros</span>=<span class="code-keyword">None</span>):
+        <span class="code-string">"""
+        Método privado para hacer peticiones a la API con autenticación
+        """</span>
+        <span class="code-variable">url</span> = <span class="code-variable">self</span>.url_base + <span class="code-variable">endpoint</span>
+        
+        <span class="code-comment"># Parámetros base que siempre incluimos</span>
+        <span class="code-variable">params</span> = {
+            <span class="code-string">"appid"</span>: <span class="code-variable">self</span>.api_key,
+            <span class="code-string">"units"</span>: <span class="code-string">"metric"</span>,  <span class="code-comment"># Celsius</span>
+            <span class="code-string">"lang"</span>: <span class="code-string">"es"</span>       <span class="code-comment"># Español</span>
+        }
+        
+        <span class="code-comment"># Agregar parámetros adicionales si los hay</span>
+        <span class="code-keyword">if</span> <span class="code-variable">parametros</span>:
+            <span class="code-variable">params</span>.<span class="code-function">update</span>(<span class="code-variable">parametros</span>)
+        
+        <span class="code-keyword">try</span>:
+            <span class="code-variable">respuesta</span> = <span class="code-variable">requests</span>.<span class="code-function">get</span>(<span class="code-variable">url</span>, <span class="code-variable">params</span>=<span class="code-variable">params</span>)
+            <span class="code-variable">respuesta</span>.<span class="code-function">raise_for_status</span>()
+            <span class="code-keyword">return</span> <span class="code-variable">respuesta</span>.<span class="code-function">json</span>()
+        
+        <span class="code-keyword">except</span> <span class="code-variable">requests</span>.exceptions.<span class="code-function">RequestException</span> <span class="code-keyword">as</span> <span class="code-variable">e</span>:
+            <span class="code-function">print</span>(f<span class="code-string">"Error en la petición: {e}"</span>)
+            <span class="code-keyword">return</span> <span class="code-keyword">None</span>
+    
+    <span class="code-keyword">def</span> <span class="code-function">obtener_clima_actual</span>(<span class="code-variable">self</span>, <span class="code-variable">ciudad</span>):
+        <span class="code-string">"""
+        Obtiene el clima actual de una ciudad
+        """</span>
+        <span class="code-variable">parametros</span> = {<span class="code-string">"q"</span>: <span class="code-variable">ciudad</span>}
+        <span class="code-keyword">return</span> <span class="code-variable">self</span>.<span class="code-function">_hacer_peticion</span>(<span class="code-string">"weather"</span>, <span class="code-variable">parametros</span>)
+    
+    <span class="code-keyword">def</span> <span class="code-function">obtener_pronostico</span>(<span class="code-variable">self</span>, <span class="code-variable">ciudad</span>, <span class="code-variable">dias</span>=<span class="code-number">5</span>):
+        <span class="code-string">"""
+        Obtiene el pronóstico del clima para varios días
+        """</span>
+        <span class="code-variable">parametros</span> = {<span class="code-string">"q"</span>: <span class="code-variable">ciudad</span>, <span class="code-string">"cnt"</span>: <span class="code-variable">dias</span> * <span class="code-number">8</span>}  <span class="code-comment"># 8 mediciones por día</span>
+        <span class="code-keyword">return</span> <span class="code-variable">self</span>.<span class="code-function">_hacer_peticion</span>(<span class="code-string">"forecast"</span>, <span class="code-variable">parametros</span>)
+    
+    <span class="code-keyword">def</span> <span class="code-function">resumen_clima</span>(<span class="code-variable">self</span>, <span class="code-variable">ciudad</span>):
+        <span class="code-string">"""
+        Obtiene un resumen formateado del clima actual
+        """</span>
+        <span class="code-variable">datos</span> = <span class="code-variable">self</span>.<span class="code-function">obtener_clima_actual</span>(<span class="code-variable">ciudad</span>)
+        
+        <span class="code-keyword">if</span> <span class="code-keyword">not</span> <span class="code-variable">datos</span>:
+            <span class="code-keyword">return</span> f<span class="code-string">"No se pudo obtener el clima para {ciudad}"</span>
+        
+        <span class="code-variable">nombre_ciudad</span> = <span class="code-variable">datos</span>[<span class="code-string">"name"</span>]
+        <span class="code-variable">pais</span> = <span class="code-variable">datos</span>[<span class="code-string">"sys"</span>][<span class="code-string">"country"</span>]
+        <span class="code-variable">temperatura</span> = <span class="code-variable">datos</span>[<span class="code-string">"main"</span>][<span class="code-string">"temp"</span>]
+        <span class="code-variable">sensacion</span> = <span class="code-variable">datos</span>[<span class="code-string">"main"</span>][<span class="code-string">"feels_like"</span>]
+        <span class="code-variable">descripcion</span> = <span class="code-variable">datos</span>[<span class="code-string">"weather"</span>][<span class="code-number">0</span>][<span class="code-string">"description"</span>]
+        <span class="code-variable">humedad</span> = <span class="code-variable">datos</span>[<span class="code-string">"main"</span>][<span class="code-string">"humidity"</span>]
+        
+        <span class="code-variable">resumen</span> = f<span class="code-string">"""
+--- Clima en {nombre_ciudad}, {pais} ---
+Temperatura: {temperatura}°C (sensación térmica: {sensacion}°C)
+Descripción: {descripcion.title()}
+Humedad: {humedad}%
+        """</span>
+        
+        <span class="code-keyword">return</span> <span class="code-variable">resumen</span>.<span class="code-function">strip</span>()
+
+
+<span class="code-comment"># --- Ejemplo de uso ---</span>
+<span class="code-keyword">if</span> <span class="code-variable">__name__</span> == <span class="code-string">"__main__"</span>:
+    <span class="code-comment"># IMPORTANTE: Nunca hardcodees tu API key en el código</span>
+    <span class="code-comment"># Usa variables de entorno o archivos de configuración</span>
+    <span class="code-variable">API_KEY</span> = <span class="code-variable">os</span>.<span class="code-function">getenv</span>(<span class="code-string">"OPENWEATHER_API_KEY"</span>)
+    
+    <span class="code-keyword">if</span> <span class="code-keyword">not</span> <span class="code-variable">API_KEY</span>:
+        <span class="code-function">print</span>(<span class="code-string">"❌ Error: No se encontró la API key."</span>)
+        <span class="code-function">print</span>(<span class="code-string">"💡 Configura la variable de entorno OPENWEATHER_API_KEY"</span>)
+        <span class="code-keyword">exit</span>(<span class="code-number">1</span>)
+    
+    <span class="code-comment"># Crear instancia de la API</span>
+    <span class="code-variable">clima_api</span> = <span class="code-function">ClimaAPI</span>(<span class="code-variable">API_KEY</span>)
+    
+    <span class="code-comment"># Probar con diferentes ciudades</span>
+    <span class="code-variable">ciudades</span> = [<span class="code-string">"Madrid"</span>, <span class="code-string">"Barcelona"</span>, <span class="code-string">"Mexico City"</span>]
+    
+    <span class="code-keyword">for</span> <span class="code-variable">ciudad</span> <span class="code-keyword">in</span> <span class="code-variable">ciudades</span>:
+        <span class="code-function">print</span>(<span class="code-variable">clima_api</span>.<span class="code-function">resumen_clima</span>(<span class="code-variable">ciudad</span>))
+        <span class="code-function">print</span>()</code></pre>
+                        
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Mejores Prácticas para API Keys</h3>
+                        
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Nunca hardcodees la API key</strong>: Usa variables de entorno o archivos de configuración.</li>
+                            <li><strong>No la subas a repositorios públicos</strong>: Agrega archivos con keys al .gitignore.</li>
+                            <li><strong>Rota las keys regularmente</strong>: Cambia tus API keys periódicamente.</li>
+                            <li><strong>Usa diferentes keys para diferentes entornos</strong>: Desarrollo, testing, producción.</li>
+                            <li><strong>Monitorea el uso</strong>: Revisa regularmente cuántas peticiones estás haciendo.</li>
+                        </ul>
+                        
+                        <p>¡Excelente! Ahora sabes cómo trabajar con APIs que requieren autenticación. En la siguiente lección aprenderemos sobre peticiones POST para enviar datos a las APIs.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 11 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 10: Enviando datos con Peticiones POST</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <p>Hasta ahora hemos usado peticiones <code>GET</code> para obtener datos de las APIs. Pero ¿qué pasa cuando queremos enviar datos? Para eso usamos peticiones <code>POST</code>. En esta lección aprenderemos cómo enviar datos a una API usando JSONPlaceholder.</p>
+                        
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">GET vs POST</h3>
+                        
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>GET</strong>: Para obtener/leer datos. Los parámetros van en la URL.</li>
+                            <li><strong>POST</strong>: Para crear/enviar datos. Los datos van en el cuerpo de la petición.</li>
+                            <li><strong>PUT</strong>: Para actualizar datos existentes completamente.</li>
+                            <li><strong>PATCH</strong>: Para actualizar datos existentes parcialmente.</li>
+                            <li><strong>DELETE</strong>: Para eliminar datos.</li>
+                        </ul>
+                        
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Ejemplo: Crear un Post en JSONPlaceholder</h3>
+                        
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># 10_Peticiones_POST/enviar_datos.py</span>
+
+<span class="code-keyword">import</span> <span class="code-variable">requests</span>
+<span class="code-keyword">import</span> <span class="code-variable">json</span>
+
+<span class="code-keyword">class</span> <span class="code-function">JSONPlaceholderAPI</span>:
+    <span class="code-string">"""
+    Clase para interactuar con JSONPlaceholder API
+    """</span>
+    
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-variable">self</span>):
+        <span class="code-variable">self</span>.url_base = <span class="code-string">"https://jsonplaceholder.typicode.com/"</span>
+        <span class="code-variable">self</span>.headers = {
+            <span class="code-string">"Content-Type"</span>: <span class="code-string">"application/json"</span>,
+            <span class="code-string">"User-Agent"</span>: <span class="code-string">"MiApp-Python/1.0"</span>
+        }
+    
+    <span class="code-keyword">def</span> <span class="code-function">obtener_posts</span>(<span class="code-variable">self</span>, <span class="code-variable">limite</span>=<span class="code-number">5</span>):
+        <span class="code-string">"""
+        Obtiene una lista de posts (GET)
+        """</span>
+        <span class="code-variable">url</span> = f<span class="code-string">"{self.url_base}posts"</span>
+        <span class="code-variable">params</span> = {<span class="code-string">"_limit"</span>: <span class="code-variable">limite</span>}
+        
+        <span class="code-keyword">try</span>:
+            <span class="code-variable">respuesta</span> = <span class="code-variable">requests</span>.<span class="code-function">get</span>(<span class="code-variable">url</span>, <span class="code-variable">params</span>=<span class="code-variable">params</span>)
+            <span class="code-variable">respuesta</span>.<span class="code-function">raise_for_status</span>()
+            <span class="code-keyword">return</span> <span class="code-variable">respuesta</span>.<span class="code-function">json</span>()
+        <span class="code-keyword">except</span> <span class="code-variable">requests</span>.exceptions.<span class="code-function">RequestException</span> <span class="code-keyword">as</span> <span class="code-variable">e</span>:
+            <span class="code-function">print</span>(f<span class="code-string">"Error al obtener posts: {e}"</span>)
+            <span class="code-keyword">return</span> <span class="code-keyword">None</span>
+    
+    <span class="code-keyword">def</span> <span class="code-function">crear_post</span>(<span class="code-variable">self</span>, <span class="code-variable">titulo</span>, <span class="code-variable">contenido</span>, <span class="code-variable">user_id</span>=<span class="code-number">1</span>):
+        <span class="code-string">"""
+        Crea un nuevo post (POST)
+        """</span>
+        <span class="code-variable">url</span> = f<span class="code-string">"{self.url_base}posts"</span>
+        
+        <span class="code-comment"># Los datos que queremos enviar</span>
+        <span class="code-variable">datos</span> = {
+            <span class="code-string">"title"</span>: <span class="code-variable">titulo</span>,
+            <span class="code-string">"body"</span>: <span class="code-variable">contenido</span>,
+            <span class="code-string">"userId"</span>: <span class="code-variable">user_id</span>
+        }
+        
+        <span class="code-keyword">try</span>:
+            <span class="code-variable">respuesta</span> = <span class="code-variable">requests</span>.<span class="code-function">post</span>(
+                <span class="code-variable">url</span>,
+                <span class="code-variable">headers</span>=<span class="code-variable">self</span>.headers,
+                <span class="code-variable">data</span>=<span class="code-variable">json</span>.<span class="code-function">dumps</span>(<span class="code-variable">datos</span>)  <span class="code-comment"># Convertir a JSON</span>
+            )
+            <span class="code-variable">respuesta</span>.<span class="code-function">raise_for_status</span>()
+            <span class="code-keyword">return</span> <span class="code-variable">respuesta</span>.<span class="code-function">json</span>()
+        
+        <span class="code-keyword">except</span> <span class="code-variable">requests</span>.exceptions.<span class="code-function">RequestException</span> <span class="code-keyword">as</span> <span class="code-variable">e</span>:
+            <span class="code-function">print</span>(f<span class="code-string">"Error al crear post: {e}"</span>)
+            <span class="code-keyword">return</span> <span class="code-keyword">None</span>
+    
+    <span class="code-keyword">def</span> <span class="code-function">actualizar_post</span>(<span class="code-variable">self</span>, <span class="code-variable">post_id</span>, <span class="code-variable">titulo</span>, <span class="code-variable">contenido</span>, <span class="code-variable">user_id</span>=<span class="code-number">1</span>):
+        <span class="code-string">"""
+        Actualiza un post existente (PUT)
+        """</span>
+        <span class="code-variable">url</span> = f<span class="code-string">"{self.url_base}posts/{post_id}"</span>
+        
+        <span class="code-variable">datos</span> = {
+            <span class="code-string">"id"</span>: <span class="code-variable">post_id</span>,
+            <span class="code-string">"title"</span>: <span class="code-variable">titulo</span>,
+            <span class="code-string">"body"</span>: <span class="code-variable">contenido</span>,
+            <span class="code-string">"userId"</span>: <span class="code-variable">user_id</span>
+        }
+        
+        <span class="code-keyword">try</span>:
+            <span class="code-variable">respuesta</span> = <span class="code-variable">requests</span>.<span class="code-function">put</span>(
+                <span class="code-variable">url</span>,
+                <span class="code-variable">headers</span>=<span class="code-variable">self</span>.headers,
+                <span class="code-variable">data</span>=<span class="code-variable">json</span>.<span class="code-function">dumps</span>(<span class="code-variable">datos</span>)
+            )
+            <span class="code-variable">respuesta</span>.<span class="code-function">raise_for_status</span>()
+            <span class="code-keyword">return</span> <span class="code-variable">respuesta</span>.<span class="code-function">json</span>()
+        
+        <span class="code-keyword">except</span> <span class="code-variable">requests</span>.exceptions.<span class="code-function">RequestException</span> <span class="code-keyword">as</span> <span class="code-variable">e</span>:
+            <span class="code-function">print</span>(f<span class="code-string">"Error al actualizar post: {e}"</span>)
+            <span class="code-keyword">return</span> <span class="code-keyword">None</span>
+    
+    <span class="code-keyword">def</span> <span class="code-function">eliminar_post</span>(<span class="code-variable">self</span>, <span class="code-variable">post_id</span>):
+        <span class="code-string">"""
+        Elimina un post (DELETE)
+        """</span>
+        <span class="code-variable">url</span> = f<span class="code-string">"{self.url_base}posts/{post_id}"</span>
+        
+        <span class="code-keyword">try</span>:
+            <span class="code-variable">respuesta</span> = <span class="code-variable">requests</span>.<span class="code-function">delete</span>(<span class="code-variable">url</span>)
+            <span class="code-variable">respuesta</span>.<span class="code-function">raise_for_status</span>()
+            <span class="code-keyword">return</span> <span class="code-variable">respuesta</span>.status_code == <span class="code-number">200</span>
+        
+        <span class="code-keyword">except</span> <span class="code-variable">requests</span>.exceptions.<span class="code-function">RequestException</span> <span class="code-keyword">as</span> <span class="code-variable">e</span>:
+            <span class="code-function">print</span>(f<span class="code-string">"Error al eliminar post: {e}"</span>)
+            <span class="code-keyword">return</span> <span class="code-keyword">False</span>
+
+
+<span class="code-comment"># --- Ejemplo de uso ---</span>
+<span class="code-keyword">if</span> <span class="code-variable">__name__</span> == <span class="code-string">"__main__"</span>:
+    <span class="code-variable">api</span> = <span class="code-function">JSONPlaceholderAPI</span>()
+    
+    <span class="code-function">print</span>(<span class="code-string">"=== Demostrando operaciones CRUD ==="</span>)
+    
+    <span class="code-comment"># 1. CREATE - Crear un nuevo post</span>
+    <span class="code-function">print</span>(<span class="code-string">"\n1. Creando un nuevo post..."</span>)
+    <span class="code-variable">nuevo_post</span> = <span class="code-variable">api</span>.<span class="code-function">crear_post</span>(
+        <span class="code-string">"Mi primer post con Python"</span>,
+        <span class="code-string">"Este es el contenido de mi post creado usando la API de JSONPlaceholder."</span>
+    )
+    
+    <span class="code-keyword">if</span> <span class="code-variable">nuevo_post</span>:
+        <span class="code-function">print</span>(f<span class="code-string">"✅ Post creado con ID: {nuevo_post['id']}"</span>)
+        <span class="code-function">print</span>(f<span class="code-string">"   Título: {nuevo_post['title']}"</span>)
+        <span class="code-variable">post_id</span> = <span class="code-variable">nuevo_post</span>[<span class="code-string">"id"</span>]
+    <span class="code-keyword">else</span>:
+        <span class="code-function">print</span>(<span class="code-string">"❌ No se pudo crear el post"</span>)
+        <span class="code-variable">post_id</span> = <span class="code-number">1</span>  <span class="code-comment"># Usar un ID existente para las siguientes operaciones</span>
+    
+    <span class="code-comment"># 2. READ - Leer posts existentes</span>
+    <span class="code-function">print</span>(<span class="code-string">"\n2. Obteniendo posts existentes..."</span>)
+    <span class="code-variable">posts</span> = <span class="code-variable">api</span>.<span class="code-function">obtener_posts</span>(<span class="code-number">3</span>)
+    <span class="code-keyword">if</span> <span class="code-variable">posts</span>:
+        <span class="code-function">print</span>(f<span class="code-string">"✅ Se obtuvieron {len(posts)} posts:"</span>)
+        <span class="code-keyword">for</span> <span class="code-variable">post</span> <span class="code-keyword">in</span> <span class="code-variable">posts</span>:
+            <span class="code-function">print</span>(f<span class="code-string">"   - ID {post['id']}: {post['title'][:50]}..."</span>)
+    
+    <span class="code-comment"># 3. UPDATE - Actualizar un post</span>
+    <span class="code-function">print</span>(<span class="code-string">"\n3. Actualizando un post..."</span>)
+    <span class="code-variable">post_actualizado</span> = <span class="code-variable">api</span>.<span class="code-function">actualizar_post</span>(
+        <span class="code-variable">post_id</span>,
+        <span class="code-string">"Post actualizado con Python"</span>,
+        <span class="code-string">"Este contenido ha sido actualizado usando PUT."</span>
+    )
+    
+    <span class="code-keyword">if</span> <span class="code-variable">post_actualizado</span>:
+        <span class="code-function">print</span>(f<span class="code-string">"✅ Post {post_id} actualizado exitosamente"</span>)
+        <span class="code-function">print</span>(f<span class="code-string">"   Nuevo título: {post_actualizado['title']}"</span>)
+    
+    <span class="code-comment"># 4. DELETE - Eliminar un post</span>
+    <span class="code-function">print</span>(<span class="code-string">"\n4. Eliminando un post..."</span>)
+    <span class="code-variable">eliminado</span> = <span class="code-variable">api</span>.<span class="code-function">eliminar_post</span>(<span class="code-variable">post_id</span>)
+    
+    <span class="code-keyword">if</span> <span class="code-variable">eliminado</span>:
+        <span class="code-function">print</span>(f<span class="code-string">"✅ Post {post_id} eliminado exitosamente"</span>)
+    <span class="code-keyword">else</span>:
+        <span class="code-function">print</span>(f<span class="code-string">"❌ No se pudo eliminar el post {post_id}"</span>)
+    
+    <span class="code-function">print</span>(<span class="code-string">"\n🎉 ¡Demostración completa de operaciones CRUD!"</span>)</code></pre>
+                        
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Puntos Importantes sobre POST</h3>
+                        
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Content-Type header</strong>: Especifica que estamos enviando JSON.</li>
+                            <li><strong>json.dumps()</strong>: Convierte el diccionario Python a string JSON.</li>
+                            <li><strong>data parameter</strong>: Contiene los datos a enviar en el cuerpo de la petición.</li>
+                            <li><strong>Códigos de respuesta</strong>: 201 para creación exitosa, 200 para actualización.</li>
+                            <li><strong>JSONPlaceholder es fake</strong>: Los datos no se guardan realmente, pero simula las respuestas.</li>
+                        </ul>
+                        
+                        <p>¡Excelente! Ahora conoces las operaciones CRUD completas (Create, Read, Update, Delete) con APIs. Esto te permite interactuar completamente con servicios web.</p>
+                    </div>
+                </div>
+            </div>
+
+            
+        </main>
+        
+        <!-- Parte 1: Lista de Ejercicios -->
+        <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+            <header class="text-center mb-10">
+                <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white">Parte 1: Lista de Ejercicios</h1>
+                <p class="text-xl text-gray-600 dark:text-gray-300 mt-4">Aquí tienes una serie de problemas para practicar, divididos por los temas que hemos visto.</p>
+            </header>
+
+            <main class="space-y-4">
+                
+                <!-- Tema 1: Clases, Objetos, Atributos y Métodos -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Tema 1: Clases, Objetos, Atributos y Métodos (Lecciones 0-1)</button>
+                    <div class="panel px-6">
+                        <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                            
+                            <div class="space-y-6">
+                                <div class="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-400 p-4">
+                                    <h4 class="font-bold text-green-800 dark:text-green-200">🟢 Fácil: Clase Libro</h4>
+                                    <p class="text-green-700 dark:text-green-300">Crea una clase <code>Libro</code> con un constructor <code>__init__</code> que reciba <code>titulo</code>, <code>autor</code> y <code>paginas</code>. La clase debe tener un método <code>descripcion()</code> que imprima una frase como: "El libro 'El Quijote' por Miguel de Cervantes tiene 300 páginas."</p>
+                                </div>
+                                
+                                <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4">
+                                    <h4 class="font-bold text-yellow-800 dark:text-yellow-200">🟡 Intermedio: Clase Estudiante</h4>
+                                    <p class="text-yellow-700 dark:text-yellow-300">Crea una clase <code>Estudiante</code> que tenga <code>nombre</code>, <code>edad</code> y una lista de <code>calificaciones</code> (inicialmente vacía). Agrega métodos para:</p>
+                                    <ul class="list-disc list-inside mt-2 space-y-1">
+                                        <li><code>agregar_calificacion(nota)</code>: Añade una nota a la lista.</li>
+                                        <li><code>promedio()</code>: Calcula y devuelve el promedio de las calificaciones.</li>
+                                        <li><code>esta_aprobado()</code>: Devuelve <code>True</code> si el promedio es >= 6, <code>False</code> en caso contrario.</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4">
+                                    <h4 class="font-bold text-red-800 dark:text-red-200">🔴 Difícil: Clase CuentaBancaria</h4>
+                                    <p class="text-red-700 dark:text-red-300">Crea una clase <code>CuentaBancaria</code> con <code>titular</code> y <code>saldo</code> (inicialmente 0). Implementa métodos para:</p>
+                                    <ul class="list-disc list-inside mt-2 space-y-1">
+                                        <li><code>depositar(cantidad)</code>: Suma la cantidad al saldo.</li>
+                                        <li><code>retirar(cantidad)</code>: Resta la cantidad del saldo solo si hay fondos suficientes.</li>
+                                        <li><code>consultar_saldo()</code>: Muestra el saldo actual.</li>
+                                        <li><code>transferir(otra_cuenta, cantidad)</code>: Transfiere dinero a otra cuenta.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tema 2: Encapsulación -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Tema 2: Encapsulación (Lección 2)</button>
+                    <div class="panel px-6">
+                        <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                            
+                            <div class="space-y-6">
+                                <div class="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-400 p-4">
+                                    <h4 class="font-bold text-green-800 dark:text-green-200">🟢 Fácil: Clase Termometro</h4>
+                                    <p class="text-green-700 dark:text-green-300">Crea una clase <code>Termometro</code> con un atributo privado <code>_temperatura_celsius</code>. Agrega métodos públicos:</p>
+                                    <ul class="list-disc list-inside mt-2 space-y-1">
+                                        <li><code>set_celsius(temp)</code>: Establece la temperatura en Celsius.</li>
+                                        <li><code>get_celsius()</code>: Devuelve la temperatura en Celsius.</li>
+                                        <li><code>get_fahrenheit()</code>: Convierte y devuelve la temperatura en Fahrenheit.</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4">
+                                    <h4 class="font-bold text-yellow-800 dark:text-yellow-200">🟡 Intermedio: Clase Producto</h4>
+                                    <p class="text-yellow-700 dark:text-yellow-300">Crea una clase <code>Producto</code> con atributos privados <code>_nombre</code>, <code>_precio</code> y <code>_stock</code>. Implementa getters y setters que:</p>
+                                    <ul class="list-disc list-inside mt-2 space-y-1">
+                                        <li>No permitan precios negativos.</li>
+                                        <li>No permitan stock negativo.</li>
+                                        <li>Conviertan el nombre a título (primera letra mayúscula).</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4">
+                                    <h4 class="font-bold text-red-800 dark:text-red-200">🔴 Difícil: Clase Password</h4>
+                                    <p class="text-red-700 dark:text-red-300">Crea una clase <code>Password</code> que almacene una contraseña de forma segura. Debe tener:</p>
+                                    <ul class="list-disc list-inside mt-2 space-y-1">
+                                        <li>Un atributo privado que almacene un hash de la contraseña.</li>
+                                        <li><code>set_password(nueva_password)</code>: Establece una nueva contraseña (hasheada).</li>
+                                        <li><code>check_password(password)</code>: Verifica si la contraseña es correcta.</li>
+                                        <li><code>is_strong()</code>: Verifica si la contraseña tiene al menos 8 caracteres, una mayúscula, una minúscula y un número.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tema 3: Herencia -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Tema 3: Herencia (Lección 3)</button>
+                    <div class="panel px-6">
+                        <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                            
+                            <div class="space-y-6">
+                                <div class="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-400 p-4">
+                                    <h4 class="font-bold text-green-800 dark:text-green-200">🟢 Fácil: Jerarquía Animal</h4>
+                                    <p class="text-green-700 dark:text-green-300">Crea una clase base <code>Animal</code> con <code>nombre</code> y <code>especie</code>, y un método <code>hacer_sonido()</code> que imprima "El animal hace un sonido". Luego crea clases <code>Perro</code> y <code>Gato</code> que hereden de <code>Animal</code> y sobrescriban <code>hacer_sonido()</code> con sonidos específicos.</p>
+                                </div>
+                                
+                                <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4">
+                                    <h4 class="font-bold text-yellow-800 dark:text-yellow-200">🟡 Intermedio: Sistema de Empleados</h4>
+                                    <p class="text-yellow-700 dark:text-yellow-300">Crea una clase <code>Empleado</code> con <code>nombre</code>, <code>salario_base</code> y un método <code>calcular_salario()</code>. Luego crea:</p>
+                                    <ul class="list-disc list-inside mt-2 space-y-1">
+                                        <li><code>EmpleadoTiempoCompleto</code>: Salario = salario_base.</li>
+                                        <li><code>EmpleadoMedioTiempo</code>: Salario = salario_base * 0.5.</li>
+                                        <li><code>EmpleadoConComision</code>: Salario = salario_base + comisiones.</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4">
+                                    <h4 class="font-bold text-red-800 dark:text-red-200">🔴 Difícil: Sistema de Figuras Geométricas</h4>
+                                    <p class="text-red-700 dark:text-red-300">Crea una clase abstracta <code>Figura</code> con métodos abstractos <code>calcular_area()</code> y <code>calcular_perimetro()</code>. Implementa clases concretas:</p>
+                                    <ul class="list-disc list-inside mt-2 space-y-1">
+                                        <li><code>Rectangulo</code> (ancho, alto)</li>
+                                        <li><code>Circulo</code> (radio)</li>
+                                        <li><code>Triangulo</code> (base, altura, lado1, lado2, lado3)</li>
+                                    </ul>
+                                    <p class="mt-2">Cada una debe implementar correctamente los métodos abstractos.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tema 4: Polimorfismo -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Tema 4: Polimorfismo (Lección 4)</button>
+                    <div class="panel px-6">
+                        <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                            
+                            <div class="space-y-6">
+                                <div class="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-400 p-4">
+                                    <h4 class="font-bold text-green-800 dark:text-green-200">🟢 Fácil: Instrumentos Musicales</h4>
+                                    <p class="text-green-700 dark:text-green-300">Crea una clase <code>Instrumento</code> con un método <code>tocar()</code>. Crea clases <code>Piano</code>, <code>Guitarra</code> y <code>Violin</code> que implementen <code>tocar()</code> de manera diferente. Luego crea una función <code>concierto(instrumentos)</code> que reciba una lista de instrumentos y haga que todos toquen.</p>
+                                </div>
+                                
+                                <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4">
+                                    <h4 class="font-bold text-yellow-800 dark:text-yellow-200">🟡 Intermedio: Sistema de Notificaciones</h4>
+                                    <p class="text-yellow-700 dark:text-yellow-300">Crea una clase base <code>Notificacion</code> con un método <code>enviar(mensaje)</code>. Implementa clases:</p>
+                                    <ul class="list-disc list-inside mt-2 space-y-1">
+                                        <li><code>NotificacionEmail</code>: Simula envío por email.</li>
+                                        <li><code>NotificacionSMS</code>: Simula envío por SMS.</li>
+                                        <li><code>NotificacionPush</code>: Simula notificación push.</li>
+                                    </ul>
+                                    <p class="mt-2">Crea una función <code>enviar_notificaciones(notificaciones, mensaje)</code> que envíe el mismo mensaje por todos los canales.</p>
+                                </div>
+                                
+                                <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4">
+                                    <h4 class="font-bold text-red-800 dark:text-red-200">🔴 Difícil: Sistema de Procesamiento de Datos</h4>
+                                    <p class="text-red-700 dark:text-red-300">Crea una clase abstracta <code>ProcesadorDatos</code> con métodos <code>leer_datos()</code>, <code>procesar()</code> y <code>guardar_datos()</code>. Implementa:</p>
+                                    <ul class="list-disc list-inside mt-2 space-y-1">
+                                        <li><code>ProcesadorCSV</code>: Lee/guarda en formato CSV.</li>
+                                        <li><code>ProcesadorJSON</code>: Lee/guarda en formato JSON.</li>
+                                        <li><code>ProcesadorXML</code>: Lee/guarda en formato XML.</li>
+                                    </ul>
+                                    <p class="mt-2">Cada uno debe procesar los datos de manera específica para su formato.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+        
+        <!-- Parte 2: Proyectos Prácticos -->
+        <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+            <header class="text-center mb-10">
+                <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white">Parte 2: Proyectos Prácticos</h1>
+                <p class="text-xl text-gray-600 dark:text-gray-300 mt-4">Proyectos más grandes que combinan múltiples conceptos de programación orientada a objetos y APIs.</p>
+            </header>
+
+            <main class="space-y-4">
+                
+                <!-- Proyecto 1: Sistema de Gestión de Biblioteca -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Proyecto 1: Sistema de Gestión de Biblioteca</button>
+                    <div class="panel px-6">
+                        <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                            
+                            <p><strong>Objetivo:</strong> Crear un sistema completo de gestión de biblioteca que permita administrar libros, usuarios y préstamos.</p>
+                            
+                            <h4 class="text-xl font-semibold text-indigo-600 dark:text-indigo-400">Requisitos:</h4>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <h5 class="font-bold">Clases a implementar:</h5>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><code>Libro</code>: ISBN, título, autor, año, disponible</li>
+                                        <li><code>Usuario</code>: ID, nombre, email, libros_prestados</li>
+                                        <li><code>Prestamo</code>: libro, usuario, fecha_prestamo, fecha_devolucion</li>
+                                        <li><code>Biblioteca</code>: catálogo de libros, usuarios registrados, préstamos activos</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-bold">Funcionalidades:</h5>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Registrar nuevos libros y usuarios</li>
+                                        <li>Buscar libros por título, autor o ISBN</li>
+                                        <li>Realizar préstamos (verificar disponibilidad)</li>
+                                        <li>Procesar devoluciones</li>
+                                        <li>Generar reportes de libros más prestados</li>
+                                        <li>Calcular multas por retraso</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-bold">Características avanzadas:</h5>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Usar herencia para diferentes tipos de usuarios (Estudiante, Profesor, Público general)</li>
+                                        <li>Implementar encapsulación para proteger datos críticos</li>
+                                        <li>Aplicar polimorfismo para diferentes tipos de materiales (Libro, Revista, DVD)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proyecto 2: API de Información Meteorológica -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Proyecto 2: API de Información Meteorológica</button>
+                    <div class="panel px-6">
+                        <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                            
+                            <p><strong>Objetivo:</strong> Crear una aplicación que consuma múltiples APIs meteorológicas y presente la información de manera unificada.</p>
+                            
+                            <h4 class="text-xl font-semibold text-indigo-600 dark:text-indigo-400">Requisitos:</h4>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <h5 class="font-bold">APIs a integrar:</h5>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>OpenWeatherMap (clima actual y pronóstico)</li>
+                                        <li>WeatherAPI (datos históricos)</li>
+                                        <li>API de geocodificación para convertir ciudades a coordenadas</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-bold">Clases a implementar:</h5>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><code>ProveedorClima</code> (clase base abstracta)</li>
+                                        <li><code>OpenWeatherProvider</code>, <code>WeatherAPIProvider</code> (implementaciones específicas)</li>
+                                        <li><code>DatosClima</code>: Estructura unificada para datos meteorológicos</li>
+                                        <li><code>GestorClima</code>: Coordina múltiples proveedores</li>
+                                        <li><code>CacheClima</code>: Almacena respuestas para evitar llamadas repetidas</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-bold">Funcionalidades:</h5>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Obtener clima actual de múltiples fuentes</li>
+                                        <li>Comparar datos entre proveedores</li>
+                                        <li>Generar pronósticos consolidados</li>
+                                        <li>Alertas automáticas para condiciones extremas</li>
+                                        <li>Exportar datos a diferentes formatos (JSON, CSV, XML)</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-bold">Manejo de errores:</h5>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Excepciones personalizadas para diferentes tipos de errores</li>
+                                        <li>Fallback automático entre proveedores</li>
+                                        <li>Retry logic con backoff exponencial</li>
+                                        <li>Logging detallado de todas las operaciones</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proyecto 3: Sistema de E-commerce con APIs -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Proyecto 3: Sistema de E-commerce con APIs</button>
+                    <div class="panel px-6">
+                        <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                            
+                            <p><strong>Objetivo:</strong> Desarrollar un sistema de comercio electrónico que integre múltiples APIs externas para funcionalidades como pagos, envíos y gestión de inventario.</p>
+                            
+                            <h4 class="text-xl font-semibold text-indigo-600 dark:text-indigo-400">Requisitos:</h4>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <h5 class="font-bold">APIs externas a integrar:</h5>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>API de pagos (Stripe/PayPal simulado)</li>
+                                        <li>API de envíos (cálculo de costos y tracking)</li>
+                                        <li>API de productos (información adicional y reviews)</li>
+                                        <li>API de notificaciones (email/SMS)</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-bold">Arquitectura de clases:</h5>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><code>Producto</code>, <code>Categoria</code>, <code>Inventario</code></li>
+                                        <li><code>Usuario</code>, <code>Cliente</code>, <code>Administrador</code> (herencia)</li>
+                                        <li><code>CarritoCompras</code>, <code>Pedido</code>, <code>LineaPedido</code></li>
+                                        <li><code>ProcesadorPagos</code> (polimorfismo para diferentes métodos)</li>
+                                        <li><code>ServicioEnvio</code> (abstracción para diferentes transportistas)</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-bold">Funcionalidades principales:</h5>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Gestión completa de productos y categorías</li>
+                                        <li>Sistema de carrito de compras persistente</li>
+                                        <li>Procesamiento de pedidos con múltiples métodos de pago</li>
+                                        <li>Cálculo automático de impuestos y envíos</li>
+                                        <li>Sistema de tracking de pedidos</li>
+                                        <li>Generación de facturas y reportes</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-bold">Características avanzadas:</h5>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Sistema de descuentos y cupones</li>
+                                        <li>Recomendaciones de productos basadas en historial</li>
+                                        <li>Integración con APIs de redes sociales para compartir</li>
+                                        <li>Dashboard administrativo con métricas en tiempo real</li>
+                                        <li>API REST propia para integración con aplicaciones móviles</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode toggle functionality
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const html = document.documentElement;
+
+        const setTheme = (theme) => {
+            if (theme === 'dark') {
+                html.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.classList.remove('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+                localStorage.setItem('theme', 'light');
+            }
+        };
+
+        darkModeToggle.addEventListener('click', () => {
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (savedTheme) {
+            setTheme(savedTheme);
+        } else if (prefersDark) {
+            setTheme('dark');
+        } else {
+            setTheme('light');
+        }
+
+        // JavaScript for Accordion functionality
+        const accordions = document.getElementsByClassName("accordion");
+        for (let i = 0; i < accordions.length; i++) {
+            accordions[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                } 
+            });
+        }
+    </script>
+</body>
+</html>

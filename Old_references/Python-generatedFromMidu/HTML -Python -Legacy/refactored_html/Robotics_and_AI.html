@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lección Final: Robótica e IA con Python</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; margin: 0; padding: 20px; transition: background-color 0.3s, color 0.3s; }
+        .container { max-width: 1000px; margin: auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #333; }
+        details { background: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 1em; padding: 15px; }
+        summary { font-weight: bold; cursor: pointer; font-size: 1.2em; color: #0056b3; }
+        pre code.hljs { display: block; overflow-x: auto; padding: 1.5em; background: #282c34; color: #abb2bf; border-radius: 5px; }
+        body.dark-mode { background-color: #1a1a1a; color: #f0f0f0; }
+        body.dark-mode .container { background: #2c2c2c; box-shadow: 0 2px 5px rgba(255,255,255,0.1); }
+        body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 { color: #f0f0f0; }
+        body.dark-mode details { background: #333; border-color: #555; }
+        body.dark-mode summary { color: #61afef; }
+        .switch { position: fixed; top: 20px; right: 20px; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #2196F3; }
+        input:checked + .slider:before { transform: translateX(26px); }
+    </style>
+</head>
+<body>
+    <label class="switch"><input type="checkbox" id="darkModeToggle"><span class="slider"></span></label>
+    <div class="container">
+        <h1>Lección Final: Robótica e Inteligencia Artificial con Python</h1>
+        <p>Esta lección final consolida todo lo aprendido y te introduce en dos de los campos más fascinantes de la tecnología: la robótica y la IA. Aprenderás a controlar hardware, a utilizar modelos de IA y a combinar ambas disciplinas para crear proyectos inteligentes.</p>
+
+        <h2>Sección 1: Fundamentos de Robótica con Python</h2>
+        <details>
+            <summary>1.1: Control de Hardware con GPIO (LEDs)</summary>
+            <p>Usaremos una Raspberry Pi y su interfaz GPIO (General Purpose Input/Output) para controlar un LED. Necesitarás la librería <code>RPi.GPIO</code>.</p>
+            <pre><code class="language-python"># pip install RPi.GPIO
+import RPi.GPIO as GPIO
+import time
+
+LED_PIN = 17 # Pin GPIO 17
+
+# Configurar el modo de los pines (BCM se refiere a los números de GPIO)
+GPIO.setmode(GPIO.BCM)
+# Configurar el pin del LED como salida
+GPIO.setup(LED_PIN, GPIO.OUT)
+
+try:
+    print("Haciendo parpadear el LED. Presiona CTRL+C para salir.")
+    while True:
+        GPIO.output(LED_PIN, GPIO.HIGH) # Encender LED
+        time.sleep(1) # Esperar 1 segundo
+        GPIO.output(LED_PIN, GPIO.LOW)  # Apagar LED
+        time.sleep(1)
+except KeyboardInterrupt:
+    print("\nLimpiando los pines GPIO...")
+finally:
+    GPIO.cleanup() # Restablece los pines a su estado inicial</code></pre>
+        </details>
+
+        <details>
+            <summary>1.2: Lectura de Sensores (Pulsador)</summary>
+            <p>Leeremos la entrada de un sensor digital, como un botón. Esto nos permite que el robot reaccione a su entorno.</p>
+            <pre><code class="language-python">import RPi.GPIO as GPIO
+import time
+
+BUTTON_PIN = 18
+LED_PIN = 17
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(LED_PIN, GPIO.OUT)
+# Configurar el pin del botón como entrada con resistencia pull-down
+GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
+print("Presiona el botón para encender el LED. CTRL+C para salir.")
+
+try:
+    while True:
+        if GPIO.input(BUTTON_PIN) == GPIO.HIGH:
+            GPIO.output(LED_PIN, GPIO.HIGH)
+        else:
+            GPIO.output(LED_PIN, GPIO.LOW)
+        time.sleep(0.1) # Pequeña pausa para evitar uso excesivo de CPU
+except KeyboardInterrupt:
+    print("\nLimpiando...")
+finally:
+    GPIO.cleanup()</code></pre>
+        </details>
+
+        <details>
+            <summary>1.3: Control de Actuadores con PWM (Servomotor)</summary>
+            <p>Los servomotores permiten un control preciso del ángulo. Usaremos PWM (Pulse Width Modulation) para mover un servo a posiciones específicas.</p>
+            <pre><code class="language-python">import RPi.GPIO as GPIO
+import time
+
+SERVO_PIN = 25
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(SERVO_PIN, GPIO.OUT)
+
+# Crear un objeto PWM con frecuencia de 50Hz
+pwm = GPIO.PWM(SERVO_PIN, 50)
+pwm.start(0) # Iniciar PWM con ciclo de trabajo 0
+
+def set_angle(angle):
+    # El ciclo de trabajo va de 2 a 12 para ángulos de 0 a 180
+    duty = angle / 18 + 2
+    GPIO.output(SERVO_PIN, True)
+    pwm.ChangeDutyCycle(duty)
+    time.sleep(1) # Dar tiempo al servo para moverse
+    GPIO.output(SERVO_PIN, False)
+    pwm.ChangeDutyCycle(0)
+
+try:
+    print("Moviendo el servo...")
+    set_angle(0)
+    set_angle(90)
+    set_angle(180)
+    set_angle(90)
+except KeyboardInterrupt:
+    print("\nDeteniendo servo...")
+finally:
+    pwm.stop()
+    GPIO.cleanup()</code></pre>
+        </details>
+
+        <h2>Sección 2: Manejo de Modelos de IA</h2>
+        <details>
+            <summary>2.1: NumPy - La Base para Datos Numéricos</summary>
+            <p>NumPy es esencial para la IA. Las imágenes, por ejemplo, se representan como arrays de NumPy.</p>
+            <pre><code class="language-python"># pip install numpy
+import numpy as np
+
+# Crear un array 1D
+a = np.array([1, 2, 3])
+print(f"Array 1D: {a}")
+
+# Crear un array 2D (como una imagen en escala de grises)
+b = np.array([[1, 2, 3], [4, 5, 6]])
+print(f"\nArray 2D:\n{b}")
+
+# Crear un array 3D (como una imagen a color RGB)
+# 2x2 píxeles, 3 canales de color (R, G, B)
+img = np.zeros((2, 2, 3), dtype=np.uint8)
+img[0, 0] = [255, 0, 0] # Píxel rojo
+img[0, 1] = [0, 255, 0] # Píxel verde
+print(f"\nArray 3D (imagen):\n{img}")</code></pre>
+        </details>
+
+        <details>
+            <summary>2.2: OpenCV para Visión por Computadora</summary>
+            <p>OpenCV es la librería estándar para procesar imágenes y video.</p>
+            <pre><code class="language-python"># pip install opencv-python
+import cv2
+
+# Capturar video desde la webcam
+cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+    print("Error: No se puede abrir la cámara")
+    exit()
+
+while True:
+    # Leer un frame
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    # Convertir a escala de grises
+    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # Mostrar el frame original y el procesado
+    cv2.imshow('Original', frame)
+    cv2.imshow('Escala de Grises', gray_frame)
+
+    # Salir con la tecla 'q'
+    if cv2.waitKey(1) == ord('q'):
+        break
+
+# Liberar recursos
+cap.release()
+cv2.destroyAllWindows()</code></pre>
+        </details>
+
+        <details>
+            <summary>2.3: Inferencia con Modelos de Visión (Local)</summary>
+            <p>Usaremos un modelo pre-entrenado con OpenCV para detectar objetos comunes en tiempo real.</p>
+            <pre><code class="language-python"># Descargar 'MobileNetSSD_deploy.prototxt.txt' y 'MobileNetSSD_deploy.caffemodel'
+import cv2
+import numpy as np
+
+# Cargar el modelo
+net = cv2.dnn.readNetFromCaffe('MobileNetSSD_deploy.prototxt.txt', 'MobileNetSSD_deploy.caffemodel')
+CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
+	"bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
+	"dog", "horse", "motorbike", "person", "pottedplant", "sheep",
+	"sofa", "train", "tvmonitor"]
+
+cap = cv2.VideoCapture(0)
+
+while True:
+    ret, frame = cap.read()
+    if not ret: break
+
+    (h, w) = frame.shape[:2]
+    blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)), 0.007843, (300, 300), 127.5)
+
+    net.setInput(blob)
+    detections = net.forward()
+
+    for i in np.arange(0, detections.shape[2]):
+        confidence = detections[0, 0, i, 2]
+        if confidence > 0.5: # Umbral de confianza
+            idx = int(detections[0, 0, i, 1])
+            box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+            (startX, startY, endX, endY) = box.astype("int")
+            label = f"{CLASSES[idx]}: {confidence:.2f}%"
+            cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
+            cv2.putText(frame, label, (startX, startY - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+    cv2.imshow("Detector de Objetos", frame)
+    if cv2.waitKey(1) == ord('q'): break
+
+cap.release()
+cv2.destroyAllWindows()</code></pre>
+        </details>
+
+        <h2>Sección 3: Integración Robótica + IA</h2>
+        <details>
+            <summary>3.1: Robot Seguidor de Objetos</summary>
+            <p>Combinamos todo: una cámara en una torreta de servos sigue un objeto detectado por IA.</p>
+            <pre><code class="language-python"># Este es un pseudocódigo conceptual que une las partes
+import cv2
+# ... (código de control de servos y detección de objetos)
+
+# Posición inicial de los servos (pan y tilt)
+pan_angle = 90
+tilt_angle = 90
+set_pan_angle(pan_angle)
+set_tilt_angle(tilt_angle)
+
+cap = cv2.VideoCapture(0)
+
+while True:
+    ret, frame = cap.read()
+    # ... (código para detectar un objeto, ej. 'person')
+
+    if objeto_detectado:
+        # Coordenadas del centro del objeto
+        obj_center_x = (startX + endX) / 2
+        obj_center_y = (startY + endY) / 2
+
+        # Centro del frame
+        frame_center_x = frame.shape[1] / 2
+
+        # Mover el servo de paneo (horizontal)
+        if obj_center_x < frame_center_x - 30: # Objeto a la izquierda
+            pan_angle += 2
+        elif obj_center_x > frame_center_x + 30: # Objeto a la derecha
+            pan_angle -= 2
+        
+        # Limitar ángulos
+        pan_angle = max(0, min(180, pan_angle))
+        set_pan_angle(pan_angle)
+
+    cv2.imshow("Seguidor", frame)
+    if cv2.waitKey(1) == ord('q'): break
+
+cap.release()
+cv2.destroyAllWindows()
+GPIO.cleanup()</code></pre>
+        </details>
+
+        <h2>Sección 4: Ejercicios Prácticos</h2>
+        <details>
+            <summary>Ejercicios Propuestos</summary>
+            <h3>Robótica</h3>
+            <ul>
+                <li><b>Semáforo:</b> Controla 3 LEDs (rojo, amarillo, verde) para que sigan la secuencia de un semáforo.</li>
+                <li><b>Medidor de distancia:</b> Usa un sensor de ultrasonido (HC-SR04) para medir la distancia a un objeto y mostrarla en la consola.</li>
+            </ul>
+            <h3>Inteligencia Artificial</h3>
+            <ul>
+                <li><b>Detector de rostros:</b> Modifica el código de detección de objetos para usar un clasificador de Haar (incluido en OpenCV) y detectar rostros en lugar de objetos genéricos.</li>
+                <li><b>Análisis de Sentimientos de Texto:</b> Usa la librería `transformers` para analizar si una frase es positiva, negativa o neutra.</li>
+            </ul>
+        </details>
+
+        <h2>Sección 5: Proyectos Finales Sugeridos</h2>
+        <details>
+            <summary>Proyecto 1: Robot de Vigilancia Autónomo</summary>
+            <p><b>Objetivo:</b> Construir un vehículo robótico que pueda navegar de forma autónoma por una habitación, detectar la presencia de personas y enviar una alerta.</p>
+            <p><b>Componentes:</b> Chasis de robot con motores, controlador de motores (L298N), Raspberry Pi, cámara, batería.</p>
+            <p><b>Pasos:</b></p>
+            <ol>
+                <li>Monta el chasis del robot y conecta los motores al controlador y a la Raspberry Pi.</li>
+                <li>Programa las funciones básicas de movimiento: avanzar, retroceder, girar.</li>
+                <li>Integra la cámara y el modelo de detección de personas.</li>
+                <li>Crea la lógica: el robot avanza hasta que un sensor de distancia detecta un obstáculo. Gira y continúa.</li>
+                <li>Si detecta una persona, el robot se detiene, captura una imagen y la envía por email o a un bot de Telegram.</li>
+            </ol>
+        </details>
+        <details>
+            <summary>Proyecto 2: Asistente de Jardinería Inteligente</summary>
+            <p><b>Objetivo:</b> Crear un sistema automatizado que cuide de una planta, monitorizando la humedad de la tierra y regándola cuando sea necesario.</p>
+            <p><b>Componentes:</b> Sensor de humedad del suelo, Raspberry Pi, relé, pequeña bomba de agua, mangueras.</p>
+            <p><b>Pasos:</b></p>
+            <ol>
+                <li>Conecta el sensor de humedad a un pin de entrada analógica (puede requerir un conversor ADC como el MCP3008).</li>
+                <li>Conecta la bomba de agua a la Raspberry Pi a través de un relé (el relé actúa como un interruptor seguro para manejar el voltaje de la bomba).</li>
+                <li>Escribe un script que lea el valor del sensor cada hora.</li>
+                <li>Define un umbral de humedad. Si el valor leído está por debajo del umbral, activa el relé durante unos segundos para regar la planta.</li>
+                <li>(Opcional) Crea una pequeña web con Flask para mostrar el nivel de humedad actual y un botón para regar manualmente.</li>
+            </ol>
+        </details>
+        <details>
+            <summary>Proyecto 3: Intérprete de Lenguaje de Señas</summary>
+            <p><b>Objetivo:</b> Desarrollar una aplicación que utilice la visión por computadora para reconocer gestos básicos del lenguaje de señas y los traduzca a texto.</p>
+            <p><b>Componentes:</b> Cámara web, un ordenador con buen rendimiento.</p>
+            <p><b>Pasos:</b></p>
+            <ol>
+                <li>Investiga sobre datasets de imágenes de lenguaje de señas (ej. ASL Alphabet).</li>
+                <li>Usa una librería como `TensorFlow` o `PyTorch` para entrenar tu propio modelo de clasificación de imágenes. El modelo aprenderá a asociar una imagen de una mano con una letra.</li>
+                <li>Usa `OpenCV` para capturar video de la cámara. Aísla la región de la mano en el video.</li>
+                <li>Pasa la imagen de la mano a tu modelo entrenado para que prediga la letra correspondiente en tiempo real.</li>
+                <li>Muestra la letra predicha en la pantalla.</li>
+            </ol>
+        </details>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((block) => { hljs.highlightElement(block); });
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const body = document.body;
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                body.classList.add('dark-mode');
+                darkModeToggle.checked = true;
+            }
+            darkModeToggle.addEventListener('change', () => {
+                if (darkModeToggle.checked) {
+                    body.classList.add('dark-mode');
+                    localStorage.setItem('darkMode', 'enabled');
+                } else {
+                    body.classList.remove('dark-mode');
+                    localStorage.setItem('darkMode', 'disabled');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

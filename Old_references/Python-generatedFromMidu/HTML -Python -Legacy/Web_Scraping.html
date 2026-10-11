@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Scraping en Python</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        details {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 1em;
+            padding: 15px;
+        }
+        summary {
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.2em;
+            color: #0056b3;
+        }
+        pre code.hljs {
+            display: block;
+            overflow-x: auto;
+            padding: 1.5em;
+            background: #282c34;
+            color: #abb2bf;
+            border-radius: 5px;
+        }
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+        }
+        body.dark-mode .container {
+            background: #2c2c2c;
+            box-shadow: 0 2px 5px rgba(255,255,255,0.1);
+        }
+        body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 {
+            color: #f0f0f0;
+        }
+        body.dark-mode details {
+            background: #333;
+            border-color: #555;
+        }
+        body.dark-mode summary {
+            color: #61afef;
+        }
+        .switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+
+    <label class="switch">
+        <input type="checkbox" id="darkModeToggle">
+        <span class="slider"></span>
+    </label>
+
+    <div class="container">
+        <h1>Web Scraping con Python</h1>
+
+        <details>
+            <summary>Lección 1: Scraping Básico con `requests` y Regex</summary>
+            <p>La forma más fundamental de hacer scraping es descargar el HTML de una página con <code>requests</code> y luego usar expresiones regulares (regex) para buscar patrones específicos, como el precio o el título.</p>
+            <pre><code class="language-python"># 01_basic.py
+import requests
+import re
+
+url = 'https://www.apple.com/es/shop/buy-mac/macbook-air/'
+response = requests.get(url)
+
+if response.status_code == 200:
+  print('La petición fue exitosa')
+  html = response.text
+
+  # Expresión regular para encontrar el título
+  title_pattern = r'<title>(.*?)</title>'
+  match = re.search(title_pattern, html)
+  if match:
+    print(f"El título de la web es: {match.group(1)}")
+
+  # Expresión regular para encontrar el precio
+  price_pattern = r'<span class="rc-prices-fullprice">(.*?)</span>'
+  match = re.search(price_pattern, html)
+  if match:
+    print(f"El precio del producto es: {match.group(1)}")</code></pre>
+        </details>
+
+        <details>
+            <summary>Lección 2: Parseo con `BeautifulSoup`</summary>
+            <p>Las expresiones regulares son frágiles. Una librería como <code>BeautifulSoup</code> nos permite parsear el HTML y navegar por su estructura de una forma mucho más robusta y legible, usando selectores de CSS.</p>
+            <pre><code class="language-python"># 02_beautiful.py
+from bs4 import BeautifulSoup
+import requests
+
+url = 'https://www.apple.com/es/shop/buy-mac/macbook-air/'
+headers = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+}
+response = requests.get(url, headers=headers)
+
+if response.status_code == 200:
+  print('La petición fue exitosa')
+  soup = BeautifulSoup(response.text, 'html.parser')
+
+  title_tag = soup.title
+  if title_tag:
+    print(f"El título de la web es: {title_tag.text}")
+
+  # Encontrar cada producto y obtener su nombre y precio
+  products = soup.find_all(class_='rc-productselection-item')
+  for product in products:
+    name = product.find(class_="list-title").text.strip()
+    price = product.find(class_="rc-prices-fullprice").text.strip()
+    print(f"Producto: {name}\nPrecio: {price}\n")</code></pre>
+        </details>
+
+        <details>
+            <summary>Lección 3: Scraper de Múltiples Datos</summary>
+            <p>Podemos crear funciones reutilizables para extraer diferentes tipos de datos de una página, como títulos, enlaces o metadatos (ej. la imagen para compartir en redes sociales).</p>
+            <pre><code class="language-python"># 03_wiki_scraper.py
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+import requests
+
+def scrape_url(url: str):
+  headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+  }
+  response = requests.get(url, headers=headers)
+
+  if response.status_code == 200:
+    print('La petición fue exitosa')
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # Extraer todos los enlaces y convertirlos a absolutos
+    enlaces = [urljoin(url, enlace.get('href')) for enlace in soup.find_all('a')]
+    print(f"\nPrimeros 5 enlaces: {enlaces[:5]}")
+
+    # Extraer la imagen de Open Graph (usada para previsualizaciones)
+    og_image = soup.find('meta', property='og:image')
+    if og_image:
+      print(f"\nImagen Open Graph: {og_image['content']}")
+    else:
+      print('\nNo se encontró la imagen Open Graph')
+
+scrape_url('https://midu.dev')</code></pre>
+        </details>
+
+        <details>
+            <summary>Lección 4: Creando una Herramienta SEO CLI</summary>
+            <p>Podemos combinar <code>BeautifulSoup</code> con <code>argparse</code> para crear una herramienta de línea de comandos (CLI) que realice comprobaciones básicas de SEO en cualquier URL que le pasemos.</p>
+            <pre><code class="language-python"># 04_seo_cli.py
+# Para ejecutar: python 04_seo_cli.py https://midu.dev
+import requests
+import argparse
+from bs4 import BeautifulSoup
+
+parser = argparse.ArgumentParser(description="Herramienta SEO para una URL")
+parser.add_argument('url', type=str, help='La URL a analizar')
+args = parser.parse_args()
+url = args.url
+
+headers = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+}
+response = requests.get(url, headers=headers)
+
+if response.status_code == 200:
+  soup = BeautifulSoup(response.text, 'html.parser')
+  print(f"Revisando: {url}")
+
+  # Comprobar título
+  titulo_pagina = soup.title.string
+  if titulo_pagina:
+    print(f"Título: {titulo_pagina}")
+    if len(titulo_pagina) < 70:
+      print("✅ Longitud de título adecuada")
+    else:
+      print("⚠️ Título demasiado largo")
+  
+  # Comprobar H1
+  titulos_h1 = soup.find_all('h1')
+  if not titulos_h1:
+    print("❌ No se encontró H1")
+  elif len(titulos_h1) > 1:
+    print("⚠️ Hay más de un H1")
+  else:
+    print("✅ Se encontró un único H1")</code></pre>
+        </details>
+
+        <details>
+            <summary>Lección 5: Introducción a `Playwright`</summary>
+            <p><code>Playwright</code> es una herramienta de automatización de navegadores que nos permite controlar un navegador real (Chromium, Firefox, WebKit) mediante código. Es ideal para tests y para interactuar con páginas dinámicas.</p>
+            <pre><code class="language-python"># 05_playwright.py
+# Es un archivo de test, se ejecuta con: pytest
+import re
+from playwright.sync_api import Page, expect
+
+def test_has_title(page: Page):
+  page.goto("https://playwright.dev/")
+  # Espera que el título contenga la palabra "Playwright"
+  expect(page).to_have_title(re.compile("Playwright"))
+
+def test_get_started_link(page: Page):
+  page.goto("https://playwright.dev/")
+  # Hace clic en el enlace "Get started"
+  page.get_by_role("link", name="Get started").click()
+  # Espera que el H1 con el texto "Installation" sea visible
+  expect(page.get_by_role("heading", name="Installation")).to_be_visible()</code></pre>
+        </details>
+
+        <details>
+            <summary>Lección 6: Scraping con `Playwright`</summary>
+            <p>Cuando una página carga su contenido con JavaScript, <code>requests</code> no es suficiente porque solo descarga el HTML inicial. <code>Playwright</code> ejecuta el JavaScript como un navegador normal, permitiéndonos extraer datos de contenido dinámico.</p>
+            <pre><code class="language-python"># 06_playwright_scraping.py
+from playwright.sync_api import sync_playwright
+
+url = 'https://midu.dev'
+
+with sync_playwright() as p:
+  # headless=False para ver el navegador, slow_mo para ralentizarlo
+  browser = p.chromium.launch(headless=True, slow_mo=500)
+  page = browser.new_page()
+  page.goto(url)
+
+  # Localiza el primer enlace dentro de un <article>
+  first_article_anchor = page.locator('article a').first
+  print(f"Texto del primer artículo: {first_article_anchor.text_content()}")
+  
+  # Hacemos clic y esperamos que la nueva página cargue
+  first_article_anchor.click()
+  page.wait_for_load_state('load')
+
+  print(f"Nuevo título de la página: {page.title()}")
+
+  browser.close()</code></pre>
+        </details>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const body = document.body;
+
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                body.classList.add('dark-mode');
+                darkModeToggle.checked = true;
+            }
+
+            darkModeToggle.addEventListener('change', () => {
+                if (darkModeToggle.checked) {
+                    body.classList.add('dark-mode');
+                    localStorage.setItem('darkMode', 'enabled');
+                } else {
+                    body.classList.remove('dark-mode');
+                    localStorage.setItem('darkMode', 'disabled');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

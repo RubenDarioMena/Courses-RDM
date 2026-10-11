@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lógica y Diccionarios en Python</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        h1, h2, h3 {
+            line-height: 1.2;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        details {
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        summary {
+            font-weight: 600;
+            font-size: 1.25em;
+            padding: 1rem;
+            cursor: pointer;
+            background-color: #f7f7f7;
+            outline: none;
+        }
+        details[open] summary {
+            border-bottom: 1px solid #ddd;
+        }
+        .lesson-content {
+            padding: 1rem;
+        }
+        .lesson-content details summary {
+            font-size: 1.1em;
+            background-color: #fafafa;
+        }
+        .lesson-content details .lesson-content {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        .code {
+            border-radius: 8px;
+            padding: 1em;
+            overflow-x: auto;
+        }
+        code {
+            font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace;
+            font-size: 85%;
+        }
+        .code > code {
+            font-size: 100%;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+        body.dark-mode details {
+            border-color: #444;
+        }
+        body.dark-mode summary {
+            background-color: #2c2c2c;
+            border-bottom-color: #444;
+        }
+        body.dark-mode .lesson-content details summary {
+            background-color: #333;
+        }
+        body.dark-mode details[open] summary {
+            border-bottom-color: #444;
+        }
+
+        /* Theme Switch */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+        }
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+        .theme-switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 28px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #4a4a4a;
+        }
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="theme-toggle">
+            <input type="checkbox" id="theme-toggle" />
+            <div class="slider"></div>
+        </label>
+    </div>
+
+    <div class="container">
+        <h1>Lección 4: Lógica y Diccionarios</h1>
+
+        <details>
+            <summary>Lección 4.1: Diccionarios en Python</summary>
+            <div class="lesson-content">
+                <p>Los diccionarios son una de las estructuras de datos más potentes y versátiles de Python. Permiten almacenar una colección de pares <code>clave-valor</code>, donde cada clave es única y se utiliza para acceder a su valor correspondiente. Son ideales para guardar datos que están relacionados entre sí.</p>
+                <pre class="code"><code class="language-python"># Un diccionario que representa a una persona
+persona = {
+  "nombre": "midudev",
+  "edad": 25,
+  "es_estudiante": True,
+  "calificaciones": [7, 8, 9],
+  "redes_sociales": {
+    "twitter": "@midudev",
+    "instagram": "@midudev"
+  }
+}
+
+# Acceder a los valores usando la clave
+print(f"Nombre: {persona['nombre']}")
+print(f"Calificación más alta: {persona['calificaciones'][2]}")
+print(f"Twitter: {persona['redes_sociales']['twitter']}")
+
+# Modificar un valor
+persona["edad"] = 26
+print(f"Edad actualizada: {persona['edad']}")
+
+# Añadir un nuevo par clave-valor
+persona["ciudad"] = "Barcelona"
+print(f"Ciudad: {persona['ciudad']}")
+
+# Eliminar una propiedad
+del persona["es_estudiante"]
+
+# El método .pop() elimina una clave y devuelve su valor
+calificaciones = persona.pop("calificaciones")
+print(f"Calificaciones eliminadas: {calificaciones}")
+
+# Comprobar si una clave existe
+print(f"¿Existe la clave 'nombre'? {'nombre' in persona}")
+print(f"¿Existe la clave 'edad'? {'edad' in persona}")
+
+# Obtener todas las claves, valores o ambos
+print(f"Claves: {list(persona.keys())}")
+print(f"Valores: {list(persona.values())}")
+
+# Iterar sobre un diccionario
+print("\n--- Datos de la Persona ---")
+for clave, valor in persona.items():
+    print(f"{clave.replace('_', ' ').capitalize()}: {valor}")</code></pre>
+            </div>
+        </details>
+
+        <details>
+            <summary>Desafíos de Lógica</summary>
+            <div class="lesson-content">
+                <details>
+                    <summary>Desafío 1: Equilibrio en los 4 Fantásticos</summary>
+                    <div class="lesson-content">
+                        <p><strong>Objetivo:</strong> Crear una función que determine si la cantidad de 'R' (Reed Richards) y 'J' (Johnny Storm) en un texto es la misma. Debe devolver <code>True</code> si son iguales o si no aparece ninguna, y <code>False</code> en caso contrario.</p>
+                        <pre class="code"><code class="language-python"># Solución al desafío de los 4 Fantásticos
+def check_is_balanced(text):
+  text = text.upper()
+  count_r = text.count("R") # Reed Richards
+  count_j = text.count("J") # Johnny Storm
+  return count_r == count_j
+
+# Ejemplos de uso
+print(f"'RRJJ' está balanceado: {check_is_balanced('RRJJ')}")
+print(f"'RRRRJJ' está balanceado: {check_is_balanced('RRRRJJ')}")
+print(f"'awwwaqAQAQA' está balanceado: {check_is_balanced('awwwaqAQAQA')}")</code></pre>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>Desafío 2: Huevos de Dinosaurio en Jurassic Park</summary>
+                    <div class="lesson-content">
+                        <p><strong>Objetivo:</strong> Escribir una función que reciba una lista de números (huevos) y devuelva la suma total de los números pares (huevos de dinosaurios carnívoros).</p>
+                        <pre class="code"><code class="language-python"># Solución al desafío de Jurassic Park
+def count_carnivore_dinosaur_eggs(egg_list):
+  """
+  Suma los números pares de una lista.
+  """
+  total_carnivore_eggs = 0
+  for eggs in egg_list:
+    if eggs % 2 == 0:
+      total_carnivore_eggs += eggs
+  return total_carnivore_eggs
+
+# Forma alternativa y más corta
+def count_carnivore_eggs_short(egg_list):
+    return sum(filter(lambda x: x % 2 == 0, egg_list))
+
+# Ejemplo de uso
+egg_list = [3, 4, 7, 5, 8]
+print(f"Total de huevos de carnívoro: {count_carnivore_dinosaur_eggs(egg_list)}") # Devuelve 12</code></pre>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>Desafío 3: Encontrar la Primera Suma</summary>
+                    <div class="lesson-content">
+                        <p><strong>Objetivo:</strong> Dada una lista de números y un número objetivo (<code>goal</code>), encontrar los dos primeros números en la lista que sumen el objetivo y devolver sus índices. Si no hay combinación, devolver <code>None</code>.</p>
+                        <pre class="code"><code class="language-python"># Solución al desafío de encontrar la primera suma
+def find_first_sum(nums, goal):
+  seen = {} # Diccionario para guardar el número y su índice
+  for index, value in enumerate(nums):
+    missing = goal - value
+    if missing in seen:
+      return [seen[missing], index]
+    seen[value] = index # Guardar el número actual si no se encontró combinación
+  return None
+
+# Ejemplo de uso
+nums = [4, 5, 6, 2]
+goal = 8
+result = find_first_sum(nums, goal)
+print(f"Los índices que suman {goal} son: {result}") # Devuelve [2, 3]</code></pre>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>Desafío 4: Batalla Numérica</summary>
+                    <div class="lesson-content">
+                        <p><strong>Objetivo:</strong> Simular una "batalla" entre dos listas de números de igual longitud. Compara los elementos en la misma posición. El ganador suma su valor al siguiente de su lista. Si empatan, se eliminan. Devolver el resultado final basado en la suma total de cada lista.</p>
+                        <pre class="code"><code class="language-python"># Solución al desafío de la batalla
+def battle(lista_a, lista_b):
+    # Esta solución simplificada suma todos los puntos y compara
+    puntos_a = sum(lista_a)
+    puntos_b = sum(lista_b)
+    
+    if puntos_a > puntos_b:
+        return f"{puntos_a - puntos_b}a"
+    elif puntos_b > puntos_a:
+        return f"{puntos_b - puntos_a}b"
+    else:
+        return "x"
+
+# Ejemplo de uso
+lista_a = [4, 4, 4]
+lista_b = [2, 8, 2]
+winner = battle(lista_a, lista_b)
+print(f"El ganador de la batalla es: {winner}") # Devuelve 'x'</code></pre>
+                    </div>
+                </details>
+            </div>
+        </details>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        function setDarkMode(isDark) {
+            if (isDark) {
+                body.classList.add('dark-mode');
+                themeToggle.checked = true;
+            } else {
+                body.classList.remove('dark-mode');
+                themeToggle.checked = false;
+            }
+        }
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            setDarkMode(savedTheme === 'dark');
+        } else {
+            // Check for system theme preference
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            setDarkMode(prefersDark);
+        }
+
+        // Listen for toggle change
+        themeToggle.addEventListener('change', () => {
+            const isDark = themeToggle.checked;
+            setDarkMode(isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+
+        // Initialize highlight.js
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

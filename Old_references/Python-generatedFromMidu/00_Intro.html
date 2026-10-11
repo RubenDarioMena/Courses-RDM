@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 00: ¡Bienvenido al Mundo de Python!</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style for smooth transitions */
+        body, h1, h2, p, li, strong, a, div, button, svg {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+    </style>
+    <script>
+        // Tailwind dark mode configuration
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    // You can extend your theme here if needed
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased">
+
+    <!-- Dark Mode Toggle Button -->
+    <div class="absolute top-4 right-4">
+        <button id="darkModeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900 focus:ring-indigo-500">
+            <!-- Sun Icon for Light Mode -->
+            <svg id="sunIcon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <!-- Moon Icon for Dark Mode (hidden by default) -->
+            <svg id="moonIcon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        
+        <header class="text-center mb-10">
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white">Módulo 00: ¡Bienvenido al Mundo de Python! <span class="text-4xl">🐍</span></h1>
+        </header>
+
+        <main class="space-y-8 text-lg leading-relaxed">
+            <p>¡Hola y bienvenido/a! Estás a punto de embarcarte en un viaje emocionante hacia el mundo de la programación. Si nunca antes has escrito código, no te preocupes. Este curso está diseñado para llevarte de la mano desde cero.</p>
+            
+            <p>Piensa en la programación como <strong class="font-semibold text-indigo-600 dark:text-indigo-400">aprender a dar instrucciones a una computadora</strong>. Imagina que tienes un robot increíblemente rápido y obediente, pero que solo entiende un idioma muy específico. Aprender a programar es aprender ese idioma para que puedas pedirle al robot que construya, calcule o automatice cualquier cosa que imagines. El idioma que vamos a aprender es Python, y es uno de los más amigables y poderosos que existen.</p>
+
+            <section class="space-y-4">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white border-b-2 border-indigo-500 pb-2">¿Qué es Python y para qué sirve?</h2>
+                <p>Python es un lenguaje de programación de alto nivel, lo que significa que su sintaxis (las reglas del idioma) es muy parecida al lenguaje humano, específicamente al inglés. Esto lo hace mucho más fácil de leer y aprender en comparación con otros lenguajes.</p>
+                <p>Piensa en Python como una <strong class="font-semibold text-indigo-600 dark:text-indigo-400">navaja suiza digital</strong>. Es una herramienta increíblemente versátil que sirve para una cantidad enorme de tareas. Algunas de las más populares son:</p>
+                <ul class="list-disc list-inside space-y-3 pl-4">
+                    <li><strong class="font-semibold">Desarrollo Web:</strong> Crear la lógica detrás de los sitios web y aplicaciones (lo que se conoce como el <em class="italic">backend</em>). Instagram y Spotify usan Python.</li>
+                    <li><strong class="font-semibold">Ciencia de Datos y Análisis:</strong> Procesar enormes cantidades de datos para encontrar patrones, hacer predicciones y crear visualizaciones.</li>
+                    <li><strong class="font-semibold">Inteligencia Artificial (IA) y Machine Learning:</strong> Es el lenguaje líder para entrenar máquinas para que aprendan, reconozcan imágenes, entiendan lenguaje y mucho más.</li>
+                    <li><strong class="font-semibold">Automatización de Tareas (Scripting):</strong> Escribir pequeños programas para automatizar tareas repetitivas, como organizar archivos, enviar correos o extraer información de páginas web.</li>
+                    <li><strong class="font-semibold">Desarrollo de Videojuegos:</strong> Aunque no es el más común, se usa para crear la lógica de juegos y herramientas de desarrollo.</li>
+                </ul>
+            </section>
+
+            <section class="space-y-4">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white border-b-2 border-indigo-500 pb-2">Fortalezas y Debilidades</h2>
+                <p>Como toda herramienta, Python tiene puntos donde brilla y otros donde no es la mejor opción. Es importante conocerlos:</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-green-300 dark:border-green-600">
+                        <h3 class="text-2xl font-semibold text-green-700 dark:text-green-400 mb-3">Fortalezas (👍)</h3>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Fácil de Aprender y Leer:</strong> Su sintaxis limpia y clara lo hace ideal para principiantes.</li>
+                            <li><strong>Enorme Comunidad y Librerías:</strong> Código pre-hecho para casi cualquier tarea imaginable.</li>
+                            <li><strong>Gran Versatilidad:</strong> Sirve para casi todo, abriendo puertas a muchísimos campos profesionales.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-red-300 dark:border-red-600">
+                        <h3 class="text-2xl font-semibold text-red-700 dark:text-red-400 mb-3">Debilidades (👎)</h3>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Velocidad de Ejecución:</strong> Puede ser más lento que lenguajes compilados para tareas muy intensivas.</li>
+                            <li><strong>No es Nativo para Móviles:</strong> No es la opción principal para desarrollar apps en iOS o Android.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="space-y-4">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white border-b-2 border-indigo-500 pb-2">Primeros Pasos: Tu Entorno de Trabajo</h2>
+                <p>Antes de poder empezar a dar instrucciones, necesitas dos cosas: el "diccionario" del idioma (el intérprete de Python) y un "cuaderno" para escribir (un editor de código o IDE).</p>
+                
+                <div>
+                    <h3 class="text-2xl font-semibold mb-2">1. Instalando Python</h3>
+                    <p>La fuente oficial y más segura para descargar Python es su sitio web.</p>
+                    <p class="mt-2 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+                        <strong class="block">Instrucciones:</strong>
+                        Ve a <a href="https://python.org" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 hover:underline">python.org</a>. El sitio detectará tu sistema operativo. Descarga y ejecuta el instalador. <strong class="text-red-600 dark:text-red-400">¡Muy importante!</strong> En Windows, asegúrate de marcar la casilla que dice <strong class="font-mono bg-gray-200 dark:bg-gray-700 px-1 rounded">"Add Python to PATH"</strong> durante la instalación.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="text-2xl font-semibold mb-2">2. Tu Editor de Código (IDE)</h3>
+                    <p>Un Entorno de Desarrollo Integrado (IDE) es un programa que te da superpoderes para escribir código. Nuestra recomendación: <strong class="font-semibold">Visual Studio Code (VS Code)</strong>.</p>
+                    <ul class="list-disc list-inside space-y-2 pl-4 mt-2">
+                        <li>Es gratuito, muy potente y personalizable.</li>
+                        <li>Tiene una extensión oficial de Python que lo hace increíblemente fácil de usar.</li>
+                        <li>Puedes descargarlo desde <a href="https://code.visualstudio.com" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 hover:underline">code.visualstudio.com</a>.</li>
+                    </ul>
+                </div>
+                 <div>
+                    <h3 class="text-2xl font-semibold mb-2">Alternativa: Editores de Código Online</h3>
+                    <p>Si prefieres no instalar nada por ahora, los editores online son una opción fantástica para empezar de inmediato:</p>
+                    <ul class="list-disc list-inside space-y-2 pl-4 mt-2">
+                        <li><a href="https://www.onlinegdb.com/online_python_interpreter" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 hover:underline">OnlineGDB</a></li>
+                        <li><a href="https://onecompiler.com/python" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 hover:underline">OneCompiler</a></li>
+                        <li><a href="https://www.jdoodle.com/python3-online-compiler" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 hover:underline">JDoodle</a></li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="space-y-4">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white border-b-2 border-indigo-500 pb-2">Recursos Adicionales para tu Viaje</h2>
+                 <ul class="list-disc list-inside space-y-2 pl-4">
+                    <li><strong class="font-semibold">Documentación Oficial de Python:</strong> La fuente de la verdad.</li>
+                    <li><strong class="font-semibold">Stack Overflow:</strong> Comunidad de preguntas y respuestas.</li>
+                    <li><strong class="font-semibold">Real Python:</strong> Tutoriales de altísima calidad.</li>
+                </ul>
+            </section>
+            
+            <footer class="text-center pt-8 mt-8 border-t border-gray-200 dark:border-gray-700">
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">¿Listos para Empezar?</p>
+                <p class="mt-2">¡Felicidades! Ya tienes todo el contexto y las herramientas necesarias para comenzar. Has dado el paso más importante: decidir aprender.</p>
+                <p class="mt-2">Ahora que tu entorno está listo, es hora de escribir tu primera línea de código. En el <strong class="font-semibold">Módulo 01: Fundamentos de Python</strong>, aprenderemos a darle a la computadora nuestra primera instrucción y a hacer que nos responda. ¡Vamos a ello!</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <script>
+        // JavaScript for Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const html = document.documentElement;
+
+        // Function to set theme based on preference
+        const setTheme = (theme) => {
+            if (theme === 'dark') {
+                html.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.classList.remove('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+                localStorage.setItem('theme', 'light');
+            }
+        };
+
+        // Event listener for the toggle button
+        darkModeToggle.addEventListener('click', () => {
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+
+        // Check for saved theme in localStorage or system preference on page load
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme) {
+            setTheme(savedTheme);
+        } else if (prefersDark) {
+            setTheme('dark');
+        } else {
+            setTheme('light');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Multi-Lenguaje (Python & JS)</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/javascript/javascript.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+
+    <style>
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: 'Inter', sans-serif; }
+        .CodeMirror { height: 100%; font-size: 16px; }
+        #console-container, #editor-container { transition: height 0.3s ease-in-out, flex-grow 0.3s ease-in-out; }
+        .tab.active { background-color: #4a5568; /* bg-gray-700 */ }
+    </style>
+</head>
+<body class="bg-gray-800 text-white">
+    <div id="app-container" class="flex flex-col h-screen">
+        <header class="flex-shrink-0 bg-gray-900 p-2 flex items-center justify-between border-b border-gray-700 z-10">
+            <div id="tabs-container" class="flex items-center space-x-2">
+                <!-- Tabs will be dynamically inserted here -->
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-1 bg-gray-700 rounded-md p-1">
+                    <button id="console-hide" title="Ocultar Consola" class="p-1 rounded-md hover:bg-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                    <button id="console-normal" title="Vista Normal" class="p-1 rounded-md hover:bg-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="15" width="18" height="6"></rect><path d="M4 15V9a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6"></path></svg>
+                    </button>
+                    <button id="console-fullscreen" title="Pantalla Completa" class="p-1 rounded-md hover:bg-gray-600">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10V4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6"></path><path d="M3 14v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6"></path></svg>
+                    </button>
+                </div>
+                <button id="run-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md flex items-center space-x-2 transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                    <span>Ejecutar</span>
+                </button>
+            </div>
+        </header>
+
+        <div id="editor-container" class="flex-grow relative min-h-0">
+            <textarea id="editor"></textarea>
+        </div>
+
+        <div id="console-container" class="flex-shrink-0 bg-gray-900 border-t border-gray-700">
+            <pre id="output" class="w-full h-full overflow-y-auto whitespace-pre-wrap p-4 text-sm text-gray-300 font-mono"></pre>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- State Management ---
+            let activeLanguage = 'python';
+            const codeStates = {
+                python: `# ¡Bienvenido!\n# Ejecuta código Python aquí.\n\nimport sys\nprint(f"Python {sys.version}")\nprint("¡Hola desde Python!")`,
+                javascript: `// ¡Hola!\n// Ahora estás en modo JavaScript.\n\nfor(let i = 1; i <= 5; i++) {\n    console.log(\`Mensaje número \${i} desde JavaScript\`);\n}`
+            };
+
+            // --- DOM Elements ---
+            const editorContainer = document.getElementById('editor-container');
+            const editorTextarea = document.getElementById('editor');
+            const runButton = document.getElementById('run-button');
+            const outputDiv = document.getElementById('output');
+            const consoleContainer = document.getElementById('console-container');
+            const header = document.querySelector('header');
+            const tabsContainer = document.getElementById('tabs-container');
+            const consoleHideBtn = document.getElementById('console-hide');
+            const consoleNormalBtn = document.getElementById('console-normal');
+            const consoleFullscreenBtn = document.getElementById('console-fullscreen');
+            
+            let consoleState = 'normal';
+            const SHORT_SCREEN_THRESHOLD = 550;
+
+            // --- Editor Initialization (CodeMirror) ---
+            const editor = CodeMirror.fromTextArea(editorTextarea, {
+                lineNumbers: true,
+                theme: 'dracula',
+                indentUnit: 4,
+                autofocus: true
+            });
+
+            // --- Language Runtimes ---
+            let pyodide;
+            let isPyodideLoading = false;
+
+            async function loadPyodideIfNeeded() {
+                if (pyodide || isPyodideLoading) return;
+                isPyodideLoading = true;
+                outputDiv.textContent = "🐍 Cargando el intérprete de Python (Pyodide)...";
+                try {
+                    pyodide = await loadPyodide();
+                    pyodide.setStdout({ batched: (str) => { outputDiv.textContent += str + "\n"; } });
+                    pyodide.setStderr({ batched: (str) => { outputDiv.textContent += str + "\n"; } });
+                    outputDiv.textContent += "\n✅ Intérprete de Python listo.\n";
+                } catch (error) {
+                    outputDiv.textContent = `❌ Error al cargar Pyodide: ${error}`;
+                } finally {
+                    isPyodideLoading = false;
+                }
+            }
+            
+            function runJavascript(code) {
+                 // Intercept console.log to redirect output
+                const oldLog = console.log;
+                outputDiv.textContent = ''; // Clear console
+                console.log = function(...args) {
+                    const message = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg).join(' ');
+                    outputDiv.textContent += message + '\n';
+                    oldLog.apply(console, args); // Also log to browser console
+                };
+
+                try {
+                    // Use Function constructor for safer evaluation than eval()
+                    new Function(code)();
+                } catch (e) {
+                    outputDiv.textContent += `❌ Error: ${e.message}\n`;
+                } finally {
+                    console.log = oldLog; // Restore original console.log
+                }
+            }
+
+            // --- Core Execution Logic ---
+            async function runCode() {
+                if (window.innerHeight < SHORT_SCREEN_THRESHOLD) {
+                    setConsoleState('fullscreen');
+                } else if (consoleState === 'hidden') {
+                    setConsoleState('normal');
+                }
+                
+                outputDiv.textContent = 'Ejecutando...\n\n';
+                const code = editor.getValue();
+
+                if (activeLanguage === 'python') {
+                    await loadPyodideIfNeeded();
+                    if(pyodide) {
+                        try {
+                           await pyodide.runPythonAsync(code);
+                        } catch(e) { /* error already piped to stderr */ }
+                    }
+                } else if (activeLanguage === 'javascript') {
+                    runJavascript(code);
+                }
+                outputDiv.scrollTop = outputDiv.scrollHeight;
+            }
+
+            // --- UI and Tabs Logic ---
+            function switchLanguage(lang) {
+                if (activeLanguage === lang) return;
+
+                // Save current code
+                codeStates[activeLanguage] = editor.getValue();
+                
+                activeLanguage = lang;
+
+                // Update editor content and mode
+                editor.setValue(codeStates[lang]);
+                editor.setOption("mode", lang === 'python' ? 'python' : 'javascript');
+                
+                // Update active tab UI
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelector(`.tab[data-lang="${lang}"]`).classList.add('active');
+            }
+
+            function createTabs() {
+                Object.keys(codeStates).forEach(lang => {
+                    const tab = document.createElement('button');
+                    tab.className = 'tab capitalize px-4 py-2 text-sm font-medium rounded-md hover:bg-gray-700';
+                    tab.textContent = lang;
+                    tab.dataset.lang = lang;
+                    tab.addEventListener('click', () => switchLanguage(lang));
+                    tabsContainer.appendChild(tab);
+                });
+            }
+
+            // --- Console State Logic ---
+             function setConsoleState(newState) {
+                consoleState = newState;
+                [consoleHideBtn, consoleNormalBtn, consoleFullscreenBtn].forEach(btn => btn.classList.remove('bg-gray-600'));
+                editorContainer.style.flexGrow = '1';
+
+                switch (newState) {
+                    case 'hidden':
+                        consoleContainer.style.height = '0px';
+                        consoleHideBtn.classList.add('bg-gray-600');
+                        break;
+                    case 'normal':
+                        consoleContainer.style.height = (window.innerHeight < SHORT_SCREEN_THRESHOLD) ? '60%' : '33.33%';
+                        consoleNormalBtn.classList.add('bg-gray-600');
+                        break;
+                    case 'fullscreen':
+                        consoleContainer.style.height = `calc(100vh - ${header.offsetHeight}px)`;
+                        editorContainer.style.flexGrow = '0';
+                        consoleFullscreenBtn.classList.add('bg-gray-600');
+                        break;
+                }
+                setTimeout(() => editor.refresh(), 310);
+            }
+
+            // --- Initial Setup ---
+            createTabs();
+            switchLanguage('python'); // Set initial state
+            setConsoleState('normal');
+
+            // --- Event Listeners ---
+            runButton.addEventListener('click', runCode);
+            editor.setOption("extraKeys", { "Ctrl-Enter": runCode, "Cmd-Enter": runCode });
+            consoleHideBtn.addEventListener('click', () => setConsoleState('hidden'));
+            consoleNormalBtn.addEventListener('click', () => setConsoleState('normal'));
+            consoleFullscreenBtn.addEventListener('click', () => setConsoleState('fullscreen'));
+            window.addEventListener('resize', () => setConsoleState(consoleState));
+        });
+    </script>
+</body>
+</html>

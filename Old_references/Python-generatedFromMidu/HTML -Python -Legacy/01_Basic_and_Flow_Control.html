@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso de Python: Conceptos Básicos y Control de Flujo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; margin: 0; padding: 20px; transition: background-color 0.3s, color 0.3s; }
+        .container { max-width: 1000px; margin: auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #333; }
+        details { background: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 1em; padding: 15px; }
+        summary { font-weight: bold; cursor: pointer; font-size: 1.2em; color: #0056b3; }
+        pre code.hljs { display: block; overflow-x: auto; padding: 1.5em; background: #282c34; color: #abb2bf; border-radius: 5px; }
+        body.dark-mode { background-color: #1a1a1a; color: #f0f0f0; }
+        body.dark-mode .container { background: #2c2c2c; box-shadow: 0 2px 5px rgba(255,255,255,0.1); }
+        body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 { color: #f0f0f0; }
+        body.dark-mode details { background: #333; border-color: #555; }
+        body.dark-mode summary { color: #61afef; }
+        .switch { position: fixed; top: 20px; right: 20px; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #2196F3; }
+        input:checked + .slider:before { transform: translateX(26px); }
+    </style>
+</head>
+<body>
+    <label class="switch"><input type="checkbox" id="darkModeToggle"><span class="slider"></span></label>
+    <div class="container">
+        <h1 class="page-title">Curso de Python: Conceptos Básicos y Control de Flujo</h1>
+        <div class="page-body"><h2>Sección 1: Conceptos Básicos</h2>
+        <details>
+            <summary>Lección 1.1: La Función print()</summary>
+            <p>La función <code>print()</code> es fundamental en Python. Nos permite mostrar información en la consola, lo cual es esencial para ver los resultados de nuestros programas y para depurar código.</p>
+            <pre><code class="language-python"># La función print() muestra un mensaje en la consola.
+print("¡Hola, Python!")
+
+# Podemos imprimir números
+print(123)
+
+# y operaciones matemáticas
+print(10 + 5)
+
+# También podemos combinar texto y resultados
+print("La suma de 10 + 5 es:", 10 + 5)</code></pre>
+        </details>
+        <details>
+            <summary>Lección 1.2: Tipos de Datos</summary>
+            <p>Python maneja diferentes tipos de datos. Los más comunes son los textos (strings), números (enteros y flotantes) y booleanos (verdadero o falso). La función <code>type()</code> nos permite saber de qué tipo es un dato.</p>
+            <pre><code class="language-python"># String (str): Cadena de texto
+print(type("Hola"))
+
+# Integer (int): Número entero
+print(type(10))
+
+# Float (float): Número con decimales
+print(type(10.5))
+
+# Boolean (bool): Verdadero o Falso
+print(type(True))
+print(type(False))</code></pre>
+        </details>
+        <details>
+            <summary>Lección 1.3: Conversión de Tipos (Casting)</summary>
+            <p>A veces necesitamos convertir un dato de un tipo a otro. A esto se le llama "casting". Por ejemplo, convertir un número a texto para poder unirlo con otro texto.</p>
+            <pre><code class="language-python"># Convertir de Integer a String
+numero = 10
+texto_numero = str(numero)
+print("El número es " + texto_numero)
+
+# Convertir de String a Integer
+texto = "25"
+integer_texto = int(texto)
+print(integer_texto + 5) # Ahora podemos hacer operaciones matemáticas
+
+# Convertir de Float a Integer (se pierde la parte decimal)
+flotante = 15.7
+integer_flotante = int(flotante)
+print(integer_flotante)</code></pre>
+        </details>
+        <details>
+            <summary>Lección 1.4: Entrada del Usuario (input)</summary>
+            <p>La función <code>input()</code> pausa el programa y espera a que el usuario escriba algo y presione Enter. Lo que el usuario escribe siempre se recibe como un tipo de dato string.</p>
+            <pre><code class="language-python"># Pedimos el nombre al usuario
+nombre = input("¿Cuál es tu nombre? ")
+print("Hola, " + nombre)
+
+# Pedimos la edad y la convertimos a número para poder operar con ella
+edad_texto = input("¿Cuántos años tienes? ")
+edad = int(edad_texto)
+print("El año que viene tendrás", edad + 1, "años.")</code></pre>
+        </details>
+        <details>
+            <summary>Lección 1.5: Indentación</summary>
+            <p>La indentación (el espacio al principio de una línea) es crucial en Python. No es solo por estética; se usa para definir bloques de código, como el contenido de una función o un condicional. La norma es usar 4 espacios.</p>
+            <pre><code class="language-python"># La indentación define qué código pertenece a qué bloque.
+
+if 5 > 2:
+    # Esta línea está indentada, por lo que pertenece al bloque 'if'.
+    print("Cinco es mayor que dos.") 
+    print("Esta línea también está dentro del if.")
+
+# Esta línea no está indentada, por lo que se ejecuta después del bloque 'if'.
+print("Esta línea se ejecuta siempre.")</code></pre>
+        </details>
+        <details>
+            <summary>Lección 1.6: Variables</summary>
+            <p>Las variables son como cajas donde guardamos datos para usarlos más tarde. Les asignamos un nombre y un valor.</p>
+            <pre><code class="language-python"># Asignamos el valor "Juan" a la variable 'nombre'
+nombre = "Juan"
+
+# Asignamos el valor 30 a la variable 'edad'
+edad = 30
+
+# Usamos las variables
+print(nombre, "tiene", edad, "años.")
+
+# Podemos cambiar el valor de una variable
+edad = 31
+print("Ahora", nombre, "tiene", edad, "años.")</code></pre>
+        </details>
+        <details>
+            <summary>Lección 1.7: Métodos de Strings</summary>
+            <p>Los strings en Python vienen con funciones integradas llamadas "métodos" que nos permiten realizar operaciones comunes sobre ellos.</p>
+            <pre><code class="language-python">texto = "Hola Mundo, este es un curso de Python"
+
+# upper(): Convierte todo a mayúsculas
+print(texto.upper())
+
+# lower(): Convierte todo a minúsculas
+print(texto.lower())
+
+# capitalize(): Pone la primera letra en mayúscula
+print(texto.capitalize())
+
+# title(): Pone la primera letra de cada palabra en mayúscula
+print(texto.title())
+
+# find(): Busca una subcadena y devuelve su posición (o -1 si no la encuentra)
+print(texto.find("Mundo"))
+
+# replace(): Reemplaza una subcadena por otra
+print(texto.replace("Mundo", "a todos"))
+
+# split(): Divide el string en una lista de subcadenas
+print(texto.split()) # Por defecto, divide por los espacios
+
+# strip(): Elimina espacios en blanco al principio y al final
+texto_con_espacios = "   hola   "
+print(texto_con_espacios.strip())</code></pre>
+        </details>
+
+        <h2>Sección 2: Control de Flujo</h2>
+        <details>
+            <summary>Lección 2.1: Condicionales (if)</summary>
+            <p>La declaración <code>if</code> nos permite ejecutar un bloque de código solo si se cumple una condición.</p>
+            <pre><code class="language-python"># La condición es '5 > 3', que es verdadera.
+if 5 > 3:
+    print("5 es mayor que 3")
+
+edad = 18
+if edad >= 18:
+    print("Eres mayor de edad")
+
+# Si la condición es falsa, el bloque no se ejecuta.
+edad = 15
+if edad >= 18:
+    print("Este mensaje no se mostrará")</code></pre>
+        </details>
+        <details>
+            <summary>Lección 2.2: Booleanos</summary>
+            <p>Los booleanos son un tipo de dato que solo puede tener dos valores: <code>True</code> (verdadero) o <code>False</code> (falso). Son el resultado de las comparaciones y son fundamentales para los condicionales.</p>
+            <pre><code class="language-python"># Las comparaciones devuelven un booleano
+es_mayor = 5 > 3
+print(es_mayor) # Imprime True
+
+es_igual = 10 == 10
+print(es_igual) # Imprime True
+
+es_diferente = 5 != 5
+print(es_diferente) # Imprime False
+
+# Podemos usar variables booleanas en los 'if'
+esta_lloviendo = True
+if esta_lloviendo:
+    print("No te olvides el paraguas")</code></pre>
+        </details>
+        <details>
+            <summary>Lección 2.3: Elif y Else</summary>
+            <p><code>elif</code> (contracción de "else if") nos permite comprobar múltiples condiciones en orden. <code>else</code> nos da un bloque de código que se ejecuta si ninguna de las condiciones anteriores fue verdadera.</p>
+            <pre><code class="language-python">nota = 7
+
+if nota >= 9:
+    print("Sobresaliente")
+elif nota >= 7:
+    print("Notable")
+elif nota >= 5:
+    print("Aprobado")
+else:
+    print("Suspendido")</code></pre>
+        </details>
+        <details>
+            <summary>Lección 2.4: Operadores Lógicos</summary>
+            <p>Los operadores lógicos <code>and</code>, <code>or</code> y <code>not</code> nos permiten combinar varias condiciones.</p>
+            <pre><code class="language-python"># and: Ambas condiciones deben ser verdaderas
+edad = 25
+sabe_python = True
+if edad > 18 and sabe_python == True:
+    print("Candidato ideal")
+
+# or: Al menos una de las condiciones debe ser verdadera
+tiene_entrada = False
+es_vip = True
+if tiene_entrada or es_vip:
+    print("Bienvenido a la fiesta")
+
+# not: Invierte el valor booleano
+es_de_dia = False
+if not es_de_dia:
+    print("Es de noche, enciende las luces")</code></pre>
+        </details>
+        <details>
+            <summary>Lección 2.5: Operadores de Comparación</summary>
+            <p>Estos operadores se usan para comparar valores y siempre devuelven un booleano.</p>
+            <pre><code class="language-python"># == : Igual a
+print(5 == 5) # True
+
+# != : No igual a (diferente)
+print(5 != 6) # True
+
+# < : Menor que
+print(4 < 8) # True
+
+# > : Mayor que
+print(10 > 5) # True
+
+# <= : Menor o igual que
+print(5 <= 5) # True
+
+# >= : Mayor o igual que
+print(6 >= 5) # True</code></pre>
+        </details>
+    </div>
+    <script>
+        hljs.highlightAll();
+        const toggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        toggle.addEventListener('change', function() {
+            if(this.checked) {
+                body.classList.add('dark-mode');
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('darkMode', 'false');
+            }
+        });
+
+        if(localStorage.getItem('darkMode') === 'true') {
+            toggle.checked = true;
+            body.classList.add('dark-mode');
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && localStorage.getItem('darkMode') !== 'false') {
+            toggle.checked = true;
+            body.classList.add('dark-mode');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expresiones Regulares en Python</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <style>
+        /* Estilos generales y modo claro */
+        body {
+            margin: 2em auto;
+            max-width: 900px;
+            color: rgb(55, 53, 47);
+            background-color: #fff;
+            font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .page {
+            padding: 2rem;
+        }
+        h1, h2, h3 {
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+            font-weight: 600;
+        }
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75em;
+        }
+        details {
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .indented {
+            padding-left: 1.5em;
+            margin-top: 0.5rem;
+        }
+        /* Estilos para bloques de código */
+        .code {
+            border-radius: 8px;
+            padding: 1em;
+            /* Dejamos que highlight.js maneje el fondo */
+        }
+        /* Estilos para código en línea */
+        code {
+            background: rgba(135, 131, 120, 0.15);
+            border-radius: 3px;
+            padding: 0.2em 0.4em;
+            font-size: 85%;
+            color: #eb5757;
+        }
+        .code > code {
+            background: none;
+            padding: 0;
+            font-size: 100%;
+            color: inherit;
+        }
+        /* Interruptor de tema */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+        }
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .theme-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px; width: 26px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #2196F3; }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        /* Estilos modo oscuro */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 {
+            color: #ffffff;
+        }
+        body.dark-mode details {
+            border-color: #444;
+        }
+        body.dark-mode code {
+            background: #282c34;
+            color: #ddd;
+        }
+        body.dark-mode a { color: #bb86fc; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header>
+            <h1 class="page-title">Lección 5: Expresiones Regulares (Regex)</h1>
+            <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider round"></div>
+                </label>
+            </div>
+        </header>
+
+        <details open>
+            <summary style="font-weight:600;font-size:1.5em;">Lección 5.1: Introducción a las Expresiones Regulares</summary>
+            <div class="indented">
+                <p>Las expresiones regulares (o Regex) son secuencias de caracteres que definen un patrón de búsqueda. Son muy útiles para encontrar texto, validar datos y manipular cadenas de forma avanzada.</p>
+                <h3>Funciones básicas del módulo <code>re</code></h3>
+                <p>Para usar expresiones regulares en Python, primero importamos el módulo <code>re</code>.</p>
+                <pre class="code"><code class="language-python">import re
+
+# 1. re.search(): Encuentra la primera coincidencia del patrón.
+pattern = "Hola"
+text = "Hola mundo"
+result = re.search(pattern, text)
+
+if result:
+  print(f"'search' encontró: {result.group()}")
+  print(f"Empieza en: {result.start()}, termina en: {result.end()}")
+
+# 2. re.findall(): Encuentra todas las coincidencias y las devuelve en una lista.
+text_multiple = "Me gusta Python. Python es genial."
+pattern_multiple = "Python"
+matches = re.findall(pattern_multiple, text_multiple)
+print(f"'findall' encontró {len(matches)} coincidencias: {matches}")
+
+# 3. re.finditer(): Devuelve un iterador con todos los objetos de coincidencia.
+matches_iter = re.finditer(pattern_multiple, text_multiple)
+print("'finditer' encontró:")
+for match in matches_iter:
+    print(f"- Coincidencia: {match.group()}, Posición: {match.start()}-{match.end()}")
+
+# 4. re.sub(): Reemplaza las coincidencias con otro texto.
+text_to_replace = "Hola, mundo! Hola de nuevo."
+pattern_to_replace = "Hola"
+replacement = "Adiós"
+new_text = re.sub(pattern_to_replace, replacement, text_to_replace)
+print(f"'sub' reemplazó el texto: {new_text}")
+
+# Modificador re.IGNORECASE: para ignorar mayúsculas y minúsculas.
+text_case = "Python es lo mismo que python o PYTHON."
+pattern_case = "python"
+matches_case = re.findall(pattern_case, text_case, re.IGNORECASE)
+print(f"Con IGNORECASE, se encontraron: {matches_case}")</code></pre>
+            </div>
+        </details>
+
+        <details>
+            <summary style="font-weight:600;font-size:1.5em;">Lección 5.2: Metacaracteres</summary>
+            <div class="indented">
+                <p>Los metacaracteres son símbolos especiales que tienen un significado único en las expresiones regulares. Permiten crear patrones más flexibles y potentes.</p>
+                <pre class="code"><code class="language-python">import re
+
+# . (Punto): Coincide con cualquier carácter excepto una nueva línea.
+text = "casa caasa cosa cisa cesa"
+pattern = r"c.sa"
+print(f"Coincidencias para 'c.sa': {re.findall(pattern, text)}")
+
+# \d: Coincide con cualquier dígito (0-9).
+text = "Mi número es +34 688999999"
+pattern = r"\d{9}"
+print(f"Dígitos encontrados: {re.findall(pattern, text)}")
+
+# \w: Coincide con cualquier carácter alfanumérico (a-z, A-Z, 0-9, _).
+text = "usuario_123"
+pattern = r"\w+"
+print(f"Caracteres alfanuméricos: {re.findall(pattern, text)}")
+
+# \s: Coincide con cualquier espacio en blanco (espacio, tab, nueva línea).
+text = "Hola\tmundo\n¿cómo estás?"
+pattern = r"\s"
+print(f"Espacios en blanco: {re.findall(pattern, text)}")
+
+# ^ (Caret): Coincide con el inicio de una cadena.
+text = "Hola mundo"
+pattern = r"^Hola"
+if re.search(pattern, text):
+    print("La cadena empieza con 'Hola'")
+
+# $ (Dólar): Coincide con el final de una cadena.
+text = "midu@gmail.com"
+pattern = r"@gmail.com$"
+if re.search(pattern, text):
+    print("El correo es de Gmail")
+
+# | (Barra vertical): Actúa como un 'OR', coincide con una opción u otra.
+text = "Me gusta la palta y el aguacate"
+pattern = r"palta|aguacate"
+print(f"Coincidencias para 'palta' o 'aguacate': {re.findall(pattern, text)}")
+
+# \b: Límite de palabra. Coincide con el inicio o final de una palabra.
+text = "casa casada cosa"
+pattern = r"\bcasa\b"
+print(f"Coincidencias exactas de 'casa': {re.findall(pattern, text)}")</code></pre>
+            </div>
+        </details>
+
+        <details>
+            <summary style="font-weight:600;font-size:1.5em;">Lección 5.3: Cuantificadores</summary>
+            <div class="indented">
+                <p>Los cuantificadores permiten especificar cuántas veces debe aparecer un carácter o grupo de caracteres para que haya una coincidencia.</p>
+                <pre class="code"><code class="language-python">import re
+
+# * (Asterisco): 0 o más veces.
+text = "aaaba"
+pattern = r"a*b"
+print(f"Coincidencias para 'a*b': {re.findall(pattern, text)}")
+
+# + (Más): 1 o más veces.
+text = "dddd aaa ccc a bb aa casa"
+pattern = r"a+"
+print(f"Coincidencias para 'a+': {re.findall(pattern, text)}")
+
+# ? (Interrogación): 0 o 1 vez.
+text = "aaabacb"
+pattern = r"a?b"
+print(f"Coincidencias para 'a?b': {re.findall(pattern, text)}")
+
+# {n}: Exactamente n veces.
+text = "aaaaaa aa aaaa"
+pattern = r"a{3}"
+print(f"Coincidencias para 'a{{3}}': {re.findall(pattern, text)}")
+
+# {n, m}: Entre n y m veces.
+words = "ala casa árbol león cinco murcielago"
+pattern = r"\b\w{4,6}\b"
+print(f"Palabras de 4 a 6 letras: {re.findall(pattern, words)}")
+
+# {n,}: Al menos n veces.
+words = "ala fantastico casa árbol león cinco murcielago"
+pattern = r"\b\w{6,}\b"
+print(f"Palabras de más de 6 letras: {re.findall(pattern, words)}")</code></pre>
+            </div>
+        </details>
+
+        <details>
+            <summary style="font-weight:600;font-size:1.5em;">Lección 5.4: Sets (Conjuntos)</summary>
+            <div class="indented">
+                <p>Los sets o conjuntos, definidos con corchetes <code>[]</code>, permiten coincidir con cualquier carácter individual dentro del conjunto. Son útiles para crear patrones más específicos.</p>
+                <pre class="code"><code class="language-python">import re
+
+# [abc]: Coincide con cualquier carácter dentro de los corchetes.
+text = "man ran fan ñan ban"
+pattern = r"[mfb]an"
+print(f"Coincidencias para '[mfb]an': {re.findall(pattern, text)}")
+
+# [a-z]: Coincide con un rango de caracteres.
+text = "Hola 123 mundo"
+pattern = r"[a-z]+"
+print(f"Letras minúsculas encontradas: {re.findall(pattern, text, re.IGNORECASE)}")
+
+# [^abc]: Coincide con cualquier carácter que NO esté en el conjunto.
+text = "Hola mundo"
+pattern = r"[^aeiou]"
+print(f"Caracteres que no son vocales: {re.findall(pattern, text)}")
+
+# Combinando sets y cuantificadores para validar un email.
+email = "lo.que+sea@shopping.online"
+# Este patrón busca un formato de email válido.
+pattern = r"^[\w._%+-]+@[\w.-]+\.[a-zA-Z]{2,}$
+
+if re.match(pattern, email):
+    print(f"El email '{email}' es válido.")
+else:
+    print(f"El email '{email}' no es válido.")</code></pre>
+            </div>
+        </details>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        // Activar resaltado de sintaxis
+        hljs.highlightAll();
+
+        // Lógica para el interruptor de tema
+        const themeSwitch = document.getElementById('checkbox');
+        const currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme) {
+            document.body.classList.add(currentTheme);
+            if (currentTheme === 'dark-mode') {
+                themeSwitch.checked = true;
+            }
+        }
+
+        function switchTheme(e) {
+            if (e.target.checked) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light-mode');
+            }
+        }
+
+        themeSwitch.addEventListener('change', switchTheme, false);
+    </script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clases y APIs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        h1, h2, h3 {
+            line-height: 1.2;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        details {
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        summary {
+            font-weight: 600;
+            font-size: 1.25em;
+            padding: 1rem;
+            cursor: pointer;
+            background-color: #f7f7f7;
+            outline: none;
+        }
+        details[open] summary {
+            border-bottom: 1px solid #ddd;
+        }
+        .lesson-content {
+            padding: 1rem;
+        }
+        .code {
+            border-radius: 8px;
+            padding: 1em;
+            overflow-x: auto;
+        }
+        code {
+            font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace;
+            font-size: 85%;
+        }
+        .code > code {
+            font-size: 100%;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+        body.dark-mode details {
+            border-color: #444;
+        }
+        body.dark-mode summary {
+            background-color: #2c2c2c;
+            border-bottom-color: #444;
+        }
+        body.dark-mode details[open] summary {
+            border-bottom-color: #444;
+        }
+
+        /* Theme Switch */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+        }
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+        .theme-switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 28px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #4a4a4a;
+        }
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="theme-toggle">
+            <input type="checkbox" id="theme-toggle" />
+            <div class="slider"></div>
+        </label>
+    </div>
+
+    <div class="container">
+        <h1>Clases y APIs</h1>
+
+        <details>
+            <summary>Lección 00: Introducción a las Clases y Objetos</summary>
+            <div class="lesson-content">
+                <p>¡Empezamos nuestro viaje! La Programación Orientada a Objetos (POO) es un paradigma que nos permite estructurar nuestro código de una manera que se asemeja al mundo real. En lugar de tener datos y funciones por separado, los agrupamos en "objetos". Una <strong>clase</strong> es como un plano o una plantilla para crear esos objetos. Define qué datos (llamados atributos) tendrán y qué cosas podrán hacer (llamados métodos). Un <strong>objeto</strong> (o instancia) es el elemento concreto que construimos a partir de ese plano.</p>
+                <p>En este primer ejemplo, crearemos la plantilla más simple posible: una clase <code>Coche</code>.</p>
+                <pre class="code"><code class="language-python"># 00_Clases_y_Objetos/coche.py
+
+# --- 1. Definición de la Clase ---
+# Usamos la palabra clave 'class' seguida del nombre de la clase (por convención, en CamelCase).
+class Coche:
+    # --- 2. El Método Constructor: __init__ ---
+    # Este método especial se ejecuta AUTOMÁTICAMENTE cada vez que creamos un nuevo objeto de esta clase.
+    # 'self' es una referencia al objeto que se está creando. Siempre es el primer parámetro.
+    # 'marca' y 'modelo' son los argumentos que pasaremos al crear el coche.
+    def __init__(self, marca, modelo, anio):
+        # --- 3. Atributos de Instancia ---
+        # Estos son los datos que pertenecerán a cada objeto 'Coche' específico.
+        # Asignamos los valores recibidos a los atributos del objeto usando 'self'.
+        self.marca = marca
+        self.modelo = modelo
+        self.anio = anio
+        self.encendido = False # Por defecto, un coche nuevo está apagado.
+
+    # Un método para describir el coche
+    def descripcion(self):
+        return f"Coche: {self.marca} {self.modelo} del año {self.anio}"
+
+# --- 4. Creación de Objetos (Instancias) ---
+# Ahora usamos nuestra clase 'Coche' como si fuera una función para crear objetos concretos.
+
+# Creamos nuestro primer objeto coche.
+# Esto llama a __init__ con marca="Toyota", modelo="Corolla" y anio=2021
+mi_coche = Coche("Toyota", "Corolla", 2021)
+
+# Creamos otro objeto, completamente independiente del primero.
+otro_coche = Coche("Ford", "Mustang", 1968)
+
+
+# --- 5. Accediendo a los Atributos y Métodos ---
+# Usamos la notación de punto para acceder a los datos y las funciones del objeto.
+
+print("--- Información de mis coches ---")
+# Accedemos a los atributos directamente
+print(f"Mi coche es un {mi_coche.marca} {mi_coche.modelo}.")
+print(f"El otro coche es un {otro_coche.marca} fabricado en {otro_coche.anio}.")
+
+# Llamamos al método descripcion()
+print(mi_coche.descripcion())
+print(otro_coche.descripcion())</code></pre>
+            </div>
+        </details>
+
+        <details>
+            <summary>Lección 01: Atributos y Métodos</summary>
+            <div class="lesson-content">
+                <p>En la lección anterior, definimos los <strong>atributos de instancia</strong> (<code>marca</code>, <code>modelo</code>, etc.) dentro de <code>__init__</code>. Estos son datos únicos para cada objeto. Ahora, introduciremos dos conceptos clave:</p>
+                <ol>
+                    <li><strong>Atributos de Clase:</strong> Son atributos que pertenecen a la clase en sí, no a un objeto en particular. <strong>Todos los objetos</strong> de esa clase compartirán el mismo valor para este atributo. Por ejemplo, todos nuestros coches tendrán 4 ruedas. Se definen directamente dentro de la clase, fuera de cualquier método.</li>
+                    <li><strong>Métodos:</strong> Son las funciones que definen el <strong>comportamiento</strong> de un objeto. Ya creamos el método <code>descripcion()</code>, que solo leía datos. Ahora crearemos métodos que <em>modifican</em> el estado del objeto, como <code>encender()</code>, <code>apagar()</code> o <code>acelerar()</code>. La palabra <code>self</code> es crucial aquí, ya que le permite a un método acceder y cambiar los atributos del propio objeto que lo está llamando.</li>
+                </ol>
+                <p>Vamos a mejorar nuestra clase <code>Coche</code>.</p>
+                <pre class="code"><code class="language-python"># 01_Atributos_y_Metodos/coche_mejorado.py
+class Coche:
+    # --- 1. Atributo de Clase ---
+    # Este atributo es compartido por TODAS las instancias de la clase Coche.
+    ruedas = 4
+
+    def __init__(self, marca, modelo, anio):
+        # --- Atributos de Instancia ---
+        self.marca = marca
+        self.modelo = modelo
+        self.anio = anio
+        self.encendido = False
+        self.velocidad = 0
+
+    # --- 2. Métodos que modifican el estado ---
+    def encender(self):
+        if not self.encendido:
+            self.encendido = True
+            print(f"El {self.modelo} ha sido encendido.")
+        else:
+            print(f"El {self.modelo} ya estaba encendido.")
+
+    def apagar(self):
+        if self.encendido:
+            self.encendido = False
+            self.velocidad = 0
+            print(f"El {self.modelo} ha sido apagado.")
+        else:
+            print(f"El {self.modelo} ya estaba apagado.")
+
+    def acelerar(self, kmh):
+        if self.encendido:
+            self.velocidad += kmh
+            print(f"Acelerando. Velocidad actual: {self.velocidad} km/h.")
+        else:
+            print("No puedes acelerar, el coche está apagado.")
+    
+    def frenar(self, kmh):
+        if self.velocidad > 0:
+            self.velocidad = max(0, self.velocidad - kmh)
+            print(f"Frenando. Velocidad actual: {self.velocidad} km/h.")
+        else:
+            print("El coche ya está detenido.")
+
+    def descripcion(self):
+        estado = "encendido" if self.encendido else "apagado"
+        return f"Coche: {self.marca} {self.modelo} ({self.anio}). Ruedas: {self.ruedas}. Estado: {estado}. Velocidad: {self.velocidad} km/h."
+
+# --- Uso de la clase mejorada ---
+mi_mustang = Coche("Ford", "Mustang", 2023)
+print(f"Mi coche tiene {mi_mustang.ruedas} ruedas.")
+print(f"La clase Coche define que los coches tienen {Coche.ruedas} ruedas.")
+
+print("\n--- Comportamiento del Coche ---")
+print(mi_mustang.descripcion())
+mi_mustang.acelerar(50)
+mi_mustang.encender()
+mi_mustang.acelerar(50)
+mi_mustang.acelerar(30)
+mi_mustang.frenar(20)
+print(mi_mustang.descripcion())
+mi_mustang.apagar()
+print(mi_mustang.descripcion())</code></pre>
+            </div>
+        </details>
+
+        <details>
+            <summary>Lección 02: Encapsulamiento y Abstracción</summary>
+            <div class="lesson-content">
+                <p>Hasta ahora, cualquiera podía modificar los atributos de nuestro coche directamente. Por ejemplo, <code>mi_coche.velocidad = 500</code> podría asignar una velocidad irreal sin que el coche esté encendido. Esto rompe la lógica que hemos construido.</p>
+                <p>El <strong>encapsulamiento</strong> es el principio de restringir el acceso directo a los atributos de un objeto y agruparlos con los métodos que operan sobre ellos. En Python, logramos esto por convención usando un guion bajo (<code>_</code>) al principio del nombre de un atributo (ej. <code>_velocidad</code>). Esto le dice a otros programadores: "No deberías tocar esto directamente desde fuera de la clase".</p>
+                <p>La <strong>abstracción</strong> consiste en ocultar la complejidad interna y exponer solo una interfaz simple. En nuestro caso, el conductor no necesita saber cómo funciona el motor; solo necesita un pedal para <code>acelerar()</code> y una llave para <code>encender()</code>. Nuestros métodos públicos (<code>encender</code>, <code>apagar</code>, etc.) son nuestra interfaz abstracta.</p>
+                <p>Para controlar cómo se leen y modifican nuestros atributos "privados", usamos una herramienta muy elegante de Python: el decorador <code>@property</code>.</p>
+                <pre class="code"><code class="language-python"># 02_Encapsulamiento_y_Abstraccion/coche_protegido.py
+
+class Coche:
+    ruedas = 4
+
+    def __init__(self, marca, modelo, anio):
+        self.marca = marca
+        self.modelo = modelo
+        self.anio = anio
+        self._encendido = False
+        self._velocidad = 0
+
+    @property
+    def velocidad(self):
+        return self._velocidad
+
+    @velocidad.setter
+    def velocidad(self, nuevo_valor):
+        if not self._encendido:
+            print("No puedes cambiar la velocidad con el coche apagado.")
+        elif nuevo_valor < 0:
+            print("La velocidad no puede ser negativa. Se establecerá en 0.")
+            self._velocidad = 0
+        else:
+            self._velocidad = nuevo_valor
+            print(f"Velocidad establecida en {self._velocidad} km/h.")
+    
+    def encender(self):
+        if not self._encendido:
+            self._encendido = True
+            print(f"El {self.modelo} ha sido encendido.")
+        else:
+            print(f"El {self.modelo} ya estaba encendido.")
+
+    def apagar(self):
+        if self._encendido:
+            self._encendido = False
+            self._velocidad = 0
+            print(f"El {self.modelo} ha sido apagado.")
+        else:
+            print(f"El {self.modelo} ya estaba apagado.")
+
+    def acelerar(self, kmh):
+        if self._encendido:
+            self.velocidad += kmh 
+        else:
+            print("No puedes acelerar, el coche está apagado.")
+    
+    def descripcion(self):
+        estado = "encendido" if self._encendido else "apagado"
+        return f"Coche: {self.marca} {self.modelo} ({self.anio}). Estado: {estado}. Velocidad: {self._velocidad} km/h."
+
+
+# --- Uso de la clase protegida ---
+mi_tesla = Coche("Tesla", "Model 3", 2024)
+
+print("--- Intentando modificar atributos directamente ---")
+mi_tesla.velocidad = 50
+print(mi_tesla.descripcion())
+
+print("\n--- Usando la interfaz pública ---")
+mi_tesla.encender()
+mi_tesla.acelerar(80)
+print(f"Leyendo la velocidad: {mi_tesla.velocidad} km/h.")
+print(mi_tesla.descripcion())
+
+print("\n--- Probando la validación del setter ---")
+mi_tesla.velocidad = -30
+print(f"Leyendo la velocidad después de intentar ponerla negativa: {mi_tesla.velocidad} km/h.")</code></pre>
+            </div>
+        </details>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        function setDarkMode(isDark) {
+            if (isDark) {
+                body.classList.add('dark-mode');
+                themeToggle.checked = true;
+            } else {
+                body.classList.remove('dark-mode');
+                themeToggle.checked = false;
+            }
+        }
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            setDarkMode(savedTheme === 'dark');
+        } else {
+            // Check for system theme preference
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            setDarkMode(prefersDark);
+        }
+
+        // Listen for toggle change
+        themeToggle.addEventListener('change', () => {
+            const isDark = themeToggle.checked;
+            setDarkMode(isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+
+        // Initialize highlight.js
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecciones de Python Interactivas</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        /* Estilos Generales */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px 40px;
+        }
+
+        /* Títulos y Encabezados */
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+
+        /* Estilo del Acordeón (menús colapsables) */
+        .accordion {
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 18px;
+            transition: background-color 0.4s ease;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion:hover, .accordion.active {
+            background-color: #2980b9;
+        }
+        .accordion::after {
+            content: '▶'; /* Símbolo para 'expandir' */
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        .accordion.active::after {
+            transform: rotate(90deg); /* Gira el símbolo al expandir */
+        }
+
+        /* Panel de contenido (inicialmente oculto) */
+        .panel {
+            padding: 0 18px;
+            background-color: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        .panel p {
+            margin-top: 15px;
+        }
+
+        /* Estilo para los bloques de código */
+        pre[class*="language-"] {
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        /* Theme switch styles */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+        }
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        body.dark-mode .container {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        body.dark-mode h1 {
+            color: #ffffff;
+            border-bottom-color: #3498db;
+        }
+        body.dark-mode h2 {
+            color: #ffffff;
+            border-bottom-color: #555;
+        }
+        body.dark-mode .accordion {
+            background-color: #3498db;
+        }
+        body.dark-mode .accordion:hover, body.dark-mode .accordion.active {
+            background-color: #2980b9;
+        }
+        body.dark-mode .panel {
+            background-color: #2a2a2a;
+            border-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round"></div>
+        </label>
+    </div>
+    
+    <div class="container">
+        <h1>Fundamentos de Python</h1>
+        <p>Esta página contiene un resumen interactivo de los conceptos básicos de Python. Haz clic en cada sección para expandir y ver la explicación detallada junto con el código de ejemplo correspondiente.</p>
+
+        <h2>Lecciones Fundamentales</h2>
+
+        <button class="accordion">01: La Función print()</button>
+        <div class="panel">
+            <p><strong>La función <code>print()</code> es fundamental en Python.</strong> Permite mostrar información en la consola, una herramienta que te acompañará durante toda tu carrera como programador. Se utiliza para depurar código, mostrar resultados y comunicarte con el usuario. Puedes imprimir texto (cadenas), números y los valores de las variables. También ofrece parámetros como <code>sep</code> para definir el separador entre elementos y <code>end</code> para controlar lo que se imprime al final.</p>
+            <pre><code class="language-python">###
+# 01 - print()
+# El módulo print() es el módulo que nos permite imprimir en consola
+# Sirve para mostrar información en consola y te va a acompañar
+# TODA TU VIDA. Desde hoy hasta el fin de los tiempos
+###
+
+# Podemos importar módulos de Python para usarlos en nuestros programas.
+# En este caso, importamos el módulo "os" que nos da acceso a funciones
+# relacionadas con el sistema operativo
+from os import system
+
+# system() nos permite ejecutar un comando en la terminal.
+# En este caso, lo hacemos para limpiar la pantalla tanto
+# en MacOS/Linux usando "clear" como en Windows con "cls"
+if system("clear") != 0: system("cls")
+
+# Este es un ejemplo básico de cómo imprimir un texto en consola
+print("¡Hola, Twitch!")
+
+# También puedes usar comillas simples para imprimir texto
+print('Esto también funciona con una comilla')
+
+# Puedes imprimir múltiples elementos separados por un espacio
+print("Python", "es", "genial")
+
+# El parámetro 'sep' permite definir cómo se separan los elementos impresos
+print("Python", "es", "brutal", sep = "-")
+
+# El parámetro 'end' define lo que se imprime al final de la línea
+print("Esto se imprime", end = "\n") # Aquí, el 'end' tiene un salto de línea explícito
+print("en una línea") # Esto se imprime en la línea siguiente
+
+# También se pueden imprimir números directamente
+print(42)
+
+# Ejemplo de cómo imprimir el símbolo de pulgadas (")
+# Si usamos comillas dobles dentro de un string con comillas dobles, se produce un error:
+# print("Esto es una "pulgada"")  # ❌ Esto generaría un error de sintaxis
+
+# ✅ Solución 1: Usar comillas simples para encerrar la cadena
+print('Esto es una "pulgada" dentro de un string con comillas simples')
+
+# ✅ Solución 2: Usar el carácter de escape \ para incluir comillas dobles dentro de un string con comillas dobles
+print("Esto es una \"pulgada\" dentro de un string con comillas dobles")
+
+# ✅ Solución 3: Usar triple comillas para definir el string
+print("""Esto es una "pulgada" dentro de un string con triple comillas""")</code></pre>
+        </div>
+
+        <button class="accordion">02: Tipos de Datos (types)</button>
+        <div class="panel">
+            <p><strong>Python maneja varios tipos de datos incorporados.</strong> Cada valor en Python tiene un tipo que determina qué operaciones se pueden realizar con él. La función <code>type()</code> es muy útil para identificar el tipo de dato de una variable u objeto. Los tipos más comunes incluyen <code>int</code> para números enteros, <code>float</code> para números con decimales, <code>str</code> para cadenas de texto, y <code>bool</code> para valores verdaderos o falsos (<code>True</code>/<code>False</code>).</p>
+            <pre><code class="language-python">###
+# 02 - types()
+# Python tiene varios tipos de datos
+# int, float, complex, str, bool, NoneType, list, tuple, dict, range, set...
+###
+
+from os import system
+if system("clear") != 0: system("cls")
+
+"""
+El comando `type()` devuelve el tipo de un objeto en Python
+"""
+print("int:")  # Enteros (números sin parte decimal)
+print(type(10))  # Número entero positivo
+print(type(0))  # El número cero también es un entero
+print(type(-5))  # Número entero negativo
+print(type(7238424723784278934789239874))  # Python permite enteros de gran tamaño
+
+print("float:")  # Números decimales (de punto flotante)
+print(type(3.14))  # Número con punto decimal
+print(type(1.0))  # También es considerado un float, aunque sea un número entero con punto decimal
+print(type(1e3))  # Notación científica (equivalente a 1000.0)
+
+print("complex:")  # Números complejos (con parte real e imaginaria)
+print(type(1 + 2j))  # Un número complejo en Python (1 es la parte real, 2j es la parte imaginaria)
+
+print("str:")  # Cadenas de texto (strings)
+print(type("Hola"))  # Un string con texto
+print(type(""))  # Un string vacío
+print(type("123"))  # Aunque parezca un número, está entre comillas, por lo que es un string
+print(type(""" 
+  Multilinea
+"""))  # Un string que abarca varias líneas usando triple comillas
+
+print("bool:")  # Valores booleanos (True o False)
+print(type(True))  # Valor booleano verdadero
+print(type(False))  # Valor booleano falso
+print(type(1 < 2))  # Comparación que devuelve un booleano (True)
+
+print("NoneType:")  # Representa la ausencia de valor
+print(type(None))  # `None` es un tipo especial en Python que representa "sin valor" o "nulo"</code></pre>
+        </div>
+
+        <button class="accordion">03: Conversión de Tipos (Casting)</button>
+        <div class="panel">
+            <p><strong>El "casting" es el proceso de transformar un valor de un tipo de dato a otro.</strong> Esto es crucial cuando necesitas realizar operaciones entre tipos incompatibles. Por ejemplo, no puedes sumar un número (<code>int</code>) a una cadena de texto (<code>str</code>) directamente. Usando funciones como <code>int()</code>, <code>float()</code>, <code>str()</code> y <code>bool()</code>, puedes convertir valores explícitamente. Ten en cuenta que algunas conversiones pueden perder información (como convertir un <code>float</code> a <code>int</code>, que trunca la parte decimal) o fallar si no son lógicas (como convertir "Hola" a un <code>int</code>).</p>
+            <pre><code class="language-python">###
+# 03 - casting de types
+# Transformar un tipo de un valor a otro
+###
+
+from os import system
+if system("clear") != 0: system("cls")
+
+print("Conversión de tipos")
+
+# Convertir una cadena que contiene un número a un entero y sumarlo con otro entero
+print(2 + int("100"))  # Convierte "100" a entero y suma 2. Resultado: 102
+
+# Convertir un entero a cadena para concatenarlo con otra cadena
+print("100" + str(2))  # Convierte el número 2 a cadena y lo concatena. Resultado: "1002"
+
+# Convertir una cadena con un número decimal a tipo float
+print(type(float("3.1416")))  # Convierte "3.1416" a float y muestra su tipo. Resultado: <class 'float'>
+
+# Convertir un número decimal a entero (se trunca la parte decimal)
+print(int(3.1416))  # Convierte 3.1416 a 3 eliminando la parte decimal. Resultado: 3
+
+# Evaluar valores numéricos como booleanos
+print(bool(3))  # Cualquier número distinto de 0 es True. Resultado: True
+print(bool(0))  # 0 es False. Resultado: False
+print(bool(-1))  # Números negativos también son True. Resultado: True
+
+# Evaluar cadenas como booleanos
+print(bool(""))  # Una cadena vacía es False. Resultado: False
+print(bool(" "))  # Una cadena con espacios es True. Resultado: True
+print(bool("False"))  # Una cadena con texto, aunque sea "False", es True. Resultado: True
+
+# Redondear un número decimal
+print(round(2.51))  # Redondea 2.51 al entero más cercano. Resultado: 3
+
+# Este genera un error y se comenta para evitar conflicto en la ejecución
+# print(int("Hola mundo"))  # ❌ Esto generaría un ValueError porque "Hola mundo" no es un número</code></pre>
+        </div>
+
+        <button class="accordion">04: Variables</button>
+        <div class="panel">
+            <p><strong>Las variables son contenedores para almacenar datos en la memoria.</strong> En Python, las variables tienen dos características importantes: son de <strong>tipado dinámico</strong> (su tipo se determina en tiempo de ejecución y puede cambiar) y de <strong>tipado fuerte</strong> (Python no convierte tipos automáticamente en operaciones, evitando errores inesperados). Es importante seguir las convenciones de nomenclatura, como usar <code>snake_case</code> para los nombres de variables, para que el código sea legible y mantenible.</p>
+            <pre><code class="language-python">##
+# 04 - Variables
+# Las variables sirven para guardar datos en memoria.
+# Python es un lenguaje de tipado dinámico y de tipado fuerte.
+###
+
+from os import system
+if system("clear") != 0: system("cls")
+
+# Para asignar una variable solo hace falta poner el nombre de la variable y asignarle un valor
+my_name = "midudev"
+print(my_name)  # Imprime el valor de la variable my_name
+
+age = 32
+print(age)  # Imprime el valor de la variable age)
+
+# Reasignar un nuevo valor a una variable existente
+age = 39
+print(age)  # Ahora la variable age tiene el valor 39
+
+# Tipado dinámico: el tipo de dato se determine en tiempo de ejecución
+# No es necesario declarar explícitamente el tipo de variable
+name = "midudev"
+print(type(name))  # Muestra el tipo de dato de la variable name (str)
+
+name = 32
+print(type(name))  # Ahora la variable tiene un número entero (int)
+
+# Tipado fuerte: Python no realiza conversione de tipo automáticas
+# Esto generará un error porque no se puede sumar un número con una cadena
+# print(10 + "2")  # ❌ TypeError: unsupported operand type(s) for +: 'int' and 'str'
+
+# f-string (literal de cadena de formato)
+# desde la versión Python 3.6
+print(f"Hola {my_name}, tengo {age + 5} años")
+
+# No recomendada forma de asignar variables
+name, age, city = "midudev", 32, "Bogotá"
+
+# Convenciones de nombres de variables
+mi_nombre_de_variable = "ok" # snake_case
+nombre = "ok"
+
+miNombreDeVariable = "no-recomendado" # camelCase
+MiNombreDeVariable = "no-recomendado" # PascalCase
+minombredevariable = "no-recomendado" # todojunto
+
+mi_nombre_de_variable_123 = "ok"
+
+MI_CONSTANTE = 3.14 # UPPER_CASE -> constantes
+
+# Nombres NO válidos de variables (esto generaría errores)
+# 123123_variable = "ko"  # ❌ No puede comenzar con un número
+# mi-variable = "ko"  # ❌ No puede contener guiones (-), usa guion bajo (_)
+# mi variable = "ko"  # ❌ No puede contener espacios
+# True = False  # ❌ No puedes sobrescribir palabras reservadas
+
+# Palabras reservadas en Python (no se pueden usar como nombres de variables)
+
+# ['False', 'None', 'True', 'and', 'as', 'assert',
+# 'async', 'await', 'break', 'class', 'continue',
+# 'def', 'del', 'elif', 'else', 'except', 'finally',
+# 'for', 'from', 'global', 'if', 'import', 'in', 'is',
+# 'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise',
+# 'return', 'try', 'while', 'with', 'yield']
+
+# Anotaciones de tipo (opcional, para mayor claridad en el código)
+is_user_logged_in: bool = True # Indica que la variable es un booleano
+print(is_user_logged_in)
+
+name: str = "midudev" # Indica que la variable es una cadena de texto
+print(name)</code></pre>
+        </div>
+
+        <button class="accordion">05: Entrada de Usuario (input)</button>
+        <div class="panel">
+            <p><strong>La función <code>input()</code> pausa la ejecución del programa y permite al usuario introducir datos desde la consola.</strong> Muestra un mensaje (prompt) al usuario y devuelve lo que este escriba como una cadena de texto (<code>str</code>). Es muy importante recordar que siempre devuelve un string, por lo que si esperas un número, deberás convertirlo manualmente usando <code>int()</code> o <code>float()</code>.</p>
+            <pre><code class="language-python">###
+# 05 - Entrada de usuario (input()) - Versión simplificada
+# La función input() permite obtener datos del usuario a través de la consola.
+###
+
+from os import system
+if system("clear") != 0: system("cls")
+
+# Para obtener datos del usuario se usa la función input()
+# La función input() recibe un mensaje que se muestra al usuario
+# y devuelve el valor introducido por el usuario
+nombre = input("Hola, ¿cómo te llamas?\n")
+print(f"Hola {nombre}, encantado de conocerte")
+
+# Ten en cuenta que la función input() devuelve un string
+# Así que si queremos obtener un número se debe convertir el string a un número
+age = input("¿Cuántos años tienes?\n")
+age = int(age)
+print(f"Tienes {age} años")
+
+# La función input() también puede devolver múltiples valores
+# Para hacerlo, el usuario debe separar los valores con una coma
+print("Obtener múltiples valores a la vez")
+country, city = input("¿En qué país y ciudad vives?\n").split()
+
+print(f"Vives en {country}, {city}")</code></pre>
+        </div>
+
+        <h2>Ejercicios Prácticos</h2>
+
+        <button class="accordion">Enunciados de los Ejercicios</button>
+        <div class="panel">
+            <p>A continuación se presentan una serie de ejercicios diseñados para practicar los conceptos aprendidos en las lecciones anteriores. Intenta resolverlos por tu cuenta antes de ver las soluciones.</p>
+            <pre><code class="language-python">###
+# exercises.py
+# Ejercicios para practicar los conceptos aprendidos en las lecciones.
+###
+
+from os import system
+if system("clear") != 0: system("cls")
+
+print("\nEjercicio 1: Imprimir mensajes")
+print("Escribe un programa que imprima tu nombre y tu ciudad en líneas separadas.")
+
+### Completa aquí
+
+print("--------------")
+
+print("\nEjercicio 2: Muestra los tipos de datos de las siguientes variables:")
+print("Usa el comando 'type()' para determinar el tipo de datos de cada variable.")
+a = 15
+b = 3.14159
+c = "Hola mundo"
+d = True
+e = None
+
+### Completa aquí
+
+print("--------------")
+
+print("\nEjercicio 3: Casting de tipos")
+print("Convierte la cadena \"12345\" a un entero y luego a un float.")
+print("Convierte el float 3.99 a un entero. ¿Qué ocurre?")
+
+### Completa aquí
+
+print("--------------")
+
+print("\nEjercicio 4: Variables")
+print("Crea variables para tu nombre, edad y altura.")
+print("Usa f-strings para imprimir una presentación.")
+
+# "Hola! Me llamo midudev y tengo 39 años, mido 1.70 metros"
+
+### Completa aquí
+
+print("--------------")
+
+print("\nEjercicio 5: Números")
+print("1. Crea una variable con el número PI (sin asignar una variable)")
+print("2. Redondea el número con round()")
+print("3. Haz la división entera entre el número que te salió y el número 2")
+print("4. El resultado debería ser 1")</code></pre>
+        </div>
+
+        <button class="accordion">Soluciones de los Ejercicios</button>
+        <div class="panel">
+            <p>Aquí puedes encontrar las soluciones a los ejercicios propuestos. Úsalas para comprobar tus respuestas o para entender cómo abordar un problema si te has atascado.</p>
+            <pre><code class="language-python">###
+# soluciones.py
+# Soluciones a los ejercicios del archivo exercises.py
+###
+
+print("\nEjercicio 1: Imprimir mensajes")
+print("Escribe un programa que imprima tu nombre y tu ciudad en líneas separadas.")
+
+# Solución:
+nombre = "Carlos"  # Reemplázalo con tu nombre
+ciudad = "Buenos Aires"  # Reemplázalo con tu ciudad
+
+print(nombre)
+print(ciudad)
+
+print("--------------")
+
+print("\nEjercicio 2: Muestra los tipos de datos de las siguientes variables:")
+print("Usa el comando 'type()' para determinar el tipo de datos de cada variable.")
+
+# Variables dadas en el enunciado
+a = 15
+b = 3.14159
+c = "Hola mundo"
+d = True
+e = None
+
+# Solución:
+print("Tipo de a:", type(a))
+print("Tipo de b:", type(b))
+print("Tipo de c:", type(c))
+print("Tipo de d:", type(d))
+print("Tipo de e:", type(e))
+
+print("--------------")
+
+print("\nEjercicio 3: Casting de tipos")
+print("Convierte la cadena '12345' a un entero y luego a un float.")
+print("Convierte el float 3.99 a un entero. ¿Qué ocurre?")
+
+# Solución:
+cadena = "12345"
+numero_entero = int(cadena)  # Convertir cadena a entero
+numero_float = float(numero_entero)  # Convertir entero a float
+
+print("Número entero:", numero_entero)
+print("Número como float:", numero_float)
+
+float_num = 3.99
+entero_convertido = int(float_num)  # Se trunca el decimal
+
+print("Float original:", float_num)
+print("Float convertido a entero (se trunca la parte decimal):", entero_convertido)
+
+print("--------------")
+
+print("\nEjercicio 4: Variables")
+print("Crea variables para tu nombre, edad y altura.")
+print("Usa f-strings para imprimir una presentación.")
+
+# Solución:
+nombre = "midudev"
+edad = 18
+altura = 1.90
+
+# Imprimir presentación con f-string
+print(f"Hola! Me llamo {nombre} y tengo {edad} años, mido {altura} metros")
+
+print("--------------")
+
+print("\nEjercicio 5: Números")
+print("1. Crea una variable con el número PI (sin asignar una variable)")
+print("2. Redondea el número con round()")
+print("3. Haz la división entera entre el número que te salió y el número 2")
+print("4. El resultado debería ser 1")
+
+# Solución:
+# Redondeamos directamente el valor de pi sin almacenarlo en una variable
+resultado = int(round(3.1416) / 2)
+print("Valor de PI (aproximado):", 3.1416)
+print("PI redondeado:", round(3.1416))
+print("División entera de PI redondeado entre 2:", resultado)</code></pre>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <script>
+        // Lógica para el funcionamiento del acordeón
+        const accordions = document.querySelectorAll(".accordion");
+
+        accordions.forEach(acc => {
+            acc.addEventListener("click", function() {
+                // Alterna la clase 'active' para cambiar el estilo (ej. color de fondo, ícono)
+                this.classList.toggle("active");
+
+                // Selecciona el panel de contenido siguiente
+                const panel = this.nextElementSibling;
+
+                // Si el panel ya está abierto (tiene un max-height), lo cierra (max-height = null)
+                // Si no, lo abre calculando la altura necesaria (scrollHeight)
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        });
+
+        // Dark mode functionality
+        const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+        
+        function switchTheme(e) {
+            if (e.target.checked) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }    
+        }
+        
+        toggleSwitch.addEventListener('change', switchTheme, false);
+        
+        // Check for saved theme preference or default to 'light' mode
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                toggleSwitch.checked = true;
+            }
+        }
+    </script>
+
+</body>
+</html>

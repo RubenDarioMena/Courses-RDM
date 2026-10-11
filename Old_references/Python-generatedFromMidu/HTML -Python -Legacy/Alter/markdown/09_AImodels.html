@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso de Python: Lección 9 - Modelos de IA y APIs Avanzadas</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px 40px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #9b59b6;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #8e44ad;
+            margin-top: 30px;
+        }
+        p.intro {
+            text-align: center;
+            font-size: 1.1em;
+            color: #555;
+        }
+        .accordion {
+            background-color: #9b59b6;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 18px;
+            transition: background-color 0.4s ease;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion:hover, .accordion.active {
+            background-color: #8e44ad;
+        }
+        .accordion::after {
+            content: '▶';
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        .accordion.active::after {
+            transform: rotate(90deg);
+        }
+        .panel {
+            padding: 0 18px;
+            background-color: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        .panel p {
+            margin-top: 15px;
+        }
+        pre[class*="language-"] {
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        /* Theme switch styles */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+        }
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        body.dark-mode .container {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        body.dark-mode h1 {
+            color: #ffffff;
+            border-bottom-color: #9b59b6;
+        }
+        body.dark-mode h2 {
+            color: #ffffff;
+            border-bottom-color: #555;
+        }
+        body.dark-mode h3 {
+            color: #bb86fc;
+        }
+        body.dark-mode .panel {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            border-color: #555;
+        }
+        body.dark-mode .accordion {
+            background-color: #9b59b6;
+        }
+        body.dark-mode .accordion:hover, 
+        body.dark-mode .accordion.active {
+            background-color: #8e44ad;
+        }
+        
+        .warning-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        body.dark-mode .warning-box {
+            background-color: #3a3a00;
+            border-color: #666600;
+            color: #ffff99;
+        }
+        
+        .info-box {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        body.dark-mode .info-box {
+            background-color: #003d4a;
+            border-color: #006080;
+            color: #b3e5fc;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+        }
+        
+        body.dark-mode th {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+        }
+        
+        body.dark-mode td {
+            border-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="theme-toggle">
+            <input type="checkbox" id="theme-toggle" />
+            <div class="slider"></div>
+        </label>
+        <span style="margin-left: 10px; font-size: 14px;">🌙</span>
+    </div>
+
+    <div class="container">
+        <h1>Modelos de IA y APIs Avanzadas</h1>
+        <p class="intro">Domina la interacción con modelos de inteligencia artificial y técnicas avanzadas de prompt engineering</p>
+
+        <button class="accordion">Parte 1: Análisis de Imágenes con IA</button>
+        <div class="panel">
+            <h2>Introducción al Análisis de Imágenes</h2>
+            <p>Los modelos de IA modernos no solo pueden procesar texto, sino también <strong>analizar imágenes</strong>. Esta capacidad, conocida como <strong>visión por computadora</strong>, abre un mundo de posibilidades para nuestras aplicaciones.</p>
+
+            <p>Los modelos multimodales como <strong>GPT-4 Vision</strong> pueden:</p>
+            <ul>
+                <li>Describir el contenido de una imagen</li>
+                <li>Identificar objetos, personas y animales</li>
+                <li>Leer texto dentro de imágenes (OCR)</li>
+                <li>Analizar gráficos y diagramas</li>
+                <li>Responder preguntas específicas sobre la imagen</li>
+                <li>Detectar emociones y expresiones faciales</li>
+                <li>Analizar composición y elementos artísticos</li>
+            </ul>
+
+            <h3>¿Cómo funciona?</h3>
+            <p>El proceso es similar a enviar texto a una API, pero ahora incluimos tanto texto como una imagen en el mismo mensaje. La IA procesa ambos tipos de información y genera una respuesta que considera el contexto visual.</p>
+
+            <div class="info-box">
+                <strong>💡 Dato interesante:</strong> Los modelos de visión por computadora procesan las imágenes dividiéndolas en pequeños "parches" o segmentos, similar a como procesan las palabras en el texto.
+            </div>
+
+            <h3>Ejemplo Práctico: Análisis de Imagen con OpenAI</h3>
+            <p>Vamos a crear un programa que envíe una imagen a GPT-4 Vision y obtenga una descripción detallada:</p>
+
+            <pre><code class="language-python"># analisis_imagen.py
+
+import requests
+import os
+
+# Configuración de la API
+API_KEY = os.getenv("OPENAI_API_KEY")
+API_URL = "https://api.openai.com/v1/chat/completions"
+
+headers = {
+    "Authorization": f"Bearer {API_KEY}",
+    "Content-Type": "application/json"
+}
+
+def analizar_imagen(url_imagen, pregunta="¿Qué ves en esta imagen?"):
+    """
+    Analiza una imagen usando GPT-4 Vision
+    
+    Args:
+        url_imagen (str): URL de la imagen a analizar
+        pregunta (str): Pregunta específica sobre la imagen
+    
+    Returns:
+        str: Descripción generada por la IA
+    """
+    data = {
+        "model": "gpt-4o",  # Modelo con capacidades de visión
+        "messages": [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": pregunta
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": url_imagen
+                        }
+                    }
+                ]
+            }
+        ],
+        "max_tokens": 500
+    }
+    
+    try:
+        response = requests.post(API_URL, headers=headers, json=data)
+        response.raise_for_status()
+        
+        result = response.json()
+        descripcion = result['choices'][0]['message']['content']
+        
+        return descripcion
+        
+    except requests.exceptions.RequestException as e:
+        return f"Error al analizar la imagen: {e}"
+
+# Ejemplo de uso
+if __name__ == "__main__":
+    # URL de una imagen de ejemplo (gato)
+    imagen_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Cat_November_2010-1a.jpg/1200px-Cat_November_2010-1a.jpg"
+    
+    # Análisis básico
+    descripcion = analizar_imagen(imagen_url, "¿Qué animal es este y qué está haciendo? Describe la escena.")
+    print("Análisis de la imagen:")
+    print(descripcion)
+    
+    # Análisis más específico
+    analisis_detallado = analizar_imagen(
+        imagen_url, 
+        "Analiza los colores predominantes en esta imagen y describe la expresión del animal."
+    )
+    print("\nAnálisis detallado:")
+    print(analisis_detallado)
+</code></pre>
+
+            <h3>Casos de Uso Avanzados</h3>
+            <p>El análisis de imágenes tiene aplicaciones muy prácticas:</p>
+
+            <ul>
+                <li><strong>Moderación de contenido:</strong> Detectar contenido inapropiado automáticamente</li>
+                <li><strong>Accesibilidad:</strong> Generar descripciones de imágenes para personas con discapacidad visual</li>
+                <li><strong>E-commerce:</strong> Catalogar productos automáticamente</li>
+                <li><strong>Educación:</strong> Analizar diagramas y gráficos científicos</li>
+                <li><strong>Medicina:</strong> Asistir en el análisis preliminar de imágenes médicas</li>
+                <li><strong>Seguridad:</strong> Análisis de video vigilancia</li>
+                <li><strong>Marketing:</strong> Análisis de engagement en redes sociales</li>
+            </ul>
+
+            <div class="warning-box">
+                <strong>⚠️ Importante:</strong> El análisis de imágenes consume más tokens que el texto simple, lo que puede aumentar los costos. Siempre considera el tamaño y la resolución de las imágenes que envías.
+            </div>
+        </div>
+
+        <button class="accordion">Parte 2: El Arte del Control - Parámetros Avanzados</button>
+        <div class="panel">
+            <h2>Dominando los Parámetros de la IA</h2>
+            <p>Un prompt es solo el principio. Podemos afinar la respuesta de la IA usando parámetros adicionales en nuestras peticiones. Estos parámetros nos dan un control granular sobre el comportamiento del modelo.</p>
+
+            <h3>Temperature: El Termostato de la Creatividad</h3>
+            <p>Este parámetro, que va de <code>0.0</code> a <code>2.0</code>, controla qué tan predecible o creativa es la respuesta:</p>
+
+            <ul>
+                <li><strong>Bajo (~0.2):</strong> Más determinista y enfocado. Ideal para tareas basadas en hechos, como resúmenes o extracción de datos.</li>
+                <li><strong>Medio (~0.7):</strong> Equilibrio entre creatividad y coherencia. Bueno para la mayoría de aplicaciones.</li>
+                <li><strong>Alto (~1.0-1.5):</strong> Más aleatorio y creativo. Ideal para lluvia de ideas, escritura creativa o generar variedad.</li>
+            </ul>
+
+            <pre><code class="language-python"># control_temperatura.py
+
+import requests
+import os
+
+class ControladorIA:
+    def __init__(self):
+        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.api_url = "https://api.openai.com/v1/chat/completions"
+        self.headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+    
+    def generar_respuesta(self, prompt, temperature=0.7, max_tokens=150):
+        """
+        Genera una respuesta con parámetros personalizables
+        """
+        data = {
+            "model": "gpt-4o-mini",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": temperature,
+            "max_tokens": max_tokens
+        }
+        
+        try:
+            response = requests.post(self.api_url, headers=self.headers, json=data)
+            response.raise_for_status()
+            
+            result = response.json()
+            return result['choices'][0]['message']['content']
+            
+        except requests.exceptions.RequestException as e:
+            return f"Error: {e}"
+
+# Demostración de diferentes temperaturas
+controlador = ControladorIA()
+
+prompt = "Escribe una breve historia sobre un robot que aprende a cocinar."
+
+print("=== TEMPERATURA BAJA (0.1) - Más predecible ===")
+respuesta_baja = controlador.generar_respuesta(prompt, temperature=0.1)
+print(respuesta_baja)
+
+print("\n=== TEMPERATURA MEDIA (0.7) - Equilibrada ===")
+respuesta_media = controlador.generar_respuesta(prompt, temperature=0.7)
+print(respuesta_media)
+
+print("\n=== TEMPERATURA ALTA (1.2) - Más creativa ===")
+respuesta_alta = controlador.generar_respuesta(prompt, temperature=1.2)
+print(respuesta_alta)
+</code></pre>
+
+            <h3>Max Tokens: Control de Longitud y Costos</h3>
+            <p>Este parámetro establece el número máximo de "tokens" (piezas de palabras) que el modelo puede generar en su respuesta. Es crucial para:</p>
+
+            <ol>
+                <li><strong>Controlar costos:</strong> La mayoría de las APIs cobran por token.</li>
+                <li><strong>Evitar respuestas demasiado largas:</strong> Asegura que la salida sea concisa.</li>
+                <li><strong>Optimizar rendimiento:</strong> Respuestas más cortas se generan más rápido.</li>
+            </ol>
+
+            <pre><code class="language-python"># control_longitud.py
+
+def demostrar_max_tokens():
+    """Demuestra el efecto del parámetro max_tokens"""
+    
+    prompt = "Explica qué es la inteligencia artificial y sus aplicaciones principales."
+    
+    # Respuesta muy corta
+    respuesta_corta = controlador.generar_respuesta(
+        prompt, 
+        max_tokens=30,
+        temperature=0.3
+    )
+    print("RESPUESTA CORTA (30 tokens):")
+    print(respuesta_corta)
+    
+    # Respuesta media
+    respuesta_media = controlador.generar_respuesta(
+        prompt, 
+        max_tokens=100,
+        temperature=0.3
+    )
+    print("\nRESPUESTA MEDIA (100 tokens):")
+    print(respuesta_media)
+    
+    # Respuesta larga
+    respuesta_larga = controlador.generar_respuesta(
+        prompt, 
+        max_tokens=300,
+        temperature=0.3
+    )
+    print("\nRESPUESTA LARGA (300 tokens):")
+    print(respuesta_larga)
+
+# Ejecutar demostración
+demostrar_max_tokens()
+</code></pre>
+
+            <h3>Otros Parámetros Importantes</h3>
+            
+            <h4>Top_p (Nucleus Sampling)</h4>
+            <p>Alternativa a temperature. Controla la diversidad considerando solo el top X% de probabilidades más altas.</p>
+
+            <h4>Frequency Penalty</h4>
+            <p>Reduce la probabilidad de repetir las mismas palabras o frases.</p>
+
+            <h4>Presence Penalty</h4>
+            <p>Fomenta que el modelo introduzca nuevos temas en lugar de repetir los existentes.</p>
+
+            <pre><code class="language-python"># parametros_avanzados.py
+
+def generar_con_parametros_avanzados(prompt):
+    """Ejemplo usando múltiples parámetros avanzados"""
+    
+    data = {
+        "model": "gpt-4o-mini",
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0.8,
+        "max_tokens": 200,
+        "top_p": 0.9,
+        "frequency_penalty": 0.5,  # Reduce repeticiones
+        "presence_penalty": 0.3    # Fomenta nuevos temas
+    }
+    
+    # ... resto de la implementación
+    
+# Ejemplo de uso para generar contenido más variado
+prompt_creativo = "Escribe un poema sobre la programación en Python."
+resultado = generar_con_parametros_avanzados(prompt_creativo)
+print(resultado)
+</code></pre>
+
+            <div class="info-box">
+                <strong>💡 Consejo:</strong> Experimenta con diferentes combinaciones de parámetros para encontrar el equilibrio perfecto para tu aplicación específica. No hay una configuración "correcta" universal.
+            </div>
+        </div>
+
+        <button class="accordion">Parte 3: Prompt Engineering y Manejo de Conversación</button>
+        <div class="panel">
+            <h2>El Poder del System Prompt</h2>
+            <p>Además del rol "user", existe el rol <strong>"system"</strong>. Es el primer mensaje que se envía y sirve para establecer la personalidad, las reglas y el contexto de la IA para toda la conversación. Es la herramienta más poderosa del Prompt Engineering.</p>
+
+            <h3>¿Por qué es tan importante el System Prompt?</h3>
+            <ul>
+                <li><strong>Define la personalidad:</strong> Puede hacer que la IA actúe como un experto, un tutor, un asistente formal, etc.</li>
+                <li><strong>Establece reglas:</strong> Puede limitar o dirigir el comportamiento del modelo</li>
+                <li><strong>Proporciona contexto:</strong> Puede dar información de fondo que influye en todas las respuestas</li>
+                <li><strong>Mejora la consistencia:</strong> Mantiene el tono y estilo a lo largo de la conversación</li>
+            </ul>
+
+            <pre><code class="language-python"># system_prompt_ejemplos.py
+
+import requests
+import os
+
+class ChatbotPersonalizado:
+    def __init__(self):
+        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.api_url = "https://api.openai.com/v1/chat/completions"
+        self.headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+    
+    def chat_con_personalidad(self, mensajes):
+        """Envía una conversación completa con system prompt"""
+        data = {
+            "model": "gpt-4o-mini",
+            "messages": mensajes,
+            "temperature": 0.7,
+            "max_tokens": 200
+        }
+        
+        try:
+            response = requests.post(self.api_url, headers=self.headers, json=data)
+            response.raise_for_status()
+            
+            result = response.json()
+            return result['choices'][0]['message']['content']
+            
+        except requests.exceptions.RequestException as e:
+            return f"Error: {e}"
+
+# Ejemplos de diferentes personalidades
+chatbot = ChatbotPersonalizado()
+
+# Ejemplo 1: Tutor de programación
+mensajes_tutor = [
+    {
+        "role": "system", 
+        "content": """Eres un tutor de programación experto y paciente. 
+        Siempre explicas conceptos paso a paso, usas analogías simples, 
+        y proporcionas ejemplos de código claros. 
+        Nunca das respuestas directas sin explicar el razonamiento."""
+    },
+    {
+        "role": "user", 
+        "content": "¿Qué es una lista en Python?"
+    }
+]
+
+respuesta_tutor = chatbot.chat_con_personalidad(mensajes_tutor)
+print("=== TUTOR DE PROGRAMACIÓN ===")
+print(respuesta_tutor)
+
+# Ejemplo 2: Asistente formal de negocios
+mensajes_formal = [
+    {
+        "role": "system", 
+        "content": """Eres un asistente ejecutivo profesional. 
+        Respondes de manera formal, concisa y orientada a resultados. 
+        Siempre incluyes puntos de acción claros y fechas cuando sea relevante. 
+        Usas un tono corporativo pero accesible."""
+    },
+    {
+        "role": "user", 
+        "content": "Necesito organizar una reunión de equipo para discutir el nuevo proyecto."
+    }
+]
+
+respuesta_formal = chatbot.chat_con_personalidad(mensajes_formal)
+print("\n=== ASISTENTE EJECUTIVO ===")
+print(respuesta_formal)
+</code></pre>
+
+            <h3>Construyendo un Chatbot: Manejo del Historial</h3>
+            <p>Para que un chatbot "recuerde" lo que se ha dicho, debemos enviarle el historial completo de la conversación en cada nueva petición.</p>
+
+            <h4>La Lógica del Historial:</h4>
+            <ol>
+                <li>Mantén una lista que almacene todos los mensajes (system, user, assistant).</li>
+                <li>Cuando el usuario envíe un nuevo mensaje, añádelo a la lista.</li>
+                <li>Envía la lista completa a la API.</li>
+                <li>Cuando la API responda, añade también su respuesta (con el rol "assistant") a la lista.</li>
+                <li>Repite.</li>
+            </ol>
+
+            <pre><code class="language-python"># chatbot_con_memoria.py
+
+class ChatbotConMemoria:
+    def __init__(self, system_prompt="Eres un asistente útil y amigable."):
+        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.api_url = "https://api.openai.com/v1/chat/completions"
+        self.headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        # Inicializar historial con system prompt
+        self.historial = [
+            {"role": "system", "content": system_prompt}
+        ]
+    
+    def enviar_mensaje(self, mensaje_usuario):
+        """Envía un mensaje y mantiene el historial"""
+        
+        # 1. Añadir mensaje del usuario al historial
+        self.historial.append({
+            "role": "user", 
+            "content": mensaje_usuario
+        })
+        
+        # 2. Preparar datos para la API
+        data = {
+            "model": "gpt-4o-mini",
+            "messages": self.historial,  # Enviar TODO el historial
+            "temperature": 0.7,
+            "max_tokens": 300
+        }
+        
+        try:
+            # 3. Llamar a la API
+            response = requests.post(self.api_url, headers=self.headers, json=data)
+            response.raise_for_status()
+            
+            result = response.json()
+            respuesta_ia = result['choices'][0]['message']['content']
+            
+            # 4. Añadir respuesta de la IA al historial
+            self.historial.append({
+                "role": "assistant", 
+                "content": respuesta_ia
+            })
+            
+            return respuesta_ia
+            
+        except requests.exceptions.RequestException as e:
+            return f"Error: {e}"
+
+# Ejemplo de uso interactivo
+def demo_chatbot_interactivo():
+    system_prompt = """Eres un asistente de programación que habla como un pirata del siglo XVII. 
+    Siempre incluyes jerga pirata en tus respuestas, pero mantienes la información técnica precisa."""
+    
+    chatbot = ChatbotConMemoria(system_prompt)
+    
+    print("=== CHATBOT PIRATA PROGRAMADOR ===")
+    print("Escribe 'salir' para terminar la conversación")
+    print("-" * 50)
+    
+    while True:
+        entrada_usuario = input("\nTú: ")
+        
+        if entrada_usuario.lower() in ['salir', 'exit', 'quit']:
+            print("¡Hasta la vista, marinero! ⚓")
+            break
+        
+        respuesta = chatbot.enviar_mensaje(entrada_usuario)
+        print(f"🏴‍☠️ Chatbot: {respuesta}")
+
+# Ejecutar demo
+if __name__ == "__main__":
+    demo_chatbot_interactivo()
+</code></pre>
+
+            <h3>Técnicas Avanzadas de Prompt Engineering</h3>
+            
+            <h4>1. Few-Shot Learning</h4>
+            <p>Proporcionar ejemplos en el prompt para enseñar el formato deseado:</p>
+
+            <pre><code class="language-python"># few_shot_learning.py
+
+def crear_clasificador_sentimientos():
+    """Ejemplo de few-shot learning para clasificación de sentimientos"""
+    
+    system_prompt = """Clasifica el sentimiento de los textos como POSITIVO, NEGATIVO o NEUTRO.
+
+Ejemplos:
+Texto: "Me encanta este producto, es fantástico!"
+Sentimiento: POSITIVO
+
+Texto: "El servicio fue terrible, muy decepcionante."
+Sentimiento: NEGATIVO
+
+Texto: "El producto llegó a tiempo."
+Sentimiento: NEUTRO
+
+Ahora clasifica el siguiente texto:"""
+    
+    return system_prompt
+
+# Uso del clasificador
+mensajes = [
+    {"role": "system", "content": crear_clasificador_sentimientos()},
+    {"role": "user", "content": "Texto: 'No está mal, pero podría ser mejor.'"}
+]
+</code></pre>
+
+            <h4>2. Chain of Thought (Cadena de Pensamiento)</h4>
+            <p>Pedir a la IA que explique su razonamiento paso a paso:</p>
+
+            <pre><code class="language-python"># chain_of_thought.py
+
+def resolver_problema_matematico(problema):
+    """Usa chain of thought para resolver problemas matemáticos"""
+    
+    prompt = f"""Resuelve este problema paso a paso, explicando tu razonamiento:
+
+{problema}
+
+Piensa paso a paso:
+1. Primero, identifica qué información tengo
+2. Luego, determina qué necesito calcular
+3. Finalmente, realiza los cálculos necesarios
+
+Problema: {problema}
+Solución paso a paso:"""
+    
+    return prompt
+</code></pre>
+
+            <div class="info-box">
+                <strong>💡 Técnica clave:</strong> El Chain of Thought mejora significativamente la precisión en tareas que requieren razonamiento lógico o matemático.
+            </div>
+        </div>
+
+        <button class="accordion">Parte 4: Simplificando la Interacción con SDKs</button>
+        <div class="panel">
+            <h2>Más Allá de las Peticiones Manuales</h2>
+            <p>Hacer peticiones manuales con <code>requests</code> está muy bien para aprender, pero para proyectos más serios, es mejor usar el <strong>SDK</strong> (Kit de Desarrollo de Software) oficial del proveedor. Es una librería de Python que simplifica todo este proceso.</p>
+
+            <h3>Ventajas de usar SDKs oficiales:</h3>
+            <ul>
+                <li><strong>Código más limpio:</strong> Menos boilerplate y configuración manual</li>
+                <li><strong>Manejo automático de errores:</strong> Mejor gestión de excepciones específicas</li>
+                <li><strong>Actualizaciones automáticas:</strong> Compatibilidad con nuevas funciones de la API</li>
+                <li><strong>Documentación integrada:</strong> IntelliSense y autocompletado en tu IDE</li>
+                <li><strong>Optimizaciones:</strong> Reintentos automáticos, pooling de conexiones, etc.</li>
+            </ul>
+
+            <h3>Ejemplo con la librería oficial de OpenAI</h3>
+            <p>Primero, instalamos la librería oficial:</p>
+            <pre><code class="language-bash">pip install openai</code></pre>
+
+            <p>El código para hacer una llamada se vuelve mucho más limpio y legible:</p>
+
+            <pre><code class="language-python"># sdk_openai_ejemplo.py
+
+from openai import OpenAI
+import os
+
+# El cliente se configura una vez y se reutiliza
+# Automáticamente busca la API Key en la variable de entorno OPENAI_API_KEY
+client = OpenAI()
+
+class AsistenteIA:
+    def __init__(self):
+        self.client = OpenAI()
+        self.historial = []
+    
+    def configurar_personalidad(self, system_prompt):
+        """Configura la personalidad del asistente"""
+        self.historial = [
+            {"role": "system", "content": system_prompt}
+        ]
+    
+    def chat(self, mensaje, temperature=0.7, max_tokens=500):
+        """Envía un mensaje y mantiene el historial"""
+        
+        # Añadir mensaje del usuario
+        self.historial.append({"role": "user", "content": mensaje})
+        
+        try:
+            # La llamada a la API es mucho más directa
+            response = self.client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=self.historial,
+                temperature=temperature,
+                max_tokens=max_tokens
+            )
+            
+            # El acceso a la respuesta también es más limpio
+            respuesta = response.choices[0].message.content
+            
+            # Añadir respuesta al historial
+            self.historial.append({"role": "assistant", "content": respuesta})
+            
+            return respuesta
+            
+        except Exception as e:
+            return f"Error: {e}"
+    
+    def analizar_imagen(self, url_imagen, pregunta):
+        """Analiza una imagen usando el SDK"""
+        try:
+            response = self.client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": pregunta},
+                            {
+                                "type": "image_url",
+                                "image_url": {"url": url_imagen}
+                            }
+                        ]
+                    }
+                ],
+                max_tokens=300
+            )
+            
+            return response.choices[0].message.content
+            
+        except Exception as e:
+            return f"Error al analizar imagen: {e}"
+
+# Ejemplo de uso del SDK
+if __name__ == "__main__":
+    # Crear asistente
+    asistente = AsistenteIA()
+    
+    # Configurar personalidad
+    asistente.configurar_personalidad(
+        "Eres un asistente que solo responde con haikus sobre programación."
+    )
+    
+    # Chat simple
+    respuesta = asistente.chat("Háblame sobre Python")
+    print("Asistente Haiku:")
+    print(respuesta)
+    
+    # Análisis de imagen
+    imagen_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Cat_November_2010-1a.jpg/1200px-Cat_November_2010-1a.jpg"
+    analisis = asistente.analizar_imagen(imagen_url, "Describe este animal en un haiku")
+    print("\nAnálisis de imagen en haiku:")
+    print(analisis)
+</code></pre>
+
+            <h3>Comparación: Requests vs SDK</h3>
+            <table>
+                <tr>
+                    <th>Aspecto</th>
+                    <th>Requests Manual</th>
+                    <th>SDK Oficial</th>
+                </tr>
+                <tr>
+                    <td>Configuración</td>
+                    <td>Headers, URLs manuales</td>
+                    <td>Automática</td>
+                </tr>
+                <tr>
+                    <td>Manejo de errores</td>
+                    <td>Try/except genérico</td>
+                    <td>Excepciones específicas</td>
+                </tr>
+                <tr>
+                    <td>Código</td>
+                    <td>Más líneas, más complejo</td>
+                    <td>Más limpio, más legible</td>
+                </tr>
+                <tr>
+                    <td>Actualizaciones</td>
+                    <td>Manual</td>
+                    <td>Automática</td>
+                </tr>
+            </table>
+
+            <div class="warning-box">
+                <strong>⚠️ Recomendación:</strong> Para proyectos de aprendizaje, usa requests para entender cómo funcionan las APIs. Para proyectos de producción, usa siempre el SDK oficial cuando esté disponible.
+            </div>
+        </div>
+
+        <button class="accordion">Ejercicios Prácticos</button>
+        <div class="panel">
+            <h3>Ejercicio 1: Analizador de Sentimientos con Imágenes</h3>
+            <p>Crea una aplicación que analice tanto el texto como las imágenes de redes sociales para determinar el sentimiento general de una publicación.</p>
+            
+            <h4>Requisitos:</h4>
+            <ul>
+                <li>Analizar texto para detectar sentimiento (positivo, negativo, neutro)</li>
+                <li>Analizar imágenes para detectar emociones faciales</li>
+                <li>Combinar ambos análisis en un score final</li>
+                <li>Generar un reporte detallado con justificaciones</li>
+                <li>Implementar diferentes niveles de confianza</li>
+            </ul>
+
+            <h4>Código base sugerido:</h4>
+            <pre><code class="language-python">class AnalizadorSentimientos:
+    def __init__(self):
+        self.client = OpenAI()
+    
+    def analizar_texto(self, texto):
+        # Implementar análisis de sentimiento en texto
+        pass
+    
+    def analizar_imagen(self, url_imagen):
+        # Implementar análisis de emociones en imagen
+        pass
+    
+    def combinar_analisis(self, sentimiento_texto, sentimiento_imagen):
+        # Combinar ambos análisis en un score final
+        pass
+</code></pre>
+
+            <h3>Ejercicio 2: Chatbot Especializado</h3>
+            <p>Desarrolla un chatbot especializado en un tema específico (ej: nutrición, programación, historia) que mantenga contexto y personalidad consistente.</p>
+            
+            <h4>Características requeridas:</h4>
+            <ul>
+                <li>System prompt bien definido con personalidad específica</li>
+                <li>Manejo de historial de conversación con límite de tokens</li>
+                <li>Capacidad de analizar imágenes relacionadas al tema</li>
+                <li>Diferentes niveles de temperatura según el tipo de pregunta</li>
+                <li>Función para exportar conversaciones a archivo</li>
+                <li>Sistema de comandos especiales (ej: /reset, /export, /help)</li>
+            </ul>
+
+            <h3>Ejercicio 3: Generador de Contenido Inteligente</h3>
+            <p>Crea una herramienta que genere contenido para redes sociales basado en imágenes y parámetros específicos.</p>
+            
+            <h4>Funcionalidades:</h4>
+            <ul>
+                <li>Subir una imagen y generar descripción automática</li>
+                <li>Crear hashtags relevantes basados en el contenido</li>
+                <li>Generar múltiples versiones con diferentes tonos (formal, casual, humorístico)</li>
+                <li>Optimizar longitud según la plataforma (Twitter, Instagram, LinkedIn)</li>
+                <li>Sugerir mejores horarios de publicación</li>
+                <li>Generar llamadas a la acción efectivas</li>
+            </ul>
+
+            <h3>Ejercicio 4: Asistente de Código con IA</h3>
+            <p>Desarrolla un asistente que ayude a revisar y mejorar código Python.</p>
+            
+            <h4>Capacidades:</h4>
+            <ul>
+                <li>Analizar código y sugerir mejoras de rendimiento</li>
+                <li>Detectar posibles bugs y vulnerabilidades</li>
+                <li>Explicar qué hace el código línea por línea</li>
+                <li>Sugerir refactorizaciones siguiendo mejores prácticas</li>
+                <li>Generar documentación automática (docstrings)</li>
+                <li>Convertir código a diferentes estilos (funcional, OOP)</li>
+                <li>Generar tests unitarios automáticamente</li>
+            </ul>
+        </div>
+
+        <button class="accordion">Mini-Proyectos Finales</button>
+        <div class="panel">
+            <h3>Proyecto 1: Sistema de Moderación de Contenido</h3>
+            <p><strong>Descripción:</strong> Crea un sistema completo que modere automáticamente contenido de texto e imágenes para una plataforma social.</p>
+            
+            <p><strong>Características principales:</strong></p>
+            <ul>
+                <li><strong>Análisis de texto:</strong> Detectar lenguaje ofensivo, spam, desinformación</li>
+                <li><strong>Análisis de imágenes:</strong> Detectar contenido inapropiado, violencia, desnudez</li>
+                <li><strong>Sistema de puntuación:</strong> Asignar scores de riesgo a cada publicación</li>
+                <li><strong>Dashboard de moderación:</strong> Interfaz web para revisar contenido flaggeado</li>
+                <li><strong>API REST:</strong> Endpoints para integrar con otras aplicaciones</li>
+                <li><strong>Base de datos:</strong> Almacenar resultados y crear reportes</li>
+                <li><strong>Alertas en tiempo real:</strong> Notificaciones para contenido de alto riesgo</li>
+            </ul>
+
+            <p><strong>Tecnologías sugeridas:</strong></p>
+            <ul>
+                <li>FastAPI para la API REST</li>
+                <li>SQLite/PostgreSQL para almacenar resultados</li>
+                <li>Streamlit para el dashboard</li>
+                <li>OpenAI API para análisis de contenido</li>
+                <li>Redis para caché de resultados</li>
+            </ul>
+
+            <h3>Proyecto 2: Tutor Personal de Programación</h3>
+            <p><strong>Descripción:</strong> Desarrolla un tutor de IA que se adapte al nivel y estilo de aprendizaje del estudiante.</p>
+            
+            <p><strong>Funcionalidades avanzadas:</strong></p>
+            <ul>
+                <li><strong>Evaluación inicial:</strong> Determinar el nivel del estudiante con quiz adaptativo</li>
+                <li><strong>Curriculum personalizado:</strong> Adaptar lecciones según el progreso y debilidades</li>
+                <li><strong>Análisis de código:</strong> Revisar ejercicios y dar feedback detallado</li>
+                <li><strong>Generación de ejercicios:</strong> Crear problemas personalizados según el nivel</li>
+                <li><strong>Tracking de progreso:</strong> Visualizar mejoras a lo largo del tiempo</li>
+                <li><strong>Gamificación:</strong> Sistema de puntos, logros y desafíos</li>
+                <li><strong>Explicaciones adaptativas:</strong> Ajustar el estilo de explicación según el estudiante</li>
+            </ul>
+
+            <h3>Proyecto 3: Asistente de Investigación Académica</h3>
+            <p><strong>Descripción:</strong> Crea un asistente que ayude a investigadores a analizar papers, generar resúmenes y encontrar conexiones entre estudios.</p>
+            
+            <p><strong>Capacidades clave:</strong></p>
+            <ul>
+                <li><strong>Análisis de PDFs:</strong> Extraer y resumir contenido de papers académicos</li>
+                <li><strong>Generación de resúmenes:</strong> Crear abstracts ejecutivos y técnicos</li>
+                <li><strong>Detección de tendencias:</strong> Identificar patrones en múltiples estudios</li>
+                <li><strong>Generación de citas:</strong> Crear bibliografías automáticamente en diferentes formatos</li>
+                <li><strong>Análisis de gráficos:</strong> Interpretar figuras, tablas y diagramas</li>
+                <li><strong>Búsqueda semántica:</strong> Encontrar papers relacionados por contenido</li>
+                <li><strong>Detección de plagio:</strong> Comparar textos y encontrar similitudes</li>
+            </ul>
+
+            <h3>Proyecto 4: Plataforma de Creación de Contenido</h3>
+            <p><strong>Descripción:</strong> Desarrolla una plataforma completa para creadores de contenido que automatice la generación de posts, videos y podcasts.</p>
+            
+            <p><strong>Módulos principales:</strong></p>
+            <ul>
+                <li><strong>Generador de ideas:</strong> Sugerir temas trending y relevantes según el nicho</li>
+                <li><strong>Creador de scripts:</strong> Generar guiones para videos/podcasts con estructura narrativa</li>
+                <li><strong>Optimizador SEO:</strong> Crear títulos y descripciones optimizadas para búsqueda</li>
+                <li><strong>Generador de thumbnails:</strong> Analizar imágenes y sugerir mejoras visuales</li>
+                <li><strong>Planificador de contenido:</strong> Calendario editorial inteligente con análisis de audiencia</li>
+                <li><strong>Análisis de competencia:</strong> Estudiar estrategias de otros creadores</li>
+                <li><strong>Predicción de engagement:</strong> Estimar el rendimiento del contenido</li>
+            </ul>
+
+            <h3>Consejos para el Desarrollo</h3>
+            <ul>
+                <li><strong>Prototipa rápido:</strong> Comienza con funcionalidades básicas y ve añadiendo complejidad</li>
+                <li><strong>Maneja costos:</strong> Implementa límites y caché para controlar gastos de API</li>
+                <li><strong>Considera la latencia:</strong> Las APIs de IA pueden ser lentas, diseña UX apropiada</li>
+                <li><strong>Implementa fallbacks:</strong> Ten planes B cuando las APIs fallen</li>
+                <li><strong>Monitorea calidad:</strong> Implementa sistemas para evaluar la calidad de las respuestas</li>
+                <li><strong>Privacidad y ética:</strong> Asegúrate de manejar datos sensibles apropiadamente</li>
+                <li><strong>Testing exhaustivo:</strong> Prueba con diferentes tipos de entrada y casos extremos</li>
+                <li><strong>Documentación clara:</strong> Documenta APIs internas y guías de uso</li>
+            </ul>
+
+            <div class="info-box">
+                <strong>🚀 Próximos pasos:</strong> Una vez domines estos conceptos, explora otras APIs como Claude (Anthropic), Gemini (Google), o modelos open-source como Llama. Cada uno tiene sus fortalezas específicas y casos de uso ideales.
+            </div>
+
+            <h3>Recursos Adicionales</h3>
+            <ul>
+                <li><strong>APIs alternativas:</strong> Anthropic Claude, Google Gemini, Cohere, Hugging Face</li>
+                <li><strong>Herramientas de desarrollo:</strong> LangChain, LlamaIndex, Pinecone (vectores)</li>
+                <li><strong>Monitoreo:</strong> Weights & Biases, MLflow para tracking de experimentos</li>
+                <li><strong>Deployment:</strong> Docker, Kubernetes, Serverless functions</li>
+                <li><strong>Seguridad:</strong> Rate limiting, input validation, output filtering</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dark mode toggle functionality
+            const themeToggle = document.getElementById('theme-toggle');
+            const body = document.body;
+
+            // Check for saved theme preference or default to 'light'
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            if (currentTheme === 'dark') {
+                body.classList.add('dark-mode');
+                if (themeToggle) themeToggle.checked = true;
+            }
+
+            if (themeToggle) {
+                themeToggle.addEventListener('change', function() {
+                    if (this.checked) {
+                        body.classList.add('dark-mode');
+                        localStorage.setItem('theme', 'dark');
+                    } else {
+                        body.classList.remove('dark-mode');
+                        localStorage.setItem('theme', 'light');
+                    }
+                });
+            }
+
+            // Accordion functionality
+            const accordions = document.querySelectorAll('.accordion');
+            
+            accordions.forEach(function(accordion) {
+                accordion.addEventListener('click', function() {
+                    // Toggle active class
+                    this.classList.toggle('active');
+                    
+                    // Get the panel
+                    const panel = this.nextElementSibling;
+                    
+                    // Toggle panel display
+                    if (panel.style.maxHeight) {
+                        panel.style.maxHeight = null;
+                    } else {
+                        panel.style.maxHeight = panel.scrollHeight + "px";
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso de Python: Lección 5 - Expresiones Regulares</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px 40px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+        }
+        p.intro {
+            text-align: center;
+            font-size: 1.1em;
+            color: #555;
+        }
+        .accordion {
+            background-color: #e74c3c;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 18px;
+            transition: background-color 0.4s ease;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion:hover, .accordion.active {
+            background-color: #c0392b;
+        }
+        .accordion::after {
+            content: '▶';
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        .accordion.active::after {
+            transform: rotate(90deg);
+        }
+        .panel {
+            padding: 0 18px;
+            background-color: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        .panel p {
+            margin-top: 15px;
+        }
+        pre[class*="language-"] {
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        /* Theme switch styles */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+        }
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        body.dark-mode .container {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        body.dark-mode h1 {
+            color: #ffffff;
+            border-bottom-color: #e74c3c;
+        }
+        body.dark-mode h2 {
+            color: #ffffff;
+            border-bottom-color: #555;
+        }
+        body.dark-mode p.intro {
+            color: #ccc;
+        }
+        body.dark-mode .accordion {
+            background-color: #e74c3c;
+        }
+        body.dark-mode .accordion:hover, body.dark-mode .accordion.active {
+            background-color: #c0392b;
+        }
+        body.dark-mode .panel {
+            background-color: #2a2a2a;
+            border-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round"></div>
+        </label>
+    </div>
+    
+    <div class="container">
+        <h1>Lección 5: Expresiones Regulares (Regex) 🔎</h1>
+        <p class="intro">Las Expresiones Regulares (o Regex) son una herramienta increíblemente poderosa para buscar, validar y manipular texto. Son como un "mini-lenguaje" de programación diseñado específicamente para trabajar con patrones en cadenas de texto.</p>
+
+        <h2>Conceptos Básicos de Regex</h2>
+
+        <button class="accordion">01: Fundamentos del Módulo `re`</button>
+        <div class="panel">
+            <p>Para usar Regex en Python, lo primero es importar el módulo <code>re</code>. Las operaciones básicas consisten en definir un patrón de búsqueda y aplicarlo a un texto.</p>
+            
+            <p><strong>Encontrando la Primera Coincidencia con <code>re.search()</code>:</strong><br>Esta función busca un patrón en un texto y se detiene en la primera coincidencia que encuentra. Si tiene éxito, devuelve un objeto "match" con información sobre el hallazgo; de lo contrario, devuelve <code>None</code>.</p>
+            <pre><code class="language-python">import re
+
+pattern = "IA"
+text = "Todo el mundo dice que la IA nos va a quitar el trabajo."
+result = re.search(pattern, text)
+
+if result:
+  print("Patrón encontrado:")
+  print(f"Texto coincidente: {result.group()}")
+  print(f"Posición inicial: {result.start()}")
+  print(f"Posición final: {result.end()}")
+else:
+  print("No se encontró el patrón.")</code></pre>
+
+            <p><strong>Encontrando Todas las Coincidencias:</strong><br>Si necesitas todas las ocurrencias de un patrón, tienes dos opciones principales:
+            <ul>
+                <li><code>re.findall()</code>: Devuelve una lista con todas las cadenas que coinciden.</li>
+                <li><code>re.finditer()</code>: Es más eficiente para muchas coincidencias, ya que devuelve un "iterador" que puedes recorrer en un bucle <code>for</code>.</li>
+            </ul></p>
+            <pre><code class="language-python">text = "Me gusta Python. Python es genial. ¡Amo Python!"
+pattern = "Python"
+
+# Con findall()
+matches_list = re.findall(pattern, text)
+print(f"findall() encontró {len(matches_list)} coincidencias: {matches_list}")
+
+# Con finditer()
+print("\nfinditer() encontró:")
+matches_iter = re.finditer(pattern, text)
+for match in matches_iter:
+  print(f"- '{match.group()}' en la posición {match.start()}")</code></pre>
+
+            <p><strong>Modificadores y Reemplazo de Texto:</strong><br>Puedes alterar el comportamiento de una búsqueda con "flags", como <code>re.IGNORECASE</code> para que no distinga mayúsculas de minúsculas. Para reemplazar texto, <code>re.sub()</code> busca todas las coincidencias y las sustituye por una nueva cadena.</p>
+            <pre><code class="language-python"># Ignorando mayúsculas/minúsculas
+text = "Python, python, PYTHON"
+matches = re.findall("python", text, re.IGNORECASE)
+print(f"Coincidencias ignorando mayúsculas: {matches}")
+
+# Reemplazando texto
+text = "Hola, mundo! Hola de nuevo."
+new_text = re.sub("hola", "Adiós", text, flags=re.IGNORECASE)
+print(f"Texto reemplazado: {new_text}")</code></pre>
+        </div>
+
+        <h2>Metacaracteres: Los Símbolos Especiales</h2>
+
+        <button class="accordion">02: Metacaracteres Esenciales</button>
+        <div class="panel">
+            <p>Los metacaracteres son el corazón de Regex. Son símbolos que no se representan a sí mismos, sino que tienen un significado especial.</p>
+            
+            <p><strong>El Comodín <code>.</code> y la Secuencia de Escape <code>\</code>:</strong><br>El punto <code>.</code> es un comodín que coincide con cualquier carácter (excepto salto de línea). Si quieres buscar un punto literal, debes "escaparlo" con una barra invertida <code>\</code> para anular su significado especial.</p>
+            <pre><code class="language-python">text = "casa caasa cosa cisa cesa"
+pattern = r"c.sa" # Coincide con 'casa', 'cosa', 'cisa', 'cesa'
+print(re.findall(pattern, text))
+
+text_con_punto = "El archivo se llama main.py."
+pattern_punto = r"\." # Busca el punto literal
+print(re.findall(pattern_punto, text_con_punto))</code></pre>
+
+            <p><strong>Clases de Caracteres (<code>\d</code>, <code>\w</code>, <code>\s</code>):</strong><br>Son atajos para grupos comunes de caracteres:
+            <ul>
+                <li><code>\d</code>: Coincide con cualquier <strong>dígito</strong> (0-9).</li>
+                <li><code>\w</code>: Coincide con cualquier carácter <strong>alfanumérico</strong> (a-z, A-Z, 0-9, y el guion bajo <code>_</code>).</li>
+                <li><code>\s</code>: Coincide con cualquier carácter de <strong>espacio en blanco</strong> (espacio, tab, salto de línea).</li>
+            </ul></p>
+            <pre><code class="language-python">text = "Mi número es +34 688999999 y mi usuario es midu_dev"
+# Buscar un número de teléfono de España
+phone_pattern = r"\+34\s\d\d\d\d\d\d\d\d\d"
+print(re.search(phone_pattern, text).group())
+
+# Buscar el nombre de usuario
+user_pattern = r"midu_dev"
+print(re.search(user_pattern, text).group())</code></pre>
+
+            <p><strong>Anclas (<code>^</code>, <code>$</code>) y Límites de Palabra (<code>\b</code>):</strong><br>Las "anclas" no coinciden con caracteres, sino con posiciones. <code>^</code> coincide con el inicio de la cadena y <code>$</code> con el final. <code>\b</code> es un "límite de palabra", ideal para buscar palabras completas y no subcadenas.</p>
+            <pre><code class="language-python">text = "casa casada cosa cosas casado casa"
+pattern = r"\bcasa\b" # Busca solo la palabra exacta "casa"
+print(re.findall(pattern, text)) # -> ['casa', 'casa']
+
+email = "midu@gmail.com"
+pattern_gmail = r"@gmail\.com$" # Verifica si el email TERMINA en @gmail.com
+if re.search(pattern_gmail, email):
+    print("El correo es de Gmail.")</code></pre>
+        </div>
+
+        <h2>Cuantificadores: Especificando Repeticiones</h2>
+
+        <button class="accordion">03: Cuantificadores (<code>*</code>, <code>+</code>, <code>?</code>, <code>{}</code>)</button>
+        <div class="panel">
+            <p>Los cuantificadores te permiten especificar cuántas veces debe aparecer un carácter o grupo para que haya una coincidencia.</p>
+            
+            <p><strong><code>*</code>, <code>+</code>, <code>?</code>:</strong><br>
+            <ul>
+                <li><code>*</code>: Coincide <strong>cero o más</strong> veces.</li>
+                <li><code>+</code>: Coincide <strong>una o más</strong> veces.</li>
+                <li><code>?</code>: Coincide <strong>cero o una</strong> vez (hace que el carácter sea opcional).</li>
+            </ul></p>
+            <pre><code class="language-python">text = "aaabacb"
+print(re.findall("a*b", text)) # -> ['aaab', 'ab', 'b']
+print(re.findall("a+b", text)) # -> ['aaab', 'ab']
+print(re.findall("a?b", text)) # -> ['ab', 'ab', 'b']</code></pre>
+
+            <p><strong>Llaves <code>{}</code> para Cantidades Específicas:</strong><br>Para un control preciso, usamos llaves:
+            <ul>
+                <li><code>{n}</code>: Exactamente 'n' veces.</li>
+                <li><code>{n,m}</code>: Un rango de 'n' a 'm' veces.</li>
+                <li><code>{n,}</code>: 'n' o más veces.</li>
+            </ul></p>
+            <pre><code class="language-python"># Buscar un número de teléfono español, con prefijo opcional
+phone1 = "+34 688999999"
+phone2 = "611222333"
+pattern = r"(\+34\s)?\d{9}" # El prefijo es opcional, el número debe tener 9 dígitos
+print(re.search(pattern, phone1).group())
+print(re.search(pattern, phone2).group())
+
+# Encontrar palabras de 4 a 6 letras
+words = "ala casa árbol león cinco murcielago"
+pattern_words = r"\b\w{4,6}\b"
+print(re.findall(pattern_words, words))</code></pre>
+        </div>
+
+        <h2>Conjuntos (Sets): Definiendo Grupos de Caracteres</h2>
+
+        <button class="accordion">04: Conjuntos de Caracteres `[]`</button>
+        <div class="panel">
+            <p>Los conjuntos (o clases de caracteres), definidos con corchetes <code>[]</code>, te permiten crear tu propio grupo de caracteres válidos para una posición.</p>
+            
+            <p><strong>Conjuntos Básicos, Rangos y Negación:</strong><br>
+            <ul>
+                <li><code>[aeiou]</code>: Coincide con cualquier vocal.</li>
+                <li><code>[a-z]</code>: Coincide con cualquier letra minúscula (rango).</li>
+                <li><code>[0-9]</code>: Coincide con cualquier dígito (es igual a <code>\d</code>).</li>
+                <li><code>[^aeiou]</code>: El <code>^</code> al inicio <strong>niega</strong> el conjunto, coincidiendo con cualquier carácter que NO sea una vocal.</li>
+            </ul></p>
+            <pre><code class="language-python"># Buscar las palabras "man", "fan" y "ban"
+text = "man ran fan ñan ban"
+pattern = r"[mfb]an"
+print(re.findall(pattern, text)) # -> ['man', 'fan', 'ban']
+
+# Buscar todas las consonantes
+text = "Hola mundo"
+pattern_consonants = r"[^aeiou\s]"
+print(re.findall(pattern_consonants, text)) # -> ['H', 'l', 'm', 'n', 'd']</code></pre>
+
+            <p><strong>Desafío Final: Validación de Emails</strong><br>Un uso clásico de Regex es validar formatos complejos como los correos electrónicos. Combinando todo lo aprendido (conjuntos, cuantificadores, metacaracteres), podemos construir patrones robustos para esta tarea. La siguiente imagen desglosa un ejemplo común.</p>
+            
+            <p>Aquí tienes un patrón mejorado que intenta resolver algunos casos borde, como subdominios (ej: <code>.co.uk</code>):</p>
+            <pre><code class="language-python"># Este patrón es más avanzado y cubre más casos
+email_pattern = r"^[\w._%+-]+@[\w.-]+\.[a-zA-Z]{2,}$"
+
+test_emails = ["test@example.com", "mi.nombre+alias@shopping.online", "michael@gov.co.uk", "invalido@.com"]
+
+for email in test_emails:
+    if re.search(email_pattern, email):
+        print(f"✔️ {email} es un email válido.")
+    else:
+        print(f"❌ {email} no es un email válido.")</code></pre>
+        <p><strong>Imagen de referencia</strong><br><img src="https://www.computerhope.com/jargon/r/regular-expression.png" alt="Example of regex pattern">
+        </div>
+        
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <script>
+        const accordions = document.querySelectorAll(".accordion");
+        accordions.forEach(acc => {
+            acc.addEventListener("click", function() {
+                this.classList.toggle("active");
+                const panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        });
+
+        // Dark mode functionality
+        const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+        
+        function switchTheme(e) {
+            if (e.target.checked) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }    
+        }
+        
+        toggleSwitch.addEventListener('change', switchTheme, false);
+        
+        // Check for saved theme preference or default to 'light' mode
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                toggleSwitch.checked = true;
+            }
+        }
+    </script>
+
+</body>
+</html>

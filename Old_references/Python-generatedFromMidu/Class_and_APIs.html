@@ -1,0 +1,1362 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Class and APIs</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.highlight-default_background {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.highlight-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.block-color-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-default { background-color: rgba(84, 72, 49, 0.08); }
+.select-value-color-gray { background-color: rgba(84, 72, 49, 0.15); }
+.select-value-color-brown { background-color: rgba(210, 162, 141, 0.35); }
+.select-value-color-orange { background-color: rgba(224, 124, 57, 0.27); }
+.select-value-color-yellow { background-color: rgba(236, 191, 66, 0.39); }
+.select-value-color-green { background-color: rgba(123, 183, 129, 0.27); }
+.select-value-color-blue { background-color: rgba(93, 165, 206, 0.27); }
+.select-value-color-purple { background-color: rgba(168, 129, 197, 0.27); }
+.select-value-color-pink { background-color: rgba(225, 136, 179, 0.27); }
+.select-value-color-red { background-color: rgba(244, 171, 159, 0.4); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="210ccb84-58a3-80f3-b22e-d2c807a0922f" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">😃</span></div><h1 class="page-title">Class and APIs</h1><p class="page-description"></p></header><div class="page-body"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Lección 00: Introducción a las Clases y Objetos</strong></summary><div class="indented"><p id="210ccb84-58a3-8021-b83d-dadff80d571c" class="">¡Empezamos nuestro viaje! La Programación Orientada a Objetos (POO) es un paradigma que nos permite estructurar nuestro código de una manera que se asemeja al mundo real. En lugar de tener datos y funciones por separado, los agrupamos en &quot;objetos&quot;. Una <strong>clase</strong> es como un plano o una plantilla para crear esos objetos. Define qué datos (llamados atributos) tendrán y qué cosas podrán hacer (llamados métodos). Un <strong>objeto</strong> (o instancia) es el elemento concreto que construimos a partir de ese plano.</p><p id="210ccb84-58a3-806d-8993-d50c62cc98aa" class="">En este primer ejemplo, crearemos la plantilla más simple posible: una clase <code>Coche</code>.</p><p id="210ccb84-58a3-80d8-94b0-df0994a733ca" class="">Lección 00: Clase Coche</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="210ccb84-58a3-80b4-8e5f-c5d71e44bf62" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all"># 00_Clases_y_Objetos/coche.py
+
+# --- 1. Definición de la Clase ---
+# Usamos la palabra clave &#x27;class&#x27; seguida del nombre de la clase (por convención, en CamelCase).
+class Coche:
+    # --- 2. El Método Constructor: __init__ ---
+    # Este método especial se ejecuta AUTOMÁTICAMENTE cada vez que creamos un nuevo objeto de esta clase.
+    # &#x27;self&#x27; es una referencia al objeto que se está creando. Siempre es el primer parámetro.
+    # &#x27;marca&#x27; y &#x27;modelo&#x27; son los argumentos que pasaremos al crear el coche.
+    def __init__(self, marca, modelo, anio):
+        # --- 3. Atributos de Instancia ---
+        # Estos son los datos que pertenecerán a cada objeto &#x27;Coche&#x27; específico.
+        # Asignamos los valores recibidos a los atributos del objeto usando &#x27;self&#x27;.
+        self.marca = marca
+        self.modelo = modelo
+        self.anio = anio
+        self.encendido = False # Por defecto, un coche nuevo está apagado.
+
+    # Un método para describir el coche
+    def descripcion(self):
+        return f&quot;Coche: {self.marca} {self.modelo} del año {self.anio}&quot;
+
+# --- 4. Creación de Objetos (Instancias) ---
+# Ahora usamos nuestra clase &#x27;Coche&#x27; como si fuera una función para crear objetos concretos.
+
+# Creamos nuestro primer objeto coche.
+# Esto llama a __init__ con marca=&quot;Toyota&quot;, modelo=&quot;Corolla&quot; y anio=2021
+mi_coche = Coche(&quot;Toyota&quot;, &quot;Corolla&quot;, 2021)
+
+# Creamos otro objeto, completamente independiente del primero.
+otro_coche = Coche(&quot;Ford&quot;, &quot;Mustang&quot;, 1968)
+
+
+# --- 5. Accediendo a los Atributos y Métodos ---
+# Usamos la notación de punto para acceder a los datos y las funciones del objeto.
+
+print(&quot;--- Información de mis coches ---&quot;)
+# Accedemos a los atributos directamente
+print(f&quot;Mi coche es un {mi_coche.marca} {mi_coche.modelo}.&quot;) # Salida: Mi coche es un Toyota Corolla.
+print(f&quot;El otro coche es un {otro_coche.marca} fabricado en {otro_coche.anio}.&quot;) # Salida: El otro coche es un Ford fabricado en 1968.
+
+# Llamamos al método descripcion()
+print(mi_coche.descripcion()) # Salida: Coche: Toyota Corolla del año 2021
+print(otro_coche.descripcion()) # Salida: Coche: Ford Mustang del año 1968</code></pre><p id="210ccb84-58a3-8090-b695-c5fed8d3f870" class="">¡Y eso es todo por ahora! Ya has creado tu primera clase y dos objetos a partir de ella. Has aprendido a definir sus características iniciales con <code>__init__</code> y a acceder a sus datos.</p></div></details><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Lección 01: Atributos y Métodos</strong></summary><div class="indented"><p id="210ccb84-58a3-80da-9b09-e063c53e569a" class="">En la lección anterior, definimos los <strong>atributos de instancia</strong> (<code>marca</code>, <code>modelo</code>, etc.) dentro de <code>__init__</code>. Estos son datos únicos para cada objeto. Ahora, introduciremos dos conceptos clave:</p><ol type="1" id="210ccb84-58a3-80ac-bb50-e6c45bc67dce" class="numbered-list" start="1"><li><strong>Atributos de Clase:</strong> Son atributos que pertenecen a la clase en sí, no a un objeto en particular. <strong>Todos los objetos</strong> de esa clase compartirán el mismo valor para este atributo. Por ejemplo, todos nuestros coches tendrán 4 ruedas. Se definen directamente dentro de la clase, fuera de cualquier método.</li></ol><ol type="1" id="210ccb84-58a3-808b-b7a4-e7aa7e9a785a" class="numbered-list" start="2"><li><strong>Métodos:</strong> Son las funciones que definen el <strong>comportamiento</strong> de un objeto. Ya creamos el método <code>descripcion()</code>, que solo leía datos. Ahora crearemos métodos que <em>modifican</em> el estado del objeto, como <code>encender()</code>, <code>apagar()</code> o <code>acelerar()</code>. La palabra <code>self</code> es crucial aquí, ya que le permite a un método acceder y cambiar los atributos del propio objeto que lo está llamando.</li></ol><p id="210ccb84-58a3-80fc-99d7-f6d3b02f2f6f" class="">Vamos a mejorar nuestra clase <code>Coche</code>.</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="210ccb84-58a3-807e-b54f-d59abbf71406" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">class Coche:
+    # --- 1. Atributo de Clase ---
+    # Este atributo es compartido por TODAS las instancias de la clase Coche.
+    ruedas = 4
+
+    def __init__(self, marca, modelo, anio):
+        # --- Atributos de Instancia ---
+        # Estos son únicos para cada objeto Coche.
+        self.marca = marca
+        self.modelo = modelo
+        self.anio = anio
+        self.encendido = False # Estado inicial
+        self.velocidad = 0     # Estado inicial
+
+    # --- 2. Métodos que modifican el estado ---
+
+    def encender(self):
+        &quot;&quot;&quot;Cambia el estado de &#x27;encendido&#x27; a True.&quot;&quot;&quot;
+        if not self.encendido:
+            self.encendido = True
+            print(f&quot;El {self.modelo} ha sido encendido.&quot;)
+        else:
+            print(f&quot;El {self.modelo} ya estaba encendido.&quot;)
+
+    def apagar(self):
+        &quot;&quot;&quot;Cambia el estado de &#x27;encendido&#x27; a False y resetea la velocidad.&quot;&quot;&quot;
+        if self.encendido:
+            self.encendido = False
+            self.velocidad = 0
+            print(f&quot;El {self.modelo} ha sido apagado.&quot;)
+        else:
+            print(f&quot;El {self.modelo} ya estaba apagado.&quot;)
+
+    def acelerar(self, kmh):
+        &quot;&quot;&quot;Aumenta la velocidad del coche si está encendido.&quot;&quot;&quot;
+        if self.encendido:
+            self.velocidad += kmh
+            print(f&quot;Acelerando. Velocidad actual: {self.velocidad} km/h.&quot;)
+        else:
+            print(&quot;No puedes acelerar, el coche está apagado.&quot;)
+    
+    def frenar(self, kmh):
+        &quot;&quot;&quot;Reduce la velocidad del coche sin bajar de 0.&quot;&quot;&quot;
+        if self.velocidad &gt; 0:
+            self.velocidad -= kmh
+            if self.velocidad &lt; 0:
+                self.velocidad = 0
+            print(f&quot;Frenando. Velocidad actual: {self.velocidad} km/h.&quot;)
+        else:
+            print(&quot;El coche ya está detenido.&quot;)
+
+    def descripcion(self):
+        &quot;&quot;&quot;Devuelve una descripción completa del estado actual del coche.&quot;&quot;&quot;
+        estado = &quot;encendido&quot; if self.encendido else &quot;apagado&quot;
+        return (f&quot;Coche: {self.marca} {self.modelo} ({self.anio}). &quot;
+                f&quot;Ruedas: {self.ruedas}. Estado: {estado}. &quot;
+                f&quot;Velocidad: {self.velocidad} km/h.&quot;)
+
+
+# --- Uso de la clase mejorada ---
+mi_mustang = Coche(&quot;Ford&quot;, &quot;Mustang&quot;, 2023)
+
+# Accediendo al atributo de clase
+print(f&quot;Mi coche tiene {mi_mustang.ruedas} ruedas.&quot;) # A través de la instancia
+print(f&quot;La clase Coche define que los coches tienen {Coche.ruedas} ruedas.&quot;) # A través de la clase
+
+print(&quot;\n--- Comportamiento del Coche ---&quot;)
+print(mi_mustang.descripcion())
+
+mi_mustang.acelerar(50) # No funciona, está apagado
+mi_mustang.encender()
+mi_mustang.acelerar(50)
+mi_mustang.acelerar(30)
+mi_mustang.frenar(20)
+print(mi_mustang.descripcion())
+mi_mustang.apagar()
+print(mi_mustang.descripcion())</code></pre><p id="210ccb84-58a3-8041-b810-cdc9b65443ef" class="">Como puedes ver, ahora nuestros objetos <code>Coche</code> tienen un comportamiento mucho más rico y realista. Podemos cambiar su estado interno (sus atributos) a través de sus métodos.</p><p id="210ccb84-58a3-803d-93b1-f487870af6c2" class="">
+</p></div></details><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Lección 02: Encapsulamiento y Abstracción</strong></summary><div class="indented"><p id="210ccb84-58a3-80a8-b137-e22ea6041759" class="">Hasta ahora, cualquiera podía modificar los atributos de nuestro coche directamente. Por ejemplo, <code>mi_coche.velocidad = 500</code> podría asignar una velocidad irreal sin que el coche esté encendido. Esto rompe la lógica que hemos construido.</p><p id="210ccb84-58a3-80ed-828b-d862ccc49284" class="">El <strong>encapsulamiento</strong> es el principio de restringir el acceso directo a los atributos de un objeto y agruparlos con los métodos que operan sobre ellos. En Python, logramos esto por convención usando un guion bajo (<code>_</code>) al principio del nombre de un atributo (ej. <code>_velocidad</code>). Esto le dice a otros programadores: &quot;No deberías tocar esto directamente desde fuera de la clase&quot;.</p><p id="210ccb84-58a3-800c-b32a-fe1977f77cd0" class="">La <strong>abstracción</strong> consiste en ocultar la complejidad interna y exponer solo una interfaz simple. En nuestro caso, el conductor no necesita saber cómo funciona el motor; solo necesita un pedal para <code>acelerar()</code> y una llave para <code>encender()</code>. Nuestros métodos públicos (<code>encender</code>, <code>apagar</code>, etc.) son nuestra interfaz abstracta.</p><p id="210ccb84-58a3-8082-9f94-ff670f780ab7" class="">Para controlar cómo se leen y modifican nuestros atributos &quot;privados&quot;, usamos una herramienta muy elegante de Python: el decorador <code>@property</code>.</p><p id="210ccb84-58a3-80eb-81ff-c399a8078a4b" class="">Lección 02: Encapsulamiento y Abstracción</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="210ccb84-58a3-806d-95d5-c5e46049fbb5" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all"># 02_Encapsulamiento_y_Abstraccion/coche_protegido.py
+
+class Coche:
+    ruedas = 4
+
+    def __init__(self, marca, modelo, anio):
+        # --- 1. Atributos &quot;Privados&quot; ---
+        # Usamos un guion bajo para indicar que estos atributos
+        # no deben ser modificados directamente desde fuera de la clase.
+        self.marca = marca
+        self.modelo = modelo
+        self.anio = anio
+        self._encendido = False # Atributo protegido
+        self._velocidad = 0     # Atributo protegido
+
+    # --- 2. Getter con @property ---
+    # Este método permite LEER el valor de _velocidad como si fuera un atributo normal.
+    # mi_coche.velocidad -&gt; ejecutará este código.
+    @property
+    def velocidad(self):
+        return self._velocidad
+
+    # --- 3. Setter para la propiedad &#x27;velocidad&#x27; ---
+    # Este método permite ASIGNAR un valor a la velocidad, pero con control.
+    # mi_coche.velocidad = 100 -&gt; ejecutará este código.
+    @velocidad.setter
+    def velocidad(self, nuevo_valor):
+        if not self._encendido:
+            print(&quot;No puedes cambiar la velocidad con el coche apagado.&quot;)
+        elif nuevo_valor &lt; 0:
+            print(&quot;La velocidad no puede ser negativa. Se establecerá en 0.&quot;)
+            self._velocidad = 0
+        else:
+            self._velocidad = nuevo_valor
+            print(f&quot;Velocidad establecida en {self._velocidad} km/h.&quot;)
+    
+    # --- 4. Interfaz Pública (Métodos) ---
+    # Estos son los métodos que el usuario de la clase debe utilizar.
+    def encender(self):
+        if not self._encendido:
+            self._encendido = True
+            print(f&quot;El {self.modelo} ha sido encendido.&quot;)
+        else:
+            print(f&quot;El {self.modelo} ya estaba encendido.&quot;)
+
+    def apagar(self):
+        if self._encendido:
+            self._encendido = False
+            self._velocidad = 0 # Usamos el atributo interno directamente
+            print(f&quot;El {self.modelo} ha sido apagado.&quot;)
+        else:
+            print(f&quot;El {self.modelo} ya estaba apagado.&quot;)
+
+    def acelerar(self, kmh):
+        if self._encendido:
+            # Usamos el setter implícitamente al asignar un valor
+            self.velocidad += kmh 
+        else:
+            print(&quot;No puedes acelerar, el coche está apagado.&quot;)
+    
+    def descripcion(self):
+        estado = &quot;encendido&quot; if self._encendido else &quot;apagado&quot;
+        return (f&quot;Coche: {self.marca} {self.modelo} ({self.anio}). &quot;
+                f&quot;Estado: {estado}. Velocidad: {self._velocidad} km/h.&quot;)
+
+
+# --- Uso de la clase protegida ---
+mi_tesla = Coche(&quot;Tesla&quot;, &quot;Model 3&quot;, 2024)
+
+print(&quot;--- Intentando modificar atributos directamente ---&quot;)
+# Intentamos asignar una velocidad con el coche apagado
+mi_tesla.velocidad = 50 # El setter lo impedirá
+print(mi_tesla.descripcion())
+
+print(&quot;\n--- Usando la interfaz pública ---&quot;)
+mi_tesla.encender()
+mi_tesla.acelerar(80)
+# Leemos la velocidad a través del @property (getter)
+print(f&quot;Leyendo la velocidad: {mi_tesla.velocidad} km/h.&quot;)
+print(mi_tesla.descripcion())
+
+print(&quot;\n--- Probando la validación del setter ---&quot;)
+# Intentamos asignar una velocidad negativa
+mi_tesla.velocidad = -30 # El setter lo corregirá
+print(f&quot;Leyendo la velocidad después de intentar ponerla negativa: {mi_tesla.velocidad} km/h.&quot;)
+
+# Aunque la convención es no hacerlo, Python aún permite el acceso si insistes.
+# ESTO SE CONSIDERA UNA MALA PRÁCTICA.
+# mi_tesla._velocidad = -100
+# print(f&quot;\nVelocidad modificada a la fuerza: {mi_tesla._velocidad}&quot;)
+</code></pre><p id="210ccb84-58a3-80f7-9214-d166f36d8e7b" class="">Ahora nuestro objeto <code>Coche</code> es más robusto. Protege sus datos internos y solo permite modificarlos de manera controlada a través de sus métodos y propiedades, ocultando la complejidad interna.</p></div></details><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Lección 03: Herencia</strong></summary><div class="indented"><p id="210ccb84-58a3-80cb-8b15-d9df46792e3b" class="">La <strong>herencia</strong> nos permite crear una nueva clase que &quot;hereda&quot; todas las propiedades (atributos) y comportamientos (métodos) de una clase ya existente. Esto es increíblemente útil para reutilizar código y crear una jerarquía lógica entre nuestras clases.</p><ul id="210ccb84-58a3-8050-aa2e-d382ef895b92" class="bulleted-list"><li style="list-style-type:disc">La clase original se conoce como <strong>clase padre</strong> o <strong>superclase</strong>.</li></ul><ul id="210ccb84-58a3-80aa-9ba3-de90e4d54c55" class="bulleted-list"><li style="list-style-type:disc">La nueva clase se conoce como <strong>clase hija</strong> o <strong>subclase</strong>.</li></ul><p id="210ccb84-58a3-8058-ac32-fbc0e06c03b1" class="">Imagina que queremos representar un coche eléctrico. Un coche eléctrico es, en esencia, un coche, por lo que comparte muchas características: tiene marca, modelo, se puede encender, apagar y acelerar. Sin embargo, tiene características únicas, como una batería en lugar de un tanque de gasolina.</p><p id="210ccb84-58a3-8024-a69d-e21c94024bf2" class="">En lugar de crear una clase <code>CocheElectrico</code> desde cero, podemos hacer que herede de nuestra clase <code>Coche</code> y luego añadirle sus particularidades.</p><p id="210ccb84-58a3-8031-9da5-dfe707ee8018" class="">En el siguiente código, haremos tres cosas clave:</p><ol type="1" id="210ccb84-58a3-8075-9079-fce344011ae3" class="numbered-list" start="1"><li>Crearemos una clase <code>CocheElectrico</code> que hereda de <code>Coche</code>.</li></ol><ol type="1" id="210ccb84-58a3-80fe-9999-cb33d95251d3" class="numbered-list" start="2"><li>Añadiremos funcionalidad específica para el coche eléctrico (un atributo de batería y un método para cargarla).</li></ol><ol type="1" id="210ccb84-58a3-8099-a977-c11abf3089aa" class="numbered-list" start="3"><li><strong>Sobrescribiremos</strong> un método (<code>descripcion</code>) para que la clase hija proporcione su propia versión más específica.</li></ol><p id="210ccb84-58a3-8031-b207-e256d3fe6a17" class="">Lección 03: Herencia</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="210ccb84-58a3-8017-b94e-f1aca2ed3528" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all"># 03_Herencia/jerarquia_coches.py
+
+# --- 1. Clase Padre (Superclase) ---
+# Usaremos una versión ligeramente simplificada de nuestra clase Coche.
+class Coche:
+    def __init__(self, marca, modelo):
+        self.marca = marca
+        self.modelo = modelo
+        self._encendido = False
+        self._velocidad = 0
+
+    def encender(self):
+        self._encendido = True
+        print(f&quot;El {self.modelo} está encendido.&quot;)
+
+    def apagar(self):
+        self._encendido = False
+        self._velocidad = 0
+        print(f&quot;El {self.modelo} está apagado.&quot;)
+
+    def acelerar(self, kmh):
+        if self._encendido:
+            self._velocidad += kmh
+            print(f&quot;Velocidad: {self._velocidad} km/h.&quot;)
+        else:
+            print(&quot;El coche está apagado.&quot;)
+    
+    def descripcion(self):
+        return f&quot;Vehículo: {self.marca} {self.modelo}.&quot;
+
+
+# --- 2. Clase Hija (Subclase) ---
+# Para heredar, ponemos el nombre de la clase padre entre paréntesis.
+class CocheElectrico(Coche):
+    
+    # --- 3. Extendiendo el constructor __init__ ---
+    def __init__(self, marca, modelo, bateria_kwh):
+        # --- 4. Llamando al constructor del padre con super() ---
+        # Es crucial llamar al __init__ de la clase padre para que
+        # inicialice sus propios atributos (marca, modelo).
+        super().__init__(marca, modelo)
+        
+        # Atributo específico de la clase hija
+        self.bateria_kwh = bateria_kwh
+        self.nivel_bateria = 100 # %
+
+    # --- 5. Nuevo método específico de la clase hija ---
+    def cargar_bateria(self):
+        self.nivel_bateria = 100
+        print(f&quot;El {self.modelo} ha sido cargado. Batería al {self.nivel_bateria}%.&quot;)
+
+    # --- 6. Sobrescribiendo un método del padre ---
+    # Esta clase proporciona su propia versión del método descripcion.
+    def descripcion(self):
+        # Llamamos al método original del padre con super() para reutilizarlo
+        descripcion_padre = super().descripcion()
+        # Y le añadimos la información específica de la clase hija
+        return f&quot;{descripcion_padre} Es eléctrico con {self.bateria_kwh} kWh. Batería: {self.nivel_bateria}%.&quot;
+
+
+# --- Uso de las clases ---
+
+print(&quot;--- Usando el objeto de la clase Padre ---&quot;)
+coche_normal = Coche(&quot;Honda&quot;, &quot;Civic&quot;)
+print(coche_normal.descripcion())
+coche_normal.encender()
+coche_normal.acelerar(40)
+
+print(&quot;\n--- Usando el objeto de la clase Hija ---&quot;)
+mi_tesla = CocheElectrico(&quot;Tesla&quot;, &quot;Model S&quot;, 100)
+
+# El Tesla puede usar métodos heredados del Coche...
+mi_tesla.encender()
+mi_tesla.acelerar(120)
+
+# ...y también sus propios métodos.
+mi_tesla.cargar_bateria()
+
+# Cuando llamamos a descripcion(), se ejecuta la versión de CocheElectrico (la sobrescrita).
+print(mi_tesla.descripcion())</code></pre><p id="210ccb84-58a3-802f-9ca8-f548c72d1671" class="">Gracias a la herencia, hemos creado una clase más especializada (<code>CocheElectrico</code>) reutilizando toda la lógica de la clase <code>Coche</code> y sin tener que repetir código. Este es un concepto fundamental para construir software escalable y bien organizado.</p></div></details><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Lección 04: Polimorfismo y Duck Typing</strong></summary><div class="indented"><p id="210ccb84-58a3-8077-bae3-e44ec0c2adc5" class=""><strong>Polimorfismo</strong> (del griego, &quot;muchas formas&quot;) es la capacidad que tienen objetos de diferentes clases para responder a la misma llamada de método. La herencia es una forma de lograr polimorfismo, pero no la única.</p><p id="210ccb84-58a3-8038-9935-ed93993d3295" class="">Python utiliza un concepto llamado <strong>Duck Typing</strong>, que encapsula esta idea de una forma muy pragmática. La frase dice:</p><blockquote id="210ccb84-58a3-8061-8be4-d46999d33dda" class="">&quot;Si camina como un pato (walks like a duck) y grazna como un pato (quacks like a duck), entonces debe ser un pato.&quot;</blockquote><p id="210ccb84-58a3-8037-8bc6-f35e7ec2b740" class="">En programación, esto significa que a Python no le interesa la clase o el tipo de un objeto, sino los <strong>métodos que tiene</strong>. Si un objeto tiene el método que intentamos llamar, Python lo ejecutará sin problemas, sin importar si hereda de una clase específica o no.</p><p id="210ccb84-58a3-8060-8ac7-d1d1a449b22f" class="">En este ejemplo, crearemos varias clases de &quot;vehículos&quot;. Algunas heredarán entre sí y otras no. Luego, crearemos una función que puede trabajar con una lista de cualquiera de estos vehículos, siempre y cuando tengan un método en común (<code>avanzar</code>), demostrando el polimorfismo en acción.</p><p id="210ccb84-58a3-80d1-9771-f299506d0944" class="">Lección 04: Polimorfismo y Duck Typing</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="210ccb84-58a3-809f-94b6-c2e4eebc18b7" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all"># 04_Polimorfismo_y_DuckTyping/vehiculos.py
+
+class Coche:
+    def __init__(self, marca):
+        self.marca = marca
+
+    def avanzar(self):
+        print(f&quot;El coche {self.marca} avanza por la carretera.&quot;)
+
+class CocheElectrico(Coche):
+    # Esta clase hereda de Coche.
+    def avanzar(self):
+        # Sobrescribe el método del padre para darle un comportamiento específico.
+        print(f&quot;El coche eléctrico {self.marca} se desliza silenciosamente.&quot;)
+
+class Bicicleta:
+    # Esta clase NO hereda de Coche, es completamente independiente.
+    def __init__(self, tipo):
+        self.tipo = tipo
+
+    # Pero TIENE un método que se llama igual: avanzar.
+    def avanzar(self):
+        print(f&quot;La bicicleta de tipo &#x27;{self.tipo}&#x27; avanza pedaleando.&quot;)
+
+# --- Función Polimórfica ---
+# A esta función no le importa el tipo de objetos que recibe.
+# Solo le importa que cada objeto en la lista TENGA un método llamado .avanzar()
+def mover_vehiculos(lista_vehiculos):
+    print(&quot;--- Iniciando el movimiento de todos los vehículos ---&quot;)
+    for vehiculo in lista_vehiculos:
+        # Aquí ocurre la magia del polimorfismo y el duck typing.
+        # Python simplemente llama al método .avanzar() del objeto &#x27;vehiculo&#x27;,
+        # sea cual sea su clase.
+        vehiculo.avanzar()
+    print(&quot;--- Todos los vehículos se han movido ---&quot;)
+
+
+# --- Creando los objetos ---
+mi_civic = Coche(&quot;Honda Civic&quot;)
+mi_tesla = CocheElectrico(&quot;Tesla Model Y&quot;)
+mi_bici = Bicicleta(&quot;Montaña&quot;)
+
+# Creamos una lista con objetos de diferentes clases.
+vehiculos = [mi_civic, mi_tesla, mi_bici]
+
+
+# --- Ejecutando la función ---
+# Le pasamos la lista heterogénea a nuestra función.
+# Ella sabrá qué hacer con cada objeto.
+mover_vehiculos(vehiculos)
+</code></pre><p id="210ccb84-58a3-8021-847b-f440947a3f03" class="">Como puedes ver, la función <code>mover_vehiculos</code> funciona perfectamente con una mezcla de objetos de clases <code>Coche</code>, <code>CocheElectrico</code> y <code>Bicicleta</code>. No necesita ninguna lógica <code>if</code> o <code>elif</code> para comprobar el tipo de cada objeto. Simplemente confía en que cada &quot;vehículo&quot; sabrá cómo &quot;avanzar&quot; a su manera. Este es un principio de diseño muy poderoso que hace que el código sea más flexible y reutilizable.</p><p id="210ccb84-58a3-8005-b041-f265ae7cdec5" class="">Ahora que hemos cubierto los pilares de la Programación Orientada a Objetos, ¿estás listo para dar el salto al mundo de las APIs en la <strong>lección 05: Introducción a las APIs y HTTP</strong>?</p></div></details><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">Lección 05: Introducción a las APIs y HTTP</summary><div class="indented"><p id="210ccb84-58a3-8062-b384-cb18f0141ea1" class="">Ahora que sabemos cómo crear y organizar nuestros propios objetos, el siguiente paso es hacer que nuestros programas se comuniquen con otros sistemas a través de internet. Aquí es donde entran las APIs.</p><h3 id="210ccb84-58a3-8076-a18e-edc189361783" class="">¿Qué es una API?</h3><p id="210ccb84-58a3-801b-a9a2-d35364a9e7e2" class=""><strong>API</strong> son las siglas de <strong>I</strong>nterfaz de <strong>P</strong>rogramación de <strong>A</strong>plicaciones (<em>Application Programming Interface</em>). Piensa en ella como un <strong>camarero en un restaurante</strong>:</p><ul id="210ccb84-58a3-8083-b649-c068f768ea4b" class="bulleted-list"><li style="list-style-type:disc"><strong>Tú (el cliente)</strong>: Eres tu programa, que necesita datos o quiere realizar una acción.</li></ul><ul id="210ccb84-58a3-808c-8033-f5f833811c1b" class="bulleted-list"><li style="list-style-type:disc"><strong>La cocina (el servidor)</strong>: Es el sistema externo que tiene los datos (ej. datos del clima, una base de datos de películas, etc.).</li></ul><ul id="210ccb84-58a3-8034-8d23-e46d16d71e0d" class="bulleted-list"><li style="list-style-type:disc"><strong>El camarero (la API)</strong>: Es el intermediario. No necesitas entrar en la cocina y entender cómo funciona. Simplemente le das tu pedido (una <strong>petición</strong>) al camarero en un formato que él entiende (el menú). Él lleva tu pedido a la cocina, y después te trae lo que has pedido (una <strong>respuesta</strong>).</li></ul><p id="210ccb84-58a3-8001-a6fb-deb0ce346e26" class="">Una API define las reglas y los métodos permitidos para que diferentes aplicaciones de software se comuniquen entre sí.</p><h3 id="210ccb84-58a3-801b-88d8-f89b1e9f76a8" class="">¿Cómo se comunican? El protocolo HTTP</h3><p id="210ccb84-58a3-80ac-88f0-cbc6f8da09e2" class="">La comunicación entre tu programa y la API se realiza a través de <strong>HTTP</strong> (<em>Hypertext Transfer Protocol</em>), el protocolo fundamental de la World Wide Web. Cada interacción consiste en dos partes:</p><ol type="1" id="210ccb84-58a3-800d-9123-d7f7003b5f82" class="numbered-list" start="1"><li><strong>Petición (Request)</strong>: Lo que tu programa envía a la API. Contiene:<ul id="210ccb84-58a3-803d-a451-e14ad49218b6" class="bulleted-list"><li style="list-style-type:disc"><strong>Método/Verbo HTTP</strong>: La acción que quieres realizar. Los más comunes son:<ul id="210ccb84-58a3-800d-a153-f82cf9367a06" class="bulleted-list"><li style="list-style-type:circle"><code>GET</code>: Solicitar y obtener datos (ej. &quot;Tráeme la información de este usuario&quot;).</li></ul><ul id="210ccb84-58a3-8045-9ce5-e75c0e442187" class="bulleted-list"><li style="list-style-type:circle"><code>POST</code>: Enviar datos para crear un nuevo recurso (ej. &quot;Publica este nuevo tuit&quot;).</li></ul><ul id="210ccb84-58a3-80bc-851d-eb2c64351351" class="bulleted-list"><li style="list-style-type:circle"><code>PUT</code>/<code>PATCH</code>: Actualizar un recurso existente.</li></ul><ul id="210ccb84-58a3-801c-87c9-f34ce09c9e92" class="bulleted-list"><li style="list-style-type:circle"><code>DELETE</code>: Eliminar un recurso.</li></ul></li></ul><ul id="210ccb84-58a3-807f-96b6-c43d3c20316e" class="bulleted-list"><li style="list-style-type:disc"><strong>URL/Endpoint</strong>: La &quot;dirección&quot; específica a la que envías la petición (ej. <code>https://api.ejemplo.com/usuarios/123</code>).</li></ul><ul id="210ccb84-58a3-80a1-8c54-cfc9af8edaff" class="bulleted-list"><li style="list-style-type:disc"><strong>Cabeceras (Headers)</strong>: Información adicional, como el tipo de contenido que esperas o claves de autenticación.</li></ul><ul id="210ccb84-58a3-80ae-aa5c-cdfc05f9825b" class="bulleted-list"><li style="list-style-type:disc"><strong>Cuerpo (Body)</strong>: Los datos que envías, típicamente en peticiones <code>POST</code> o <code>PUT</code>.</li></ul></li></ol><ol type="1" id="210ccb84-58a3-806d-812e-c28a6507cd15" class="numbered-list" start="2"><li><strong>Respuesta (Response)</strong>: Lo que el servidor de la API te devuelve. Contiene:<ul id="210ccb84-58a3-802f-8841-e83336d929c6" class="bulleted-list"><li style="list-style-type:disc"><strong>Código de Estado (Status Code)</strong>: Un número que indica si la petición tuvo éxito. Algunos clave son:<ul id="210ccb84-58a3-809e-b652-f8cb7165d6d8" class="bulleted-list"><li style="list-style-type:circle"><code>200 OK</code>: ¡Todo salió bien!</li></ul><ul id="210ccb84-58a3-8014-addb-fed7852bd7d5" class="bulleted-list"><li style="list-style-type:circle"><code>201 Created</code>: Se creó un nuevo recurso con éxito.</li></ul><ul id="210ccb84-58a3-80da-86b5-cad1e7859bfe" class="bulleted-list"><li style="list-style-type:circle"><code>400 Bad Request</code>: La petición estaba mal formada.</li></ul><ul id="210ccb84-58a3-8087-bea9-c53ade6e399e" class="bulleted-list"><li style="list-style-type:circle"><code>401 Unauthorized</code>: No tienes permiso (falta autenticación).</li></ul><ul id="210ccb84-58a3-80ba-b1cb-fc70a4ef3722" class="bulleted-list"><li style="list-style-type:circle"><code>404 Not Found</code>: El recurso que pediste no existe.</li></ul><ul id="210ccb84-58a3-8055-997c-f06a442e93b4" class="bulleted-list"><li style="list-style-type:circle"><code>500 Internal Server Error</code>: Hubo un error en el servidor.</li></ul></li></ul><ul id="210ccb84-58a3-8062-8625-cb079498e207" class="bulleted-list"><li style="list-style-type:disc"><strong>Cabeceras (Headers)</strong>: Información sobre la respuesta.</li></ul><ul id="210ccb84-58a3-80fe-ac05-c4ad503eba06" class="bulleted-list"><li style="list-style-type:disc"><strong>Cuerpo (Body)</strong>: ¡Los datos que pediste! Generalmente vienen en un formato llamado <strong>JSON</strong>.</li></ul></li></ol><h3 id="210ccb84-58a3-8054-9ba8-d4502746d7cf" class="">¿Qué es JSON?</h3><p id="210ccb84-58a3-8000-a88c-c0b41b777e21" class=""><strong>JSON</strong> (<em>JavaScript Object Notation</em>) es un formato de texto ligero para el intercambio de datos. Es muy fácil de leer para los humanos y muy fácil de procesar para las máquinas. Su estructura es casi idéntica a los diccionarios y listas de Python, lo que lo hace perfecto para nosotros.</p><p id="210ccb84-58a3-80d4-bd3a-d94b7a569709" class="">Un ejemplo de JSON:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="210ccb84-58a3-80fa-85df-fb30dd2e3142" class="code code-wrap"><code class="language-JSON" style="white-space:pre-wrap;word-break:break-all">{
+  &quot;nombre&quot;: &quot;Pikachu&quot;,
+  &quot;tipo&quot;: &quot;Eléctrico&quot;,
+  &quot;id&quot;: 25,
+  &quot;habilidades&quot;: [
+    &quot;Impactrueno&quot;,
+    &quot;Ataque Rápido&quot;
+  ]
+}</code></pre><p id="210ccb84-58a3-80e6-a992-d753e687643f" class="">Hemos sentado las bases teóricas. Ahora ya sabes qué es una API, cómo funciona la comunicación HTTP y en qué formato recibiremos los datos.</p><p id="210ccb84-58a3-80ce-bf9c-f65cf14dd0a5" class="">¿Estás listo para escribir código en la <strong>lección 06 y realizar tu primera petición real a una API</strong>?</p><p id="210ccb84-58a3-80b0-9b9b-db55cc2a6d38" class="">
+</p></div></details><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Lección 06: Realizando tu primera petición con </strong><code><strong>requests</strong></code></summary><div class="indented"><p id="210ccb84-58a3-8073-b6f4-dcfc3f70a0cf" class="">Para interactuar con APIs en Python, la librería <code>requests</code> es el estándar de oro. No forma parte de la biblioteca estándar de Python, por lo que si no la tienes, necesitarás instalarla abriendo tu terminal o línea de comandos y ejecutando:<br/><code>pip install requests</code></p><p id="210ccb84-58a3-80e7-9748-fa400ec009fd" class="">Una vez instalada, usarla es increíblemente sencillo. En esta lección, haremos nuestra primera petición <code>GET</code> a <strong>JSONPlaceholder</strong>, una API gratuita y falsa, perfecta para practicar. Solicitaremos un único &quot;to-do&quot; (tarea pendiente) y mostraremos los datos que nos devuelva.</p><p id="210ccb84-58a3-80c7-9256-d2a0b00c725f" class="">El proceso es simple:</p><ol type="1" id="210ccb84-58a3-8092-9a9b-c54393902134" class="numbered-list" start="1"><li>Importar la librería <code>requests</code>.</li></ol><ol type="1" id="210ccb84-58a3-8002-93a9-f331a2496c10" class="numbered-list" start="2"><li>Definir la URL del <em>endpoint</em> al que queremos acceder.</li></ol><ol type="1" id="210ccb84-58a3-8089-a8bd-e2d8ffd5de2e" class="numbered-list" start="3"><li>Usar <code>requests.get()</code> para enviar la petición.</li></ol><ol type="1" id="210ccb84-58a3-8041-b0d3-ee1b452d1673" class="numbered-list" start="4"><li>Verificar el código de estado de la respuesta para asegurarnos de que todo fue bien (<code>200 OK</code>).</li></ol><ol type="1" id="210ccb84-58a3-800e-ab20-df2165f92785" class="numbered-list" start="5"><li>Si la respuesta es exitosa, convertir el cuerpo de la respuesta (que viene en formato JSON) a un diccionario de Python usando el método <code>.json()</code>.</li></ol><ol type="1" id="210ccb84-58a3-80c7-bb10-c12d28ad6144" class="numbered-list" start="6"><li>¡Usar los datos!</li></ol><p id="210ccb84-58a3-808d-8128-cec9c431aaba" class="">Lección 06: Tu Primera Petición a una API</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="210ccb84-58a3-8064-b549-df9fb932e237" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all"># 06_Primera_Peticion/consumir_api.py
+
+import requests # 1. Importar la librería
+
+# 2. Definir la URL del endpoint
+# Este endpoint de JSONPlaceholder nos devuelve una única tarea (to-do).
+url = &quot;https://jsonplaceholder.typicode.com/todos/1&quot;
+
+print(f&quot;Realizando una petición GET a: {url}&quot;)
+
+try:
+    # 3. Realizar la petición GET
+    response = requests.get(url)
+
+    # 4. Verificar el código de estado de la respuesta
+    # response.raise_for_status() es una forma útil de generar un error
+    # si el código de estado no es exitoso (ej. 404, 500).
+    response.raise_for_status() 
+
+    print(f&quot;¡Éxito! Código de estado: {response.status_code}&quot;) # Debería ser 200
+
+    # 5. Convertir la respuesta JSON a un diccionario de Python
+    data = response.json()
+
+    # 6. ¡Usar los datos!
+    print(&quot;\n--- Datos recibidos de la API ---&quot;)
+    print(f&quot;ID de Usuario: {data[&#x27;userId&#x27;]}&quot;)
+    print(f&quot;ID de la Tarea: {data[&#x27;id&#x27;]}&quot;)
+    print(f&quot;Título: {data[&#x27;title&#x27;]}&quot;)
+    print(f&quot;¿Completada?: {&#x27;Sí&#x27; if data[&#x27;completed&#x27;] else &#x27;No&#x27;}&quot;)
+
+except requests.exceptions.RequestException as e:
+    # Este bloque se ejecutará si hay un problema de red,
+    # un código de estado de error (como 404 o 500), etc.
+    print(f&quot;Ha ocurrido un error al realizar la petición: {e}&quot;)</code></pre><p id="210ccb84-58a3-8021-acbf-f5f73243bf50" class="">¡Felicidades! Acabas de escribir un programa que se conecta a un servidor en internet, solicita datos, los recibe y los procesa. Has dado un paso gigante, pasando de programas que solo existen en tu ordenador a programas que pueden interactuar con el mundo.</p><p id="210ccb84-58a3-80bc-9722-f7c24f3f9507" class="">Ahora que sabes cómo obtener datos, ¿te parece que unamos nuestros conocimientos de Clases y APIs en la <strong>lección 07: Proyecto Práctico: Consulta de API de Pokémon</strong>?</p></div></details><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Lección 07: Proyecto Práctico: Consulta de API de Pokémon</strong></summary><div class="indented"><p id="210ccb84-58a3-80f2-9d27-ec7f5820ca4f" class="">En las lecciones anteriores aprendimos a crear clases para modelar objetos y, por separado, a consumir APIs para obtener datos. Ahora, combinaremos ambos conceptos para crear un programa realmente dinámico.</p><p id="210ccb84-58a3-8023-a3bd-fd57f918373b" class=""><strong>El objetivo:</strong> Crearemos una clase <code>Pokemon</code>. La magia está en que, al crear un objeto de esta clase, no le pasaremos los datos directamente. En su lugar, le daremos el nombre o el número de un Pokémon. La propia clase será responsable de conectarse a la <strong>PokéAPI</strong> (una API pública y gratuita sobre Pokémon), buscar la información y rellenar sus propios atributos con los datos recibidos.</p><p id="210ccb84-58a3-80fc-add9-c1032b998c5e" class="">Esto demuestra un patrón de diseño muy potente: objetos que se &quot;autoconstruyen&quot; a partir de una fuente de datos externa.</p><p id="210ccb84-58a3-80a1-a5da-fafde366214a" class="">Lección 07: Clase Pokémon con API</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="210ccb84-58a3-8057-a1c2-d39ce7092ec5" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all"># 07_Proyecto_Pokemon/pokemon_class.py
+
+import requests
+
+class Pokemon:
+    &quot;&quot;&quot;
+    Una clase que representa a un Pokémon.
+    Al instanciarla, consulta la PokéAPI para obtener y almacenar sus datos.
+    &quot;&quot;&quot;
+    # URL base de la API. Usaremos una f-string para añadir el nombre o ID.
+    base_url = &quot;https://pokeapi.co/api/v2/pokemon/&quot;
+
+    def __init__(self, name_or_id):
+        # 1. Almacenamos el nombre o id que nos pasaron.
+        self.name_or_id = str(name_or_id).lower()
+        
+        # 2. Inicializamos los atributos a None. Se llenarán después.
+        self.name = None
+        self.id = None
+        self.height = None # Altura en decímetros
+        self.weight = None # Peso en hectogramos
+        self.types = []
+        
+        # 3. Llamamos al método que hará la magia.
+        self._fetch_data()
+
+    def _fetch_data(self):
+        &quot;&quot;&quot;
+        Método privado para conectarse a la API y obtener los datos.
+        &quot;&quot;&quot;
+        url = f&quot;{self.base_url}{self.name_or_id}&quot;
+        print(f&quot;Buscando datos en: {url}...&quot;)
+        
+        try:
+            response = requests.get(url)
+            response.raise_for_status() # Lanza un error si la petición falla (ej. 404)
+            
+            # Si todo fue bien, procesamos los datos.
+            data = response.json()
+            self._populate_attributes(data)
+            
+        except requests.exceptions.RequestException as e:
+            print(f&quot;Error al buscar el Pokémon &#x27;{self.name_or_id}&#x27;: {e}&quot;)
+            self.name = f&quot;Error: &#x27;{self.name_or_id}&#x27; no encontrado.&quot;
+
+    def _populate_attributes(self, data):
+        &quot;&quot;&quot;
+        Método privado para rellenar los atributos de la instancia
+        con los datos del JSON recibido.
+        &quot;&quot;&quot;
+        self.name = data[&#x27;name&#x27;].capitalize()
+        self.id = data[&#x27;id&#x27;]
+        self.height = data[&#x27;height&#x27;]
+        self.weight = data[&#x27;weight&#x27;]
+        
+        # El tipo es una lista de diccionarios, extraemos solo los nombres.
+        self.types = [type_info[&#x27;type&#x27;][&#x27;name&#x27;] for type_info in data[&#x27;types&#x27;]]
+        print(f&quot;¡Datos de {self.name} cargados con éxito!&quot;)
+
+    def describe(self):
+        &quot;&quot;&quot;
+        Muestra una descripción bien formateada del Pokémon.
+        &quot;&quot;&quot;
+        if self.id is None: # Comprobamos si la carga de datos falló
+            print(self.name)
+            return
+
+        print(&quot;\n--- Ficha de Pokémon ---&quot;)
+        print(f&quot;Nombre: {self.name}&quot;)
+        print(f&quot;ID: {self.id}&quot;)
+        print(f&quot;Altura: {self.height * 10} cm&quot;) # Convertimos a cm
+        print(f&quot;Peso: {self.weight / 10} kg&quot;)   # Convertimos a kg
+        # Unimos la lista de tipos en un string legible
+        print(f&quot;Tipo(s): {&#x27;, &#x27;.join(self.types)}&quot;)
+        print(&quot;------------------------&quot;)
+
+# --- ¡Vamos a probarlo! ---
+
+# Creamos un Pokémon usando su nombre
+charizard = Pokemon(&quot;charizard&quot;)
+charizard.describe()
+
+# Creamos otro Pokémon usando su número de Pokédex
+bulbasaur = Pokemon(1)
+bulbasaur.describe()
+
+# Intentamos crear un Pokémon que no existe para ver el error
+missingno = Pokemon(&quot;missingno&quot;)
+missingno.describe()
+</code></pre><p id="210ccb84-58a3-80d8-972f-f509a36ce097" class="">¡Ahí lo tienes! Has creado una clase inteligente que sabe cómo obtener y configurar sus propios datos. Este es un paso fundamental para crear aplicaciones más complejas y desacopladas.</p><p id="210ccb84-58a3-8015-bdf6-d881625132a8" class="">En el último ejemplo, vimos que el programa muestra un error cuando un Pokémon no se encuentra. Sería ideal manejar estos errores de una forma más controlada. ¿Te parece si abordamos eso en la <strong>lección 08: Manejo de Errores y Excepciones</strong>?</p></div></details><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Lección 08: Manejo de Errores y Excepciones</strong></summary><div class="indented"><p id="210ccb84-58a3-807f-b4c2-e548ea4d7be1" class="">En la lección anterior, nuestro programa imprime un mensaje cuando un Pokémon no se encuentra. Esto funciona, pero es una práctica limitada. ¿Qué pasa si otro programador usa nuestra clase <code>Pokemon</code> y necesita <em>saber</em> mediante código si la búsqueda falló para poder reaccionar? Simplemente imprimir un texto no es suficiente.</p><p id="210ccb84-58a3-808f-80e6-da7cce4e1f60" class="">Aquí es donde entra el manejo de <strong>excepciones</strong>. Una excepción es un error que ocurre durante la ejecución de un programa y que interrumpe su flujo normal. Usamos el bloque <code>try...except</code> para &quot;intentar&quot; ejecutar un código que podría fallar y &quot;capturar&quot; la excepción si ocurre, permitiéndonos manejar el error sin que el programa se detenga bruscamente.</p><p id="210ccb84-58a3-805a-aebd-c9a9e2ba575b" class="">Para hacer nuestro código más profesional, haremos dos cosas:</p><ol type="1" id="210ccb84-58a3-8055-99c8-fa86fe13075f" class="numbered-list" start="1"><li>Crearemos nuestra propia <strong>excepción personalizada</strong> (<code>PokemonNotFoundException</code>). Esto hace que nuestro código sea mucho más claro y permite a quien use nuestra clase capturar <em>específicamente</em> el error de &quot;Pokémon no encontrado&quot;.</li></ol><ol type="1" id="210ccb84-58a3-8086-8918-fab505f81560" class="numbered-list" start="2"><li>En lugar de solo imprimir un error dentro de la clase, usaremos la palabra clave <code>raise</code> para &quot;lanzar&quot; nuestra excepción personalizada. Quien llame al código será ahora el responsable de capturarla y manejarla.</li></ol><p id="210ccb84-58a3-8077-84f2-e4de0417e0a4" class="">Lección 08: Manejo de Excepciones</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="210ccb84-58a3-80ac-804c-e63db50c8538" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all"># 08_Manejo_de_Excepciones/pokemon_exceptions.py
+
+import requests
+
+# 1. Definimos nuestra propia clase de Excepción.
+# Es una buena práctica que herede de la clase base Exception de Python.
+class PokemonNotFoundException(Exception):
+    &quot;&quot;&quot;Excepción personalizada para cuando un Pokémon no es encontrado en la API.&quot;&quot;&quot;
+    pass # No necesita lógica adicional, solo el nombre es suficiente.
+
+
+class Pokemon:
+    base_url = &quot;https://pokeapi.co/api/v2/pokemon/&quot;
+
+    def __init__(self, name_or_id):
+        self.name_or_id = str(name_or_id).lower()
+        self.name = None
+        self.id = None
+        self.height = None
+        self.weight = None
+        self.types = []
+        
+        # El constructor ahora puede lanzar una excepción,
+        # así que quien lo llame debe estar preparado.
+        self._fetch_data()
+
+    def _fetch_data(self):
+        url = f&quot;{self.base_url}{self.name_or_id}&quot;
+        print(f&quot;Buscando datos en: {url}...&quot;)
+        
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            data = response.json()
+            self._populate_attributes(data)
+            
+        # Capturamos la excepción de requests...
+        except requests.exceptions.HTTPError as e:
+            # 2. ...y lanzamos nuestra propia excepción más específica.
+            # Esto le da más información a quien use nuestra clase.
+            raise PokemonNotFoundException(f&quot;El Pokémon &#x27;{self.name_or_id}&#x27; no fue encontrado en la PokéAPI.&quot;) from e
+
+    def _populate_attributes(self, data):
+        self.name = data[&#x27;name&#x27;].capitalize()
+        self.id = data[&#x27;id&#x27;]
+        self.height = data[&#x27;height&#x27;]
+        self.weight = data[&#x27;weight&#x27;]
+        self.types = [type_info[&#x27;type&#x27;][&#x27;name&#x27;] for type_info in data[&#x27;types&#x27;]]
+        print(f&quot;¡Datos de {self.name} cargados con éxito!&quot;)
+
+    def describe(self):
+        print(&quot;\n--- Ficha de Pokémon ---&quot;)
+        print(f&quot;Nombre: {self.name}&quot;)
+        print(f&quot;ID: {self.id}&quot;)
+        print(f&quot;Altura: {self.height * 10} cm&quot;)
+        print(f&quot;Peso: {self.weight / 10} kg&quot;)
+        print(f&quot;Tipo(s): {&#x27;, &#x27;.join(self.types)}&quot;)
+        print(&quot;------------------------&quot;)
+
+# --- ¡Vamos a probarlo! ---
+# Ahora, el código que USA nuestra clase es responsable de manejar los errores.
+pokemon_a_buscar = [&quot;pikachu&quot;, &quot;mewtwo&quot;, &quot;greymon&quot;, &quot;151&quot;]
+
+for p in pokemon_a_buscar:
+    try:
+        # 3. Intentamos crear la instancia del Pokémon.
+        pokemon_obj = Pokemon(p)
+        pokemon_obj.describe()
+    except PokemonNotFoundException as e:
+        # 4. Si se lanza nuestra excepción personalizada, la capturamos aquí.
+        # Esto nos permite manejar el error de forma controlada.
+        print(f&quot;\nERROR: No se pudo crear el objeto para &#x27;{p}&#x27;.&quot;)
+        print(f&quot;Razón: {e}\n&quot;)</code></pre><p id="210ccb84-58a3-8087-bda3-f5c31f2ca931" class="">Ahora nuestro código es mucho más robusto y reutilizable. La clase <code>Pokemon</code> notifica claramente cuando ocurre un error, y el código que la utiliza puede decidir qué hacer en ese caso, en lugar de depender de un simple mensaje impreso.</p><p id="210ccb84-58a3-8045-8430-f3ba54f56aa6" class="">Hasta ahora hemos trabajado con APIs públicas y abiertas. ¿Qué tal si en la siguiente lección aprendemos a interactuar con servicios que requieren un permiso especial? Continuemos con la <strong>lección 09: Autenticación en APIs</strong>.</p></div></details><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Lección 09: Autenticación en APIs (con API Key)</strong></summary><div class="indented"><p id="210ccb84-58a3-80a9-b3a6-f0a2c7ba6a9d" class="">Las APIs abiertas como PokéAPI son fantásticas para aprender, pero la mayoría de las APIs que usarás en proyectos reales te pedirán que te identifiques. La forma más común de hacerlo es mediante una <strong>API Key</strong>.</p><p id="210ccb84-58a3-80e7-8d1b-dc43ea84edca" class="">Una <strong>API Key</strong> es simplemente una cadena de texto única (como una contraseña larga) que el proveedor de la API te da cuando te registras en su servicio. Tu aplicación debe incluir esta clave en cada petición que realiza. De esta manera, el servidor de la API sabe quién eres, comprueba si tienes permiso para usar el servicio y lleva la cuenta de cuántas peticiones has hecho (muchos servicios tienen límites gratuitos).</p><h3 id="210ccb84-58a3-805f-bdcd-ec0dd24e409a" class="">¿Cómo se envía la API Key?</h3><p id="210ccb84-58a3-8091-8e8a-d17e60ae8b64" class="">Hay varias formas, pero una de las más comunes y seguras es enviarla en las <strong>cabeceras (headers)</strong> de la petición HTTP. Las cabeceras son metadatos que viajan junto a tu petición y le dan información adicional al servidor. La librería <code>requests</code> hace que enviar cabeceras sea muy sencillo.</p><p id="210ccb84-58a3-80bd-93cc-e333841faada" class="">Para este ejemplo, usaremos la API de <strong>OpenWeatherMap</strong>, un servicio popular que ofrece datos meteorológicos. <strong>Necesitarás obtener tu propia API Key gratuita registrándote en su </strong><strong><a href="https://openweathermap.org/appid">página web</a></strong><strong>.</strong></p><p id="210ccb84-58a3-80de-a47e-c0f3e3d9a31c" class=""><strong>El flujo será:</strong></p><ol type="1" id="210ccb84-58a3-8038-bc0e-e5ca368272bf" class="numbered-list" start="1"><li>Almacenar nuestra API Key de forma segura.</li></ol><ol type="1" id="210ccb84-58a3-8053-bd9d-d73d240600e1" class="numbered-list" start="2"><li>Definir las cabeceras (<code>headers</code>) que incluirán nuestra clave.</li></ol><ol type="1" id="210ccb84-58a3-8082-935d-e828b09e2b25" class="numbered-list" start="3"><li>Realizar la petición <code>GET</code> a la API del clima, pasando tanto la URL con los parámetros de la ciudad como las cabeceras de autenticación.</li></ol><ol type="1" id="210ccb84-58a3-8004-8e44-c9ad6579531a" class="numbered-list" start="4"><li>Manejar la respuesta y los posibles errores (como una clave inválida o una ciudad no encontrada).</li></ol><p id="210ccb84-58a3-80b3-9747-e0e44f8dc994" class="">Lección 09: Autenticación con API Key</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="210ccb84-58a3-80c6-b34e-e9822b1a3569" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all"># 09_Autenticacion_API/weather_api.py
+
+import requests
+import os
+
+# --- 1. Almacenando la API Key ---
+# Es una MALA PRÁCTICA escribir la API Key directamente en el código.
+# Una mejor forma es usar variables de entorno.
+# Por simplicidad aquí, la pediremos al usuario o la leeremos de una variable.
+# Para ejecutarlo, puedes crear una variable de entorno llamada OPENWEATHER_API_KEY
+# o simplemente pegar tu clave cuando el script te lo pida.
+
+API_KEY = os.getenv(&quot;OPENWEATHER_API_KEY&quot;)
+if not API_KEY:
+    API_KEY = input(&quot;Por favor, introduce tu API Key de OpenWeatherMap: &quot;)
+
+
+def get_weather(city_name, api_key):
+    &quot;&quot;&quot;
+    Obtiene el clima actual para una ciudad usando la API de OpenWeatherMap.
+    &quot;&quot;&quot;
+    base_url = &quot;https://api.openweathermap.org/data/2.5/weather&quot;
+    
+    # 2. Parámetros de la Petición
+    # Estos se añadirán a la URL como ?q=city_name&amp;appid=api_key&amp;...
+    params = {
+        &#x27;q&#x27;: city_name,
+        &#x27;appid&#x27;: api_key,
+        &#x27;units&#x27;: &#x27;metric&#x27;, # Para obtener la temperatura en Celsius
+        &#x27;lang&#x27;: &#x27;es&#x27;      # Para obtener la descripción en español
+    }
+    
+    print(f&quot;\nObteniendo el clima para &#x27;{city_name}&#x27;...&quot;)
+    
+    try:
+        # 3. Realizando la petición con los parámetros
+        response = requests.get(base_url, params=params)
+        
+        # Lanza una excepción para errores HTTP (ej. 401 Unauthorized, 404 Not Found)
+        response.raise_for_status() 
+        
+        data = response.json()
+        return data
+        
+    except requests.exceptions.HTTPError as e:
+        # Manejo específico para errores de autenticación o ciudad no encontrada
+        if e.response.status_code == 401:
+            print(&quot;Error de autenticación: Tu API Key es inválida o no tiene permisos.&quot;)
+        elif e.response.status_code == 404:
+            print(f&quot;Error: La ciudad &#x27;{city_name}&#x27; no fue encontrada.&quot;)
+        else:
+            print(f&quot;Error HTTP: {e}&quot;)
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f&quot;Error de conexión: {e}&quot;)
+        return None
+
+def display_weather(weather_data):
+    &quot;&quot;&quot;Muestra los datos del clima de forma legible.&quot;&quot;&quot;
+    if not weather_data:
+        return
+
+    main_weather = weather_data[&#x27;weather&#x27;][0][&#x27;description&#x27;].capitalize()
+    temp = weather_data[&#x27;main&#x27;][&#x27;temp&#x27;]
+    feels_like = weather_data[&#x27;main&#x27;][&#x27;feels_like&#x27;]
+    humidity = weather_data[&#x27;main&#x27;][&#x27;humidity&#x27;]
+    
+    print(&quot;--- Clima Actual ---&quot;)
+    print(f&quot;Descripción: {main_weather}&quot;)
+    print(f&quot;Temperatura: {temp}°C&quot;)
+    print(f&quot;Sensación térmica: {feels_like}°C&quot;)
+    print(f&quot;Humedad: {humidity}%&quot;)
+    print(&quot;--------------------&quot;)
+
+
+# --- ¡Vamos a probarlo! ---
+ciudad = &quot;Mexico City&quot;
+datos_clima = get_weather(ciudad, API_KEY)
+if datos_clima:
+    display_weather(datos_clima)
+
+ciudad_invalida = &quot;Ciudad Inventada&quot;
+datos_clima_invalidos = get_weather(ciudad_invalida, API_KEY)
+# No se mostrará nada porque get_weather devolverá None y manejará el error.</code></pre><p id="210ccb84-58a3-80ca-9771-c123638e6294" class="">En este ejemplo, por simplicidad, pasamos la API key como un <strong>parámetro en la URL</strong> (<code>appid</code>), que es un método que OpenWeatherMap permite. Sin embargo, el principio es el mismo que enviarla en las cabeceras, lo cual es a menudo la práctica recomendada para mayor seguridad y es algo que <code>requests</code> también facilita enormemente.</p><p id="210ccb84-58a3-80f2-85fa-f3efdbe81354" class="">Hemos aprendido a autenticarnos. Hasta ahora solo hemos <em>leído</em> datos. ¿Te gustaría ver cómo <em>enviarlos</em> en la <strong>lección 10: Enviando datos con Peticiones POST</strong>?</p></div></details><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Lección 10: Enviando datos con Peticiones POST</strong></summary><div class="indented"><p id="210ccb84-58a3-8056-bc84-dec25f60bf63" class="">Hasta ahora, todas nuestras interacciones con las APIs han sido para <em>solicitar</em> datos usando el método <code>GET</code>. Ahora, aprenderemos a <em>enviar</em> datos para crear un nuevo recurso en un servidor. Para esto, se utiliza el método <code>POST</code>.</p><p id="210ccb84-58a3-80c0-ad7e-f22d4ba4c010" class="">Piensa en <code>GET</code> como &quot;leer&quot; y en <code>POST</code> como &quot;escribir&quot; o &quot;crear&quot;.</p><p id="210ccb84-58a3-8087-a4c9-d7267758d7b5" class="">Cuando envías una petición <code>POST</code>, incluyes los datos del nuevo recurso en el <strong>cuerpo (body)</strong> de la petición. Normalmente, estos datos se envían en formato JSON. La librería <code>requests</code> nos lo pone muy fácil: simplemente creamos un diccionario de Python con los datos y se lo pasamos al parámetro <code>json</code> de la función <code>requests.post()</code>. La librería se encargará de convertirlo a JSON y de poner las cabeceras HTTP correctas (<code>Content-Type: application/json</code>).</p><p id="210ccb84-58a3-8041-91f1-c31c80dd4407" class="">Si la creación es exitosa, el servidor normalmente responderá con un código de estado <code>201 Created</code> y devolverá el objeto recién creado en el cuerpo de la respuesta, a menudo con un <code>id</code> nuevo asignado por el servidor.</p><p id="210ccb84-58a3-80b1-a9bc-d8ed6163c78a" class="">Para nuestro ejemplo final, volveremos a usar la API de <strong>JSONPlaceholder</strong>. Enviaremos un <code>POST</code> al endpoint <code>/posts</code> para simular la creación de una nueva entrada de blog.</p><p id="210ccb84-58a3-80ea-bfdb-d40d3325abea" class="">Lección 10: Enviando Datos con POST</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="210ccb84-58a3-801b-baa1-deadaac58c6a" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all"># 10_Peticiones_POST/crear_recurso.py
+
+import requests
+
+def create_new_post(title, body, user_id):
+    &quot;&quot;&quot;
+    Envía una petición POST a JSONPlaceholder para crear un nuevo post.
+    &quot;&quot;&quot;
+    api_url = &quot;https://jsonplaceholder.typicode.com/posts&quot;
+    
+    # 1. Preparamos los datos en un diccionario de Python.
+    # La estructura debe coincidir con lo que la API espera.
+    post_data = {
+        &#x27;title&#x27;: title,
+        &#x27;body&#x27;: body,
+        &#x27;userId&#x27;: user_id,
+    }
+    
+    print(f&quot;\nEnviando datos para crear un nuevo post titulado: &#x27;{title}&#x27;&quot;)
+    
+    try:
+        # 2. Realizamos la petición POST.
+        # Pasamos los datos a través del parámetro &#x27;json&#x27;.
+        # requests se encarga de la serialización y las cabeceras.
+        response = requests.post(api_url, json=post_data)
+        
+        # 3. Verificamos la respuesta.
+        # Un POST exitoso para crear suele devolver 201.
+        response.raise_for_status()
+        
+        # 4. Obtenemos el recurso recién creado de la respuesta.
+        newly_created_post = response.json()
+        
+        print(f&quot;¡Éxito! El post fue creado con el código de estado: {response.status_code}&quot;)
+        return newly_created_post
+        
+    except requests.exceptions.RequestException as e:
+        print(f&quot;Ha ocurrido un error al crear el post: {e}&quot;)
+        return None
+
+# --- ¡Vamos a probarlo! ---
+nuevo_titulo = &quot;Mi Aventura con Python y APIs&quot;
+nuevo_cuerpo = &quot;Aprender a usar requests ha sido una experiencia increíble para interactuar con la web.&quot;
+id_usuario = 101 # Un ID de usuario de ejemplo
+
+# Llamamos a nuestra función para crear el post
+post_creado = create_new_post(nuevo_titulo, nuevo_cuerpo, id_usuario)
+
+# Si se creó correctamente, mostramos la respuesta del servidor.
+if post_creado:
+    print(&quot;\n--- Respuesta del Servidor (Post Creado) ---&quot;)
+    print(f&quot;ID del nuevo post (asignado por la API): {post_creado[&#x27;id&#x27;]}&quot;)
+    print(f&quot;Título: {post_creado[&#x27;title&#x27;]}&quot;)
+    print(f&quot;Cuerpo: {post_creado[&#x27;body&#x27;]}&quot;)
+    print(f&quot;ID de Usuario: {post_creado[&#x27;userId&#x27;]}&quot;)
+    print(&quot;------------------------------------------&quot;)
+</code></pre><p id="210ccb84-58a3-8022-a7cd-f12610b7c448" class="">¡Y con esto concluimos el curso!</p><p id="210ccb84-58a3-805a-ae4e-fa66d7086c49" class="">Has completado un viaje increíble, desde los fundamentos de la Programación Orientada a Objetos (Clases, Herencia, Polimorfismo) hasta convertirte en un usuario competente de APIs web, capaz de leer datos (<code>GET</code>), manejar errores, autenticarte (<code>API Keys</code>) y ahora, crear recursos (<code>POST</code>).</p><p id="210ccb84-58a3-8062-bad7-ff0f023ddbb5" class="">Estas habilidades son la base para construir aplicaciones mucho más complejas, como bots de redes sociales, paneles de datos en tiempo real, scripts de automatización y mucho más. ¡El siguiente paso es empezar a construir tus propios proyectos!</p></div></details><details open=""><summary style="font-weight:600;font-size:1.5em;line-height:1.3;margin:0"><strong>Parte 1: Lista de Ejercicios</strong></summary><div class="indented"><p id="210ccb84-58a3-80db-973c-f27664954005" class="">Aquí tienes una serie de problemas para practicar, divididos por los temas que hemos visto.</p><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Tema 1: Clases, Objetos, Atributos y Métodos (Lecciones 0-1)</strong></summary><div class="indented"><ul id="210ccb84-58a3-805b-ada2-cf10e55ce2a0" class="bulleted-list"><li style="list-style-type:disc"><strong>Fácil: Clase </strong><code><strong>Libro</strong></code><br/>Crea una clase <code>Libro</code> con un constructor <code>__init__</code> que reciba <code>titulo</code>, <code>autor</code> y <code>paginas</code>. La clase debe tener un método <code>descripcion()</code> que imprima una frase como: &quot;El libro &#x27;El Quijote&#x27; por Miguel de Cervantes tiene 300 páginas.&quot;</li></ul><ul id="210ccb84-58a3-805b-9817-dd9cac4c0063" class="bulleted-list"><li style="list-style-type:disc"><strong>Intermedio: Clase </strong><code><strong>Estudiante</strong></code><br/>Crea una clase <code>Estudiante</code> con atributos <code>nombre</code> y una lista vacía llamada <code>calificaciones</code>. La clase debe tener los siguientes métodos:<ol type="1" id="210ccb84-58a3-8072-b59f-fbe79ad1407b" class="numbered-list" start="1"><li><code>agregar_calificacion(calificacion)</code>: Añade una calificación (un número) a la lista.</li></ol><ol type="1" id="210ccb84-58a3-8046-b874-d37317d50ae1" class="numbered-list" start="2"><li><code>promedio()</code>: Calcula y devuelve el promedio de las calificaciones. Si no hay calificaciones, debe devolver 0.</li></ol><ol type="1" id="210ccb84-58a3-8081-a778-deb9fb3dedd4" class="numbered-list" start="3"><li><code>mostrar_info()</code>: Imprime el nombre del estudiante y su promedio.</li></ol></li></ul><ul id="210ccb84-58a3-8073-933d-eaac192f6313" class="bulleted-list"><li style="list-style-type:disc"><strong>Difícil: Clase </strong><code><strong>CuentaBancaria</strong></code><br/>Crea una clase <code>CuentaBancaria</code> con atributos <code>titular</code> y <code>saldo</code>.<ol type="1" id="210ccb84-58a3-8099-a45d-f529df888797" class="numbered-list" start="1"><li>El saldo inicial debe ser 0 si no se especifica otro valor.</li></ol><ol type="1" id="210ccb84-58a3-805f-90a1-d7f84dae0658" class="numbered-list" start="2"><li>Crea un método <code>depositar(cantidad)</code> que añada dinero al saldo.</li></ol><ol type="1" id="210ccb84-58a3-8069-994f-e5dae0c0bc42" class="numbered-list" start="3"><li>Crea un método <code>retirar(cantidad)</code> que reste dinero del saldo. Este método no debe permitir que el saldo se vuelva negativo. Si se intenta retirar más de lo que hay, debe imprimir un mensaje de error y no modificar el saldo.</li></ol><ol type="1" id="210ccb84-58a3-8034-8f2f-f00217fa7233" class="numbered-list" start="4"><li>Crea un método <code>transferir(cantidad, otra_cuenta)</code> que mueva dinero de una cuenta a otra, reutilizando la lógica de los métodos <code>depositar</code> y <code>retirar</code>.</li></ol></li></ul></div></details><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Tema 2: Encapsulamiento y Herencia (Lecciones 2-3)</strong></summary><div class="indented"><ul id="210ccb84-58a3-80c9-900c-c4aeb83dd19e" class="bulleted-list"><li style="list-style-type:disc"><strong>Fácil: Herencia de </strong><code><strong>Animal</strong></code><br/>Crea una clase padre <code>Animal</code> con un método <code>comer()</code>. Luego, crea una clase hija <code>Perro</code> que herede de <code>Animal</code> y añada un método propio <code>ladrar()</code>. Comprueba que un objeto <code>Perro</code> puede tanto <code>comer()</code> como <code>ladrar()</code>.</li></ul><ul id="210ccb84-58a3-80a4-8ff3-ce60896758bf" class="bulleted-list"><li style="list-style-type:disc"><strong>Intermedio: </strong><code><strong>CuentaDeAhorros</strong></code><br/>Toma la clase <code>CuentaBancaria</code> del ejercicio anterior.<ol type="1" id="210ccb84-58a3-806f-abcb-f6c016c3d21c" class="numbered-list" start="1"><li>Modifícala para que el atributo <code>saldo</code> sea &quot;privado&quot; (usando un guion bajo, <code>_saldo</code>).</li></ol><ol type="1" id="210ccb84-58a3-804c-991f-d5392499ff09" class="numbered-list" start="2"><li>Crea una propiedad (<code>@property</code>) para poder leer el saldo desde fuera, pero no modificarlo directamente.</li></ol><ol type="1" id="210ccb84-58a3-80e9-afb4-cfcb600a0feb" class="numbered-list" start="3"><li>Crea una clase hija <code>CuentaDeAhorros</code> que herede de <code>CuentaBancaria</code>. Esta nueva clase debe tener un atributo adicional <code>tasa_interes</code> (ej. 0.02 para un 2%).</li></ol><ol type="1" id="210ccb84-58a3-805f-9fe3-d04b255f6a05" class="numbered-list" start="4"><li>Añade un método <code>aplicar_interes()</code> que incremente el saldo actual según la tasa de interés.</li></ol></li></ul><ul id="210ccb84-58a3-80a2-b2e3-d932cb2e0800" class="bulleted-list"><li style="list-style-type:disc"><strong>Difícil: Jerarquía de </strong><code><strong>Empleado</strong></code><br/>Diseña una jerarquía de clases para una empresa.<ol type="1" id="210ccb84-58a3-80f0-b928-efec609c7419" class="numbered-list" start="1"><li>Crea una clase padre <code>Empleado</code> con atributos <code>nombre</code>, <code>id_empleado</code> y <code>salario</code>.</li></ol><ol type="1" id="210ccb84-58a3-808b-97dd-fc850ab7b4ac" class="numbered-list" start="2"><li>Crea una clase hija <code>Gerente</code> que herede de <code>Empleado</code>. <code>Gerente</code> debe tener un atributo adicional: una lista de <code>empleados_a_cargo</code>. Añade un método para agregar empleados a esa lista.</li></ol><ol type="1" id="210ccb84-58a3-80b5-82ee-ec07c09834a5" class="numbered-list" start="3"><li>Crea otra clase hija <code>Desarrollador</code> que herede de <code>Empleado</code>. <code>Desarrollador</code> debe tener un atributo adicional <code>lenguaje_programacion</code>.</li></ol><ol type="1" id="210ccb84-58a3-8007-998b-d2e496d97f8e" class="numbered-list" start="4"><li>Sobrescribe un método <code>mostrar_detalles()</code> en cada clase para que muestre la información específica de cada tipo de empleado.</li></ol></li></ul></div></details><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Tema 3: Polimorfismo y Duck Typing (Lección 4)</strong></summary><div class="indented"><ul id="210ccb84-58a3-80e7-a5a0-fd347bbf380f" class="bulleted-list"><li style="list-style-type:disc"><strong>Fácil: Sonidos de Animales</strong><br/>Crea una clase <code>Gato</code> con un método <code>hacer_sonido()</code> que imprima &quot;Miau&quot;. Usando la clase <code>Perro</code> del ejercicio anterior (que tiene <code>ladrar()</code>), renombra <code>ladrar()</code> a <code>hacer_sonido()</code> para que imprima &quot;Guau&quot;. Luego, crea una función que reciba una lista de animales (<code>Perro</code> y <code>Gato</code>) y llame al método <code>hacer_sonido()</code> de cada uno.</li></ul><ul id="210ccb84-58a3-80eb-b3fb-edb74317f0f3" class="bulleted-list"><li style="list-style-type:disc"><strong>Intermedio: Figuras Geométricas</strong><br/>Crea una clase abstracta (conceptual) <code>FiguraGeometrica</code> con un método <code>calcular_area()</code> que no haga nada (<code>pass</code>). Luego, crea dos clases hijas, <code>Rectangulo</code> (con <code>base</code> y <code>altura</code>) y <code>Circulo</code> (con <code>radio</code>), que hereden de <code>FiguraGeometrica</code>. Ambas deben implementar su propia versión de <code>calcular_area()</code>. Escribe una función que reciba una lista de figuras y muestre el área de cada una.</li></ul><ul id="210ccb84-58a3-801a-9680-fa86b5dca416" class="bulleted-list"><li style="list-style-type:disc"><strong>Difícil: Sistema de Notificaciones</strong><br/>Crea una clase <code>Notificacion</code> con un método <code>enviar(mensaje)</code>. Luego, crea tres clases hijas:<ol type="1" id="210ccb84-58a3-8008-99da-e4eba4941a5f" class="numbered-list" start="1"><li><code>NotificacionEmail</code>: Su método <code>enviar</code> debe imprimir &quot;Enviando por Email: [mensaje]&quot;.</li></ol><ol type="1" id="210ccb84-58a3-8073-8118-f129b3922477" class="numbered-list" start="2"><li><code>NotificacionSMS</code>: Su método <code>enviar</code> debe imprimir &quot;Enviando por SMS: [mensaje]&quot;.</li></ol><ol type="1" id="210ccb84-58a3-8037-b1f2-e7eed1b091e6" class="numbered-list" start="3"><li><code>NotificacionPush</code>: Su método <code>enviar</code> debe imprimir &quot;Enviando notificación Push: [mensaje]&quot;.<br/>Crea una función que reciba un <code>mensaje</code> y una lista de <code>objetos de notificación</code>, y use el polimorfismo para enviar el mensaje a través de todos los canales.</li></ol></li></ul></div></details><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Tema 4: Consumo de APIs con </strong><code><strong>requests</strong></code><strong> (Lecciones 5-10)</strong></summary><div class="indented"><ul id="210ccb84-58a3-80ed-8029-c01204ab8fe8" class="bulleted-list"><li style="list-style-type:disc"><strong>Fácil: Chistes de Chuck Norris</strong><br/>Usa la API pública de Chuck Norris (<code>https://api.chucknorris.io/jokes/random</code>) para hacer una petición <code>GET</code>, obtener un chiste aleatorio y mostrarlo por pantalla.</li></ul><ul id="210ccb84-58a3-80b6-932e-efa0e7f57a8e" class="bulleted-list"><li style="list-style-type:disc"><strong>Intermedio: Buscador de Películas de Ghibli</strong><br/>Usa la API de Studio Ghibli (<code>https://ghibliapi.dev/films</code>).<ol type="1" id="210ccb84-58a3-8069-a768-f416cfc5bcff" class="numbered-list" start="1"><li>Primero, haz una petición <code>GET</code> para obtener la lista completa de películas.</li></ol><ol type="1" id="210ccb84-58a3-808c-987c-ff076a99fe45" class="numbered-list" start="2"><li>Luego, pide al usuario que escriba el título de una película.</li></ol><ol type="1" id="210ccb84-58a3-8073-a7ef-de28c56daca2" class="numbered-list" start="3"><li>Busca en tu lista de películas la que coincida con el título del usuario y muestra su <code>director</code> y su <code>description</code>.</li></ol></li></ul><ul id="210ccb84-58a3-802b-90fb-e72a335a4696" class="bulleted-list"><li style="list-style-type:disc"><strong>Difícil: Catálogo de Productos con Descuento</strong><br/>Usa la API de productos falsos <code>https://dummyjson.com/products</code>.<ol type="1" id="210ccb84-58a3-8008-b3a6-cb7d7d396e84" class="numbered-list" start="1"><li>Crea una clase <code>Producto</code> con atributos <code>nombre</code>, <code>precio</code> y <code>categoria</code>.</li></ol><ol type="1" id="210ccb84-58a3-80ff-9f8a-c97e4a9cd28d" class="numbered-list" start="2"><li>Haz una petición <code>GET</code> para obtener la lista de productos.</li></ol><ol type="1" id="210ccb84-58a3-805c-8ae1-e70edf470873" class="numbered-list" start="3"><li>Crea una lista de objetos <code>Producto</code> con los datos de los primeros 10 productos de la API.</li></ol><ol type="1" id="210ccb84-58a3-8096-ba92-e8abb3d9bdb0" class="numbered-list" start="4"><li>La clase <code>Producto</code> debe tener un método <code>aplicar_descuento(porcentaje)</code> que devuelva el precio con el descuento aplicado.</li></ol><ol type="1" id="210ccb84-58a3-80b0-bf90-e276e719050c" class="numbered-list" start="5"><li>Muestra por pantalla el nombre y el precio con un 15% de descuento para cada uno de los 10 productos que creaste.</li></ol></li></ul></div></details></div></details><details open=""><summary style="font-weight:600;font-size:1.5em;line-height:1.3;margin:0"><strong>Parte 2: Mini-Proyectos Finales</strong></summary><div class="indented"><p id="210ccb84-58a3-804d-9c4c-d72c459fa4df" class="">Estos proyectos integran todo lo que hemos aprendido, desde las clases hasta el consumo de APIs y el manejo de errores.</p><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Proyecto 1: Tu Pokédex Personal</strong></summary><div class="indented"><p id="210ccb84-58a3-8099-9363-c272dd907ba9" class=""><strong>Descripción:</strong> Crear una aplicación de consola interactiva que permita a los usuarios buscar información sobre Pokémon y crear su propio equipo.</p><p id="210ccb84-58a3-808a-8652-e10023c739d0" class=""><strong>Requisitos:</strong></p><ol type="1" id="210ccb84-58a3-804a-b141-ded94c38b8d2" class="numbered-list" start="1"><li><strong>Clase </strong><code><strong>Pokemon</strong></code><strong>:</strong> Utiliza y mejora la clase <code>Pokemon</code> que creamos en las lecciones, asegurándote de que maneje correctamente la excepción <code>PokemonNotFoundException</code>.</li></ol><ol type="1" id="210ccb84-58a3-8059-920f-cd618f5ecece" class="numbered-list" start="2"><li><strong>Menú Interactivo:</strong> El programa debe mostrar un menú con opciones como:<ul id="210ccb84-58a3-80e0-ad95-d578f5b69fdf" class="bulleted-list"><li style="list-style-type:disc">&quot;1. Buscar Pokémon&quot;</li></ul><ul id="210ccb84-58a3-805f-8c69-e3e8ebc88872" class="bulleted-list"><li style="list-style-type:disc">&quot;2. Ver mi equipo&quot;</li></ul><ul id="210ccb84-58a3-8051-ae25-f7e2d1519a97" class="bulleted-list"><li style="list-style-type:disc">&quot;3. Salir&quot;</li></ul></li></ol><ol type="1" id="210ccb84-58a3-80a0-bb60-e7efbe5caee5" class="numbered-list" start="3"><li><strong>Buscar Pokémon:</strong><ul id="210ccb84-58a3-80cc-9124-eae3adbc47ef" class="bulleted-list"><li style="list-style-type:disc">El usuario introduce un nombre o número de Pokémon.</li></ul><ul id="210ccb84-58a3-8090-841a-ed4a3ccc1976" class="bulleted-list"><li style="list-style-type:disc">El programa crea una instancia de la clase <code>Pokemon</code>. Si el Pokémon no se encuentra, captura la excepción y se lo informa al usuario.</li></ul><ul id="210ccb84-58a3-8029-a121-dd9be6f14546" class="bulleted-list"><li style="list-style-type:disc">Si se encuentra, muestra su descripción (usando el método <code>.describe()</code>) y pregunta al usuario si desea &quot;capturarlo&quot; (agregarlo a su equipo).</li></ul></li></ol><ol type="1" id="210ccb84-58a3-8034-a33a-e1360605a308" class="numbered-list" start="4"><li><strong>Equipo Pokémon:</strong><ul id="210ccb84-58a3-80b5-829f-c50fbd2211ff" class="bulleted-list"><li style="list-style-type:disc">Mantén una lista que funcione como el &quot;equipo&quot; del usuario.</li></ul><ul id="210ccb84-58a3-804d-92e3-d9d9f11da792" class="bulleted-list"><li style="list-style-type:disc">Si el usuario decide capturar un Pokémon, el objeto <code>Pokemon</code> se añade a esta lista.</li></ul><ul id="210ccb84-58a3-8099-bc60-dfd8c5b6327b" class="bulleted-list"><li style="list-style-type:disc">La opción &quot;Ver mi equipo&quot; debe iterar sobre la lista y mostrar de forma resumida cada Pokémon del equipo (ej. &quot;Pikachu (Eléctrico)&quot;).</li></ul></li></ol><ol type="1" id="210ccb84-58a3-80f8-aedb-f1ba6ac9b706" class="numbered-list" start="5"><li><strong>Bucle Principal:</strong> El programa debe seguir funcionando y mostrando el menú hasta que el usuario elija la opción de salir.</li></ol></div></details><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Proyecto 2: Gestor de Tareas Conectado a la Nube</strong></summary><div class="indented"><p id="210ccb84-58a3-807e-b0fe-e3f1c0e185ef" class=""><strong>Descripción:</strong> Crear un gestor de tareas pendientes (To-Do list) que permita al usuario crear nuevas tareas y enviarlas a un servidor usando la API de JSONPlaceholder.</p><p id="210ccb84-58a3-809e-b71a-fae76dfacb75" class=""><strong>Requisitos:</strong></p><ol type="1" id="210ccb84-58a3-8031-9ed2-cfd71c4a127a" class="numbered-list" start="1"><li><strong>Clase </strong><code><strong>Tarea</strong></code><strong>:</strong> Crea una clase <code>Tarea</code> con atributos <code>titulo</code>, <code>completada</code> (un booleano) y <code>id_usuario</code>.</li></ol><ol type="1" id="210ccb84-58a3-80c4-bd6d-e14962ae6638" class="numbered-list" start="2"><li><strong>Interfaz de Usuario:</strong> Una aplicación de consola que permita:<ul id="210ccb84-58a3-80f3-9315-f39097f7da03" class="bulleted-list"><li style="list-style-type:disc">&quot;1. Crear nueva tarea&quot;</li></ul><ul id="210ccb84-58a3-8025-9e17-cebaf6f2237e" class="bulleted-list"><li style="list-style-type:disc">&quot;2. Ver mis tareas enviadas&quot;</li></ul><ul id="210ccb84-58a3-8026-9e40-e5e69eb170d0" class="bulleted-list"><li style="list-style-type:disc">&quot;3. Salir&quot;</li></ul></li></ol><ol type="1" id="210ccb84-58a3-806a-be9b-febd5897ffc8" class="numbered-list" start="3"><li><strong>Crear Tarea:</strong><ul id="210ccb84-58a3-80bc-9d21-d1571eeee014" class="bulleted-list"><li style="list-style-type:disc">Pide al usuario que introduzca el título de la tarea.</li></ul><ul id="210ccb84-58a3-80f9-8e16-dbb87351b375" class="bulleted-list"><li style="list-style-type:disc">Utiliza la función que creaste en la lección 10 para hacer una petición <code>POST</code> a <code>https://jsonplaceholder.typicode.com/todos</code> con el título, un <code>userId</code> fijo (puedes usar <code>1</code>) y <code>completed: false</code>.</li></ul></li></ol><ol type="1" id="210ccb84-58a3-8028-91be-f663d14408fa" class="numbered-list" start="4"><li><strong>Tareas Enviadas:</strong><ul id="210ccb84-58a3-8097-9fec-c9133e1b1e49" class="bulleted-list"><li style="list-style-type:disc">Mantén una lista local con las tareas que el programa ha enviado con éxito.</li></ul><ul id="210ccb84-58a3-8061-9916-fb1493d5935f" class="bulleted-list"><li style="list-style-type:disc">Cuando una tarea se crea correctamente vía <code>POST</code>, la API devuelve el objeto creado con un nuevo <code>id</code>. Almacena este objeto completo en tu lista.</li></ul><ul id="210ccb84-58a3-80f5-aa56-d82a434ff36d" class="bulleted-list"><li style="list-style-type:disc">La opción &quot;Ver mis tareas enviadas&quot; debe mostrar todas las tareas de la lista, incluyendo el <code>id</code> asignado por el servidor.</li></ul></li></ol><ol type="1" id="210ccb84-58a3-8091-b8e9-f864b50e1b66" class="numbered-list" start="5"><li><strong>Manejo de Errores:</strong> Asegúrate de que tu función de <code>POST</code> maneje correctamente los posibles errores de red o del servidor e informe al usuario si una tarea no pudo ser creada.</li></ol></div></details></div></details></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 01: Fundamentos de Python</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        /* Custom font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        pre, code {
+            font-family: 'Fira Code', monospace;
+        }
+        /* Style for smooth transitions */
+        body, h1, h2, p, li, strong, a, div, button, svg, pre {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        /* Accordion styles */
+        .accordion {
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            border: none;
+            outline: none;
+            transition: background-color 0.4s ease;
+            position: relative;
+        }
+        .accordion:after {
+            content: '\002B'; /* Plus sign */
+            font-size: 1.5em;
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.3s ease;
+        }
+        .accordion.active:after {
+            content: "\2212"; /* Minus sign */
+            transform: translateY(-50%) rotate(180deg);
+        }
+        .panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        /* Syntax Highlighting Styles */
+        .code-comment { color: #6a9955; } /* Green for comments */
+        .dark .code-comment { color: #6A9955; }
+        .code-string { color: #ce9178; } /* Orange for strings */
+        .dark .code-string { color: #CE9178; }
+        .code-function { color: #dcdcaa; } /* Yellow for functions */
+        .dark .code-function { color: #DCDCAA; }
+        .code-keyword { color: #569cd6; } /* Blue for keywords */
+        .dark .code-keyword { color: #569CD6; }
+        .code-number { color: #b5cea8; } /* Light green for numbers */
+        .dark .code-number { color: #B5CEA8; }
+        .code-variable { color: #9cdcfe; } /* Light blue for variables */
+        .dark .code-variable { color: #9CDCFE; }
+        /* Mobile-only: wrap long lines in code blocks and hide horizontal scroll */
+        @media (max-width: 640px) {
+            pre code {
+                white-space: pre-wrap;   /* keep indentation and line breaks, allow wrapping */
+                overflow-wrap: anywhere; /* allow breaking long tokens */
+                word-break: break-word;  /* fallback for older engines */
+            }
+            pre { overflow-x: hidden; }
+        }
+
+        /* Opt-in class: apply wrapping on desktop to chosen blocks */
+        .wrap-code code {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+        .wrap-code { overflow-x: hidden; }
+    </style>
+    <script>
+        // Tailwind dark mode configuration
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    // You can extend your theme here if needed
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased">
+
+    <!-- Dark Mode Toggle Button -->
+    <div class="fixed top-4 right-4 z-10">
+        <button id="darkModeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900 focus:ring-indigo-500">
+            <svg id="sunIcon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <svg id="moonIcon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        </button>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        
+        <header class="text-center mb-10">
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white">Módulo 01: Fundamentos de Python <span class="text-4xl">🚀</span></h1>
+        </header>
+
+        <main class="space-y-4">
+            <p class="text-lg text-center mb-8">¡Felicidades por empezar! En el módulo anterior, preparamos nuestro entorno. Ahora, es el momento de la verdad: vamos a escribir nuestras primeras líneas de código para comunicarnos con la computadora.</p>
+            
+            <!-- Accordion Item 1 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 1: La Función print()</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Tu Primera Conversación con print()</h3>
+                        <p>La función <code>print()</code> es la herramienta más fundamental de Python. Es como la "voz" de tu programa. La usarás constantemente para mostrar mensajes, ver los resultados de tus operaciones y entender qué está pasando dentro de tu código.</p>
+                        <h4 class="text-xl font-semibold">Imprimiendo un Mensaje Simple</h4>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># Esta es tu primera línea de código funcional. ¡Ejecútala!</span>
+<span class="code-function">print</span>(<span class="code-string">"¡Hola, mundo!"</span>)
+
+<span class="code-comment"># También puedes usar comillas simples.</span>
+<span class="code-function">print</span>(<span class="code-string">'Python es increíble.'</span>)
+</code></pre>
+                        <h4 class="text-xl font-semibold">Mostrando Múltiples Elementos</h4>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-function">print</span>(<span class="code-string">"Mi edad es"</span>, <span class="code-number">30</span>, <span class="code-string">"años."</span>)</code></pre>
+                        <h4 class="text-xl font-semibold">Controlando la Salida con `sep` y `end`</h4>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># Usando 'sep' para unir con guiones</span>
+<span class="code-function">print</span>(<span class="code-string">"Python"</span>, <span class="code-string">"es"</span>, <span class="code-string">"genial"</span>, sep=<span class="code-string">"-"</span>)
+
+<span class="code-comment"># Usando 'end' para evitar el salto de línea y continuar en la misma línea</span>
+<span class="code-function">print</span>(<span class="code-string">"Esto se imprime en la misma línea"</span>, end=<span class="code-string">" "</span>)
+<span class="code-function">print</span>(<span class="code-string">"que esto."</span>)
+</code></pre>
+                        <h4 class="text-xl font-semibold">F-Strings: Cadenas de Texto Formateadas</h4>
+                        <p>Los <strong>f-strings</strong> (cadenas de texto formateadas) son una forma moderna y legible de crear cadenas de texto dinámicas. Te permiten insertar variables directamente dentro de un string de manera muy sencilla, prefijando la cadena con la letra <code>f</code>.</p>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># Creamos algunas variables para usar en el f-string</span>
+<span class="code-variable">nombre</span> = <span class="code-string">"Ana"</span>
+<span class="code-variable">puntos</span> = <span class="code-number">150</span>
+
+<span class="code-comment"># Usamos un f-string para combinar texto y variables</span>
+<span class="code-function">print</span>(f<span class="code-string">"¡Hola, {</span><span class="code-variable">nombre</span><span class="code-string">}! Has obtenido {</span><span class="code-variable">puntos</span><span class="code-string">} puntos."</span>)
+</code></pre>
+                        <h4 class="text-xl font-semibold">Comentarios: Escribiendo Notas para ti y otros Desarrolladores</h4>
+                        <p>Los comentarios son líneas de texto que el intérprete de Python ignora por completo. Son esenciales para explicar tu código, hacerlo más legible y recordar la lógica detrás de tus decisiones de programación. No tienes que comentar cada linea de código, solo partes importantes o que se presten a ambiguedades. Con el tiempo y la práctica desarrollaras mejor el criterio necesario para saber cuándo es necesario comentar algo.</p>
+                        <h5 class="text-lg font-semibold">Comentario de una sola línea</h5>
+                        <p>Usa el signo de almohadilla (<code>#</code>) para crear un comentario de una sola línea. Todo lo que esté después del <code>#</code> en esa línea no será ejecutado.</p>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># Este es un comentario que explica la siguiente línea de código</span>
+<span class="code-function">print</span>(<span class="code-string">"Hello, Python!"</span>) 
+<span class="code-comment"># La línea de arriba imprime un saludo</span>
+</code></pre>
+                        <h5 class="text-lg font-semibold">Comentario de múltiples líneas</h5>
+                        <p>En Python, no hay una sintaxis oficial para comentarios de varias líneas como en otros lenguajes. La convención es usar tres comillas dobles (<code>"""</code>) o simples (<code>'''</code>). Esto crea un <strong>docstring</strong>, que es una cadena de texto que no se asigna a ninguna variable y se utiliza comúnmente para documentar funciones y módulos, pero también puede servir como un comentario multilinea.</p>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-string">"""
+Este es un comentario de múltiples líneas.
+Puede extenderse a través de varias líneas
+para explicar bloques de código más grandes.
+"""</span>
+<span class="code-function">print</span>(<span class="code-string">"Estoy usando un comentario multilinea."</span>)</code></pre>
+                        <h5 class="text-lg font-semibold">Limpiar la consola</h5>
+                        <p>Si en lugar de usar el interprete embebido en las lecciones decides usar uno propio y tienes que imprimir mucho codigo (como cualquiera que esta aprendiendo un lenguaje nuevo). El siguiente codigo te ayudará a limpiar automaticamente la consola cada que ejecutes el codigo. Además sirve como pequeña introduccion a importar modulos a python, algo fundamental para añadir más funciones al lenguaje. </p>
+<pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># Podemos importar módulos de Python para usarlos en nuestros programas.</span>
+<span class="code-comment"># En este caso, importamos el módulo "os" que nos da acceso a funciones</span>
+<span class="code-comment"># relacionadas con el sistema operativo</span>
+<span class="code-keyword">from</span> os <span class="code-keyword">import</span> system
+
+<span class="code-comment"># system() nos permite ejecutar un comando en la terminal.</span>
+<span class="code-comment"># En este caso, lo hacemos para limpiar la pantalla tanto</span>
+<span class="code-comment"># en MacOS/Linux usando "clear" como en Windows con "cls"</span>
+<span class="code-keyword">if</span> <span class="code-function">system</span>(<span class="code-string">"clear"</span>) != <span class="code-number">0</span>: <span class="code-function">system</span>(<span class="code-string">"cls"</span>)
+</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 2 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 2: Variables y Tipos de Datos</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Guardando Información: Variables</h3>
+                        <p>Una <strong>variable</strong> es como una caja con una etiqueta. Puedes guardar algo dentro y usar la etiqueta para referirte a ello más tarde.</p>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># Creamos una variable y le asignamos un valor</span>
+<span class="code-variable">nombre_heroe</span> = <span class="code-string">"Spider-Man"</span>
+<span class="code-variable">edad</span> = <span class="code-number">25</span>
+
+<span class="code-comment"># Ahora podemos usar la variable en lugar del valor directo</span>
+<span class="code-function">print</span>(<span class="code-string">"Mi héroe favorito es"</span>, <span class="code-variable">nombre_heroe</span>)
+<span class="code-function">print</span>(<span class="code-variable">nombre_heroe</span>, <span class="code-string">"tiene"</span>, <span class="code-variable">edad</span>, <span class="code-string">"años."</span>)
+</code></pre>
+                        <h4 class="text-xl font-semibold">Tipos de Datos Fundamentales</h4>
+                        <ul class="list-disc list-inside space-y-2">
+                           <li><code>int</code>: Números enteros (ej: <code>10</code>, <code>-5</code>).</li>
+                           <li><code>float</code>: Números con decimales (ej: <code>3.14</code>).</li>
+                           <li><code>str</code>: Cadenas de texto (ej: <code>"Hola"</code>).</li>
+                           <li><code>bool</code>: Valores de verdad: <code>True</code> o <code>False</code>.</li>
+                        </ul>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># Python deduce el tipo de dato automáticamente</span>
+<span class="code-variable">numero_entero</span> = <span class="code-number">42</span>
+<span class="code-variable">numero_decimal</span> = <span class="code-number">9.99</span>
+<span class="code-variable">texto</span> = <span class="code-string">"Este es un string"</span>
+<span class="code-variable">es_verdadero</span> = <span class="code-keyword">True</span>
+
+<span class="code-comment"># Podemos usar la función type() para comprobarlo</span>
+<span class="code-function">print</span>(<span class="code-function">type</span>(<span class="code-variable">numero_entero</span>)) <span class="code-comment"># Muestra &lt;class 'int'&gt;</span>
+<span class="code-function">print</span>(<span class="code-function">type</span>(<span class="code-variable">es_verdadero</span>)) <span class="code-comment"># Muestra &lt;class 'bool'&gt;</span>
+</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 3 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 3: Operadores y Entrada de Usuario</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Interactuando con los Datos</h3>
+                        <h4 class="text-xl font-semibold">Operadores Aritméticos</h4>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-variable">resultado_suma</span> = <span class="code-number">10</span> + <span class="code-number">5</span>  <span class="code-comment"># 15</span>
+<span class="code-variable">resultado_division</span> = <span class="code-number">20</span> / <span class="code-number">4</span>  <span class="code-comment"># 5.0 (la división normal siempre da un float)</span>
+<span class="code-variable">resultado_potencia</span> = <span class="code-number">2</span> ** <span class="code-number">3</span>  <span class="code-comment"># 8 (2 elevado a 3)</span>
+<span class="code-function">print</span>(<span class="code-string">"El resultado de la suma es:"</span>, <span class="code-variable">resultado_suma</span>)
+
+<span class="code-comment"># El operador + también concatena (une) strings</span>
+<span class="code-variable">saludo</span> = <span class="code-string">"Hola"</span> + <span class="code-string">" "</span> + <span class="code-string">"mundo"</span>
+<span class="code-function">print</span>(<span class="code-variable">saludo</span>) <span class="code-comment"># Muestra "Hola mundo"</span>
+</code></pre>
+                        <h4 class="text-xl font-semibold">Operadores de Asignación Compuesta</h4>
+                        <p>Estos operadores combinan una operación aritmética con la asignación (<code>=</code>). Son una forma abreviada de escribir código y muy comunes. Aquí están los más útiles:</p>
+                        <ul class="list-disc list-inside space-y-2">
+                           <li><span class="inline-flex items-center justify-center w-8 h-8 rounded-md bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100 font-mono text-sm">+=</span> <span class="ml-2"><code>x += 5</code> es lo mismo que <code>x = x + 5</code>.</span></li>
+                           <li><span class="inline-flex items-center justify-center w-8 h-8 rounded-md bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100 font-mono text-sm">-=</span> <span class="ml-2"><code>x -= 3</code> es lo mismo que <code>x = x - 3</code>.</span></li>
+                           <li><span class="inline-flex items-center justify-center w-8 h-8 rounded-md bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100 font-mono text-sm">*=</span> <span class="ml-2"><code>x *= 2</code> es lo mismo que <code>x = x * 2</code>.</span></li>
+                           <li><span class="inline-flex items-center justify-center w-8 h-8 rounded-md bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100 font-mono text-sm">/=</span> <span class="ml-2"><code>x /= 4</code> es lo mismo que <code>x = x / 4</code>.</span></li>
+                        </ul>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-variable">saldo</span> = <span class="code-number">100</span>
+
+<span class="code-comment"># Aumenta el saldo en 50, usando el operador de asignación +=</span>
+<span class="code-variable">saldo</span> += <span class="code-number">50</span>
+<span class="code-function">print</span>(<span class="code-string">"Saldo después de un depósito:"</span>, <span class="code-variable">saldo</span>) <span class="code-comment"># Muestra 150</span>
+
+<span class="code-comment"># Reduce el saldo a la mitad, usando el operador de asignación /=</span>
+<span class="code-variable">saldo</span> /= <span class="code-number">2</span>
+<span class="code-function">print</span>(<span class="code-string">"Saldo después de un gasto:"</span>, <span class="code-variable">saldo</span>) <span class="code-comment"># Muestra 75.0</span>
+</code></pre>
+                        <h4 class="text-xl font-semibold">Pidiendo Información al Usuario con `input()`</h4>
+                        <p><strong>Importancia:</strong> <code>input()</code> es el <strong>puente de interacción</strong> entre tu programa y quien lo usa (e incluso con el <em>entorno</em> cuando se leen datos de sensores). Lo usarás con frecuencia para que el programa reciba información.</p>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>¿Qué hace?</strong> Muestra un mensaje (el “prompt”).</li>
+                            <li><strong>Pausa</strong> el programa hasta que la persona escribe y presiona Enter.</li>
+                            <li><strong>Devuelve SIEMPRE</strong> un <code>str</code> (texto), aunque parezca número.</li>
+                            <li>Si quieres hacer matemáticas, primero convierte ese texto a número con <code>int()</code> o <code>float()</code> (lo veremos más adelante).</li>
+                        </ul>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-variable">nombre_usuario</span> = <span class="code-function">input</span>(<span class="code-string">"Por favor, introduce tu nombre: "</span>)
+<span class="code-function">print</span>(f<span class="code-string">"¡Hola, {</span><span class="code-variable">nombre_usuario</span><span class="code-string">}! Encantado de conocerte."</span>)
+
+<span class="code-variable">edad_texto</span> = <span class="code-function">input</span>(<span class="code-string">"¿Cuántos años tienes? "</span>)
+<span class="code-function">print</span>(<span class="code-string">"El tipo de dato de la edad introducida es:"</span>, <span class="code-function">type</span>(<span class="code-variable">edad_texto</span>))
+</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 4 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 4: Conversión de Tipos (Casting)</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Transformando Datos</h3>
+                        <p>El <strong>casting</strong> es el proceso de convertir un valor de un tipo de dato a otro. Usamos <code>int()</code>, <code>float()</code>, <code>str()</code>.</p>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-variable">edad_texto</span> = <span class="code-function">input</span>(<span class="code-string">"Introduce tu edad de nuevo: "</span>)
+<span class="code-comment"># Hacemos el casting para convertir el string a un número entero</span>
+<span class="code-variable">edad_numero</span> = <span class="code-function">int</span>(<span class="code-variable">edad_texto</span>)
+
+<span class="code-comment"># ¡Ahora sí podemos hacer operaciones matemáticas!</span>
+<span class="code-function">print</span>(f<span class="code-string">"El año que viene tendrás {</span><span class="code-variable">edad_numero</span><span class="code-string"> + </span><span class="code-number">1</span><span class="code-string">} años."</span>)
+
+<span class="code-comment"># De número a string</span>
+<span class="code-variable">puntos</span> = <span class="code-number">100</span>
+                        <span class="code-variable">mensaje</span> = <span class="code-string">"Has ganado "</span> + <span class="code-function">str</span>(<span class="code-variable">puntos</span>) + <span class="code-string">" puntos."</span>
+                        <span class="code-function">print</span>(<span class="code-variable">mensaje</span>)
+                        </code></pre>
+                        <h4 class="text-xl font-semibold mt-6">Optimizando el Código: Combinando `input` y `int`</h4>
+                        <p>A menudo, verás que la captura de un número y su conversión se hacen en una sola línea. Es una forma más compacta y eficiente de escribir el mismo código.</p>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># La versión corta y directa</span>
+<span class="code-variable">edad</span> = <span class="code-function">int</span>(<span class="code-function">input</span>(<span class="code-string">"Introduce tu edad de nuevo: "</span>))
+<span class="code-function">print</span>(f<span class="code-string">"En 5 años tendrás {</span><span class="code-variable">edad</span><span class="code-string"> + </span><span class="code-number">5</span><span class="code-string">} años."</span>)
+</code></pre>
+                        <h5 class="text-lg font-semibold">¿Cuándo usar cada forma?</h5>
+                        <ul class="list-disc list-inside space-y-2 bg-gray-100 dark:bg-gray-800 p-4 rounded-md">
+                            <li><strong>Forma Larga (separada):</strong> Es ideal cuando estás aprendiendo. Te permite ver cada paso claramente: primero capturas el texto, luego lo conviertes. También es útil si necesitas la versión en texto del input para otra cosa antes de convertirla.</li>
+                            <li><strong>Forma Corta (combinada):</strong> Es la más común en el código de producción. Úsala cuando estés seguro de que el único propósito de ese `input` es obtener un número para hacer cálculos. Es más concisa y se considera más "pythonic" (idiomática de Python). Sin embargo, si el usuario introduce algo que no es un número (como "veinte"), el programa se detendrá con un error. Más adelante aprenderemos a manejar estos errores.</li>
+                        </ul>
+                        <p class="mt-4 italic text-gray-600 dark:text-gray-400">Esta clase de "trucos" serán comunes a lo largo del curso, y por ello es importante contar con un compilador a la mano, para permitirte probar y romper el código, así explorando todas estas posibilidades que permite Python.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 5 (New) -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 5: f-strings con expresiones y formato</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">f-strings: expresivos y precisos</h3>
+                        <p>En un <strong>f-string</strong> puedes poner <em>expresiones</em> entre llaves <code>{}</code>: operaciones, llamadas a funciones y condicionales. Tras <code>:</code> agrega <em>especificadores de formato</em> como <code>.2f</code>, <code>,</code>, <code>>10</code>, etc.</p>
+
+                        <h4 class="text-xl font-semibold">Ejemplos rápidos</h4>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-variable">a</span>, <span class="code-variable">b</span> = <span class="code-number">10</span>, <span class="code-number">3</span>
+<span class="code-function">print</span>(f<span class="code-string">"{</span><span class="code-variable">a</span> <span class="code-string">+</span> <span class="code-variable">b</span><span class="code-string">}"</span>)   <span class="code-comment"># 13 (aritmética)</span>
+<span class="code-function">print</span>(f<span class="code-string">"{(</span><span class="code-variable">a</span><span class="code-string">/</span><span class="code-variable">b</span><span class="code-string">):.2f}"</span>)   <span class="code-comment"># 3.33 (decimales)</span>
+<span class="code-function">print</span>(f<span class="code-string">"{</span><span class="code-variable">a</span><span class="code-string">:,}"</span>) <span class="code-comment"># 10 (separador miles)</span>
+<span class="code-variable">nombre</span> = <span class="code-string">"Ada"</span>
+<span class="code-function">print</span>(f<span class="code-string">"{</span><span class="code-variable">nombre</span><span class="code-string">.upper()}"</span>)                <span class="code-comment"># ADA (método)</span>
+<span class="code-function">print</span>(f<span class="code-string">"{</span><span class="code-variable">a</span> <span class="code-keyword">if</span> <span class="code-variable">a</span><span class="code-string">></span><span class="code-variable">b</span> <span class="code-keyword">else</span> <span class="code-variable">b</span><span class="code-string">}"</span>)   <span class="code-comment"># 10 (condicional)</span>
+<span class="code-function">print</span>(f<span class="code-string">"{</span><span class="code-variable">a</span><span class="code-string">=}"</span>)                          <span class="code-comment"># a=10 (debug)</span>
+</code></pre>
+
+                        <h4 class="text-xl font-semibold">Ejercicio resuelto: ticket de compra</h4>
+                        <p>Integra <code>input()</code>, variables, operadores, <em>casting</em> y f-strings para calcular un total con impuestos.</p>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-variable">producto</span> = <span class="code-function">input</span>(<span class="code-string">"Nombre del producto: "</span>)
+<span class="code-variable">precio_txt</span> = <span class="code-function">input</span>(<span class="code-string">"Precio unitario: "</span>)
+<span class="code-variable">cantidad_txt</span> = <span class="code-function">input</span>(<span class="code-string">"Cantidad: "</span>)
+
+<span class="code-comment"># Casting</span>
+<span class="code-variable">precio</span> = <span class="code-function">float</span>(<span class="code-variable">precio_txt</span>)
+<span class="code-variable">cantidad</span> = <span class="code-function">int</span>(<span class="code-variable">cantidad_txt</span>)
+
+<span class="code-comment"># Operaciones</span>
+<span class="code-variable">subtotal</span> = <span class="code-variable">precio</span> * <span class="code-variable">cantidad</span>
+<span class="code-variable">iva</span> = <span class="code-variable">subtotal</span> * <span class="code-number">0.16</span>
+<span class="code-variable">total</span> = <span class="code-variable">subtotal</span> + <span class="code-variable">iva</span>
+
+<span class="code-comment"># Salida con f-strings y formato</span>
+<span class="code-function">print</span>(f<span class="code-string">"Producto: {</span><span class="code-variable">producto</span><span class="code-string">}"</span>)
+<span class="code-function">print</span>(f<span class="code-string">"Subtotal: $ {(</span><span class="code-variable">subtotal</span><span class="code-string">):,.2f}"</span>)
+<span class="code-function">print</span>(f<span class="code-string">"IVA (16%): $ {(</span><span class="code-variable">iva</span><span class="code-string">):,.2f}"</span>)
+<span class="code-function">print</span>(f<span class="code-string">"Total: $ {(</span><span class="code-variable">total</span><span class="code-string">):,.2f}"</span>)
+</code></pre>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Tip: usa <code>,</code> para miles y <code>.2f</code> para dos decimales dentro del formato.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 5 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Ejercicios Prácticos del Módulo 01</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <div class="space-y-3">
+                            <h4 class="text-xl font-semibold">Ejercicio 1: Saludo Personalizado</h4>
+                            <p>Escribe un programa que pregunte al usuario su nombre y su ciudad. Luego, muestra un mensaje de bienvenida. Ejemplo: "¡Bienvenido/a, [nombre] de la ciudad de [ciudad]!"</p>
+                        </div>
+                        <div class="space-y-3">
+                            <h4 class="text-xl font-semibold">Ejercicio 2: Calculadora de Edad Futura</h4>
+                            <p>Crea un programa que pida al usuario su edad actual. Usa <code>input()</code>, haz el <strong>casting</strong> a <code>int</code> y luego calcula y muestra la edad que tendrá en 10 años.</p>
+                        </div>
+                        <div class="space-y-3">
+                            <h4 class="text-xl font-semibold">Ejercicio 3: Sumadora Simple</h4>
+                            <p>Pide al usuario dos números (pueden ser decimales). Convierte ambos a <code>float</code>, súmalos y muestra el resultado con un mensaje claro.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // JavaScript for Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const html = document.documentElement;
+
+        const setTheme = (theme) => {
+            if (theme === 'dark') {
+                html.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.classList.remove('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+                localStorage.setItem('theme', 'light');
+            }
+        };
+
+        darkModeToggle.addEventListener('click', () => {
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (savedTheme) {
+            setTheme(savedTheme);
+        } else if (prefersDark) {
+            setTheme('dark');
+        } else {
+            setTheme('light');
+        }
+
+        // JavaScript for Accordion functionality
+        const accordions = document.getElementsByClassName("accordion");
+        for (let i = 0; i < accordions.length; i++) {
+            accordions[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                } 
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso de Python: Lección 3 - Bucles y Funciones</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px 40px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #8e44ad;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+        }
+        p.intro {
+            text-align: center;
+            font-size: 1.1em;
+            color: #555;
+        }
+        .accordion {
+            background-color: #8e44ad;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 18px;
+            transition: background-color 0.4s ease;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion:hover, .accordion.active {
+            background-color: #7d3c98;
+        }
+        .accordion::after {
+            content: '▶';
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        .accordion.active::after {
+            transform: rotate(90deg);
+        }
+        .panel {
+            padding: 0 18px;
+            background-color: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        .panel p {
+            margin-top: 15px;
+        }
+        pre[class*="language-"] {
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        /* Theme switch styles */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+        }
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        body.dark-mode .container {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        body.dark-mode h1 {
+            color: #ffffff;
+            border-bottom-color: #8e44ad;
+        }
+        body.dark-mode h2 {
+            color: #ffffff;
+            border-bottom-color: #555;
+        }
+        body.dark-mode p.intro {
+            color: #ccc;
+        }
+        body.dark-mode .accordion {
+            background-color: #8e44ad;
+        }
+        body.dark-mode .accordion:hover, body.dark-mode .accordion.active {
+            background-color: #7d3c98;
+        }
+        body.dark-mode .panel {
+            background-color: #2a2a2a;
+            border-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round"></div>
+        </label>
+    </div>
+    
+    <div class="container">
+        <h1>Lección 3: Bucles y Funciones</h1>
+        <p class="intro">En esta lección dominaremos las estructuras que permiten repetir tareas (bucles) y organizar nuestro código en bloques reutilizables (funciones), dos de los pilares más importantes de la programación.</p>
+
+        <h2>El Bucle `while`</h2>
+
+        <button class="accordion">01: El Bucle `while` y su Control</button>
+        <div class="panel">
+            <p>Un bucle <code>while</code> (mientras) ejecuta un bloque de código repetidamente mientras una condición específica sea verdadera. Es ideal cuando no sabemos de antemano cuántas veces necesitamos repetir una acción.</p>
+            
+            <p><strong>Bucle Básico:</strong><br>Veamos un bucle simple que cuenta de 0 a 5. Es crucial tener un contador (<code>contador += 1</code>) que cambie en cada iteración para que la condición eventualmente se vuelva falsa y así evitar bucles infinitos.</p>
+            <pre><code class="language-python">contador = 0
+while contador <= 5:
+  print(contador)
+  contador += 1 # es super importante para evitar un bucle infinito</code></pre>
+
+            <p><strong><code>break</code> para Romper el Bucle:</strong><br>La palabra clave <code>break</code> nos permite salir de un bucle inmediatamente, sin importar si la condición principal (en este caso <code>while True</code>) todavía es verdadera. Es una salida de emergencia.</p>
+            <pre><code class="language-python">contador = 0
+while True: # Esto crearía un bucle infinito si no fuera por el break
+  print(contador)
+  contador += 1
+  if contador == 5:
+    break # sale del bucle cuando el contador llega a 5</code></pre>
+
+            <p><strong><code>continue</code> para Saltar una Iteración:</strong><br><code>continue</code> es diferente. No rompe el bucle, sino que ignora el resto del código de la iteración actual y salta directamente al inicio de la siguiente. En este ejemplo, si el número es par, se salta el <code>print()</code>.</p>
+            <pre><code class="language-python">contador = 0
+while contador < 10:
+  contador += 1
+  if contador % 2 == 0: # Si el número es par...
+    continue # ...salta a la siguiente iteración sin imprimirlo.
+  print(contador) # Solo se ejecuta para números impares</code></pre>
+
+            <p><strong>Ejemplo Práctico con <code>input</code>:</strong><br>Un uso muy común de <code>while</code> es validar la entrada del usuario. Este bucle no dejará de pedir un número hasta que el usuario introduzca uno positivo. Además, usamos <code>try-except</code> para manejar el error si el usuario escribe texto en lugar de un número.</p>
+            <pre><code class="language-python">numero = -1
+while numero < 0:
+  try:
+    numero = int(input("Escribe un número positivo: "))
+    if numero < 0:
+      print("El número debe ser positivo. Intenta otra vez.")
+  except ValueError:
+    print("Error: Debes introducir un número válido.")
+
+print(f"¡Excelente! El número que has introducido es {numero}")</code></pre>
+        </div>
+
+        <button class="accordion">Ejercicios con `while`</button>
+        <div class="panel">
+            <p>Pon a prueba tu dominio del bucle <code>while</code> con estos problemas.</p>
+            <pre><code class="language-python"># Ejercicio 1: Cuenta atrás
+# Imprime los números del 10 al 1 usando un bucle while.
+
+# Ejercicio 2: Suma de números pares
+# Calcula la suma de los números pares entre 1 y 20 (inclusive) usando un bucle while.
+
+# Ejercicio 3: Factorial de un número
+# Pide al usuario que introduzca un número entero positivo.
+# Calcula su factorial usando un bucle while (ej: 5! = 5 * 4 * 3 * 2 * 1).
+
+# Ejercicio 4: Validación de contraseña
+# Pide al usuario una contraseña. Usa un bucle while para seguir pidiéndola
+# hasta que tenga al menos 8 caracteres.
+
+# Ejercicio 5: Tabla de multiplicar
+# Pide al usuario un número e imprime su tabla de multiplicar (del 1 al 10) usando while.
+
+# Ejercicio 6: Números primos hasta N
+# Pide un número N e imprime todos los números primos menores o iguales a N.</code></pre>
+        </div>
+
+        <button class="accordion">Soluciones a Ejercicios con `while`</button>
+        <div class="panel">
+            <p>Compara tus resultados con las soluciones propuestas.</p>
+            <pre><code class="language-python"># Ejercicio 1: Cuenta atrás
+print("\nEjercicio 1:")
+numero = 10
+while numero >= 1:
+  print(numero)
+  numero -= 1
+
+# Ejercicio 2: Suma de números pares
+print("\nEjercicio 2:")
+numero = 1
+suma_pares = 0
+while numero <= 20:
+  if numero % 2 == 0:
+    suma_pares += numero
+  numero += 1
+print(f"La suma de los números pares hasta 20 es: {suma_pares}")
+
+# Ejercicio 3: Factorial de un número
+print("\nEjercicio 3:")
+numero = int(input("Introduce un número entero positivo: "))
+factorial = 1
+contador = 1
+while contador <= numero:
+  factorial *= contador
+  contador += 1
+print(f"El factorial de {numero} es: {factorial}")
+
+# Ejercicio 4: Validación de contraseña
+print("\nEjercicio 4:")
+contrasena = ""
+while len(contrasena) < 8:
+  contrasena = input("Introduce una contraseña (al menos 8 caracteres): ")
+  if len(contrasena) < 8:
+    print("La contraseña debe tener al menos 8 caracteres. Inténtalo de nuevo.")
+print("Contraseña válida")
+
+# Ejercicio 5: Tabla de multiplicar
+print("\nEjercicio 5:")
+numero = int(input("Introduce un número: "))
+multiplicador = 1
+while multiplicador <= 10:
+  resultado = numero * multiplicador
+  print(f"{numero} x {multiplicador} = {resultado}")
+  multiplicador += 1
+
+# Ejercicio 6: Números primos hasta N
+print("\nEjercicio 6:")
+n = int(input("Introduce un número entero positivo N: "))
+numero = 2
+while numero <= n:
+  es_primo = True
+  divisor = 2
+  while divisor * divisor <= numero:
+    if numero % divisor == 0:
+      es_primo = False
+      break
+    divisor += 1
+  if es_primo:
+    print(numero)
+  numero += 1</code></pre>
+        </div>
+
+        <h2>El Bucle `for`</h2>
+
+        <button class="accordion">02: El Bucle `for` y la Iteración</button>
+        <div class="panel">
+            <p>El bucle <code>for</code> se utiliza para <strong>iterar</strong> sobre los elementos de una secuencia (como una lista, una cadena de texto o un rango de números). Es perfecto cuando sabes de antemano sobre qué conjunto de elementos quieres operar.</p>
+            
+            <p><strong>Iterar sobre Secuencias:</strong><br>El uso más común es recorrer los elementos de un iterable. En cada iteración, la variable del bucle (<code>fruta</code>, <code>caracter</code>) toma el valor del siguiente elemento de la secuencia.</p>
+            <pre><code class="language-python"># Iterar una lista
+frutas = ["manzana", "pera", "mandarina"]
+for fruta in frutas:
+  print(fruta)
+
+# Iterar sobre una cadena de texto
+cadena = "midudev"
+for caracter in cadena:
+  print(caracter)</code></pre>
+
+            <p><strong><code>enumerate()</code> para Índice y Valor:</strong><br>Si necesitas tanto la posición (índice) como el valor de cada elemento, la función <code>enumerate()</code> es tu mejor aliada. Devuelve ambos en cada iteración.</p>
+            <pre><code class="language-python">frutas = ["manzana", "pera", "mandarina"]
+for idx, value in enumerate(frutas):
+  print(f"El índice es {idx} y la fruta es {value}")</code></pre>
+
+            <p><strong>Comprensión de Listas (List Comprehension):</strong><br>Python ofrece una sintaxis muy potente y concisa llamada "comprensión de listas" para crear nuevas listas a partir de iterables. Es una forma elegante de escribir un bucle <code>for</code> cuyo objetivo es construir una lista, a menudo con alguna condición.</p>
+            <pre><code class="language-python"># Crear una lista con todos los animales en mayúsculas
+animales = ["perro", "gato", "raton", "loro", "pez", "canario"]
+animales_mayus = [animal.upper() for animal in animales]
+print(animales_mayus)
+
+# Crear una lista solo con los números pares de otra lista
+numeros = [1, 2, 3, 4, 5, 6]
+pares = [num for num in numeros if num % 2 == 0]
+print(pares)</code></pre>
+        </div>
+
+        <button class="accordion">Ejercicios con `for`</button>
+        <div class="panel">
+            <p>Practica el bucle <code>for</code> iterando sobre listas y aplicando lógica en cada paso.</p>
+            <pre><code class="language-python"># Ejercicio 1: Imprimir números pares
+# Imprime todos los números pares del 2 al 20 (inclusive).
+
+# Ejercicio 2: Calcular la media de una lista
+# Dada la lista numeros = [10, 20, 30, 40, 50], calcula la media de sus elementos.
+
+# Ejercicio 3: Buscar el máximo de una lista
+# Dada la lista numeros = [15, 5, 25, 10, 20], encuentra el número máximo.
+
+# Ejercicio 4: Filtrar cadenas por longitud
+# Dada la lista palabras = ["casa", "arbol", "sol", "elefante", "luna"],
+# crea una nueva lista solo con las palabras de más de 5 letras.
+
+# Ejercicio 5: Contar palabras que empiezan con una letra
+# Pide al usuario una letra y cuenta cuántas palabras de una lista empiezan con ella.</code></pre>
+        </div>
+
+        <button class="accordion">Soluciones a Ejercicios con `for`</button>
+        <div class="panel">
+            <p>Revisa tus soluciones a los ejercicios del bucle <code>for</code>.</p>
+            <pre><code class="language-python"># Ejercicio 1: Imprimir números pares
+print("\nEjercicio 1:")
+for numero in range(2, 21, 2):
+  print(numero)
+
+# Ejercicio 2: Calcular la media de una lista
+print("\nEjercicio 2:")
+numeros = [10, 20, 30, 40, 50]
+suma = 0
+for numero in numeros:
+  suma += numero
+media = suma / len(numeros)
+print(f"La media es: {media}")
+
+# Ejercicio 3: Buscar el máximo de una lista
+print("\nEjercicio 3:")
+numeros = [15, 5, 25, 10, 20]
+maximo = numeros[0]
+for numero in numeros:
+  if numero > maximo:
+    maximo = numero
+print(f"El número máximo es: {maximo}")
+
+# Ejercicio 4: Filtrar cadenas por longitud
+print("\nEjercicio 4:")
+palabras = ["casa", "arbol", "sol", "elefante", "luna"]
+palabras_largas = [palabra for palabra in palabras if len(palabra) > 5]
+print(palabras_largas)
+
+# Ejercicio 5: Contar palabras que empiezan con una letra
+print("\nEjercicio 5:")
+palabras = ["casa", "arbol", "sol", "elefante", "luna", "coche"]
+letra = input("Introduce una letra: ").lower()
+contador = 0
+for palabra in palabras:
+  if palabra.lower().startswith(letra):
+    contador += 1
+print(f"Hay {contador} palabras que empiezan con la letra {letra}")</code></pre>
+        </div>
+
+        <h2>La Función `range()`</h2>
+
+        <button class="accordion">03: La Función `range()`</button>
+        <div class="panel">
+            <p>La función <code>range()</code> es una herramienta extremadamente útil que genera una secuencia inmutable de números. Es el compañero perfecto para los bucles <code>for</code> cuando necesitas repetir una acción un número específico de veces.</p>
+            
+            <p><strong>Formas de usar <code>range()</code>:</strong><br>Puede tomar uno, dos o tres argumentos, dándonos un control total sobre la secuencia generada:</p>
+            <ul>
+                <li><code>range(fin)</code>: Genera números desde 0 hasta <code>fin - 1</code>.</li>
+                <li><code>range(inicio, fin)</code>: Genera números desde <code>inicio</code> hasta <code>fin - 1</code>.</li>
+                <li><code>range(inicio, fin, paso)</code>: Genera números desde <code>inicio</code> hasta <code>fin - 1</code>, incrementando en cada paso. El paso puede ser negativo para ir hacia atrás.</li>
+            </ul>
+            <pre><code class="language-python"># 1. range(fin) -> de 0 a 9
+print("Del 0 al 9:")
+for num in range(10):
+  print(num, end=" ") # end=" " imprime en la misma línea
+
+print("\n\n# 2. range(inicio, fin) -> de 5 a 9")
+for num in range(5, 10):
+  print(num, end=" ")
+
+print("\n\n# 3. range(inicio, fin, paso) -> de 10 a 0")
+for num in range(10, 0, -1):
+  print(num, end=" ")
+print("\n")</code></pre>
+
+            <p><strong>Uso con Guion Bajo <code>_</code>:</strong><br>Si solo necesitas repetir una acción y no te importa el número de la iteración actual, es una convención en Python usar un guion bajo <code>_</code> como nombre de la variable del bucle.</p>
+            <pre><code class="language-python"># Repetir una acción 5 veces
+for _ in range(5):
+  print("Esto es una repetición")</code></pre>
+        </div>
+        
+        <button class="accordion">Ejercicios con `range`</button>
+        <div class="panel">
+            <p>Practica la generación de secuencias numéricas con `range`.</p>
+            <pre><code class="language-python"># Ejercicio 1: Imprimir números del 1 al 10.
+
+# Ejercicio 2: Imprimir números impares del 1 al 20.
+
+# Ejercicio 3: Imprimir múltiplos de 5 (del 5 al 50).
+
+# Ejercicio 4: Imprimir números en orden inverso (del 10 al 1).
+
+# Ejercicio 5: Suma de números en un rango (del 1 al 100).
+
+# Ejercicio 6: Tabla de multiplicar de un número introducido por el usuario.</code></pre>
+        </div>
+
+        <button class="accordion">Soluciones a Ejercicios con `range`</button>
+        <div class="panel">
+            <p>Verifica tus soluciones de los ejercicios de `range`.</p>
+            <pre><code class="language-python"># Ejercicio 1: Imprimir números del 1 al 10
+print("\nEjercicio 1:")
+for i in range(1, 11):
+  print(i)
+
+# Ejercicio 2: Imprimir números impares del 1 al 20
+print("\nEjercicio 2:")
+for i in range(1, 21, 2):
+  print(i)
+
+# Ejercicio 3: Imprimir múltiplos de 5
+print("\nEjercicio 3:")
+for i in range(5, 51, 5):
+  print(i)
+
+# Ejercicio 4: Imprimir números en orden inverso
+print("\nEjercicio 4:")
+for i in range(10, 0, -1):
+  print(i)
+
+# Ejercicio 5: Suma de números en un rango
+print("\nEjercicio 5:")
+suma = 0
+for i in range(1, 101):
+  suma += i
+print(f"La suma de los números del 1 al 100 es: {suma}")
+
+# Ejercicio 6: Tabla de multiplicar
+print("\nEjercicio 6:")
+numero = int(input("Introduce un número para la tabla de multiplicar: "))
+for i in range(1, 11):
+  print(f"{numero} x {i} = {numero * i}")</code></pre>
+        </div>
+
+        <h2>Funciones</h2>
+
+        <button class="accordion">04: Funciones, los Bloques Reutilizables</button>
+        <div class="panel">
+            <p>Las funciones son bloques de código con un nombre que realizan una tarea específica. Nos permiten <strong>reutilizar</strong> código en lugar de repetirlo, haciendo nuestros programas más organizados, legibles y fáciles de mantener. Se definen con la palabra clave <code>def</code>.</p>
+
+            <p><strong>Definición, Parámetros y <code>return</code>:</strong><br>Una función puede recibir datos a través de <strong>parámetros</strong> (las variables entre paréntesis). Usando la palabra clave <code>return</code>, una función puede devolver un resultado al código que la llamó.</p>
+            <pre><code class="language-python"># Función simple sin parámetros ni retorno
+def saludar():
+  print("¡Hola!")
+
+# Función con un parámetro
+def saludar_a(nombre):
+  print(f"¡Hola {nombre}!")
+
+# Llamando a las funciones
+saludar()
+saludar_a("midudev")
+
+# Función con dos parámetros y un valor de retorno
+def sumar(a, b):
+  """Este es un docstring: documenta que la función suma dos números."""
+  suma = a + b
+  return suma
+
+resultado = sumar(5, 3) # Guardamos el valor devuelto en una variable
+print(f"El resultado de la suma es: {resultado}")</code></pre>
+
+            <p><strong>Argumentos por Posición vs. por Clave:</strong><br>Al llamar a una función, puedes pasar los argumentos en el orden en que se definieron (por posición) o especificando el nombre del parámetro al que corresponden (por clave). Usar argumentos por clave puede hacer que el código sea más claro.</p>
+            <pre><code class="language-python">def describir_persona(nombre: str, edad: int, sexo: str):
+  print(f"Soy {nombre}, tengo {edad} años y me identifico como {sexo}")
+
+# Argumentos por posición (el orden importa)
+describir_persona("midudev", 39, "gato")
+
+# Argumentos por clave (el orden no importa)
+describir_persona(edad=21, sexo="hombre", nombre="madeval")</code></pre>
+
+            <p><strong>Argumentos Variables: <code>*args</code> y <code>**kwargs</code></strong><br>A veces no sabes cuántos argumentos recibirá tu función.
+            <ul>
+                <li><code>*args</code>: Agrupa cualquier número de argumentos posicionales extra en una <strong>tupla</strong>.</li>
+                <li><code>**kwargs</code>: Agrupa cualquier número de argumentos por clave extra en un <strong>diccionario</strong>.</li>
+            </ul>
+            </p>
+            <pre><code class="language-python"># *args para un número variable de argumentos posicionales
+def sumar_numeros(*args):
+  print(f"Recibí los argumentos: {args}")
+  suma = 0
+  for numero in args:
+    suma += numero
+  return suma
+
+print(sumar_numeros(1, 2, 3, 4, 5))
+
+# **kwargs para un número variable de argumentos de clave-valor
+def mostrar_informacion_de(**kwargs):
+  print(f"Recibí los argumentos: {kwargs}")
+  for clave, valor in kwargs.items():
+    print(f"- {clave}: {valor}")
+
+mostrar_informacion_de(nombre="pheralb", es_sub=True, is_rich=True)</code></pre>
+        </div>
+        
+        <button class="accordion">Ejercicios con Funciones</button>
+        <div class="panel">
+            <p><strong>Desafío de Refactorización:</strong></p>
+            <p>Ahora que sabes cómo crear funciones, tu principal ejercicio es volver a los problemas de las lecciones anteriores y convertirlos en funciones reutilizables. Esto se conoce como <strong>refactorizar</strong> el código.</p>
+            <p>Intenta lo siguiente:</p>
+            <ul>
+                <li>Crea una función <code>calcular_media(lista_numeros)</code> que reciba una lista y devuelva su media.</li>
+                <li>Crea una función <code>es_bisiesto(anio)</code> que reciba un año y devuelva <code>True</code> si es bisiesto y <code>False</code> si no lo es.</li>
+                <li>Crea una función <code>obtener_tabla_multiplicar(numero)</code> que reciba un número y devuelva una lista de cadenas con su tabla de multiplicar.</li>
+            </ul>
+            <p>¡Esto te ayudará a pensar en cómo estructurar y organizar mejor tu código!</p>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <script>
+        const accordions = document.querySelectorAll(".accordion");
+        accordions.forEach(acc => {
+            acc.addEventListener("click", function() {
+                this.classList.toggle("active");
+                const panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        });
+
+        // Dark mode functionality
+        const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+        
+        function switchTheme(e) {
+            if (e.target.checked) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }    
+        }
+        
+        toggleSwitch.addEventListener('change', switchTheme, false);
+        
+        // Check for saved theme preference or default to 'light' mode
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                toggleSwitch.checked = true;
+            }
+        }
+    </script>
+
+</body>
+</html>

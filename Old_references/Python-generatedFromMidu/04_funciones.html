@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 04: Funciones y Desafíos de Lógica</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        /* Custom font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        pre, code {
+            font-family: 'Fira Code', monospace;
+        }
+        pre {
+            color: #d4d4d4; /* Default light color for all code text, fixing punctuation visibility */
+        }
+        /* Style for smooth transitions */
+        body, h1, h2, p, li, strong, a, div, button, svg, pre {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        /* Accordion styles */
+        .accordion {
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            border: none;
+            outline: none;
+            transition: background-color 0.4s ease;
+            position: relative;
+        }
+        .accordion:after {
+            content: '\002B'; /* Plus sign */
+            font-size: 1.5em;
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.3s ease;
+        }
+        .accordion.active:after {
+            content: "\2212"; /* Minus sign */
+            transform: translateY(-50%) rotate(180deg);
+        }
+        .panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        /* Syntax Highlighting Styles (for dark background) */
+        .code-comment { color: #6A9955; }
+        .code-string { color: #CE9178; }
+        .code-function { color: #DCDCAA; }
+        .code-keyword { color: #569CD6; }
+        .code-number { color: #B5CEA8; }
+        .code-variable { color: #9CDCFE; }
+    </style>
+    <script>
+        // Tailwind dark mode configuration
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased">
+
+    <!-- Dark Mode Toggle Button -->
+    <div class="fixed top-4 right-4 z-10">
+        <button id="darkModeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900 focus:ring-indigo-500">
+            <svg id="sunIcon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <svg id="moonIcon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        </button>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        
+        <header class="text-center mb-10">
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white">Módulo 04: Funciones y Desafíos de Lógica <span class="text-4xl">🧠</span></h1>
+        </header>
+
+        <main class="space-y-4">
+            <p class="text-lg text-center mb-8">¡Prepárate, porque este es el módulo donde todo encaja! Aprenderás la herramienta final para ser un programador organizado y eficiente: las <strong>funciones</strong>.</p>
+            
+            <!-- Accordion Item 1 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 1: Creando tus Propias Funciones (def, return)</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Empaquetando Código: Funciones</h3>
+                        <p>Una función es como una receta: tiene un nombre, necesita "ingredientes" (<strong>parámetros</strong>), y entrega un resultado (el valor de <strong>retorno</strong>).</p>
+                        <h4 class="text-xl font-semibold">Tu Primera Función con `def`</h4>
+                        <pre class="bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># 1. Definimos la función</span>
+<span class="code-keyword">def</span> <span class="code-function">saludar</span>():
+    <span class="code-function">print</span>(<span class="code-string">"¡Hola! Bienvenido/a al mundo de las funciones."</span>)
+    <span class="code-function">print</span>(<span class="code-string">"Esta es una herramienta que acabas de crear."</span>)
+
+<span class="code-comment"># 2. "Llamamos" a la función para que se ejecute</span>
+<span class="code-function">saludar</span>()
+</code></pre>
+                        <h4 class="text-xl font-semibold">Ingredientes: Pasando Parámetros</h4>
+                        <pre class="bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-keyword">def</span> <span class="code-function">saludo_personalizado</span>(<span class="code-variable">nombre</span>):
+    <span class="code-function">print</span>(f<span class="code-string">"¡Hola, {</span><span class="code-variable">nombre</span><span class="code-string">}! Qué bueno tenerte aquí."</span>)
+
+<span class="code-comment"># Ahora podemos reutilizar la función con diferentes nombres</span>
+<span class="code-function">saludo_personalizado</span>(<span class="code-string">"Ana"</span>)
+<span class="code-function">saludo_personalizado</span>(<span class="code-string">"Carlos"</span>)
+</code></pre>
+                        <h4 class="text-xl font-semibold">El Resultado: La Sentencia `return`</h4>
+                        <pre class="bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-keyword">def</span> <span class="code-function">sumar</span>(<span class="code-variable">numero1</span>, <span class="code-variable">numero2</span>):
+    <span class="code-variable">resultado</span> = <span class="code-variable">numero1</span> + <span class="code-variable">numero2</span>
+    <span class="code-keyword">return</span> <span class="code-variable">resultado</span>
+
+<span class="code-comment"># Llamamos a la función y guardamos el valor que nos devuelve</span>
+<span class="code-variable">suma_total</span> = <span class="code-function">sumar</span>(<span class="code-number">10</span>, <span class="code-number">5</span>)
+<span class="code-function">print</span>(f<span class="code-string">"El resultado de la suma es: {</span><span class="code-variable">suma_total</span><span class="code-string">}"</span>)
+</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 2 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 2: Desafío - El Equilibrio de la Alianza 🦸</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">¿Está en Equilibrio la Alianza?</h3>
+                        <p><strong>Objetivo:</strong> Crear una función que reciba un texto y verifique si el número de letras 'R' es igual al número de letras 'J' (mayúsculas o minúsculas).</p>
+                        <pre class="bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-keyword">def</span> <span class="code-function">check_is_balanced</span>(<span class="code-variable">text</span>):
+    <span class="code-comment"># Convertimos todo a mayúsculas para no diferenciar</span>
+    <span class="code-variable">text_upper</span> = <span class="code-variable">text</span>.upper()
+    <span class="code-comment"># Contamos las apariciones de cada letra</span>
+    <span class="code-variable">count_r</span> = <span class="code-variable">text_upper</span>.count(<span class="code-string">"R"</span>)
+    <span class="code-variable">count_j</span> = <span class="code-variable">text_upper</span>.count(<span class="code-string">"J"</span>)
+    <span class="code-comment"># La comparación ya devuelve True o False</span>
+    <span class="code-keyword">return</span> <span class="code-variable">count_r</span> == <span class="code-variable">count_j</span>
+
+<span class="code-comment"># Pruebas</span>
+<span class="code-function">print</span>(f<span class="code-string">"'RRJJ' está balanceado? -> {</span>check_is_balanced(<span class="code-string">'RRJJ'</span>)<span class="code-string">}"</span>)
+<span class="code-function">print</span>(f<span class="code-string">"'rJ' está balanceado? -> {</span>check_is_balanced(<span class="code-string">'rJ'</span>)<span class="code-string">}"</span>)
+</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 3 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 3: Desafío - Contando Huevos de Dinosaurio 🦖</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">¡Peligro en Jurassic Park!</h3>
+                        <p><strong>Objetivo:</strong> Escribe una función que reciba una lista de números (huevos por nido) y devuelva la suma de todos los números pares.</p>
+                        <pre class="bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-keyword">def</span> <span class="code-function">count_carnivore_dinosaur_eggs</span>(<span class="code-variable">egg_list</span>):
+    <span class="code-variable">total_carnivore_eggs</span> = <span class="code-number">0</span>
+    <span class="code-comment"># Recorremos cada número en la lista</span>
+    <span class="code-keyword">for</span> <span class="code-variable">eggs</span> <span class="code-keyword">in</span> <span class="code-variable">egg_list</span>:
+        <span class="code-comment"># Usamos el operador módulo (%) para saber si es par</span>
+        <span class="code-keyword">if</span> <span class="code-variable">eggs</span> % <span class="code-number">2</span> == <span class="code-number">0</span>:
+            <span class="code-variable">total_carnivore_eggs</span> += <span class="code-variable">eggs</span>
+    <span class="code-keyword">return</span> <span class="code-variable">total_carnivore_eggs</span>
+
+<span class="code-comment"># Prueba</span>
+<span class="code-variable">egg_counts</span> = [<span class="code-number">3</span>, <span class="code-number">4</span>, <span class="code-number">7</span>, <span class="code-number">5</span>, <span class="code-number">8</span>, <span class="code-number">10</span>]
+<span class="code-variable">total</span> = <span class="code-function">count_carnivore_dinosaur_eggs</span>(<span class="code-variable">egg_counts</span>)
+<span class="code-function">print</span>(f<span class="code-string">"El total de huevos de carnívoro es: {</span><span class="code-variable">total</span><span class="code-string">}"</span>)
+</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 4 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 4: Desafío - Encontrando la Suma ("Two Sum")</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">El Clásico de las Entrevistas: "Two Sum"</h3>
+                        <p><strong>Objetivo:</strong> Dada una lista de números y un objetivo (<code>goal</code>), encuentra los <strong>índices</strong> de los dos números que sumen exactamente el <code>goal</code>.</p>
+                        <pre class="bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-keyword">def</span> <span class="code-function">find_sum_indexes</span>(<span class="code-variable">nums</span>, <span class="code-variable">goal</span>):
+    <span class="code-variable">seen</span> = {}  <span class="code-comment"># Diccionario para guardar -> {valor_visto: indice_visto}</span>
+    <span class="code-comment"># Usamos enumerate para obtener tanto el índice como el valor</span>
+    <span class="code-keyword">for</span> <span class="code-variable">index</span>, <span class="code-variable">value</span> <span class="code-keyword">in</span> <span class="code-function">enumerate</span>(<span class="code-variable">nums</span>):
+        <span class="code-variable">missing</span> = <span class="code-variable">goal</span> - <span class="code-variable">value</span>
+        <span class="code-comment"># Si el número que nos falta ya está en nuestro diccionario...</span>
+        <span class="code-keyword">if</span> <span class="code-variable">missing</span> <span class="code-keyword">in</span> <span class="code-variable">seen</span>:
+            <span class="code-comment"># ¡Lo encontramos!</span>
+            <span class="code-keyword">return</span> [<span class="code-variable">seen</span>[<span class="code-variable">missing</span>], <span class="code-variable">index</span>]
+        <span class="code-comment"># Si no, guardamos el número actual y su índice.</span>
+        <span class="code-variable">seen</span>[<span class="code-variable">value</span>] = <span class="code-variable">index</span>
+    <span class="code-keyword">return</span> <span class="code-keyword">None</span> <span class="code-comment"># Si no se encuentra combinación</span>
+
+<span class="code-comment"># Prueba</span>
+<span class="code-variable">numeros</span> = [<span class="code-number">2</span>, <span class="code-number">7</span>, <span class="code-number">11</span>, <span class="code-number">15</span>]
+<span class="code-variable">objetivo</span> = <span class="code-number">9</span>
+<span class="code-variable">indices</span> = <span class="code-function">find_sum_indexes</span>(<span class="code-variable">numeros</span>, <span class="code-variable">objetivo</span>)
+<span class="code-function">print</span>(f<span class="code-string">"Los índices que suman {</span><span class="code-variable">objetivo</span><span class="code-string">} son: {</span><span class="code-variable">indices</span><span class="code-string">}"</span>)
+</code></pre>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // JavaScript for Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const html = document.documentElement;
+
+        const setTheme = (theme) => {
+            if (theme === 'dark') {
+                html.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.classList.remove('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+                localStorage.setItem('theme', 'light');
+            }
+        };
+
+        darkModeToggle.addEventListener('click', () => {
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+
+        // Check for saved theme in localStorage, otherwise default to dark
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            setTheme(savedTheme);
+        } else {
+            setTheme('dark');
+        }
+
+        // JavaScript for Accordion functionality
+        const accordions = document.getElementsByClassName("accordion");
+        for (let i = 0; i < accordions.length; i++) {
+            accordions[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                } 
+            });
+        }
+    </script>
+</body>
+</html>

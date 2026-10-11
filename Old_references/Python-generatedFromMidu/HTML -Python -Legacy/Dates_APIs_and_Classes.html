@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fechas, APIs y Clases en Python</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        details {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 1em;
+            padding: 15px;
+        }
+        summary {
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.2em;
+            color: #0056b3;
+        }
+        pre code.hljs {
+            display: block;
+            overflow-x: auto;
+            padding: 1.5em;
+            background: #282c34; /* Atom One Dark background */
+            color: #abb2bf; /* Atom One Dark text color */
+            border-radius: 5px;
+        }
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+        }
+        body.dark-mode .container {
+            background: #2c2c2c;
+            box-shadow: 0 2px 5px rgba(255,255,255,0.1);
+        }
+        body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 {
+            color: #f0f0f0;
+        }
+        body.dark-mode details {
+            background: #333;
+            border-color: #555;
+        }
+        body.dark-mode summary {
+            color: #61afef;
+        }
+        /* Toggle Switch */
+        .switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+
+    <label class="switch">
+        <input type="checkbox" id="darkModeToggle">
+        <span class="slider"></span>
+    </label>
+
+    <div class="container">
+        <h1>Fechas, APIs y Clases en Python</h1>
+
+        <!-- Lección 1: Manejo de Fechas -->
+        <details>
+            <summary>Lección 1: Manejo de Fechas y Horas</summary>
+            <p>Python proporciona el módulo <code>datetime</code> para trabajar con fechas y horas de una manera sencilla y potente.</p>
+            <pre><code class="language-python"># 01_dates.py
+# Trabajando con fechas y horas en Python
+
+from datetime import datetime, timedelta
+import locale
+
+# 1. Obtener la fecha y hora actual
+now = datetime.now()
+print(f"Fecha y hora actual: {now}")
+
+# 2. Crear una fecha y hora específica
+specific_date = datetime(2025, 2, 12, 15, 30, 0)
+print(f"Fecha y hora específica: {specific_date}")
+
+# 3. Formatear fechas en español
+# Usamos locale para establecer el idioma
+locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+format_date = now.strftime("%A, %d de %B de %Y - %H:%M:%S")
+print(f"Fecha formateada: {format_date}")
+
+# 4. Operaciones con fechas usando timedelta
+yesterday = datetime.now() - timedelta(days=1)
+print(f"Ayer fue: {yesterday}")
+
+tomorrow = datetime.now() + timedelta(days=1)
+print(f"Mañana será: {tomorrow}")
+
+one_hour_after = datetime.now() + timedelta(hours=1)
+print(f"Dentro de una hora: {one_hour_after}")
+
+# 5. Obtener componentes individuales de una fecha
+year = now.year
+month = now.month
+day = now.day
+print(f"Año: {year}, Mes: {month}, Día: {day}")
+
+# 6. Calcular la diferencia entre dos fechas
+date1 = datetime.now()
+date2 = datetime(2025, 1, 1)
+difference = date2 - date1
+print(f"Días hasta año nuevo: {difference.days}")</code></pre>
+        </details>
+
+        <!-- Lección 2: Peticiones a APIs -->
+        <details>
+            <summary>Lección 2: Peticiones a APIs con `requests`</summary>
+            <p>Para interactuar con servicios web y APIs, la librería <code>requests</code> es el estándar de facto en Python por su simplicidad y poder.</p>
+            <h3>GET, POST, PUT</h3>
+            <pre><code class="language-python"># 02_requests.py (Parte 1)
+import requests
+
+# GET: Obtener datos
+print("\nGET:")
+api_posts = "https://jsonplaceholder.typicode.com/posts/"
+response = requests.get(api_posts)
+if response.status_code == 200:
+    print(f"GET exitoso! Se obtuvieron {len(response.json())} posts.")
+else:
+    print(f"Error en GET: {response.status_code}")
+
+# POST: Crear un nuevo recurso
+print("\nPOST:")
+new_post = {
+    "title": "Mi nuevo post",
+    "body": "Contenido del post.",
+    "userId": 1
+}
+response = requests.post(api_posts, json=new_post)
+if response.status_code == 201: # 201 Created
+    print(f"POST exitoso! Nuevo post creado con ID: {response.json()['id']}")
+else:
+    print(f"Error en POST: {response.status_code}")
+
+# PUT: Actualizar un recurso existente
+print("\nPUT:")
+updated_post = {
+    "id": 1,
+    "title": "Título actualizado",
+    "body": "Contenido actualizado.",
+    "userId": 1
+}
+response = requests.put(f"{api_posts}1", json=updated_post)
+if response.status_code == 200:
+    print(f"PUT exitoso! Post actualizado: {response.json()['title']}")
+else:
+    print(f"Error en PUT: {response.status_code}")</code></pre>
+            <h3>Llamando a APIs de Inteligencia Artificial</h3>
+            <p>Aquí vemos cómo llamar a las APIs de OpenAI y DeepSeek. Recuerda reemplazar <code>"sk-XXXXXXXX"</code> con tu clave de API real.</p>
+            <pre><code class="language-python"># 02_requests.py (Parte 2)
+import requests
+import json
+
+# NOTA: Debes reemplazar con tus propias API keys
+OPENAI_KEY = "sk-XXXXXXXX"
+DEEPSEEK_API_KEY = "sk-XXXXXXXX"
+
+def call_openai_gpt(api_key, prompt):
+    url = "https://api.openai.com/v1/chat/completions"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    }
+    data = {
+        "model": "gpt-4o-mini",
+        "messages": [{"role": "user", "content": prompt}]
+    }
+    try:
+        response = requests.post(url, json=data, headers=headers)
+        response.raise_for_status() # Lanza un error para respuestas 4xx/5xx
+        return response.json()["choices"][0]["message"]["content"]
+    except requests.exceptions.RequestException as e:
+        return f"Error en la llamada a OpenAI: {e}"
+
+
+def call_deepseek(api_key, prompt):
+    url = "https://api.deepseek.com/chat/completions"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    }
+    data = {
+        "model": "deepseek-chat",
+        "messages": [{"role": "user", "content": prompt}]
+    }
+    try:
+        response = requests.post(url, json=data, headers=headers)
+        response.raise_for_status()
+        return response.json()["choices"][0]["message"]["content"]
+    except requests.exceptions.RequestException as e:
+        return f"Error en la llamada a DeepSeek: {e}"
+
+
+poema_prompt = "Escribe un breve poema sobre la programación"
+
+# Llamada a OpenAI
+respuesta_openai = call_openai_gpt(OPENAI_KEY, poema_prompt)
+print(f"\nRespuesta de OpenAI:\n{respuesta_openai}")
+
+# Llamada a DeepSeek
+respuesta_deepseek = call_deepseek(DEEPSEEK_API_KEY, poema_prompt)
+print(f"\nRespuesta de DeepSeek:\n{respuesta_deepseek}")</code></pre>
+        </details>
+
+        <!-- Lección 3: Clases para APIs -->
+        <details>
+            <summary>Lección 3: Clases para Organizar Llamadas a APIs</summary>
+            <p>El encapsulamiento es un pilar de la Programación Orientada a Objetos. Nos permite ocultar la complejidad interna y exponer una interfaz simple. Podemos crear una clase que gestione las llamadas a diferentes APIs de IA, haciendo nuestro código más limpio, reutilizable y fácil de mantener.</p>
+            <pre><code class="language-python"># 03_clases.py
+import requests
+
+# NOTA: Debes reemplazar con tus propias API keys
+OPENAI_KEY = "sk-XXXXXXXX"
+DEEPSEEK_API_KEY = "sk-XXXXXXXX"
+
+class AI_API:
+    def __init__(self, api_key, url, model):
+        if not api_key or api_key == "sk-XXXXXXXX":
+            raise ValueError("API key no válida o no proporcionada.")
+        self.api_key = api_key
+        self.url = url
+        self.model = model
+
+    def call(self, prompt):
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
+        }
+        data = {
+            "model": self.model,
+            "messages": [{"role": "user", "content": prompt}]
+        }
+
+        try:
+            response = requests.post(self.url, json=data, headers=headers)
+            response.raise_for_status() # Lanza error si la petición falla
+            return response.json()["choices"][0]["message"]["content"]
+        except requests.exceptions.RequestException as e:
+            print(f"Error en la solicitud a {self.url}: {e}")
+            return None
+        except (KeyError, IndexError) as e:
+            print(f"Error procesando la respuesta de la API: {e}")
+            return None
+
+# --- Uso de la clase --- 
+
+poema_prompt = "Escribe un breve poema sobre la programación"
+
+try:
+    print("\nLlamando a OpenAI con la clase:")
+    openai_api = AI_API(OPENAI_KEY, "https://api.openai.com/v1/chat/completions", "gpt-4o-mini")
+    respuesta_openai = openai_api.call(poema_prompt)
+    if respuesta_openai:
+        print(respuesta_openai)
+except ValueError as e:
+    print(e)
+
+try:
+    print("\nLlamando a DeepSeek con la clase:")
+    deepseek_api = AI_API(DEEPSEEK_API_KEY, "https://api.deepseek.com/chat/completions", "deepseek-chat")
+    respuesta_deepseek = deepseek_api.call(poema_prompt)
+    if respuesta_deepseek:
+        print(respuesta_deepseek)
+except ValueError as e:
+    print(e)
+
+</code></pre>
+        </details>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Aplicar resaltado de sintaxis
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+
+            // Funcionalidad del modo oscuro
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const body = document.body;
+
+            // Comprobar si el modo oscuro está guardado en localStorage
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                body.classList.add('dark-mode');
+                darkModeToggle.checked = true;
+            }
+
+            // Listener para el interruptor
+            darkModeToggle.addEventListener('change', () => {
+                if (darkModeToggle.checked) {
+                    body.classList.add('dark-mode');
+                    localStorage.setItem('darkMode', 'enabled');
+                } else {
+                    body.classList.remove('dark-mode');
+                    localStorage.setItem('darkMode', 'disabled');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

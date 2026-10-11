@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 02: Estructuras de Datos Esenciales</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        /* Custom font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        pre, code {
+            font-family: 'Fira Code', monospace;
+        }
+        /* Style for smooth transitions */
+        body, h1, h2, p, li, strong, a, div, button, svg, pre {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        /* Accordion styles */
+        .accordion {
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            border: none;
+            outline: none;
+            transition: background-color 0.4s ease;
+            position: relative;
+        }
+        .accordion:after {
+            content: '\002B'; /* Plus sign */
+            font-size: 1.5em;
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.3s ease;
+        }
+        .accordion.active:after {
+            content: "\2212"; /* Minus sign */
+            transform: translateY(-50%) rotate(180deg);
+        }
+        .panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        /* Syntax Highlighting Styles */
+        .code-comment { color: #6a9955; }
+        .dark .code-comment { color: #6A9955; }
+        .code-string { color: #ce9178; }
+        .dark .code-string { color: #CE9178; }
+        .code-function { color: #dcdcaa; }
+        .dark .code-function { color: #DCDCAA; }
+        .code-keyword { color: #569cd6; }
+        .dark .code-keyword { color: #569CD6; }
+        .code-number { color: #b5cea8; }
+        .dark .code-number { color: #B5CEA8; }
+        .code-variable { color: #9cdcfe; }
+        .dark .code-variable { color: #9CDCFE; }
+        /* Mobile-only: wrap long lines in code blocks and hide horizontal scroll */
+        @media (max-width: 640px) {
+            pre code {
+                white-space: pre-wrap;   /* keep indentation and line breaks, allow wrapping */
+                overflow-wrap: anywhere; /* allow breaking long tokens */
+                word-break: break-word;  /* fallback for older engines */
+            }
+            pre { overflow-x: hidden; }
+        }
+
+        /* Opt-in class: apply wrapping on desktop to chosen blocks */
+        .wrap-code code {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+        .wrap-code { overflow-x: hidden; }
+    </style>
+    <script>
+        // Tailwind dark mode configuration
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased">
+
+    <!-- Dark Mode Toggle Button -->
+    <div class="fixed top-4 right-4 z-10">
+        <button id="darkModeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900 focus:ring-indigo-500">
+            <svg id="sunIcon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <svg id="moonIcon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        </button>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        
+        <header class="text-center mb-10">
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white">Módulo 02: Estructuras de Datos Esenciales <span class="text-4xl">🗃️</span></h1>
+        </header>
+
+        <main class="space-y-4">
+            <p class="text-lg text-center mb-8">¡Bienvenido/a al Módulo 02! Aquí es donde entran las <strong>estructuras de datos</strong>. Son "contenedores" especializados en organizar información. Nos centraremos en las <strong>listas</strong> y los <strong>diccionarios</strong>.</p>
+            
+            <!-- Accordion Item 1 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 1: Listas - Creación, Acceso y Slicing</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Organizando Datos en Secuencia: Listas</h3>
+                        <p>Piensa en una <strong>lista</strong> como una estantería numerada. Se crea usando corchetes <code>[]</code>.</p>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># Una lista de números</span>
+<span class="code-variable">numeros_primos</span> = [<span class="code-number">2</span>, <span class="code-number">3</span>, <span class="code-number">5</span>, <span class="code-number">7</span>, <span class="code-number">11</span>]
+<span class="code-comment"># Una lista de strings</span>
+<span class="code-variable">heroes</span> = [<span class="code-string">"Iron Man"</span>, <span class="code-string">"Spider-Man"</span>, <span class="code-string">"Viuda Negra"</span>]
+<span class="code-comment"># Una lista con datos mixtos</span>
+<span class="code-variable">datos_mixtos</span> = [<span class="code-string">"Tony Stark"</span>, <span class="code-number">53</span>, <span class="code-keyword">True</span>, <span class="code-number">1.75</span>]
+<span class="code-function">print</span>(<span class="code-string">"Mi lista de héroes es:"</span>, <span class="code-variable">heroes</span>)
+</code></pre>
+                        <h4 class="text-xl font-semibold">Accediendo a Elementos por su Índice (empieza en 0)</h4>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-variable">heroes</span> = [<span class="code-string">"Iron Man"</span>, <span class="code-string">"Spider-Man"</span>, <span class="code-string">"Viuda Negra"</span>]
+<span class="code-comment"># Acceder al primer elemento (índice 0)</span>
+<span class="code-variable">primer_heroe</span> = <span class="code-variable">heroes</span>[<span class="code-number">0</span>]
+<span class="code-function">print</span>(<span class="code-string">"El primer héroe es:"</span>, <span class="code-variable">primer_heroe</span>) <span class="code-comment"># Muestra "Iron Man"</span>
+<span class="code-comment"># ¡También puedes usar índices negativos para empezar desde el final!</span>
+<span class="code-variable">ultimo_heroe</span> = <span class="code-variable">heroes</span>[-<span class="code-number">1</span>]
+<span class="code-function">print</span>(<span class="code-string">"El último héroe es:"</span>, <span class="code-variable">ultimo_heroe</span>) <span class="code-comment"># Muestra "Viuda Negra"</span>
+</code></pre>
+                        <h4 class="text-xl font-semibold">"Rebanando" Listas: Slicing</h4>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-variable">numeros</span> = [<span class="code-number">0</span>, <span class="code-number">1</span>, <span class="code-number">2</span>, <span class="code-number">3</span>, <span class="code-number">4</span>, <span class="code-number">5</span>, <span class="code-number">6</span>, <span class="code-number">7</span>, <span class="code-number">8</span>, <span class="code-number">9</span>]
+<span class="code-comment"># Obtener los elementos desde el índice 2 hasta el 4 (el 5 no se incluye)</span>
+<span class="code-variable">sub_lista</span> = <span class="code-variable">numeros</span>[<span class="code-number">2</span>:<span class="code-number">5</span>]
+<span class="code-function">print</span>(<span class="code-variable">sub_lista</span>) <span class="code-comment"># Muestra [2, 3, 4]</span>
+<span class="code-comment"># Si omites el inicio, empieza desde el principio</span>
+<span class="code-variable">primeros_tres</span> = <span class="code-variable">numeros</span>[:<span class="code-number">3</span>]
+<span class="code-function">print</span>(<span class="code-variable">primeros_tres</span>) <span class="code-comment"># Muestra [0, 1, 2]</span>
+</code></pre>
+                        <h4 class="text-xl font-semibold">Slicing Avanzado: Trucos Curiosos</h4>
+                        <p>Además de seleccionar rangos, el slicing te permite hacer manipulaciones de listas de forma muy concisa. El formato completo es <code>[inicio:fin:paso]</code>. Si omites el inicio y el fin, puedes usar el <strong>paso</strong> para cosas geniales.</p>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-variable">letras</span> = [<span class="code-string">'a'</span>, <span class="code-string">'b'</span>, <span class="code-string">'c'</span>, <span class="code-string">'d'</span>, <span class="code-string">'e'</span>]
+
+<span class="code-comment"># Invertir una lista con un paso negativo</span>
+<span class="code-variable">letras_invertidas</span> = <span class="code-variable">letras</span>[<span class="code-string">::</span>-<span class="code-number">1</span>]
+<span class="code-function">print</span>(<span class="code-string">"Lista invertida:"</span>, <span class="code-variable">letras_invertidas</span>) <span class="code-comment"># Muestra ['e', 'd', 'c', 'b', 'a']</span>
+
+<span class="code-comment"># Obtener cada segundo elemento de la lista</span>
+<span class="code-variable">cada_dos</span> = <span class="code-variable">letras</span>[<span class="code-string">::</span><span class="code-number">2</span>]
+<span class="code-function">print</span>(<span class="code-string">"Cada segundo elemento:"</span>, <span class="code-variable">cada_dos</span>) <span class="code-comment"># Muestra ['a', 'c', 'e']</span>
+</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 2 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 2: Métodos de Listas</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Manipulando Listas con Métodos</h3>
+                        <p>Un método es una función que pertenece a un objeto (a nuestra lista) y nos permite realizar acciones sobre él.</p>
+                        <h4 class="text-xl font-semibold">Añadiendo Elementos</h4>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-variable">vengadores</span> = [<span class="code-string">"Iron Man"</span>, <span class="code-string">"Thor"</span>]
+<span class="code-function">print</span>(<span class="code-string">"Equipo inicial:"</span>, <span class="code-variable">vengadores</span>)
+<span class="code-comment"># .append() añade al final</span>
+<span class="code-variable">vengadores</span>.append(<span class="code-string">"Hulk"</span>)
+<span class="code-function">print</span>(<span class="code-string">"Después de append:"</span>, <span class="code-variable">vengadores</span>)
+<span class="code-comment"># .insert() añade en un índice específico</span>
+<span class="code-variable">vengadores</span>.insert(<span class="code-number">0</span>, <span class="code-string">"Capitán América"</span>)
+<span class="code-function">print</span>(<span class="code-string">"Después de insert:"</span>, <span class="code-variable">vengadores</span>)
+</code></pre>
+                        <h4 class="text-xl font-semibold">Eliminando Elementos</h4>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-variable">equipo</span> = [<span class="code-string">"Capitán América"</span>, <span class="code-string">"Iron Man"</span>, <span class="code-string">"Hulk"</span>, <span class="code-string">"Thor"</span>]
+<span class="code-comment"># .remove() elimina por valor</span>
+<span class="code-variable">equipo</span>.remove(<span class="code-string">"Hulk"</span>)
+<span class="code-function">print</span>(<span class="code-string">"Equipo sin Hulk:"</span>, <span class="code-variable">equipo</span>)
+<span class="code-comment"># .pop() elimina por índice y devuelve el valor</span>
+<span class="code-variable">heroe_que_se_fue</span> = <span class="code-variable">equipo</span>.pop(-<span class="code-number">1</span>)
+<span class="code-function">print</span>(f<span class="code-string">"Se fue {</span><span class="code-variable">heroe_que_se_fue</span><span class="code-string">}. Equipo actual:"</span>, <span class="code-variable">equipo</span>)
+</code></pre>
+                        <h4 class="text-xl font-semibold">Otros Métodos Útiles</h4>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-variable">numeros</span> = [<span class="code-number">5</span>, <span class="code-number">1</span>, <span class="code-number">9</span>, <span class="code-number">3</span>]
+<span class="code-variable">numeros</span>.sort()
+<span class="code-function">print</span>(<span class="code-string">"Lista ordenada:"</span>, <span class="code-variable">numeros</span>)
+<span class="code-variable">heroes</span> = [<span class="code-string">"Iron Man"</span>, <span class="code-string">"Capitán América"</span>, <span class="code-string">"Thor"</span>]
+<span class="code-function">print</span>(<span class="code-string">"Tenemos"</span>, <span class="code-function">len</span>(<span class="code-variable">heroes</span>), <span class="code-string">"héroes."</span>)
+</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 3 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 3: Diccionarios - La Estructura Clave-Valor</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Organizando Datos con Etiquetas: Diccionarios</h3>
+                        <p>Un <strong>diccionario</strong> es una colección no ordenada de pares <strong>clave-valor</strong>. Se crea con llaves <code>{}</code>.</p>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># Creamos un diccionario para describir a un personaje</span>
+<span class="code-variable">personaje</span> = {
+    <span class="code-string">"nombre"</span>: <span class="code-string">"Tony Stark"</span>,
+    <span class="code-string">"heroe"</span>: <span class="code-string">"Iron Man"</span>,
+    <span class="code-string">"edad"</span>: <span class="code-number">53</span>,
+    <span class="code-string">"esta_vivo"</span>: <span class="code-keyword">False</span>
+}
+<span class="code-function">print</span>(<span class="code-variable">personaje</span>)
+</code></pre>
+                        <h4 class="text-xl font-semibold">Acceder y Modificar Datos</h4>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-comment"># Acceder al valor de la clave "heroe"</span>
+<span class="code-function">print</span>(<span class="code-string">"El alter ego es:"</span>, <span class="code-variable">personaje</span>[<span class="code-string">"heroe"</span>])
+<span class="code-comment"># Modificar un valor existente</span>
+<span class="code-variable">personaje</span>[<span class="code-string">"esta_vivo"</span>] = <span class="code-keyword">True</span>
+<span class="code-comment"># Añadir un nuevo par clave-valor</span>
+<span class="code-variable">personaje</span>[<span class="code-string">"profesion"</span>] = <span class="code-string">"Filántropo, Playboy, Millonario"</span>
+<span class="code-function">print</span>(<span class="code-string">"Profesión:"</span>, <span class="code-variable">personaje</span>[<span class="code-string">"profesion"</span>])
+</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 4 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 4: Iterando sobre Listas y Diccionarios</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Recorriendo tus Estructuras: Bucles for</h3>
+                        <p><strong>Iterar</strong> significa "pasar por cada elemento de una colección, uno por uno".</p>
+                        <h4 class="text-xl font-semibold">Iterando sobre una Lista</h4>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-variable">heroes</span> = [<span class="code-string">"Iron Man"</span>, <span class="code-string">"Capitán América"</span>, <span class="code-string">"Thor"</span>, <span class="code-string">"Hulk"</span>]
+<span class="code-function">print</span>(<span class="code-string">"Miembros del equipo:"</span>)
+<span class="code-keyword">for</span> <span class="code-variable">heroe</span> <span class="code-keyword">in</span> <span class="code-variable">heroes</span>:
+    <span class="code-function">print</span>(f<span class="code-string">"- {</span><span class="code-variable">heroe</span><span class="code-string">}"</span>)
+</code></pre>
+                        <h4 class="text-xl font-semibold">Iterando sobre un Diccionario</h4>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code class="language-python"><span class="code-variable">stats_personaje</span> = {
+    <span class="code-string">"nombre"</span>: <span class="code-string">"Steve Rogers"</span>,
+    <span class="code-string">"fuerza"</span>: <span class="code-number">85</span>,
+    <span class="code-string">"inteligencia"</span>: <span class="code-number">90</span>,
+    <span class="code-string">"velocidad"</span>: <span class="code-number">75</span>
+}
+<span class="code-comment"># La forma más común y útil: iterando sobre claves y valores con .items()</span>
+<span class="code-function">print</span>(<span class="code-string">"\nReporte completo:"</span>)
+<span class="code-keyword">for</span> <span class="code-variable">clave</span>, <span class="code-variable">valor</span> <span class="code-keyword">in</span> <span class="code-variable">stats_personaje</span>.items():
+    <span class="code-function">print</span>(f<span class="code-string">"-> {</span><span class="code-variable">clave</span><span class="code-string">.capitalize()}: {</span><span class="code-variable">valor</span><span class="code-string">}"</span>)
+</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 5 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Ejercicios Prácticos del Módulo 02</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-6 text-lg">
+                        <div>
+                            <h4 class="text-xl font-semibold">Ejercicio 1: Tu Lista de Compras</h4>
+                            <p>Crea una lista <code>lista_compras</code>, añade "pan" al final, inserta "leche" al principio, muestra el segundo y último elemento, elimina el tercero y muestra la lista final y su longitud.</p>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-semibold">Ejercicio 2: Ficha de Mascota</h4>
+                            <p>Crea un diccionario para una mascota con "nombre", "especie", "edad" y "comidas_favoritas" (una lista). Muestra el nombre y la edad, añade un "color" y muestra la segunda comida favorita.</p>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-semibold">Ejercicio 3: Recorriendo Números</h4>
+                            <p>Crea una lista de 5 números. Usando un bucle <code>for</code>, recorre la lista y muestra cada número multiplicado por 2.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // JavaScript for Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const html = document.documentElement;
+
+        const setTheme = (theme) => {
+            if (theme === 'dark') {
+                html.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.classList.remove('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+                localStorage.setItem('theme', 'light');
+            }
+        };
+
+        darkModeToggle.addEventListener('click', () => {
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (savedTheme) {
+            setTheme(savedTheme);
+        } else if (prefersDark) {
+            setTheme('dark');
+        } else {
+            setTheme('light');
+        }
+
+        // JavaScript for Accordion functionality
+        const accordions = document.getElementsByClassName("accordion");
+        for (let i = 0; i < accordions.length; i++) {
+            accordions[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                } 
+            });
+        }
+    </script>
+</body>
+</html>

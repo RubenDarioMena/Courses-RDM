@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecciones de C++ Interactivas</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        /* Estilos Generales */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px 40px;
+        }
+
+        /* Títulos y Encabezados */
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+
+        /* Estilo del Acordeón (menús colapsables) */
+        .accordion {
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 18px;
+            transition: background-color 0.4s ease;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion:hover, .accordion.active {
+            background-color: #2980b9;
+        }
+        .accordion::after {
+            content: '▶'; /* Símbolo para 'expandir' */
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        .accordion.active::after {
+            transform: rotate(90deg); /* Gira el símbolo al expandir */
+        }
+
+        /* Panel de contenido (inicialmente oculto) */
+        .panel {
+            padding: 0 18px;
+            background-color: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        .panel p {
+            margin-top: 15px;
+        }
+
+        /* Estilo para los bloques de código */
+        pre[class*="language-"] {
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        /* Theme switch styles */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+        }
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        body.dark-mode .container {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        body.dark-mode h1 {
+            color: #ffffff;
+            border-bottom-color: #3498db;
+        }
+        body.dark-mode h2 {
+            color: #ffffff;
+            border-bottom-color: #555;
+        }
+        body.dark-mode .accordion {
+            background-color: #3498db;
+        }
+        body.dark-mode .accordion:hover, body.dark-mode .accordion.active {
+            background-color: #2980b9;
+        }
+        body.dark-mode .panel {
+            background-color: #2a2a2a;
+            border-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round"></div>
+        </label>
+    </div>
+    
+    <div class="container">
+        <h1>Fundamentos de C++</h1>
+        <p>Esta página contiene un resumen interactivo de los conceptos básicos de C++. Haz clic en cada sección para expandir y ver la explicación detallada junto con el código de ejemplo correspondiente.</p>
+
+        <h2>Lecciones Fundamentales</h2>
+
+        <button class="accordion">01: Salida de Datos (cout)</button>
+        <div class="panel">
+            <p><strong>La función <code>std::cout</code> es fundamental en C++.</strong> Permite mostrar información en la consola, una herramienta que te acompañará durante toda tu carrera como programador. Se utiliza para depurar código, mostrar resultados y comunicarte con el usuario. Puedes imprimir texto (cadenas), números y los valores de las variables. A diferencia de Python, C++ requiere incluir la librería <code>&lt;iostream&gt;</code> y usar el operador <code>&lt;&lt;</code> para enviar datos al flujo de salida.</p>
+            <pre><code class="language-cpp">/*
+ * 01 - cout (salida de datos)
+ * std::cout es el objeto que nos permite imprimir en consola
+ * Sirve para mostrar información en consola y te va a acompañar
+ * TODA TU VIDA. Desde hoy hasta el fin de los tiempos
+ */
+
+#include <iostream>  // Necesario para cout
+#include <string>    // Necesario para std::string
+
+// Función para limpiar pantalla (multiplataforma)
+void clearScreen() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}
+
+int main() {
+    clearScreen();
+    
+    // Este es un ejemplo básico de cómo imprimir un texto en consola
+    std::cout << "¡Hola, Twitch!" << std::endl;
+    
+    // También puedes usar comillas dobles para imprimir texto
+    std::cout << "Esto funciona con comillas dobles" << std::endl;
+    
+    // Puedes imprimir múltiples elementos en una sola línea
+    std::cout << "C++" << " " << "es" << " " << "genial" << std::endl;
+    
+    // Usando std::endl vs \n
+    std::cout << "Esto se imprime" << std::endl; // std::endl hace flush del buffer
+    std::cout << "en líneas separadas\n";       // \n es más eficiente
+    
+    // También se pueden imprimir números directamente
+    std::cout << 42 << std::endl;
+    
+    // Ejemplo de cómo imprimir comillas dentro de strings
+    std::cout << "Esto es una \"pulgada\" dentro de un string" << std::endl;
+    
+    // Usando caracteres de escape
+    std::cout << "Línea 1\nLínea 2\tTabulación" << std::endl;
+    
+    return 0;  // Indica que el programa terminó exitosamente
+}</code></pre>
+        </div>
+
+        <button class="accordion">02: Tipos de Datos Fundamentales</button>
+        <div class="panel">
+            <p><strong>C++ es un lenguaje de tipado estático y fuerte.</strong> Esto significa que debes declarar el tipo de cada variable antes de usarla, y el tipo no puede cambiar durante la ejecución. Los tipos fundamentales incluyen <code>int</code> para números enteros, <code>double</code> y <code>float</code> para números decimales, <code>char</code> para caracteres individuales, <code>bool</code> para valores verdaderos/falsos, y <code>std::string</code> para cadenas de texto. La función <code>typeid()</code> puede ayudarte a identificar el tipo de una variable.</p>
+            <pre><code class="language-cpp">/*
+ * 02 - Tipos de datos fundamentales
+ * C++ tiene varios tipos de datos primitivos
+ * int, float, double, char, bool, string...
+ */
+
+#include <iostream>
+#include <string>
+#include <typeinfo>  // Para typeid()
+
+int main() {
+    // Números enteros
+    int numero_entero = 10;
+    int cero = 0;
+    int negativo = -5;
+    long long numero_grande = 7238424723784278934LL;  // Para números muy grandes
+    
+    std::cout << "int:" << std::endl;
+    std::cout << "Valor: " << numero_entero << ", Tipo: " << typeid(numero_entero).name() << std::endl;
+    std::cout << "Valor: " << cero << ", Tipo: " << typeid(cero).name() << std::endl;
+    std::cout << "Valor: " << negativo << ", Tipo: " << typeid(negativo).name() << std::endl;
+    
+    // Números decimales
+    float decimal_simple = 3.14f;      // f indica que es float
+    double decimal_doble = 3.14159;    // double tiene más precisión
+    double notacion_cientifica = 1e3;  // Equivalente a 1000.0
+    
+    std::cout << "\nfloat y double:" << std::endl;
+    std::cout << "Float: " << decimal_simple << ", Tipo: " << typeid(decimal_simple).name() << std::endl;
+    std::cout << "Double: " << decimal_doble << ", Tipo: " << typeid(decimal_doble).name() << std::endl;
+    std::cout << "Científica: " << notacion_cientifica << ", Tipo: " << typeid(notacion_cientifica).name() << std::endl;
+    
+    // Caracteres
+    char letra = 'A';
+    char simbolo = '@';
+    
+    std::cout << "\nchar:" << std::endl;
+    std::cout << "Valor: " << letra << ", Tipo: " << typeid(letra).name() << std::endl;
+    std::cout << "Valor: " << simbolo << ", Tipo: " << typeid(simbolo).name() << std::endl;
+    
+    // Cadenas de texto
+    std::string texto = "Hola mundo";
+    std::string vacio = "";
+    std::string numero_como_texto = "123";
+    
+    std::cout << "\nstd::string:" << std::endl;
+    std::cout << "Valor: \"" << texto << "\", Tipo: " << typeid(texto).name() << std::endl;
+    std::cout << "Vacío: \"" << vacio << "\", Tipo: " << typeid(vacio).name() << std::endl;
+    
+    // Valores booleanos
+    bool verdadero = true;
+    bool falso = false;
+    bool comparacion = (1 < 2);
+    
+    std::cout << "\nbool:" << std::endl;
+    std::cout << "Verdadero: " << std::boolalpha << verdadero << ", Tipo: " << typeid(verdadero).name() << std::endl;
+    std::cout << "Falso: " << falso << ", Tipo: " << typeid(falso).name() << std::endl;
+    std::cout << "Comparación: " << comparacion << ", Tipo: " << typeid(comparacion).name() << std::endl;
+    
+    return 0;
+}</code></pre>
+        </div>
+
+        <button class="accordion">03: Conversión de Tipos (Casting)</button>
+        <div class="panel">
+            <p><strong>El "casting" en C++ es el proceso de convertir un valor de un tipo a otro.</strong> C++ ofrece varios tipos de casting: <strong>implícito</strong> (automático y seguro), <strong>explícito</strong> usando operadores de casting como <code>static_cast&lt;&gt;</code>, y casting estilo C (menos seguro). Es importante entender cuándo las conversiones son seguras y cuándo pueden perder información. Por ejemplo, convertir un <code>double</code> a <code>int</code> trunca la parte decimal.</p>
+            <pre><code class="language-cpp">/*
+ * 03 - Conversión de tipos (Casting)
+ * Transformar un tipo de un valor a otro en C++
+ */
+
+#include <iostream>
+#include <string>
+#include <cmath>  // Para std::round
+
+int main() {
+    std::cout << "Conversión de tipos en C++" << std::endl;
+    
+    // Conversión de string a número (usando stoi, stof, stod)
+    std::string numero_texto = "100";
+    int numero_convertido = std::stoi(numero_texto);  // string to int
+    std::cout << "2 + " << numero_texto << " = " << 2 + numero_convertido << std::endl;
+    
+    // Conversión de número a string (usando to_string)
+    int numero = 2;
+    std::string resultado = numero_texto + std::to_string(numero);
+    std::cout << "\"100\" + \"2\" = \"" << resultado << "\"" << std::endl;
+    
+    // Conversión de string a double
+    std::string pi_texto = "3.1416";
+    double pi = std::stod(pi_texto);  // string to double
+    std::cout << "Tipo de pi: " << typeid(pi).name() << ", Valor: " << pi << std::endl;
+    
+    // Conversión de double a int (trunca la parte decimal)
+    int pi_entero = static_cast<int>(pi);  // Casting explícito y seguro
+    std::cout << "Pi como entero (truncado): " << pi_entero << std::endl;
+    
+    // Conversiones a bool
+    bool numero_bool = static_cast<bool>(3);    // Cualquier número != 0 es true
+    bool cero_bool = static_cast<bool>(0);      // 0 es false
+    bool negativo_bool = static_cast<bool>(-1); // Números negativos son true
+    
+    std::cout << "\nConversiones a bool:" << std::endl;
+    std::cout << "bool(3): " << std::boolalpha << numero_bool << std::endl;
+    std::cout << "bool(0): " << cero_bool << std::endl;
+    std::cout << "bool(-1): " << negativo_bool << std::endl;
+    
+    // Conversiones de string a bool (más complejo en C++)
+    std::string texto_vacio = "";
+    std::string texto_con_contenido = " ";
+    std::cout << "\nStrings como bool (usando .empty()):" << std::endl;
+    std::cout << "String vacío es: " << (texto_vacio.empty() ? "true" : "false") << std::endl;
+    std::cout << "String con espacio es: " << (texto_con_contenido.empty() ? "true" : "false") << std::endl;
+    
+    // Redondeo
+    double decimal = 2.51;
+    int redondeado = static_cast<int>(std::round(decimal));
+    std::cout << "\nRedondeo de " << decimal << ": " << redondeado << std::endl;
+    
+    // Ejemplo de conversión que fallaría (comentado para evitar error)
+    // int error = std::stoi("Hola mundo");  // ❌ Esto lanzaría std::invalid_argument
+    
+    return 0;
+}</code></pre>
+        </div>
+
+        <button class="accordion">04: Variables y Declaraciones</button>
+        <div class="panel">
+            <p><strong>Las variables en C++ deben declararse con un tipo específico antes de usarse.</strong> C++ es de <strong>tipado estático</strong> (el tipo se define en tiempo de compilación) y <strong>tipado fuerte</strong> (no permite conversiones automáticas peligrosas). Es importante seguir las convenciones de nomenclatura como <code>snake_case</code> o <code>camelCase</code>. C++ también permite declarar constantes usando <code>const</code> y variables automáticas usando <code>auto</code> (el compilador deduce el tipo).</p>
+            <pre><code class="language-cpp">/*
+ * 04 - Variables y declaraciones
+ * Las variables sirven para guardar datos en memoria.
+ * C++ es un lenguaje de tipado estático y de tipado fuerte.
+ */
+
+#include <iostream>
+#include <string>
+
+int main() {
+    // Declaración e inicialización de variables
+    std::string my_name = "midudev";
+    std::cout << my_name << std::endl;
+    
+    int age = 32;
+    std::cout << age << std::endl;
+    
+    // Reasignar un nuevo valor a una variable existente
+    age = 39;
+    std::cout << age << std::endl;
+    
+    // Tipado estático: el tipo se determina en tiempo de compilación
+    std::string name = "midudev";
+    std::cout << "Tipo de name: " << typeid(name).name() << std::endl;
+    
+    // ❌ Esto NO es posible en C++ (a diferencia de Python)
+    // name = 32;  // Error de compilación: no se puede asignar int a string
+    
+    // Tipado fuerte: C++ no realiza conversiones automáticas peligrosas
+    // std::cout << 10 + "2" << std::endl;  // ❌ Error de compilación
+    
+    // Concatenación de strings en C++ (equivalente a f-strings de Python)
+    std::cout << "Hola " << my_name << ", tengo " << age + 5 << " años" << std::endl;
+    
+    // Declaración múltiple (no recomendada)
+    std::string nombre = "midudev";
+    int edad = 32;
+    std::string ciudad = "Bogotá";
+    
+    // Convenciones de nombres de variables
+    std::string mi_nombre_de_variable = "ok";     // snake_case
+    std::string nombre_simple = "ok";
+    
+    std::string miNombreDeVariable = "también_ok"; // camelCase (común en C++)
+    std::string MiNombreDeVariable = "PascalCase"; // Para clases/tipos
+    std::string minombredevariable = "no-recomendado"; // todo junto
+    
+    std::string mi_nombre_de_variable_123 = "ok";
+    
+    // Constantes (equivalente a variables en MAYÚSCULAS de Python)
+    const double MI_CONSTANTE = 3.14159;
+    // MI_CONSTANTE = 2.71;  // ❌ Error: no se puede modificar una constante
+    
+    // Deducción automática de tipos (C++11 y posterior)
+    auto numero_automatico = 42;        // El compilador deduce que es int
+    auto decimal_automatico = 3.14;     // El compilador deduce que es double
+    auto texto_automatico = "Hola";     // El compilador deduce que es const char*
+    
+    std::cout << "\nTipos deducidos automáticamente:" << std::endl;
+    std::cout << "auto numero: " << typeid(numero_automatico).name() << std::endl;
+    std::cout << "auto decimal: " << typeid(decimal_automatico).name() << std::endl;
+    std::cout << "auto texto: " << typeid(texto_automatico).name() << std::endl;
+    
+    // Inicialización uniforme (C++11)
+    int valor{42};
+    std::string mensaje{"Hola mundo"};
+    
+    return 0;
+}</code></pre>
+        </div>
+
+        <button class="accordion">05: Entrada de Usuario (cin)</button>
+        <div class="panel">
+            <p><strong>La función <code>std::cin</code> permite obtener datos del usuario desde la consola.</strong> A diferencia de Python's <code>input()</code>, <code>cin</code> puede leer diferentes tipos de datos directamente sin necesidad de conversión manual. Sin embargo, es importante manejar los espacios en blanco y usar <code>getline()</code> para leer líneas completas con espacios. También es crucial validar la entrada para evitar errores.</p>
+            <pre><code class="language-cpp">/*
+ * 05 - Entrada de usuario (cin)
+ * std::cin permite obtener datos del usuario a través de la consola.
+ */
+
+#include <iostream>
+#include <string>
+#include <sstream>  // Para stringstream
+
+int main() {
+    // Para obtener datos del usuario se usa std::cin
+    std::string nombre;
+    std::cout << "Hola, ¿cómo te llamas?\n";
+    std::cin >> nombre;  // Lee hasta el primer espacio
+    std::cout << "Hola " << nombre << ", encantado de conocerte" << std::endl;
+    
+    // Para leer números, cin puede convertir automáticamente
+    int age;
+    std::cout << "¿Cuántos años tienes?\n";
+    std::cin >> age;
+    std::cout << "Tienes " << age << " años" << std::endl;
+    
+    // Limpiar el buffer antes de usar getline
+    std::cin.ignore();
+    
+    // Para leer líneas completas (incluyendo espacios), usar getline
+    std::string nombre_completo;
+    std::cout << "¿Cuál es tu nombre completo?\n";
+    std::getline(std::cin, nombre_completo);
+    std::cout << "Tu nombre completo es: " << nombre_completo << std::endl;
+    
+    // Obtener múltiples valores en una línea
+    std::string pais, ciudad;
+    std::cout << "¿En qué país y ciudad vives? (separados por espacio)\n";
+    std::cin >> pais >> ciudad;
+    std::cout << "Vives en " << pais << ", " << ciudad << std::endl;
+    
+    // Validación básica de entrada
+    int numero;
+    std::cout << "Ingresa un número entero:\n";
+    while (!(std::cin >> numero)) {
+        std::cout << "Error: Por favor ingresa un número válido:\n";
+        std::cin.clear();  // Limpiar el estado de error
+        std::cin.ignore(10000, '\n');  // Descartar la entrada inválida
+    }
+    std::cout << "El número ingresado es: " << numero << std::endl;
+    
+    return 0;
+}</code></pre>
+        </div>
+
+        <button class="accordion">06: Compilación y Ejecución</button>
+        <div class="panel">
+            <p><strong>A diferencia de Python, C++ es un lenguaje compilado.</strong> Esto significa que debes convertir tu código fuente en un archivo ejecutable antes de poder ejecutarlo. El proceso incluye: <strong>preprocesamiento</strong> (manejo de #include y #define), <strong>compilación</strong> (conversión a código objeto), <strong>enlazado</strong> (linking de librerías), y finalmente la <strong>ejecución</strong>. Los compiladores más comunes son GCC, Clang y MSVC.</p>
+            <pre><code class="language-bash"># Compilación básica con g++
+g++ -o programa programa.cpp
+
+# Compilación con flags de optimización y debug
+g++ -std=c++17 -Wall -Wextra -g -O2 -o programa programa.cpp
+
+# Ejecución del programa
+./programa
+
+# Compilación paso a paso (opcional, para entender el proceso)
+g++ -E programa.cpp > programa.i    # Preprocesamiento
+g++ -S programa.i                   # Compilación a ensamblador
+g++ -c programa.s                   # Ensamblado a código objeto
+g++ programa.o -o programa          # Enlazado final</code></pre>
+            <pre><code class="language-cpp">/*
+ * 06 - Estructura básica de un programa C++
+ * Todo programa C++ necesita estas partes fundamentales
+ */
+
+// Directivas de preprocesador (incluir librerías)
+#include <iostream>  // Para entrada/salida estándar
+#include <string>    // Para manejo de strings
+
+// Declaración del espacio de nombres (opcional pero común)
+using namespace std;  // Permite usar cout en lugar de std::cout
+
+// Función principal (punto de entrada del programa)
+int main() {
+    // Tu código aquí
+    cout << "¡Hola mundo desde C++!" << endl;
+    
+    // Valor de retorno (0 = éxito, != 0 = error)
+    return 0;
+}
+
+// Ejemplo sin 'using namespace std' (más explícito y recomendado)
+/*
+#include <iostream>
+#include <string>
+
+int main() {
+    std::cout << "¡Hola mundo desde C++!" << std::endl;
+    return 0;
+}
+*/</code></pre>
+        </div>
+
+        <h2>Ejercicios Prácticos</h2>
+
+        <button class="accordion">Enunciados de los Ejercicios</button>
+        <div class="panel">
+            <p>A continuación se presentan una serie de ejercicios diseñados para practicar los conceptos aprendidos en las lecciones anteriores. Intenta resolverlos por tu cuenta antes de ver las soluciones.</p>
+            <pre><code class="language-cpp">/*
+ * exercises.cpp
+ * Ejercicios para practicar los conceptos aprendidos en las lecciones.
+ */
+
+#include <iostream>
+#include <string>
+
+int main() {
+    std::cout << "\nEjercicio 1: Imprimir mensajes" << std::endl;
+    std::cout << "Escribe un programa que imprima tu nombre y tu ciudad en líneas separadas." << std::endl;
+    
+    /// Completa aquí
+    
+    std::cout << "--------------" << std::endl;
+    
+    std::cout << "\nEjercicio 2: Declara variables de diferentes tipos:" << std::endl;
+    std::cout << "Declara variables de tipo int, double, string, bool y char." << std::endl;
+    std::cout << "Usa typeid() para mostrar el tipo de cada variable." << std::endl;
+    
+    /// Completa aquí
+    
+    std::cout << "--------------" << std::endl;
+    
+    std::cout << "\nEjercicio 3: Casting de tipos" << std::endl;
+    std::cout << "Convierte la cadena \"12345\" a un entero y luego a un double." << std::endl;
+    std::cout << "Convierte el double 3.99 a un entero. ¿Qué ocurre?" << std::endl;
+    
+    /// Completa aquí
+    
+    std::cout << "--------------" << std::endl;
+    
+    std::cout << "\nEjercicio 4: Variables y entrada de usuario" << std::endl;
+    std::cout << "Pide al usuario su nombre, edad y altura." << std::endl;
+    std::cout << "Imprime una presentación usando estos datos." << std::endl;
+    
+    // "Hola! Me llamo [nombre] y tengo [edad] años, mido [altura] metros"
+    
+    /// Completa aquí
+    
+    std::cout << "--------------" << std::endl;
+    
+    std::cout << "\nEjercicio 5: Compilación" << std::endl;
+    std::cout << "Compila y ejecuta un programa básico de C++." << std::endl;
+    std::cout << "Usa los comandos de compilación mostrados en la lección 06." << std::endl;
+    
+    return 0;
+}</code></pre>
+        </div>
+
+        <button class="accordion">Soluciones de los Ejercicios</button>
+        <div class="panel">
+            <p>Aquí puedes encontrar las soluciones a los ejercicios propuestos. Úsalas para comprobar tus respuestas o para entender cómo abordar un problema si te has atascado.</p>
+            <pre><code class="language-cpp">/*
+ * soluciones.cpp
+ * Soluciones a los ejercicios del archivo exercises.cpp
+ */
+
+#include <iostream>
+#include <string>
+#include <typeinfo>
+#include <cmath>
+
+int main() {
+    std::cout << "\nEjercicio 1: Imprimir mensajes" << std::endl;
+    std::cout << "Escribe un programa que imprima tu nombre y tu ciudad en líneas separadas." << std::endl;
+    
+    // Solución:
+    std::string nombre = "Carlos";  // Reemplázalo con tu nombre
+    std::string ciudad = "Buenos Aires";  // Reemplázalo con tu ciudad
+    
+    std::cout << nombre << std::endl;
+    std::cout << ciudad << std::endl;
+    
+    std::cout << "--------------" << std::endl;
+    
+    std::cout << "\nEjercicio 2: Declara variables de diferentes tipos:" << std::endl;
+    std::cout << "Usa typeid() para mostrar el tipo de cada variable." << std::endl;
+    
+    // Solución:
+    int a = 15;
+    double b = 3.14159;
+    std::string c = "Hola mundo";
+    bool d = true;
+    char e = 'X';
+    
+    std::cout << "Tipo de a (int): " << typeid(a).name() << std::endl;
+    std::cout << "Tipo de b (double): " << typeid(b).name() << std::endl;
+    std::cout << "Tipo de c (string): " << typeid(c).name() << std::endl;
+    std::cout << "Tipo de d (bool): " << typeid(d).name() << std::endl;
+    std::cout << "Tipo de e (char): " << typeid(e).name() << std::endl;
+    
+    std::cout << "--------------" << std::endl;
+    
+    std::cout << "\nEjercicio 3: Casting de tipos" << std::endl;
+    std::cout << "Convierte la cadena \"12345\" a un entero y luego a un double." << std::endl;
+    std::cout << "Convierte el double 3.99 a un entero. ¿Qué ocurre?" << std::endl;
+    
+    // Solución:
+    std::string cadena = "12345";
+    int numero_entero = std::stoi(cadena);  // Convertir cadena a entero
+    double numero_double = static_cast<double>(numero_entero);  // Convertir entero a double
+    
+    std::cout << "Número entero: " << numero_entero << std::endl;
+    std::cout << "Número como double: " << numero_double << std::endl;
+    
+    double double_num = 3.99;
+    int entero_convertido = static_cast<int>(double_num);  // Se trunca el decimal
+    
+    std::cout << "Double original: " << double_num << std::endl;
+    std::cout << "Double convertido a entero (se trunca la parte decimal): " << entero_convertido << std::endl;
+    
+    std::cout << "--------------" << std::endl;
+    
+    std::cout << "\nEjercicio 4: Variables y entrada de usuario" << std::endl;
+    std::cout << "Pide al usuario su nombre, edad y altura." << std::endl;
+    std::cout << "Imprime una presentación usando estos datos." << std::endl;
+    
+    // Solución:
+    std::string nombre_usuario;
+    int edad;
+    double altura;
+    
+    std::cout << "¿Cuál es tu nombre? ";
+    std::cin >> nombre_usuario;
+    
+    std::cout << "¿Cuántos años tienes? ";
+    std::cin >> edad;
+    
+    std::cout << "¿Cuál es tu altura en metros? ";
+    std::cin >> altura;
+    
+    // Imprimir presentación
+    std::cout << "Hola! Me llamo " << nombre_usuario << " y tengo " << edad 
+              << " años, mido " << altura << " metros" << std::endl;
+    
+    std::cout << "--------------" << std::endl;
+    
+    std::cout << "\nEjercicio 5: Compilación" << std::endl;
+    std::cout << "Para compilar este programa:" << std::endl;
+    std::cout << "1. Guarda este código en un archivo llamado 'programa.cpp'" << std::endl;
+    std::cout << "2. Abre la terminal en la carpeta donde guardaste el archivo" << std::endl;
+    std::cout << "3. Ejecuta: g++ -o programa programa.cpp" << std::endl;
+    std::cout << "4. Ejecuta el programa: ./programa" << std::endl;
+    
+    return 0;
+}</code></pre>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <script>
+        // Lógica para el funcionamiento del acordeón
+        const accordions = document.querySelectorAll(".accordion");
+
+        accordions.forEach(acc => {
+            acc.addEventListener("click", function() {
+                // Alterna la clase 'active' para cambiar el estilo (ej. color de fondo, ícono)
+                this.classList.toggle("active");
+
+                // Selecciona el panel de contenido siguiente
+                const panel = this.nextElementSibling;
+
+                // Si el panel ya está abierto (tiene un max-height), lo cierra (max-height = null)
+                // Si no, lo abre calculando la altura necesaria (scrollHeight)
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        });
+
+        // Dark mode functionality
+        const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+        
+        function switchTheme(e) {
+            if (e.target.checked) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }    
+        }
+        
+        toggleSwitch.addEventListener('change', switchTheme, false);
+        
+        // Check for saved theme preference or default to 'light' mode
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                toggleSwitch.checked = true;
+            }
+        }
+    </script>
+
+</body>
+</html>

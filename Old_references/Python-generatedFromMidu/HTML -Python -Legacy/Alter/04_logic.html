@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso de Python: Lección 4 - Lógica y Desafíos</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px 40px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+        }
+        p.intro {
+            text-align: center;
+            font-size: 1.1em;
+            color: #555;
+        }
+        .accordion {
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 18px;
+            transition: background-color 0.4s ease;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion:hover, .accordion.active {
+            background-color: #2980b9;
+        }
+        .accordion::after {
+            content: '▶';
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        .accordion.active::after {
+            transform: rotate(90deg);
+        }
+        .panel {
+            padding: 0 18px;
+            background-color: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        .panel p {
+            margin-top: 15px;
+        }
+        .challenge-prompt {
+            background-color: #eaf2f8;
+            border-left: 5px solid #3498db;
+            padding: 10px 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-style: italic;
+        }
+        pre[class*="language-"] {
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        /* Theme switch styles */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+        }
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        body.dark-mode .container {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        body.dark-mode h1 {
+            color: #ffffff;
+            border-bottom-color: #3498db;
+        }
+        body.dark-mode h2 {
+            color: #ffffff;
+            border-bottom-color: #555;
+        }
+        body.dark-mode p.intro {
+            color: #ccc;
+        }
+        body.dark-mode .accordion {
+            background-color: #3498db;
+        }
+        body.dark-mode .accordion:hover, body.dark-mode .accordion.active {
+            background-color: #2980b9;
+        }
+        body.dark-mode .panel {
+            background-color: #2a2a2a;
+            border-color: #555;
+        }
+        body.dark-mode .challenge-prompt {
+            background-color: #1a2332;
+            border-left-color: #3498db;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round"></div>
+        </label>
+    </div>
+    
+    <div class="container">
+        <h1>Lección 4: Lógica y Desafíos de Programación</h1>
+        <p class="intro">En esta lección, pondremos a prueba nuestra capacidad para resolver problemas. Primero, aprenderemos sobre los diccionarios, una estructura de datos increíblemente poderosa, y luego la aplicaremos para resolver una serie de desafíos prácticos y entretenidos.</p>
+
+        <h2>Diccionarios: La Estructura de Datos Clave-Valor</h2>
+
+        <button class="accordion">01: Introducción a los Diccionarios 📚</button>
+        <div class="panel">
+            <p>Imagina una agenda telefónica o un diccionario real. No buscas a una persona por su posición (la número 50 en la agenda), sino por su nombre (la "clave"). Los diccionarios en Python funcionan igual: son colecciones de pares <strong>clave-valor</strong>, optimizadas para una recuperación de datos muy rápida.</p>
+
+            <p><strong>Creación y Acceso a Datos:</strong><br>Un diccionario se crea con llaves <code>{}</code>. Cada elemento es un par <code>"clave": valor</code>. Para acceder a un valor, se utiliza su clave entre corchetes.</p>
+            <pre><code class="language-python"># Un diccionario puede contener diferentes tipos de datos.
+persona = {
+  "nombre": "midudev",
+  "edad": 25,
+  "es_estudiante": True,
+  "calificaciones": [7, 8, 9],
+  "socials": {
+    "twitter": "@midudev",
+    "instagram": "@midudev"
+  }
+}
+
+# Accedemos a los valores usando sus claves
+print(persona["nombre"])
+print(persona["calificaciones"][2]) 
+print(persona["socials"]["twitter"])</code></pre>
+
+            <p><strong>Modificar y Eliminar Datos:</strong><br>Los diccionarios son mutables. Puedes cambiar fácilmente el valor de una clave, eliminar un par clave-valor con <code>del</code>, o usar el método <code>.pop()</code> que elimina un elemento pero también te devuelve su valor.</p>
+            <pre><code class="language-python">persona = {"nombre": "midudev", "edad": 25, "es_estudiante": True}
+
+# Cambiar el valor de una clave existente
+persona["nombre"] = "madeval"
+
+# Eliminar completamente una propiedad
+del persona["edad"]
+
+# Eliminar una propiedad y guardar su valor
+era_estudiante = persona.pop("es_estudiante") 
+print(f"El valor de 'era_estudiante' fue: {era_estudiante}")
+print(persona)</code></pre>
+
+            <p><strong>Iterar sobre un Diccionario:</strong><br>Puedes obtener todas las claves, valores o ambos usando los métodos <code>.keys()</code>, <code>.values()</code> y <code>.items()</code>. El método <code>.items()</code> es el más común para iterar, ya que te da acceso tanto a la clave como al valor en cada paso del bucle.</p>
+            <pre><code class="language-python">persona = {"nombre": "madeval", "edad": 21}
+
+print("\nClaves del diccionario:", list(persona.keys()))
+print("Valores del diccionario:", list(persona.values()))
+
+print("\nIterando con .items():")
+for key, value in persona.items():
+  print(f"La clave '{key}' tiene el valor: {value}")</code></pre>
+        </div>
+
+        <h2>Desafíos de Lógica</h2>
+
+        <button class="accordion">¡Desafío Fantástico! El Equilibrio de la Alianza 🦸</button>
+        <div class="panel">
+            <div class="challenge-prompt">
+                <p><strong>¿Está en Equilibrio la Alianza entre Reed Richards y Johnny Storm?</strong></p>
+                <p>En el universo de los 4 Fantásticos, la unión y el equilibrio entre los poderes es fundamental. Nos centraremos en dos de sus miembros: Reed Richards (Mr. Fantastic), representado por la letra 'R', y Johnny Storm (La Antorcha Humana), representado por la letra 'J'.</p>
+                <p><strong>Objetivo:</strong> Crear una función que reciba un texto y verifique si el número de letras 'R' es igual al número de letras 'J'. Debe devolver <code>True</code> si son iguales y <code>False</code> si no.</p>
+            </div>
+            
+            <p><strong>Análisis de la Solución:</strong> La solución es muy eficiente. Primero, convierte todo el texto a mayúsculas con <code>.upper()</code> para no diferenciar entre 'r' y 'R'. Luego, utiliza el método de cadenas <code>.count()</code> para contar las apariciones de cada letra. Finalmente, devuelve directamente el resultado de la comparación <code>count_r == count_j</code>, que ya es un valor booleano (<code>True</code> o <code>False</code>).</p>
+            <pre><code class="language-python">def check_is_balanced(text):
+  text = text.upper()
+
+  count_r = text.count("R") # Reed Richards
+  count_j = text.count("J") # Johnny Storm
+
+  # Esta línea es un atajo elegante para un if/else.
+  # La comparación 'count_r == count_j' ya evalúa a True o False.
+  return count_r == count_j
+
+print(f"¿'RRJJ' está balanceado? -> {check_is_balanced('RRJJ')}")
+print(f"¿'RRRRJJ' está balanceado? -> {check_is_balanced('RRRRJJ')}")
+print(f"¿'sin letras' está balanceado? -> {check_is_balanced('awwwaqAQAQA')}")</code></pre>
+        </div>
+
+        <button class="accordion">¡Peligro en Jurassic Park! Contando Huevos 🦖</button>
+        <div class="panel">
+            <div class="challenge-prompt">
+                <p>En Jurassic Park, se ha observado que los dinosaurios carnívoros, como el temible T-Rex, depositan un número par de huevos. Tienes una lista de números donde cada número es la cantidad de huevos de un dinosaurio.</p>
+                <p><strong>Objetivo:</strong> Escribe una función que reciba la lista y devuelva la suma total de los huevos que pertenecen a los dinosaurios carnívoros (es decir, la suma de todos los números pares).</p>
+            </div>
+
+            <p><strong>Análisis de la Solución:</strong> La solución recorre cada número de la lista. Dentro del bucle, el <strong>operador módulo</strong> (<code>%</code>) se usa para determinar si un número es par. Si <code>eggs % 2</code> da como resultado <code>0</code>, significa que el número es divisible por 2 (par), y se suma al total.</p>
+            <pre><code class="language-python">def count_carnivore_dinosaur_eggs(egg_list) -> int:
+  total_carnivore_eggs = 0
+
+  for eggs in egg_list:
+    # El operador módulo (%) nos da el resto de una división.
+    # Si el resto de dividir entre 2 es 0, el número es par.
+    if eggs % 2 == 0:
+      total_carnivore_eggs += eggs
+
+  return total_carnivore_eggs
+
+egg_list = [3, 4, 7, 5, 8]
+print(f"El total de huevos de carnívoro es: {count_carnivore_dinosaur_eggs(egg_list)}") # 12</code></pre>
+        </div>
+
+        <button class="accordion">Desafío de Lógica: Encontrando la Suma 🧠</button>
+        <div class="panel">
+            <div class="challenge-prompt">
+                <p><strong>"Two Sum"</strong> es un problema clásico en entrevistas de programación.</p>
+                <p><strong>Objetivo:</strong> Dado un array de números y un número `goal`, encontrar los dos primeros números del array que sumen el `goal` y devolver sus índices. Si no existe tal combinación, devolver <code>None</code>.</p>
+            </div>
+            
+            <p><strong>Solución Eficiente con Diccionario:</strong><br>Esta solución es mucho más rápida (complejidad O(n)). Recorre la lista una sola vez. En cada paso, calcula el número que "falta" para alcanzar el objetivo. Luego, revisa en un diccionario si ya ha "visto" ese número faltante antes. Si es así, ha encontrado la pareja. Si no, guarda el número actual y su índice en el diccionario de "vistos" para futuras comprobaciones.</p>
+            <pre><code class="language-python">def find_first_sum(nums, goal):
+  seen = {} # diccionario para guardar el numero y su índice -> {valor: indice}
+
+  for index, value in enumerate(nums):
+    missing = goal - value
+    if missing in seen:
+      # ¡Encontrado! El número que nos faltaba ya lo habíamos visto.
+      return [seen[missing], index]
+    
+    # Si no lo encontramos, guardamos el número actual para el futuro.
+    seen[value] = index
+
+  return None
+
+nums = [4, 5, 6, 2]
+goal = 8
+result = find_first_sum(nums, goal)
+print(f"Los índices que suman {goal} son: {result}")</code></pre>
+        </div>
+        
+        <button class="accordion">Desafío Estratégico: La Batalla Final ⚔️</button>
+        <div class="panel">
+            <div class="challenge-prompt">
+                <p><strong>Tienes dos listas de números de la misma longitud.</strong></p>
+                <p>Cada número en <code>lista_a</code> se "enfrenta" al número en la misma posición en <code>lista_b</code>. Si el de <code>a</code> es mayor, su valor se suma al siguiente en <code>a</code>. Si el de <code>b</code> es mayor, su valor se suma al siguiente en <code>b</code>. Si son iguales, se eliminan. Debes devolver un string con el resultado final.</p>
+            </div>
+
+            <p><strong>Análisis de la Solución Proporcionada:</strong> Este es un caso interesante. La descripción del problema detalla un complejo proceso secuencial. Sin embargo, la solución implementada es una simplificación extrema: ignora la lógica secuencial y simplemente <strong>suma todos los valores de cada lista</strong> (<code>sum(lista_a)</code>) y compara los totales. Esto nos enseña que a veces, la solución más directa (aunque no siga las reglas al pie de la letra) puede ser una forma de abordar un problema complejo.</p>
+            <pre><code class="language-python">def battle(lista_a, lista_b):
+    puntos_a = sum(lista_a)
+    puntos_b = sum(lista_b)
+    
+    if puntos_a > puntos_b:
+        return f"{puntos_a - puntos_b}a"
+    elif puntos_b > puntos_a:
+        return f"{puntos_b - puntos_a}b"
+    else:
+        return "x"
+
+lista_a = [4, 4, 4] # Total: 12
+lista_b = [2, 8, 2] # Total: 12
+print(f"Ganador de [4,4,4] vs [2,8,2] -> '{battle(lista_a, lista_b)}'")
+
+lista_a = [2, 4, 2] # Total: 8
+lista_b = [3, 3, 4] # Total: 10
+print(f"Ganador de [2,4,2] vs [3,3,4] -> '{battle(lista_a, lista_b)}'")
+</code></pre>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <script>
+        const accordions = document.querySelectorAll(".accordion");
+        accordions.forEach(acc => {
+            acc.addEventListener("click", function() {
+                this.classList.toggle("active");
+                const panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        });
+
+        // Dark mode functionality
+        const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+        
+        function switchTheme(e) {
+            if (e.target.checked) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }    
+        }
+        
+        toggleSwitch.addEventListener('change', switchTheme, false);
+        
+        // Check for saved theme preference or default to 'light' mode
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                toggleSwitch.checked = true;
+            }
+        }
+    </script>
+
+</body>
+</html>
