@@ -2,7 +2,9 @@
 
 Sitio existente: https://rubenmena-cursos.netlify.app
 
-El prototipo de Arena está implementado en `Cursos-templates`, con 40 misiones de Python. Repositorio: https://github.com/RubenDarioMena/Courses-RDM . El usuario autorizó subir las fuentes y conectar el sitio existente de Netlify para publicar automáticamente cada push a `main`.
+Arena está publicada en https://rubenmena-cursos.netlify.app/arena/ , con 40 misiones de Python. Fuentes: https://github.com/RubenDarioMena/Courses-RDM . El sitio existente `rubenmena-cursos` de Netlify está conectado: cada push a `main` compila y publica automáticamente el sitio y su función BYOK.
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/0a6bd364-2cc9-4ae4-8577-86450e15b518/deploy-status)](https://app.netlify.com/projects/rubenmena-cursos/deploys)
 
 ## Desarrollo local
 
@@ -82,7 +84,7 @@ El catálogo reserva JavaScript/Web y SQL como próximos cursos. Para implementa
 
 ## Netlify
 
-El `netlify.toml` usa `npm run build`, publica `dist/` y despliega `netlify/functions/`. Conectar el repositorio al sitio existente permite publicar ambos. Arrastrar solo `dist/` como sitio estático permite los ejercicios originales; la generación BYOK requiere desplegar también la función.
+El `netlify.toml` usa Node.js 22, ejecuta `npm run build`, publica `dist/` y despliega `netlify/functions/`. La rama de producción es `main`; los pushes a esa rama publican ambos automáticamente en el sitio existente. No hace falta subir ZIPs para las actualizaciones normales. Arrastrar solo `dist/` como sitio estático permite los ejercicios originales; la generación BYOK requiere desplegar también la función.
 
 Para preparar la subida manual, ejecutar `npm run build:static`. Esta variante indica a la interfaz que la IA aún no está conectada y desactiva la entrada de claves; todas las misiones originales siguen funcionando. `npm run preview` permite revisar ese paquete.
 

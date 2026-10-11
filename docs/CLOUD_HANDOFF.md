@@ -1,6 +1,6 @@
 # Continuar Arena en Codex Cloud
 
-Estado al 11 de octubre de 2026: prototipo implementado en `Cursos-templates`. Repositorio creado por el usuario: https://github.com/RubenDarioMena/Courses-RDM . El usuario autorizó subir las fuentes y conectar el proyecto existente `rubenmena-cursos` de Netlify para publicar cada push a `main`. Las 12 pruebas comprueban, entre otros casos, las 40 soluciones del currículo; se comprobó Python real y la escena en el navegador, además del diseño móvil.
+Estado al 11 de octubre de 2026: fuentes subidas a https://github.com/RubenDarioMena/Courses-RDM y proyecto existente `rubenmena-cursos` de Netlify conectado. El primer despliegue desde GitHub fue publicado correctamente (commit `d39a550`). URL: https://rubenmena-cursos.netlify.app/arena/ . Cada push a `main` compila y publica el sitio y la función BYOK. Las 12 pruebas comprueban, entre otros casos, las 40 soluciones del currículo; se comprobó también una compilación desde las fuentes versionadas, sin metadatos Git en los archivos públicos.
 
 ## Lo que hay que conectar
 
@@ -9,7 +9,7 @@ Estado al 11 de octubre de 2026: prototipo implementado en `Cursos-templates`. R
 3. En ChatGPT web o desktop, elegir **Work in → Cloud → Select environment → Create environment**, seleccionar el repositorio y **Get started**. Revisar la preparación y publicar el entorno. También está disponible desde **Settings → Codex Cloud → Environments**.
 4. Pedir Node.js 22+ y Python 3. Comprobar `npm test` y `npm run build`. El preview se inicia con `npm run dev`; si se necesita acceso desde un navegador remoto, usar el mecanismo de preview/forwarding del entorno, no asumir que localhost de la VM es localhost del portátil.
 5. Habilitar los destinos de red que correspondan. Para el runtime de Python: `cdn.jsdelivr.net`. Para consultar fuentes: GitHub y documentación oficial. Para probar BYOK: `api.openai.com` y un modelo/clave de pruebas propios. Estas últimas credenciales son opcionales para desarrollar el resto del curso.
-6. Más adelante, conectar el mismo repositorio al sitio existente de Netlify y conservar el dominio actual. El proyecto ya incluye `netlify.toml`.
+6. Netlify ya está conectado al repositorio y conserva el dominio actual. La configuración está en `netlify.toml`: Node.js 22, `npm run build`, carpeta pública `dist` y funciones `netlify/functions`. Un push a `main` publica automáticamente.
 
 Las tareas del entorno publicado pueden seguir trabajando con el portátil dormido. Cada tarea tiene su propio espacio; conservar los cambios importantes en Git. El usuario autorizó publicación automática de `main`: un push a esa rama puede cambiar el sitio público.
 
@@ -25,7 +25,6 @@ Las tareas del entorno publicado pueden seguir trabajando con el portátil dormi
 
 ## Pendientes conocidos
 
-- Completar y verificar el primer despliegue desde GitHub en https://rubenmena-cursos.netlify.app/arena/ . La compilación normal despliega también la función BYOK; la variante manual `build:static` desactiva la entrada de claves.
 - Probar generación con una API key real; el contrato del endpoint se prueba sin consumo de API.
 - Ampliar Python con funciones y diccionarios.
 - Añadir runtimes, currículo y escenas de JavaScript/Web y SQL.
