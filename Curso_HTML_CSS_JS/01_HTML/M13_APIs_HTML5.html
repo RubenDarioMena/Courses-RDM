@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M13 · APIs HTML5 (introducción) — Curso HTML+CSS+JS</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#110F18; --bg-s3:#15131F; --bg-s4:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --cyan:#67E8F9; --cyan-soft:rgba(95,208,224,.06); --cyan-border:rgba(95,208,224,.2);
+  --pink:#F9A8D4; --pink-soft:rgba(249,168,212,.06); --pink-border:rgba(249,168,212,.2);
+  --yellow:#F5C451; --green:#34D399; --red:#FB7185;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(34,184,207,.18),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(95,208,224,.12);border:1px solid rgba(95,208,224,.32);color:#7FE0F0;
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--cyan)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+.content-block strong{color:#EEEBF6}
+
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text-sec);font-family:var(--font-body);
+  font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+.code-btn.primary{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#7FE0F0}
+
+/* CANVAS DEMO */
+.canvas-demo{background:var(--bg-s1);border:1px solid var(--cyan-border);
+  border-radius:13px;overflow:hidden;margin:14px 0;text-align:center}
+.canvas-demo canvas{background:#09080F;display:block;margin:0 auto;cursor:crosshair;
+  max-width:100%;height:auto;border-radius:8px}
+.canvas-hint{padding:10px 16px;font-family:var(--font-mono);font-size:11px;
+  color:var(--text-mut);letter-spacing:.1em;background:#100F18;border-top:1px solid var(--border)}
+
+.note{padding:14px 16px;border-radius:13px;background:rgba(167,139,250,.07);
+  border:1px solid rgba(167,139,250,.28);margin:16px 0}
+.note p{margin:0;color:#C7BFE0;font-size:14.5px;line-height:1.6}
+.note strong{color:#A78BFA}
+
+.api-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.api-card{padding:14px 16px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border)}
+.api-card h4{font-family:var(--font-mono);font-size:13px;color:#7FE0F0;margin-bottom:6px}
+.api-card p{font-size:13.5px;color:#9A97AC;line-height:1.5;margin:0}
+.api-card .perm{display:inline-block;font-family:var(--font-mono);font-size:10px;
+  padding:2px 7px;border-radius:5px;margin-top:8px}
+.api-card .perm.yes{background:rgba(251,191,36,.12);color:#F5C451}
+.api-card .perm.no{background:rgba(52,211,153,.12);color:#34D399}
+
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;
+  color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body strong{color:#EEEBF6}
+
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(95,208,224,.08);border-color:rgba(95,208,224,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,#22B8CF,#0EA5C7);color:#06120B;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(34,184,207,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(34,184,207,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+  .api-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 13 · APIS HTML5 (INTRODUCCIÓN)
+    </div>
+    <h1>Dibuja con el <span class="hl">canvas</span> nativo</h1>
+    <p>El navegador moderno no solo renderiza HTML: expone APIs que dibujan, geolocalizan, arrastran y controlan el modo pantalla completa. Aquí abrimos el <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;canvas&gt;</code> y damos un vistazo conceptual a las demás. El canvasEs tu puerta de entrada a gráficos sin una librería.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+        Canvas 2D + APIs nativas
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        Haz clic y dibuja
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ~60 min de lectura
+      </span>
+    </div>
+  </div>
+
+  <div class="note">
+    <p><strong>Nota:</strong> <code style="font-family:var(--font-mono);color:#7FE0F0">localStorage</code>/<code style="font-family:var(--font-mono);color:#7FE0F0">sessionStorage</code> se cubren en <strong>M42 · localStorage</strong> (Bloque III: JS), donde ya se dispone del lenguaje para usar la API.</p>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">El elemento &lt;canvas&gt;</span>
+    </div>
+    <div class="card">
+      <p>El <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;canvas&gt;</code> es una zona rectangular donde el navegador te deja dibujar píxel a píxel usando JavaScript. No es HTML/CSS: es una superficie 2D controlada por código. Se usa para juegos, gráficos, diagramas y visualización de datos.</p>
+      <div class="content-block">
+        <h3>El molde mínimo</h3>
+        <p>Declara el lienzo con <code style="font-family:var(--font-mono);color:#7FE0F0">width</code> y <code style="font-family:var(--font-mono);color:#7FE0F0">height</code> en píxeles. El contexto 2D es el "pincel" que pinta dentro:</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML + JS · canvas</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;canvas</span> <span class="code-fn">id</span>=<span class="code-str">"lienzo"</span> <span class="code-fn">width</span>=<span class="code-str">"400"</span> <span class="code-fn">height</span>=<span class="code-str">"400"</span><span class="code-kw">&gt;&lt;/canvas&gt;</span>
+
+<span class="code-kw">&lt;script&gt;</span>
+  <span class="code-fn">const</span> canvas = <span class="code-fn">document</span>.<span class="code-fn">getElementById</span>(<span class="code-str">'lienzo'</span>);
+  <span class="code-fn">const</span> ctx    = canvas.<span class="code-fn">getContext</span>(<span class="code-str">'2d'</span>);
+<span class="code-kw">&lt;/script&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Formas básicas: rectángulo, texto y arco</h3>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>JS · dibujo básico</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">// Fondo</span>
+ctx.<span class="code-fn">fillStyle</span> = <span class="code-str">'#09080F'</span>;
+ctx.<span class="code-fn">fillRect</span>(0, 0, 400, 400);
+
+<span class="code-cmt">// Rectángulo violeta</span>
+ctx.<span class="code-fn">fillStyle</span> = <span class="code-str">'#A78BFA'</span>;
+ctx.<span class="code-fn">fillRect</span>(20, 20, 100, 50);
+
+<span class="code-cmt">// Texto cyan</span>
+ctx.<span class="code-fn">font</span> = <span class="code-str">'20px sans-serif'</span>;
+ctx.<span class="code-fn">fillStyle</span> = <span class="code-str">'#00d8ff'</span>;
+ctx.<span class="code-fn">fillText</span>(<span class="code-str">'Click para dibujar'</span>, 130, 50);
+
+<span class="code-cmt">// Círculo en el punto (x, y) con radio 10</span>
+ctx.<span class="code-fn">beginPath</span>();
+ctx.<span class="code-fn">arc</span>(x, y, 10, 0, <span class="code-fn">Math</span>.PI * 2);
+ctx.<span class="code-fn">fill</span>();</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">Demo: galería de clicks</span>
+    </div>
+    <div class="card">
+      <p>Pulsa <strong>Ejecutar</strong> y haz clic sobre el lienzo: cada clic deja un círculo cyan en la coordenada pulsada. El rectángulo violeta y el texto cyan aparecen al cargar.</p>
+      <div class="canvas-demo">
+        <canvas id="liveCanvas" width="400" height="280"></canvas>
+        <div class="canvas-hint" id="canvasHint">Pulsa «Ejecutar demo» para inicializar el lienzo</div>
+      </div>
+      <button class="code-btn primary" onclick="initCanvasDemo()" style="margin-top:10px">Ejecutar demo</button>
+      <button class="code-btn" onclick="resetCanvasDemo()" style="margin-top:10px;margin-left:8px">Limpiar</button>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">Otras APIs: visión general conceptual</span>
+    </div>
+    <div class="card">
+      <p>El navegador expone muchas APIs nativas. Aquí las enumeramos de forma conceptual — su uso real se verá cuando tengas JavaScript disponible; por ahora solo necesitas saber que existen y qué hacen.</p>
+      <div class="api-grid">
+        <div class="api-card">
+          <h4>Geolocation</h4>
+          <p>Pide la ubicación GPS del usuario (con su permiso).</p>
+          <span class="perm yes">Requiere permiso</span>
+        </div>
+        <div class="api-card">
+          <h4>Drag &amp; Drop</h4>
+          <p>Arrastrar elementos entre zonas de la página.</p>
+          <span class="perm no">Sin permiso</span>
+        </div>
+        <div class="api-card">
+          <h4>Fullscreen</h4>
+          <p>Pone un elemento a pantalla completa.</p>
+          <span class="perm no">Sin permiso</span>
+        </div>
+        <div class="api-card">
+          <h4>Visibility</h4>
+          <p>Detecta si la pestaña está visible o oculta.</p>
+          <span class="perm no">Sin permiso</span>
+        </div>
+        <div class="api-card">
+          <h4>Canvas 2D</h4>
+          <p>Dibuja formas, texto e imágenes pixel a pixel.</p>
+          <span class="perm no">Sin permiso</span>
+        </div>
+        <div class="api-card">
+          <h4>localStorage</h4>
+          <p>Guarda datos entre recargas. <strong>M42 · JS</strong></p>
+          <span class="perm no">Sin permiso</span>
+        </div>
+      </div>
+      <div class="content-block">
+        <h3>Con permiso vs sin permiso</h3>
+        <p>Algunas APIs (<code style="font-family:var(--font-mono);color:#7FE0F0">Geolocation</code>) abren un diálogo pidiendo consentimiento al usuario; otras (<code style="font-family:var(--font-mono);color:#7FE0F0">Canvas</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">Fullscreen</code>) no lo necesitan porque no exponen datos sensibles. Conocer esta diferencia te ayuda a predecir el comportamiento de tu app.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">Ejercicio: dibujar al hacer clic</span>
+    </div>
+    <div class="card">
+      <p>Crea <code style="font-family:var(--font-mono);color:#7FE0F0">canvas-demo.html</code> desde cero y reproduce la demo de arriba paso a paso.</p>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-body">
+            <h4>Estructura mínima + canvas</h4>
+            <p><code style="font-family:var(--font-mono);color:#7FE0F0">&lt;h1&gt;</code> "Galería de clicks" y un <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;canvas id="lienzo" width="400" height="400"&gt;</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-body">
+            <h4>Obtén el contexto 2D</h4>
+            <p>Un <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;script&gt;</code> al final del <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;body&gt;</code>: <code style="font-family:var(--font-mono);color:#7FE0F0">getContext('2d')</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-body">
+            <h4>Fondo + rectángulo violero</h4>
+            <p>Rellena el fondo con <code style="font-family:var(--font-mono);color:#7FE0F0">fillRect</code> y dibuja un rectángulo <code style="font-family:var(--font-mono);color:#7FE0F0">#A78BFA</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <div class="step-body">
+            <h4>Texto</h4>
+            <p>Con <code style="font-family:var(--font-mono);color:#7FE0F0">fillText</code> y color <code style="font-family:var(--font-mono);color:#7FE0F0">#00d8ff</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">5</span>
+          <div class="step-body">
+            <h4>Listener de clic</h4>
+            <p>Al hacer clic dibuja un círculo cyan <code style="font-family:var(--font-mono);color:#7FE0F0">#67E8F9</code> en las coordenadas del puntero usando <code style="font-family:var(--font-mono);color:#7FE0F0">arc()</code>. Opcional: explora <code style="font-family:var(--font-mono);color:#7FE0F0">visibilitychange</code> en <code style="font-family:var(--font-mono);color:#7FE0F0">document</code> (conceptual).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span>
+      <span class="num-title">Recursos</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/API/Canvas_API" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Canvas API</div>
+          <div class="res-desc">Dibujo 2D completo: formas, texto, imágenes y transformaciones.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/API/Geolocation_API" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Geolocation</div>
+          <div class="res-desc">Cómo pedir la ubicación GPS del usuario (con su permiso).</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://web.dev/learn/html/canvas" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">web.dev · Canvas</div>
+          <div class="res-desc">Tutorial introductorio de Google sobre el elemento canvas.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div class="cta-label">Tu siguiente paso</div>
+    <h2>Cierra el bloque HTML con un proyecto real</h2>
+    <p>Ya dominas estructura, formularios, accesibilidad, SEO y APIs. En el último módulo del bloque HTML integrar youTodo en una página web completa — tu proyecto final antes de pasar al CSS.</p>
+    <a class="cta-btn" href="M14_Buenas_practicas.html">
+      MÓDULO 14 · Buenas prácticas y proyecto final
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+var canvasReady = false;
+function initCanvasDemo(){
+  var canvas = document.getElementById('liveCanvas');
+  var hint = document.getElementById('canvasHint');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  // Fondo
+  ctx.fillStyle = '#09080F';
+  ctx.fillRect(0, 0, 400, 280);
+  // Rectángulo violeta
+  ctx.fillStyle = '#A78BFA';
+  ctx.fillRect(20, 20, 100, 50);
+  // Texto
+  ctx.font = '18px sans-serif';
+  ctx.fillStyle = '#00d8ff';
+  ctx.fillText('Click para dibujar', 140, 50);
+  // Listener (una sola vez)
+  if(!canvasReady){
+    canvas.addEventListener('click', function(e){
+      var rect = canvas.getBoundingClientRect();
+      var scaleX = canvas.width / rect.width;
+      var scaleY = canvas.height / rect.height;
+      var x = (e.clientX - rect.left) * scaleX;
+      var y = (e.clientY - rect.top) * scaleY;
+      ctx.beginPath();
+      ctx.arc(x, y, 10, 0, Math.PI * 2);
+      ctx.fillStyle = '#67E8F9';
+      ctx.fill();
+    });
+    canvasReady = true;
+  }
+  hint.textContent = 'Haz clic sobre el lienzo para dejar círculos cyan';
+}
+function resetCanvasDemo(){
+  var canvas = document.getElementById('liveCanvas');
+  var hint = document.getElementById('canvasHint');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#09080F';
+  ctx.fillRect(0, 0, 400, 280);
+  hint.textContent = 'Lienzo limpio — haz clic para dibujar';
+}
+</script>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

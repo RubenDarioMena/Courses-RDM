@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M14 · Widget keywords — Curso Bug Report Tool</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --yellow:#F5C451; --red:#FB7185; --green:#34D399; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(245,196,81,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(245,196,81,.18),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(167,139,250,.08),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(34,184,207,.05),transparent 60%)}
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(245,196,81,.12);border:1px solid rgba(245,196,81,.32);color:var(--yellow);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--yellow)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;margin:0 0 20px;max-width:62ch}
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#1a1a1a;background:linear-gradient(145deg,#F5C451,#F59E0B)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+.content-block code{font-family:var(--font-mono);font-size:13px;background:rgba(245,196,81,.1);
+  padding:2px 6px;border-radius:5px;color:var(--yellow)}
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
+  background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(245,196,81,.16);border-color:rgba(245,196,81,.22);color:var(--yellow)}
+.code-btn.primary{background:rgba(245,196,81,.16);border-color:rgba(245,196,81,.22);color:var(--yellow)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+.code-prop{color:#93C5FD}
+.output-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;overflow:hidden;display:none}
+.output-block.show{display:block}
+.output-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.output-body{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6}
+.out-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.out-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.out-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.out-text{color:#C7CDE0}
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#1a1a1a;background:linear-gradient(145deg,#F5C451,#F59E0B)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body code{font-family:var(--font-mono);font-size:13px;background:rgba(245,196,81,.1);
+  padding:2px 6px;border-radius:5px;color:var(--yellow)}
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;
+  border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(245,196,81,.08);border-color:rgba(245,196,81,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px;color:#F4F2FB}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;
+  background:linear-gradient(145deg,#F59E0B,#D97706);color:#1a1a1a;font-family:var(--font-body);
+  font-size:15px;font-weight:600;box-shadow:0 8px 24px -8px rgba(245,196,81,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(245,196,81,.8)}
+.cta-btn svg{width:18px;height:18px}
+@media(max-width:640px){.step{flex-direction:column;gap:6px}}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="wrap">
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 14 · JS AVANZADO — WIDGETS</div>
+    <h1>Widget <span class="hl">keywords</span>: chips con validacion</h1>
+    <p>El widget de palabras clave transforma un input de texto en chips visuales. Cada chip se anade con Enter o coma, se borra con Backspace o el boton ✕. Detras de esa interfaz simple hay tres validaciones: cantidad exacta de keywords, unicidad (sin duplicados) y kwOverlap (ningun keyword debe aparecer en el cuerpo del bug). En este modulo desmontamos el widget completo.</p>
+    <div class="meta-chips">
+      <span class="chip">⚡ JS Avanzado</span>
+      <span class="chip">~12 min de lectura</span>
+      <span class="chip">Nivel: intermedio</span>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">1</span><span class="num-title">La idea en una imagen</span></div>
+    <div class="card">
+      <p>Imagina una etiqueta de equipaje: cada palabra clave es una pegatina que pegas en la maleta. Solo caben un numero exacto de pegatinas (kwCount). No puedes repetir la misma palabra (unicidad). Y ninguna pegatina puede decir lo mismo que la descripcion del contenido (kwOverlap). Si intentas romper esas reglas, la maleta no se cierra.</p>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">2</span><span class="num-title">wireKeywords: el widget completo</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>La funcion que conecta el input con los chips</h3>
+        <p>El widget se construye sobre un input de texto normal. La funcion <code>wireKeywords</code> escucha tres eventos: <code>keydown</code> para detectar Enter o coma (anadir chip), <code>keydown</code> para Backspace (borrar ultimo chip) y <code>blur</code> para validacion final.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — wireKeywords (esqueleto)</span></div>
+        <pre><code><span class="code-kw">function</span> <span class="code-fn">wireKeywords</span>(input, inst) {
+  <span class="code-kw">const</span> wrap = input.<span class="code-fn">closest</span>(<span class="code-str">".keywords-wrap"</span>);
+  <span class="code-kw">const</span> chipsBox = wrap.<span class="code-fn">querySelector</span>(<span class="code-str">".keywords-chips"</span>);
+
+  input.<span class="code-fn">addEventListener</span>(<span class="code-str">"keydown"</span>, (e) => {
+    <span class="code-kw">if</span> (e.key === <span class="code-str">"Enter"</span> || e.key === <span class="code-str">","</span>) {
+      e.<span class="code-fn">preventDefault</span>();
+      <span class="code-fn">addChip</span>(input, inst);       <span class="code-cmt">// anadir palabra clave</span>
+    } <span class="code-kw">else if</span> (e.key === <span class="code-str">"Backspace"</span>
+               && input.value === <span class="code-str">""</span>) {
+      <span class="code-fn">removeLastChip</span>(inst);       <span class="code-cmt">// borrar ultima</span>
+    }
+  });
+}</code></pre>
+      </div>
+      <div class="content-block">
+        <h3>El flujo completo</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Enter o coma → addChip</h4><p>Al pulsar Enter o coma, el texto del input se convierte en chip. El input se vacia y los chips se re-pintan.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Backspace en input vacio → removeLastChip</h4><p>Si el input esta vacio y pulsas Backspace, se borra el ultimo chip. Es el mismo patron que usan Gmail o Slack.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Click en ✕ → removeChip(i)</h4><p>Cada chip tiene un boton ✕. Al pulsarlo se borra ese chip en especifico por su indice.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Despues de cada cambio → revalidate</h4><p>Tras anadir o borrar, se ejecutan las tres validaciones para mostrar errores en vivo.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">3</span><span class="num-title">Anadir y borrar chips</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>addChip: del texto al chip visual</h3>
+        <p>La funcion <code>addChip</code> lee el texto del input, lo limpia con <code>trim()</code> y <code>toLowerCase()</code>, comprueba que no este vacio, que no sea duplicado, y lo aniade al array <code>inst.values.keywords</code>. Despues re-renderiza.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — addChip / removeChip</span></div>
+        <pre><code><span class="code-kw">function</span> <span class="code-fn">addChip</span>(input, inst) {
+  <span class="code-kw">const</span> v = input.value.trim().<span class="code-fn">toLowerCase</span>();
+  <span class="code-kw">if</span> (!v) <span class="code-kw">return</span>;
+  <span class="code-kw">const</span> arr = inst.values.keywords || [];
+  <span class="code-kw">if</span> (arr.<span class="code-fn">includes</span>(v)) <span class="code-kw">return</span>;  <span class="code-cmt">// unicidad</span>
+  arr.<span class="code-fn">push</span>(v);
+  inst.values.keywords = arr;
+  input.value = <span class="code-str">""</span>;
+  <span class="code-fn">renderChips</span>(wrap, inst);
+  <span class="code-fn">revalidate</span>(inst);
+}
+
+<span class="code-kw">function</span> <span class="code-fn">removeChip</span>(inst, i) {
+  inst.values.keywords.<span class="code-fn">splice</span>(i, 1);
+  <span class="code-fn">renderChips</span>(wrap, inst);
+  <span class="code-fn">revalidate</span>(inst);
+}</code></pre>
+      </div>
+      <div class="content-block">
+        <p>El truco de la unicidad esta en <code>arr.includes(v)</code> antes de <code>push</code>. Como el array se normaliza a minusculas, <code>"Bug"</code> y <code>"bug"</code> se consideran el mismo keyword.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">4</span><span class="num-title">Las tres validaciones</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>kwCount, unicidad y kwOverlap</h3>
+        <p>El widget valida tres cosas distintas. Cada una produce un mensaje de error diferente que se muestra debajo del input.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — validacion de keywords</span></div>
+        <pre><code><span class="code-cmt">// 1. Cantidad exacta de keywords (kwCount)</span>
+<span class="code-kw">if</span> (arr.length !== config.kwCount) {
+  errors.<span class="code-fn">push</span>(<span class="code-str">"Debe haber exactamente "</span>
+    + config.kwCount + <span class="code-str">" palabras clave"</span>);
+}
+
+<span class="code-cmt">// 2. Unicidad (sin duplicados)</span>
+<span class="code-kw">const</span> set = <span class="code-kw">new</span> <span class="code-fn">Set</span>(arr);
+<span class="code-kw">if</span> (set.size !== arr.length) {
+  errors.<span class="code-fn">push</span>(<span class="code-str">"No puede haber keywords duplicados"</span>);
+}
+
+<span class="code-cmt">// 3. kwOverlap: ningun keyword aparece en el cuerpo</span>
+<span class="code-kw">const</span> body = (inst.values.body || <span class="code-str">""</span>).<span class="code-fn">toLowerCase</span>();
+<span class="code-kw">const</span> overlap = arr.<span class="code-fn">filter</span>(kw => body.<span class="code-fn">includes</span>(kw));
+<span class="code-kw">if</span> (overlap.length) {
+  errors.<span class="code-fn">push</span>(<span class="code-str">"Estos keywords ya estan en el cuerpo: "</span>
+    + overlap.<span class="code-fn">join</span>(<span class="code-str">", "</span>));
+}</code></pre>
+      </div>
+      <div class="content-block">
+        <p>kwOverlap evita que el usuario anada como keyword algo que ya aparece en la descripcion del bug. Si el cuerpo dice "el servidor cae a las 3am", el keyword <code>"servidor"</code> no aporta nada nuevo y se rechaza.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">5</span><span class="num-title">Re-render sin perder foco: refresh()</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>El problema de re-pintar mientras el usuario escribe</h3>
+        <p>Cuando re-renderizas un widget que contiene un input, el navegador pierde el foco del input. El usuario notaria que el cursor desaparece. La solucion es <code>refresh()</code>: guarda la posicion del cursor, re-pinta el HTML, y despues restaura el foco y el cursor.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — refresh() sin perder foco</span></div>
+        <pre><code><span class="code-kw">function</span> <span class="code-fn">refresh</span>(input, inst) {
+  <span class="code-cmt">// 1. Guardar estado del cursor</span>
+  <span class="code-kw">const</span> wasFocused = document.activeElement === input;
+  <span class="code-kw">const</span> selStart = input.selectionStart;
+  <span class="code-kw">const</span> selEnd = input.selectionEnd;
+
+  <span class="code-cmt">// 2. Re-pintar el HTML de los chips</span>
+  <span class="code-fn">renderChips</span>(input.<span class="code-fn">closest</span>(<span class="code-str">".keywords-wrap"</span>), inst);
+
+  <span class="code-cmt">// 3. Restaurar foco y cursor</span>
+  <span class="code-kw">if</span> (wasFocused) {
+    input.<span class="code-fn">focus</span>();
+    input.<span class="code-fn">setSelectionRange</span>(selStart, selEnd);
+  }
+}</code></pre>
+      </div>
+      <div class="content-block">
+        <p>Sin <code>refresh()</code>, cada vez que el widget re-renderiza por una validacion o un cambio en otro campo, el usuario perderia el cursor y tendria que volver a hacer clic en el input. Es un detalle pequeno que marca la diferencia entre un widget profesional y uno que frustra.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">6</span><span class="num-title">Tu primer momento: simular chips</span></div>
+    <div class="card">
+      <p>Pulsa <strong>Ejecutar</strong> para ver como <code>wireKeywords</code> procesa una secuencia de entradas: anade tres keywords, intenta anadir un duplicado (se rechaza) y despues borra uno con Backspace.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>JavaScript — simulacion de chips</span>
+          <div class="code-btns"><button class="code-btn primary" onclick="runChips()">Ejecutar</button></div>
+        </div>
+        <pre><code><span class="code-cmt">// Simular el widget de keywords</span>
+<span class="code-kw">var</span> keywords = [];
+<span class="code-kw">var</span> kwCount = 3;  <span class="code-cmt">// cantidad exacta requerida</span>
+
+<span class="code-kw">function</span> <span class="code-fn">add</span>(v) {
+  v = v.trim().<span class="code-fn">toLowerCase</span>();
+  <span class="code-kw">if</span> (!v) <span class="code-kw">return</span> <span class="code-str">"vacio"</span>;
+  <span class="code-kw">if</span> (keywords.<span class="code-fn">includes</span>(v)) <span class="code-kw">return</span> <span class="code-str">"duplicado"</span>;
+  keywords.<span class="code-fn">push</span>(v);
+  <span class="code-kw">return</span> <span class="code-str">"ok"</span>;
+}
+
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"Anadiendo 'server'...      "</span> + <span class="code-fn">add</span>(<span class="code-str">"server"</span>));
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"Anadiendo 'crash'...       "</span> + <span class="code-fn">add</span>(<span class="code-str">"crash"</span>));
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"Anadiendo '3am'...         "</span> + <span class="code-fn">add</span>(<span class="code-str">"3am"</span>));
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"Anadiendo 'Server' (dup)..."</span> + <span class="code-fn">add</span>(<span class="code-str">"Server"</span>));
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"Keywords actuales: "</span> + keywords.<span class="code-fn">join</span>(<span class="code-str">", "</span>));
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"Cantidad: "</span> + keywords.length + <span class="code-str">"/"</span> + kwCount);</code></pre>
+      </div>
+      <div class="output-block" id="outChips">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outChipsBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">7</span><span class="num-title">Ejercicio</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Construir un input de chips con validacion</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Crea un input y un contenedor de chips</h4><p><code>&lt;input id="kwInput"&gt;</code> y <code>&lt;div id="kwChips"&gt;</code> donde se pintaran los chips visualmente.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Conecta Enter y coma para anadir</h4><p>En el evento <code>keydown</code>, si la tecla es Enter o coma, llama a <code>addChip</code> y cancela el evento con <code>preventDefault()</code>.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Anade Backspace para borrar el ultimo</h4><p>Si el input esta vacio y se pulsa Backspace, elimina el ultimo chip del array con <code>pop()</code> y re-renderiza.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Implementa kwOverlap</h4><p>Anade una caja de texto (el "cuerpo") y valida que ningun keyword este contenido en ese texto.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">8</span><span class="num-title">Recursos</span></div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Array/splice" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Array.splice</div>
+        <div class="res-desc">Insertar y eliminar elementos de un array por indice.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/API/HTMLElement/focus" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · HTMLElement.focus</div>
+        <div class="res-desc">Restaurar el foco despues de re-renderizar.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div class="cta-label">Siguiente paso</div>
+    <h2>¿Como se valida un formulario completo?</h2>
+    <p>Los chips validan cantidad, unicidad y solapamiento. Pero el formulario completo necesita un motor de validacion que verifique required, regex y condiciones entre campos.</p>
+    <a class="cta-btn" href="M15_validacion.html">
+      MODULO 15 · Validacion
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+<script>
+"use strict";
+function runChips(){
+  var out=document.getElementById('outChips'),body=document.getElementById('outChipsBody');
+  body.innerHTML='';
+  var logs=[];
+  var origLog=console.log;
+  console.log=function(){var a=[].slice.call(arguments);logs.push({level:'log',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')})};
+  try{
+    var keywords=[];
+    var kwCount=3;
+    function add(v){
+      v=v.trim().toLowerCase();
+      if(!v)return "vacio";
+      if(keywords.includes(v))return "duplicado";
+      keywords.push(v);
+      return "ok";
+    }
+    console.log("Anadiendo 'server'...      "+add("server"));
+    console.log("Anadiendo 'crash'...       "+add("crash"));
+    console.log("Anadiendo '3am'...         "+add("3am"));
+    console.log("Anadiendo 'Server' (dup)..."+add("Server"));
+    console.log("Keywords actuales: "+keywords.join(", "));
+    console.log("Cantidad: "+keywords.length+"/"+kwCount);
+  }catch(e){logs.push({level:'log',text:'Error: '+e.message})}finally{console.log=origLog}
+  if(!logs.length)logs.push({level:'log',text:'(sin salida visible)'});
+  logs.forEach(function(l){
+    var line=document.createElement('div');line.className='out-line';
+    var tag=document.createElement('span');tag.className='out-tag '+l.level;tag.textContent=l.level;
+    var txt=document.createElement('span');txt.className='out-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);body.appendChild(line);
+  });
+  out.classList.add('show');
+}
+</script>
+</body>
+</html>

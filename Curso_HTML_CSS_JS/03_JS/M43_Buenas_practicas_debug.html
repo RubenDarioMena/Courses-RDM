@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M43 · Buenas prácticas y debugging — Curso HTML+CSS+JS</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --yellow:#F5C451; --yellow-soft:rgba(245,196,81,.12); --yellow-border:rgba(245,196,81,.22);
+  --red:#FB7185; --green:#34D399; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(139,92,246,.20),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(34,184,207,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* HERO */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(245,196,81,.12);border:1px solid rgba(245,196,81,.32);color:var(--yellow);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--accent)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* CARD */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;font-size:clamp(21px,3vw,27px);
+  color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;margin:0 0 20px;max-width:62ch}
+
+/* NUM SECTION */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,var(--yellow),#EAB308)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* CONTENT */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+.content-block ul{color:#A7A4B8;line-height:1.75;font-size:15.5px;max-width:60ch;margin:6px 0 8px 22px}
+.content-block li{margin:3px 0}
+.content-block code{font-family:var(--font-mono);font-size:13.5px;background:rgba(255,255,255,.05);
+  padding:1px 6px;border-radius:5px;color:var(--yellow)}
+
+/* CODE BLOCK */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
+  background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(245,196,81,.16);border-color:var(--yellow-border);color:var(--yellow)}
+.code-btn.primary{background:rgba(245,196,81,.16);border-color:var(--yellow-border);color:var(--yellow)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+.code-prop{color:#93C5FD}
+.code-num{color:#F5C451}
+.code-bool{color:#FB7185}
+.code-err{color:#FF8E8E}
+
+/* OUTPUT */
+.output-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;overflow:hidden;display:none}
+.output-block.show{display:block}
+.output-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.output-body{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6}
+.out-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.out-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.out-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.out-tag.alert{color:#C4B5FD;background:rgba(196,181,253,.1)}
+.out-tag.error{color:#FF8E8E;background:rgba(255,142,142,.1)}
+.out-tag.warn{color:var(--yellow);background:rgba(245,196,81,.1)}
+.out-text{color:#C7CDE0}
+
+/* HERO IMAGE */
+.idea-img{background:linear-gradient(135deg,rgba(245,196,81,.08),rgba(139,92,246,.05));
+  border:1px solid var(--border);border-radius:18px;padding:24px 20px;margin:0 0 clamp(24px,4vw,38px);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px}
+.idea-box{text-align:center;padding:14px 10px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);border-radius:12px}
+.idea-box .ibox-title{font-family:var(--font-head);font-weight:600;font-size:15px;color:var(--yellow);margin-bottom:4px}
+.idea-box .ibox-sub{font-size:12.5px;color:var(--text-mut);font-family:var(--font-mono)}
+
+/* TOOLBOX GRID */
+.toolbox{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:16px}
+.tool{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:13px;padding:15px 17px}
+.tool-name{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--yellow);margin-bottom:4px;font-family:var(--font-mono);font-size:14px}
+.tool-desc{font-size:13px;color:var(--text-mut);line-height:1.55}
+
+/* TABLE PREVIEW (console.table) */
+.tbl-preview{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:13px;
+  padding:12px 16px;margin-top:14px;font-family:var(--font-mono);font-size:12.5px;overflow-x:auto}
+.tbl-preview table{width:100%;border-collapse:collapse}
+.tbl-preview th,.tbl-preview td{padding:6px 10px;text-align:left;border-bottom:1px solid var(--border);font-size:12.5px}
+.tbl-preview th{color:var(--yellow);font-weight:600}
+.tbl-preview tr:last-child td{border-bottom:0}
+.tbl-preview td.idx{color:var(--text-mut);width:30px}
+.tbl-preview td.green{color:var(--green)}
+.tbl-preview td.purple{color:#C4B5FD}
+
+/* RESOURCES */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;
+  border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* CTA */
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;
+  background:linear-gradient(145deg,#8B5CF6,#7C3AED);color:#fff;font-family:var(--font-body);
+  font-size:15px;font-weight:600;box-shadow:0 8px 24px -8px rgba(139,92,246,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(139,92,246,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 43 · DEBUG</div>
+    <h1>Buenas prácticas y <span class="hl">debugging</span></h1>
+    <p>Un programa que "funciona" en tu máquina puede romperse en producción. La diferencia entre un dev junior y uno senior no es la cantidad de bugs: es la velocidad con la que los encuentra y la disciplina con la que los evita. Aquí te llevas las dos cosas: el cinturón de seguridad y las herramientas para cuando algo se sale del carril.</p>
+    <div class="meta-chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>ESLint + Prettier</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>debugger</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>use strict</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>~9 min de lectura</span>
+    </div>
+  </div>
+
+  <!-- LA IDEA EN UNA IMAGEN -->
+  <div class="idea-img">
+    <div class="idea-box">
+      <div class="ibox-title">ESLINT</div>
+      <div class="ibox-sub">errores antes de ejecutar</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">PRETTIER</div>
+      <div class="ibox-sub">formato consistente</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">DEBUGGER</div>
+      <div class="ibox-sub">pausar el tiempo</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">CONSOLE.*</div>
+      <div class="ibox-sub">log, table, time</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">USE STRICT</div>
+      <div class="ibox-sub">modo paranoico</div>
+    </div>
+  </div>
+
+  <!-- 01 · ESTILO Y HERRAMIENTAS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span><span class="num-title">El cinturón antes de la moto</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Estilo, linter y formateador</h3>
+        <p>Escribir código que funciona es la mitad del trabajo. La otra mitad es que se pueda leer seis meses después por ti o por tu compañero. Tres herramientas te cambian la vida:</p>
+        <ul>
+          <li><strong>Guía de estilo</strong>: convenciones del equipo (nombres, indentación, comillas, etc.).</li>
+          <li><strong>ESLint</strong>: analiza tu código y avisa de errores latentes (variables no usadas, <code>==</code> en vez de <code>===</code>, imports rotos).</li>
+          <li><strong>Prettier</strong>: reformatea tu código automáticamente al guardar. Cero discusiones sobre comas.</li>
+        </ul>
+      </div>
+      <div class="content-block">
+        <h3>"use strict": el modo paranoico</h3>
+        <p>Activar <code>"use strict"</code> al inicio de un script (o en una función) convierte errores silenciosos en excepciones. Prohíbe variables sin declarar, <code>this</code> accidental en <code>undefined</code>, y un puñado de trampas históricas. Es un interruptor de seguridad gratuito; actívalo siempre.</p>
+      </div>
+      <div class="toolbox">
+        <div class="tool"><div class="tool-name">ESLint</div><div class="tool-desc">Analiza tu código estáticamente. Te avisa de variables no usadas, comparaciones sospechosas, imports que no existen.</div></div>
+        <div class="tool"><div class="tool-name">Prettier</div><div class="tool-desc">Formatea al guardar. No discute: siempre la misma indentación, comas y comillas. Se integra con VS Code.</div></div>
+        <div class="tool"><div class="tool-name">"use strict"</div><div class="tool-desc">Convierte errores silenciosos en excepciones. Añádelo al inicio de cada script o módulo.</div></div>
+        <div class="tool"><div class="tool-name">typecheck (TS)</div><div class="tool-desc">Si quieres el siguiente nivel: TypeScript te avisa de errores de tipo antes incluso de ejecutar.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 · DEBUGGER -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span><span class="num-title">El debugger: pausar el tiempo</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Breakpoints: donde la ejecución se detiene</h3>
+        <p>Un <strong>breakpoint</strong> es un semáforo rojo en una línea de código: cuando la ejecución llega ahí, se pausa y puedes inspeccionar variables, el call stack y el estado del DOM. Se pone con un clic en la pestaña <em>Sources</em> de DevTools o con la palabra clave <code>debugger;</code> directamente en tu código.</p>
+      </div>
+      <div class="content-block">
+        <h3>Step over · step into · step out</h3>
+        <ul>
+          <li><strong>Step over</strong> (F10): ejecuta la línea actual y pasa a la siguiente. Si la línea llama a una función, no entras: la ejecuta del tirón.</li>
+          <li><strong>Step into</strong> (F11): si la línea llama a una función, entras dentro de ella. Ideal cuando sospechas que el bug está en una sub-rutina.</li>
+          <li><strong>Step out</strong> (Shift+F11): termina la función actual y vuelve a quien la llamó.</li>
+        </ul>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>Bug intencionado + debugger</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runBug()">Reproducir bug</button>
+          </div>
+        </div>
+        <pre><code><span class="code-cmt">// ⚠️ "use strict" activado</span>
+<span class="code-str">"use strict"</span>;
+
+<span class="code-kw">function</span> <span class="code-fn">promedio</span>(numeros) {
+  <span class="code-cmt">// 🐛 BUG: si el array está vacío, .reduce explota</span>
+  <span class="code-fn">debugger</span>;  <span class="code-cmt">// abre DevTools para pausar aquí</span>
+  <span class="code-kw">const</span> suma = numeros.<span class="code-fn">reduce</span>((a, b) =&gt; a + b, <span class="code-num">0</span>);
+  <span class="code-kw">return</span> suma / numeros.length;
+}
+
+<span class="code-cmt">// En un fix robusto haríamos:</span>
+<span class="code-cmt">// if (!numeros.length) return 0;</span>
+
+<span class="code-kw">try</span> {
+  <span class="code-kw">const</span> usuarios = [];  <span class="code-cmt">// array vacío simula el bug</span>
+  <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'promedio:'</span>, <span class="code-fn">promedio</span>(usuarios));
+} <span class="code-kw">catch</span> (e) {
+  <span class="code-fn">console</span>.<span class="code-fn">error</span>(<span class="code-str">'nombre:'</span>, e.name);
+  <span class="code-fn">console</span>.<span class="code-fn">error</span>(<span class="code-str">'mensaje:'</span>, e.message);
+  <span class="code-fn">console</span>.<span class="code-fn">error</span>(<span class="code-str">'stack:'</span>, e.stack.<span class="code-fn">split</span>(<span class="code-str">'\n'</span>)[<span class="code-num">0</span>]);
+}</code></pre>
+      </div>
+      <div class="output-block" id="outBug">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outBugBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 · CONSOLE AVANZADO -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span><span class="num-title">Console avanzado</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Más allá de <code>console.log</code></h3>
+        <p>La consola tiene muchas más herramientas que <code>log</code>. Conocerlas te ahorra formatear strings a mano y te da información que un simple <em>log</em> jamás podría mostrar.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>console.table · group · time</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runConsole()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-cmt">// console.table: array de objetos → tabla interactiva</span>
+<span class="code-kw">const</span> usuarios = [
+  { nombre: <span class="code-str">'Ada'</span>,  edad: <span class="code-num">36</span>, rol: <span class="code-str">'admin'</span>   },
+  { nombre: <span class="code-str">'Lin'</span>,  edad: <span class="code-num">28</span>, rol: <span class="code-str">'editor'</span>  },
+  { nombre: <span class="code-str">'Nik'</span>,  edad: <span class="code-num">42</span>, rol: <span class="code-str">'viewer'</span>  }
+];
+<span class="code-fn">console</span>.<span class="code-fn">table</span>(usuarios);
+
+<span class="code-cmt">// console.group: jerarquiza mensajes relacionados</span>
+<span class="code-fn">console</span>.<span class="code-fn">group</span>(<span class="code-str">'Carga de datos'</span>);
+  <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'1. fetch iniciado…'</span>);
+  <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'2. JSON parseado'</span>);
+  <span class="code-fn">console</span>.<span class="code-fn">groupCollapsed</span>(<span class="code-str">'detalles'</span>);
+    <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'3.1 url: /api/usuarios'</span>);
+    <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'3.2 tamaño: 1.2 KB'</span>);
+  <span class="code-fn">console</span>.<span class="code-fn">groupEnd</span>();
+  <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'4. UI renderizada'</span>);
+<span class="code-fn">console</span>.<span class="code-fn">groupEnd</span>();
+
+<span class="code-cmt">// console.time: medir duración</span>
+<span class="code-fn">console</span>.<span class="code-fn">time</span>(<span class="code-str">'parse-json'</span>);
+<span class="code-kw">const</span> big = <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(<span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(usuarios));
+<span class="code-fn">console</span>.<span class="code-fn">timeEnd</span>(<span class="code-str">'parse-json'</span>);</code></pre>
+      </div>
+      <div class="output-block" id="outConsole">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outConsoleBody"></div>
+      </div>
+      <div class="content-block" style="margin-top:18px">
+        <h3>Lo que console.table muestra en DevTools</h3>
+        <p>En tu navegador, <code>console.table(usuarios)</code> dibuja una tabla interactiva con filtros. Aquí tienes una aproximación visual del mismo array:</p>
+      </div>
+      <div class="tbl-preview">
+        <table>
+          <thead><tr><th>(index)</th><th>nombre</th><th>edad</th><th>rol</th></tr></thead>
+          <tbody>
+            <tr><td class="idx">0</td><td class="green">Ada</td><td>36</td><td>admin</td></tr>
+            <tr><td class="idx">1</td><td class="green">Lin</td><td>28</td><td>editor</td></tr>
+            <tr><td class="idx">2</td><td class="green">Nik</td><td>42</td><td class="purple">viewer</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 · ESTRATEGIAS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span><span class="num-title">Estrategias para encontrar bugs</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>El método que funciona siempre</h3>
+        <ul>
+          <li><strong>Reproduce el bug</strong> en el caso más simple posible. Si puedes aislarlo a 5 líneas, lo encontrarás.</li>
+          <li><strong>Lee el stack trace de abajo arriba</strong>: la primera línea es donde el programa reventó; las anteriores muestran <em>cómo llegó ahí</em>.</li>
+          <li><strong>Divide y vencerás</strong>: comenta bloques hasta que el bug desaparezca. La última línea que comentaste es la culpable.</li>
+          <li><strong>Rubber duck</strong>: explica el código en voz alta a un objeto inanimado. Suena ridículo. Funciona el 70% del tiempo.</li>
+          <li><strong>Hipótesis, no adivinanzas</strong>: no toques código sin una teoría previa. Si tu teoría falla, tienes un dato nuevo: lo que NO está roto.</li>
+        </ul>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>Cómo leer un stack trace</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runStack()">Provocar error</button>
+          </div>
+        </div>
+        <pre><code><span class="code-kw">function</span> <span class="code-fn">a</span>() { <span class="code-fn">b</span>(); }
+<span class="code-kw">function</span> <span class="code-fn">b</span>() { <span class="code-fn">c</span>(); }
+<span class="code-kw">function</span> <span class="code-fn">c</span>() { <span class="code-kw">throw new</span> <span class="code-fn">Error</span>(<span class="code-str">'algo falló'</span>); }
+
+<span class="code-kw">try</span> { <span class="code-fn">a</span>(); }
+<span class="code-kw">catch</span>(e) {
+  <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'--- stack ---'</span>);
+  <span class="code-fn">console</span>.<span class="code-fn">log</span>(e.stack);
+  <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'--- primera línea = sitio exacto ---'</span>);
+  <span class="code-fn">console</span>.<span class="code-fn">log</span>(e.stack.<span class="code-fn">split</span>(<span class="code-str">'\n'</span>)[<span class="code-num">0</span>]);
+}</code></pre>
+      </div>
+      <div class="output-block" id="outStack">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outStackBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 · TU PRIMER MOMENTO + RECURSOS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span><span class="num-title">Recursos para tu aventura</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Statements/debugger" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · debugger</div>
+        <div class="res-desc">La palabra clave <code>debugger</code>: cómo pausar la ejecución y qué hace DevTools por ti.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/API/console" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · console</div>
+        <div class="res-desc">Referencia completa de la API de consola: <code>log</code>, <code>table</code>, <code>group</code>, <code>time</code>, <code>assert</code> y más.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://javascript.info/debugging-chrome" target="_blank" rel="noopener">
+        <div><div class="res-name">javascript.info · Debugging en Chrome</div>
+        <div class="res-desc">Tutorial paso a paso con DevTools: breakpoints condicionales, watch, call stack y todo el flujo.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <div class="cta-label">Tienes las herramientas</div>
+    <h2>¿Listo para juntarlo todo en una sola web app?</h2>
+    <p>Llega el momento de la verdad: integrar HTML, CSS, JS, DOM, eventos, fetch mock, JSON, localStorage, organización y accesibilidad en un solo proyecto real. El examen final del curso.</p>
+    <a class="cta-btn" href="M44_Proyecto_final.html">
+      MÓDULO 44 · Proyecto final integrador
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+
+<script>
+function makeRunner(outId,bodyId){
+  return function(code){
+    var out=document.getElementById(outId),body=document.getElementById(bodyId);
+    body.innerHTML='';var logs=[];var origLog=console.log;
+    console.log=function(){var a=[].slice.call(arguments);logs.push({level:'log',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')})};
+    var al=function(msg){logs.push({level:'alert',text:String(msg)})};
+    try{new Function('alert','console',code)(al,console)}catch(e){logs.push({level:'error',text:e.message})}finally{console.log=origLog}
+    if(!logs.length)logs.push({level:'log',text:'(sin salida visible)'});
+    logs.forEach(function(l){
+      var line=document.createElement('div');line.className='out-line';
+      var tag=document.createElement('span');tag.className='out-tag '+l.level;tag.textContent=l.level;
+      var txt=document.createElement('span');txt.className='out-text';txt.textContent=l.text;
+      line.appendChild(tag);line.appendChild(txt);body.appendChild(line);
+    });
+    out.classList.add('show');
+  };
+}
+
+function runBug(){
+  makeRunner('outBug','outBugBody')("\n    \"use strict\";\n    function promedio(numeros){\n      const suma=numeros.reduce((a,b)=>a+b,0);\n      return suma/numeros.length;\n    }\n    try{\n      const usuarios=[];\n      console.log('promedio:',promedio(usuarios));\n    }catch(e){\n      console.error('nombre:',e.name);\n      console.error('mensaje:',e.message);\n      console.error('stack[0]:',e.stack.split('\\n')[0]);\n    }\n  ");
+}
+
+function runConsole(){
+  makeRunner('outConsole','outConsoleBody')("\n    const usuarios=[\n      {nombre:'Ada',edad:36,rol:'admin'},\n      {nombre:'Lin',edad:28,rol:'editor'},\n      {nombre:'Nik',edad:42,rol:'viewer'}\n    ];\n    console.table(usuarios);\n    console.group('Carga de datos');\n      console.log('1. fetch iniciado');\n      console.log('2. JSON parseado');\n      console.groupCollapsed('detalles');\n        console.log('3.1 url: /api/usuarios');\n        console.log('3.2 tamaño: 1.2 KB');\n      console.groupEnd();\n      console.log('4. UI renderizada');\n    console.groupEnd();\n    console.time('parse-json');\n    const big=JSON.parse(JSON.stringify(usuarios));\n    console.timeEnd('parse-json');\n    console.log('items procesados:',big.length);\n  ");
+}
+
+function runStack(){
+  makeRunner('outStack','outStackBody')("\n    function a(){b()}\n    function b(){c()}\n    function c(){throw new Error('algo falló')}\n    try{a()}\n    catch(e){\n      console.log('--- stack ---');\n      console.log(e.stack);\n      console.log('--- primera línea = sitio exacto ---');\n      console.log(e.stack.split('\\n')[0]);\n    }\n  ");
+}
+</script>
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M11 · Accesibilidad (a11y) — Curso HTML+CSS+JS</title>
+<style>
+/* ═══ RESET ═══ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#110F18; --bg-s3:#15131F; --bg-s4:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --cyan:#67E8F9; --cyan-soft:rgba(95,208,224,.06); --cyan-border:rgba(95,208,224,.2);
+  --pink:#F9A8D4; --pink-soft:rgba(249,168,212,.06); --pink-border:rgba(249,168,212,.2);
+  --yellow:#F5C451; --green:#34D399; --red:#FB7185;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(34,184,207,.18),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(95,208,224,.12);border:1px solid rgba(95,208,224,.32);color:#7FE0F0;
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--cyan)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+.content-block strong{color:#EEEBF6}
+
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#7FE0F0}
+.code-tag{color:#7FE0F0}
+
+/* Note callout */
+.note{padding:14px 16px;border-radius:13px;background:rgba(167,139,250,.07);
+  border:1px solid rgba(167,139,250,.28);margin:16px 0}
+.note p{margin:0;color:#C7BFE0;font-size:14.5px;line-height:1.6}
+.note strong{color:#A78BFA}
+
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;
+  color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body kbd{font-family:var(--font-mono);background:rgba(255,255,255,.06);padding:2px 6px;
+  border-radius:5px;border:1px solid var(--border);font-size:12px}
+.step-body strong{color:#EEEBF6}
+
+/* DO/DONT */
+.dd-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.dd{padding:14px 16px;border-radius:13px;border:1px solid}
+.dd.do{background:rgba(52,211,153,.06);border-color:rgba(52,211,153,.3)}
+.dd.dont{background:rgba(251,113,133,.06);border-color:rgba(251,113,133,.3)}
+.dd h4{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;margin-bottom:8px}
+.dd.do h4{color:#34D399}
+.dd.dont h4{color:#FB7185}
+.dd code{font-family:var(--font-mono);font-size:13px;color:#C7CDE0;display:block;margin:4px 0}
+.dd.do code{color:#86E5B5}
+.dd.dont code{color:#F4A6B5}
+
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(95,208,224,.08);border-color:rgba(95,208,224,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,#22B8CF,#0EA5C7);color:#06120B;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(34,184,207,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(34,184,207,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+  .dd-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 11 · ACCESIBILIDAD (A11Y)
+    </div>
+    <h1>Haz tu web <span class="hl">para todos</span></h1>
+    <p>Una web que solo funciona con ratón deja fuera a millones de personas. Aquí aprendes el HTML semántico que el lector de pantalla entiende, el orden de teclado que respeta la lógica, ARIA cuando lo nativo no basta, y a auditar todo con Lighthouse. La accesibilidad no es un extra: es la base.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+        HTML semántico + ARIA
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        Auditoría con Lighthouse
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ~75 min de lectura
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ NOTE CONCEPTUAL ═══ -->
+  <div class="note">
+    <p><strong>Nota:</strong> La pestaña "Red" de DevTools se cubre de forma conceptual en este módulo — el curso no usa red real.</p>
+  </div>
+
+  <!-- ═══ 01 · HTML SEMÁNTICO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">HTML semántico como base</span>
+    </div>
+    <div class="card">
+      <p>La accesibilidad empieza antes que ARIA: empieza por elegir la etiqueta correcta. Un <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;button&gt;</code> ya es focuseable,.envía el formulario y anuncia "botón" al lector de pantalla sin que tú hagas nada. Si usas <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;div onclick&gt;</code>, rompes las tres.</p>
+      <div class="content-block">
+        <h3>Roles landmark implícitos</h3>
+        <p>Cada elemento semántico expone un rol ARIA automáticamente al navegador. Esto es lo que el lector de pantalla anuncia al entrar en cada zona:</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · landmarks</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;header&gt;</span>   <span class="code-cmt">&lt;!-- role=banner --&gt;</span>
+<span class="code-kw">&lt;nav&gt;</span>      <span class="code-cmt">&lt;!-- role=navigation --&gt;</span>
+<span class="code-kw">&lt;main&gt;</span>     <span class="code-cmt">&lt;!-- role=main --&gt;</span>
+<span class="code-kw">&lt;aside&gt;</span>    <span class="code-cmt">&lt;!-- role=complementary --&gt;</span>
+<span class="code-kw">&lt;footer&gt;</span>   <span class="code-cmt">&lt;!-- role=contentinfo --&gt;</span>
+<span class="code-kw">&lt;form&gt;</span>    <span class="code-cmt">&lt;!-- role=form --&gt;</span>
+<span class="code-kw">&lt;search&gt;</span>   <span class="code-cmt">&lt;!-- role=search --&gt;</span></code></pre>
+      </div>
+      <div class="dd-grid">
+        <div class="dd do">
+          <h4>✓ Haz</h4>
+          <code>&lt;button&gt;Guardar cambios&lt;/button&gt;</code>
+          <code>&lt;a href="/login"&gt;Entrar&lt;/a&gt;</code>
+        </div>
+        <div class="dd dont">
+          <h4>✗ No hagas</h4>
+          <code>&lt;div onclick="save()"&gt;Guardar&lt;/div&gt;</code>
+          <code>&lt;span onclick="login()"&gt;Entrar&lt;/span&gt;</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 · TABINDEX Y TECLADO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">tabindex y navegación por teclado</span>
+    </div>
+    <div class="card">
+      <p>El teclado es el primer input accesible. Pulsa <kbd style="font-family:var(--font-mono);background:rgba(255,255,255,.06);padding:2px 6px;border-radius:5px;border:1px solid var(--border);font-size:12px">Tab</kbd> y el foco recorre los controles interactivos en orden lógico (el del DOM). Tu trabajo: <strong>no romper ese orden</strong>.</p>
+      <div class="content-block">
+        <h3>Los tres valores de tabindex</h3>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · tabindex</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- Sin tabindex: el navegador decide el orden --&gt;</span>
+<span class="code-kw">&lt;button&gt;</span>Guardar<span class="code-kw">&lt;/button&gt;</span>
+
+<span class="code-cmt">&lt;!-- tabindex="0": focuseable, orden natural del DOM --&gt;</span>
+<span class="code-kw">&lt;div</span> <span class="code-fn">tabindex</span>=<span class="code-str">"0"</span><span class="code-kw">&gt;</span>...<span class="code-kw">&lt;/div&gt;</span>
+
+<span class="code-cmt">&lt;!-- tabindex="-1": focuseable por JS, no con Tab --&gt;</span>
+<span class="code-kw">&lt;div</span> <span class="code-fn">tabindex</span>=<span class="code-str">"-1"</span><span class="code-kw">&gt;</span>...<span class="code-kw">&lt;/div&gt;</span>
+
+<span class="code-cmt">&lt;!-- tabindex="3": EVÍTALO. Salta el orden natural --&gt;</span>
+<span class="code-cmt">&lt;!--Solo genera caos. Casi nunca se necesita. --&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Foco visible</h3>
+        <p>El navegador dibuja un <code style="font-family:var(--font-mono);color:#7FE0F0">outline</code> en el elemento con foco. Si tu CSS lo quita, estás cegando a quien navega con teclado. Refuérzalo en su lugar:</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>CSS · focus-visible</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">:focus-visible</span> {
+  <span class="code-fn">outline</span>: <span class="code-str">3px solid #A78BFA</span>;
+  <span class="code-fn">outline-offset</span>: <span class="code-str">2px</span>;
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 · ARIA ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">ARIA: cuando lo nativo no basta</span>
+    </div>
+    <div class="card">
+      <p>La regla nº1 de ARIA es: <strong>no uses ARIA si un elemento HTML nativo ya hace el trabajo</strong>. ARIA se reserva para patrones que HTML no cubre (tabs custom, live regions, árboles expandibles). Los atributos que verás en este módulo:</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · ARIA</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;nav</span> <span class="code-fn">aria-label</span>=<span class="code-str">"Principal"</span><span class="code-kw">&gt;</span>...<span class="code-kw">&lt;/nav&gt;</span>       <span class="code-cmt">&lt;!-- etiqueta la zona --&gt;</span>
+<span class="code-kw">&lt;section</span> <span class="code-fn">aria-labelledby</span>=<span class="code-str">"tit"</span><span class="code-kw">&gt;</span>                    <span class="code-cmt">&lt;!-- referencia por id --&gt;</span>
+  <span class="code-kw">&lt;h2</span> <span class="code-fn">id</span>=<span class="code-str">"tit"</span><span class="code-kw">&gt;</span>Noticias<span class="code-kw">&lt;/h2&gt;</span>...<span class="code-kw">&lt;/section&gt;</span>
+<span class="code-kw">&lt;input</span> <span class="code-fn">aria-describedby</span>=<span class="code-str">"ayu"</span><span class="code-kw">&gt;</span>             <span class="code-cmt">&lt;!-- pista extra asociada --&gt;</span>
+<span class="code-kw">&lt;p</span> <span class="code-fn">id</span>=<span class="code-str">"ayu"</span><span class="code-kw">&gt;</span>8 caracteres mínimo<span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;div</span> <span class="code-fn">role</span>=<span class="code-str">"status"</span> <span class="code-fn">aria-live</span>=<span class="code-str">"polite"</span><span class="code-kw">&gt;&lt;/div&gt;</span>  <span class="code-cmt">&lt;!-- live region --&gt;</span></code></pre>
+      </div>
+      <div class="dd-grid">
+        <div class="dd do">
+          <h4>✓ aria-label</h4>
+          <code>&lt;button aria-label="Cerrar"&gt;✕&lt;/button&gt;</code>
+        </div>
+        <div class="dd dont">
+          <h4>✗ Sin etiqueta</h4>
+          <code>&lt;button&gt;✕&lt;/button&gt;</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 · ALT CORRECTO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">alt correcto: decorativa vs informativa</span>
+    </div>
+    <div class="card">
+      <p>El <code style="font-family:var(--font-mono);color:#7FE0F0">alt</code> decide qué oye el lector de pantalla cuando pasa por una imagen. Hay dos casos, y se resuelven de forma opuesta.</p>
+      <div class="dd-grid">
+        <div class="dd do">
+          <h4>✓ Imagen informativa</h4>
+          <code>&lt;img src="grafico.jpg" alt="Ventas 2025: subida del 30 % en Q3"&gt;</code>
+          <p style="font-size:13.5px;color:#C7CDE0;margin-top:8px;line-height:1.5">El alt describe lo que la imagen <em>transmite</em>, no lo que <em>es</em>.</p>
+        </div>
+        <div class="dd do">
+          <h4>✓ Imagen decorativa</h4>
+          <code>&lt;img src="ondas.svg" alt=""&gt;</code>
+          <p style="font-size:13.5px;color:#C7CDE0;margin-top:8px;line-height:1.5">alt <strong>vacío</strong>: el lector la ignora. La pantalla ya la ve.</p>
+        </div>
+      </div>
+      <div class="dd dont" style="margin-top:12px">
+        <h4>✗ El error clásico</h4>
+        <code>&lt;img src="logo.png" alt="imagen"&gt;</code>
+        <p style="font-size:13.5px;color:#C7CDE0;margin-top:8px;line-height:1.5">"imagen" no ayuda a nadie. Si la imagen es decorativa, alt vacío. Si comunica algo, descríbelo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 05 · EJERCICIO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span>
+      <span class="num-title">Ejercicio: auditar con Lighthouse y corregir</span>
+    </div>
+    <div class="card">
+      <p>Vas a construir a propósito una página con fallos, auditarla, corregir los tres peores y volver a lanzar Lighthouse para ver la puntuación subir.</p>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-body">
+            <h4>Crea <code style="font-family:var(--font-mono);color:#7FE0F0">a11y-audit.html</code></h4>
+            <p>Header sin <code style="font-family:var(--font-mono);color:#7FE0F0">nav</code>, 2 imágenes sin <code style="font-family:var(--font-mono);color:#7FE0F0">alt</code>, un botón "Clic aquí" no descriptivo y un <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;div onclick&gt;</code> sin rol ni <code style="font-family:var(--font-mono);color:#7FE0F0">tabindex</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-body">
+            <h4>Abre DevTools → Lighthouse</h4>
+            <p>Lanza auditoría de Accessibility (puedes desmarcar SEO y Rendimiento). Revisa los fallos listados.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-body">
+            <h4>Corrige 3 problemas</h4>
+            <p><code style="font-family:var(--font-mono);color:#7FE0F0">alt=""</code> a la decorativa y alt descriptivo a la informativa. Cambia "Clic aquí" por "Guardar cambios". Sustituye el <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;div onclick&gt;</code> por un <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;button&gt;</code> nativo (o añade <code style="font-family:var(--font-mono);color:#7FE0F0">role="button" tabindex="0"</code>).</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <div class="step-body">
+            <h4>Vuelve a lanzar Lighthouse</h4>
+            <p>Compara las puntuaciones. Revisa también la pestaña "Issues" o "Accessibility" de DevTools.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">5</span>
+          <div class="step-body">
+            <h4>Prueba el teclado</h4>
+            <p>Sin ratón, pulsa <kbd>Tab</kbd> repetidamente: el foco debe recorrer todos los controles en orden lógico y visible. Añade <code style="font-family:var(--font-mono);color:#7FE0F0">:focus-visible</code> si no se distingue.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 06 · RECURSOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span>
+      <span class="num-title">Recursos</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Learn/Accessibility" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Accesibilidad</div>
+          <div class="res-desc">Guía completa de a11y en la web: ARIA, teclado, color.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://web.dev/learn/accessibility" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">web.dev · Learn Accessibility</div>
+          <div class="res-desc">Curso gratuito de Google sobre a11y práctica.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.chrome.com/docs/lighthouse/accessibility/scoring" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">Chrome Docs · Lighthouse a11y</div>
+          <div class="res-desc">Cómo puntúa Lighthouse la accesibilidad y qué audita.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="cta">
+    <div class="cta-label">Tu siguiente paso</div>
+    <h2>Haz que te encuentren en Google</h2>
+    <p>Tu web ya funciona para todos. Ahora toca que el resto del mundo la descubra: metadatos SEO, Open Graph para redes, Twitter Cards y datos estructurados JSON-LD en el siguiente módulo.</p>
+    <a class="cta-btn" href="M12_Metadatos_SEO_Social.html">
+      MÓDULO 12 · Metadatos, SEO y social
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

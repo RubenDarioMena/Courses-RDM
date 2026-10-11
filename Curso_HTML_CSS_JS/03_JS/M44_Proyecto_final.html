@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M44 · Proyecto final integrador — Curso HTML+CSS+JS</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --yellow:#F5C451; --yellow-soft:rgba(245,196,81,.12); --yellow-border:rgba(245,196,81,.22);
+  --red:#FB7185; --green:#34D399; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(139,92,246,.20),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(34,184,207,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* HERO */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(245,196,81,.12);border:1px solid rgba(245,196,81,.32);color:var(--yellow);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--accent)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* CARD */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;font-size:clamp(21px,3vw,27px);
+  color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;margin:0 0 20px;max-width:62ch}
+
+/* NUM SECTION */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,var(--yellow),#EAB308)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* CONTENT */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+.content-block ul{color:#A7A4B8;line-height:1.75;font-size:15.5px;max-width:60ch;margin:6px 0 8px 22px}
+.content-block li{margin:3px 0}
+.content-block code{font-family:var(--font-mono);font-size:13.5px;background:rgba(255,255,255,.05);
+  padding:1px 6px;border-radius:5px;color:var(--yellow)}
+
+/* CODE BLOCK */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
+  background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(245,196,81,.16);border-color:var(--yellow-border);color:var(--yellow)}
+.code-btn.primary{background:rgba(245,196,81,.16);border-color:var(--yellow-border);color:var(--yellow)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+.code-prop{color:#93C5FD}
+.code-num{color:#F5C451}
+.code-bool{color:#FB7185}
+
+/* OUTPUT */
+.output-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;overflow:hidden;display:none}
+.output-block.show{display:block}
+.output-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.output-body{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6}
+.out-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.out-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.out-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.out-tag.alert{color:#C4B5FD;background:rgba(196,181,253,.1)}
+.out-tag.error{color:#FF8E8E;background:rgba(255,142,142,.1)}
+.out-text{color:#C7CDE0}
+
+/* HERO IMAGE */
+.idea-img{background:linear-gradient(135deg,rgba(245,196,81,.08),rgba(139,92,246,.05));
+  border:1px solid var(--border);border-radius:18px;padding:24px 20px;margin:0 0 clamp(24px,4vw,38px);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px}
+.idea-box{text-align:center;padding:14px 10px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);border-radius:12px}
+.idea-box .ibox-title{font-family:var(--font-head);font-weight:600;font-size:15px;color:var(--yellow);margin-bottom:4px}
+.idea-box .ibox-sub{font-size:12.5px;color:var(--text-mut);font-family:var(--font-mono)}
+
+/* CHECKLIST */
+.checklist{list-style:none;padding:0;margin:14px 0;display:flex;flex-direction:column;gap:8px}
+.checklist li{display:flex;align-items:flex-start;gap:10px;padding:10px 13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);border-radius:10px;font-size:14.5px;color:var(--text-sec)}
+.checklist .check{flex-shrink:0;width:18px;height:18px;border-radius:5px;
+  background:linear-gradient(145deg,var(--yellow),#EAB308);color:#06120B;
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.checklist code{font-family:var(--font-mono);font-size:13px;background:rgba(255,255,255,.05);
+  padding:1px 6px;border-radius:5px;color:var(--yellow)}
+
+/* TIMELINE */
+.timeline{display:flex;flex-direction:column;gap:12px;margin:14px 0}
+.t-step{display:flex;gap:14px;padding:12px 14px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);border-radius:11px;align-items:flex-start}
+.t-step .tnum{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,var(--yellow),#EAB308)}
+.t-step h4{font-family:var(--font-head);font-size:15px;color:var(--text-pri);margin-bottom:3px}
+.t-step p{color:var(--text-mut);font-size:13.5px;line-height:1.55;margin:0}
+
+/* SYLLABUS */
+.syllabus{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:13px;
+  padding:16px 18px;margin:14px 0}
+.syllabus h4{font-family:var(--font-head);color:var(--yellow);font-size:14px;margin:14px 0 6px;
+  letter-spacing:.06em;text-transform:uppercase}
+.syllabus h4:first-child{margin-top:0}
+.syllabus ul{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
+.syllabus li{padding:5px 0;font-size:13px;color:var(--text-sec);font-family:var(--font-mono)}
+.syllabus li span{color:var(--text-mut);margin-right:8px}
+
+/* RESOURCES */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;
+  border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* CTA FINAL */
+.cta-final{text-align:center;padding:clamp(36px,6vw,60px) 24px;margin-top:18px;
+  background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:20px;position:relative;overflow:hidden}
+.cta-final::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(500px 280px at 50% 0%,rgba(245,196,81,.12),transparent 70%);
+  pointer-events:none}
+.cta-final .trophy{font-size:48px;margin-bottom:14px;display:inline-block}
+.cta-final h2{font-size:clamp(24px,4vw,34px);margin-bottom:14px;position:relative}
+.cta-final p{color:#A7A4B8;font-size:16px;line-height:1.65;max-width:54ch;margin:0 auto 18px;position:relative}
+.cta-final .sign{color:var(--yellow);font-family:var(--font-mono);font-size:13px;letter-spacing:.16em;position:relative}
+
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 44 · PROYECTO FINAL</div>
+    <h1>Proyecto final: <span class="hl">lo juntas todo</span></h1>
+    <p>Llegó el momento. 17 módulos después, tienes todas las piezas: HTML semántico, CSS con variables y Grid, JS moderno, DOM, eventos, fetch, JSON, clases, localStorage, debugging. Ahora toca <strong>construir una web app de verdad</strong> que integre todo, no por obligación, sino porque ya puedes.</p>
+    <div class="meta-chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Integración total</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Tu primer proyecto real</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>5-10 horas</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>~5 min de briefing</span>
+    </div>
+  </div>
+
+  <!-- LA IDEA EN UNA IMAGEN -->
+  <div class="idea-img">
+    <div class="idea-box">
+      <div class="ibox-title">HTML</div>
+      <div class="ibox-sub">semántico + a11y</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">CSS</div>
+      <div class="ibox-sub">grid + tokens + tema</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">JS</div>
+      <div class="ibox-sub">DOM + fetch mock</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">STATE</div>
+      <div class="ibox-sub">localStorage</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">ERRORES</div>
+      <div class="ibox-sub">ok:false del mock</div>
+    </div>
+  </div>
+
+  <!-- 01 · OPCIONES -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span><span class="num-title">Elige tu aventura</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Tres opciones para construir</h3>
+        <p>Cualquiera de las tres cumple los requisitos. Elige la que más te motive; lo que importa no es el tema, sino la <strong>calidad de la integración</strong>:</p>
+        <ul>
+          <li><strong>Todo-app avanzada</strong> · filtros, categorías, fechas límite, persistencia completa, drag & drop opcional.</li>
+          <li><strong>Buscador de películas</strong> · fetch a un JSON local "tipo API" con <code>ok:true</code> y <code>ok:false</code>, favoritos persistentes, vista detalle.</li>
+          <li><strong>Dashboard de clima</strong> · datos embebidos de 5 ciudades, cambio de ciudad, gráfico simple con SVG, tema dinámico según temperatura.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 · CHECKLIST DE REQUISITOS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span><span class="num-title">Requisitos que no se negocian</span>
+    </div>
+    <div class="card">
+      <p>Tu proyecto pasa el corte si marca todas estas casillas. No son sugerencias: son la rúbrica de evaluación.</p>
+      <ul class="checklist">
+        <li><span class="check">✓</span><div><strong>HTML semántico</strong>: <code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;footer&gt;</code>, con <code>&lt;meta&gt;</code> SEO y <code>lang="es"</code>.</div></li>
+        <li><span class="check">✓</span><div><strong>CSS responsivo</strong>: Flexbox o Grid, <strong>custom properties</strong> para tokens, <strong>media queries</strong> o <code>clamp()</code>, <strong>tema claro/oscuro</strong> con toggle persistente.</div></li>
+        <li><span class="check">✓</span><div><strong>JS interactivo</strong>: DOM, eventos, <code>fetch</code> mock con <code>&lt;script type="application/json"&gt;</code>, manejo de <code>ok:false</code> visible en el DOM.</div></li>
+        <li><span class="check">✓</span><div><strong>Organización</strong>: al menos 2 namespaces (<code>App</code> + <code>Api</code>) o 1 module-blob (M39). Nada de <code>var x</code> en el global.</div></li>
+        <li><span class="check">✓</span><div><strong>Persistencia</strong>: estado crítico en <code>localStorage</code> con <code>JSON.stringify</code> / <code>JSON.parse</code>. Maneja el caso <code>null</code>.</div></li>
+        <li><span class="check">✓</span><div><strong>Accesibilidad</strong>: <code>alt</code> en imágenes, <code>label</code> en inputs, contraste suficiente, foco visible, navegación con teclado.</div></li>
+        <li><span class="check">✓</span><div><strong>Calidad</strong>: console limpia, <code>"use strict"</code> activo, sin warnings en W3C Validator, Lighthouse a11y ≥ 90.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 03 · ARQUITECTURA -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span><span class="num-title">Arquitectura recomendada</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Cómo organizar el código (opción B: 2 namespaces)</h3>
+        <p>No necesitas un framework. Un módulo blob al final del <code>&lt;body&gt;</code> con <strong>dos namespaces</strong> es suficiente y se siente como una app seria:</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>namespace App + Api (skeleton)</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runArch()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-str">"use strict"</span>;
+
+<span class="code-cmt">// 1) Datos embebidos — simulan la respuesta de una API</span>
+<span class="code-cmt">&lt;!-- &lt;script type="application/json" id="mock-data"&gt;
+  { "ok": true,  "items": [ ... ] }
+&lt;/script&gt; --&gt;</span>
+
+<span class="code-cmt">// 2) Namespace Api: acceso a datos (real o mockeado)</span>
+<span class="code-kw">const</span> <span class="code-prop">Api</span> = {
+  <span class="code-fn">fakeFetch</span>(path) {
+    <span class="code-kw">return new</span> <span class="code-fn">Promise</span>(resolve =&gt; {
+      <span class="code-fn">setTimeout</span>(() =&gt; {
+        <span class="code-cmt">// Simula ok:false para enseñar manejo de errores</span>
+        <span class="code-kw">if</span> (path.<span class="code-fn">includes</span>(<span class="code-str">'fail'</span>)) {
+          resolve({ ok: <span class="code-bool">false</span>, error: <span class="code-str">'recurso no encontrado'</span> });
+        } <span class="code-kw">else</span> {
+          resolve({ ok: <span class="code-bool">true</span>, items: [<span class="code-str">'tarea 1'</span>, <span class="code-str">'tarea 2'</span>] });
+        }
+      }, <span class="code-num">200</span>);
+    });
+  }
+};
+
+<span class="code-cmt">// 3) Namespace App: estado, UI, persistencia</span>
+<span class="code-kw">const</span> <span class="code-prop">App</span> = {
+  state: { tareas: [], tema: <span class="code-str">'oscuro'</span> },
+  <span class="code-fn">init</span>() {
+    <span class="code-cmt">// leer localStorage con fallback seguro</span>
+    <span class="code-kw">try</span> { this.state = <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(<span class="code-fn">localStorage</span>.<span class="code-fn">getItem</span>(<span class="code-str">'app-state'</span>)) || this.state; }
+    <span class="code-kw">catch</span> { <span class="code-cmt">/* mantén default */</span> }
+  },
+  <span class="code-fn">save</span>() { <span class="code-fn">localStorage</span>.<span class="code-fn">setItem</span>(<span class="code-str">'app-state'</span>, <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(<span class="code-kw">this</span>.state)); },
+  <span class="code-fn">render</span>() { <span class="code-cmt">/* dibuja this.state.tareas en el DOM */</span> }
+};
+
+App.<span class="code-fn">init</span>();
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'arquitectura cargada:'</span>, <span class="code-fn">Object</span>.<span class="code-fn">keys</span>(App), <span class="code-fn">Object</span>.<span class="code-fn">keys</span>(Api));
+
+<span class="code-cmt">// 4) Sincronización entre pestañas</span>
+<span class="code-fn">window</span>.<span class="code-fn">addEventListener</span>(<span class="code-str">'storage'</span>, e =&gt; {
+  <span class="code-kw">if</span> (e.key === <span class="code-str">'app-state'</span>) { App.<span class="code-fn">init</span>(); App.<span class="code-fn">render</span>(); }
+});</code></pre>
+      </div>
+      <div class="output-block" id="outArch">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outArchBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 · PLAN DE TRABAJO -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span><span class="num-title">Plan de trabajo en 5 pasos</span>
+    </div>
+    <div class="card">
+      <p>Un orden probado para que no te atasques. Cada paso debe <strong>funcionar antes de pasar al siguiente</strong>; no acumules errores.</p>
+      <div class="timeline">
+        <div class="t-step">
+          <div class="tnum">1</div>
+          <div>
+            <h4>HTML y meta-datos</h4>
+            <p>Estructura semántica + <code>&lt;script type="application/json"&gt;</code> con tus datos mock. Verifica en W3C Validator sin errores.</p>
+          </div>
+        </div>
+        <div class="t-step">
+          <div class="tnum">2</div>
+          <div>
+            <h4>CSS responsivo + tema</h4>
+            <p>Custom properties para tokens, Grid/Flex, media queries. Toggle de tema claro/oscuro con persistencia (M26 + M42).</p>
+          </div>
+        </div>
+        <div class="t-step">
+          <div class="tnum">3</div>
+          <div>
+            <h4>JS: DOM + fetch mock</h4>
+            <p>Renderiza datos del mock en el DOM, maneja <code>ok:false</code> con un mensaje visible y accesible.</p>
+          </div>
+        </div>
+        <div class="t-step">
+          <div class="tnum">4</div>
+          <div>
+            <h4>Namespaces + localStorage</h4>
+            <p>Refactoriza a <code>App</code> + <code>Api</code>. Persiste estado crítico. Sincroniza con evento <code>storage</code>.</p>
+          </div>
+        </div>
+        <div class="t-step">
+          <div class="tnum">5</div>
+          <div>
+            <h4>QA: a11y, validator, console</h4>
+            <p>Lighthouse a11y ≥ 90, W3C Validator sin errores, console limpia, navegación con teclado, foco visible.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 · SYLLABUS RECAP -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span><span class="num-title">El camino que has recorrido</span>
+    </div>
+    <div class="card">
+      <p>Estos 17 módulos no son una línea recta: son una <strong>pila</strong> que se apoya una sobre otra. Repásalo y verás que cada pieza tiene su lugar en el proyecto final.</p>
+      <div class="syllabus">
+        <h4>Bloque I · HTML (M01–M12)</h4>
+        <ul>
+          <li><span>M01</span> Qué es HTML</li>
+          <li><span>M02</span> Estructura básica</li>
+          <li><span>M03</span> Etiquetas de texto</li>
+          <li><span>M04</span> Enlaces e imágenes</li>
+          <li><span>M05</span> Listas y tablas</li>
+          <li><span>M06</span> Formularios</li>
+          <li><span>M07</span> Semántica</li>
+          <li><span>M08</span> Audio y vídeo</li>
+          <li><span>M09</span> SVG inline</li>
+          <li><span>M10</span> Metadatos SEO</li>
+          <li><span>M11</span> Accesibilidad</li>
+          <li><span>M12</span> Publicar</li>
+        </ul>
+        <h4>Bloque II · CSS (M13–M27)</h4>
+        <ul>
+          <li><span>M13</span> Selectores</li>
+          <li><span>M14</span> Box model</li>
+          <li><span>M15</span> Tipografía</li>
+          <li><span>M16</span> Colores y fondos</li>
+          <li><span>M17</span> Unidades</li>
+          <li><span>M18</span> Display</li>
+          <li><span>M19</span> Flexbox</li>
+          <li><span>M20</span> Grid</li>
+          <li><span>M21</span> Posicionamiento</li>
+          <li><span>M22</span> Responsive</li>
+          <li><span>M23</span> Animaciones</li>
+          <li><span>M24</span> Transiciones</li>
+          <li><span>M25</span> Pseudo-clases</li>
+          <li><span>M26</span> Custom properties</li>
+          <li><span>M27</span> Buenas prácticas</li>
+        </ul>
+        <h4>Bloque III · JavaScript (M28–M43)</h4>
+        <ul>
+          <li><span>M28</span> Qué es JS</li>
+          <li><span>M29</span> Variables</li>
+          <li><span>M30</span> Tipos y operadores</li>
+          <li><span>M31</span> Flujo de control</li>
+          <li><span>M32</span> Funciones</li>
+          <li><span>M33</span> Arrays</li>
+          <li><span>M34</span> Objetos y closures</li>
+          <li><span>M35</span> Strings y templates</li>
+          <li><span>M36</span> DOM y eventos</li>
+          <li><span>M37</span> Manejo de errores</li>
+          <li><span>M38</span> Async / fetch</li>
+          <li><span>M39</span> Organización</li>
+          <li><span>M40</span> Clases y POO</li>
+          <li><span>M41</span> JSON</li>
+          <li><span>M42</span> localStorage</li>
+          <li><span>M43</span> Buenas prácticas</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 · RECURSOS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span><span class="num-title">Recursos para tu aventura</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/API" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Web APIs</div>
+        <div class="res-desc">Índice de todas las APIs del navegador: DOM, fetch, storage, eventos, geolocalización, etc.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/Accessibility" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Accesibilidad</div>
+        <div class="res-desc">Guías de ARIA, navegación con teclado, semántica y patrones accesibles para tu app final.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://javascript.info/modules" target="_blank" rel="noopener">
+        <div><div class="res-name">javascript.info · Módulos y proyecto</div>
+        <div class="res-desc">Estructura de proyecto, módulos ES, y patrones para organizar apps JS no triviales.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- CTA FINAL -->
+  <div class="cta-final">
+    <div class="trophy">🏆</div>
+    <h2>Has llegado al final del camino</h2>
+    <p>De <code>&lt;!DOCTYPE html&gt;</code> a una web app completa con DOM, clases, fetch mock, JSON, localStorage y dos namespaces. Eso no es un curso: es un superpoder. Ahora ve y construye algo que la gente quiera usar.</p>
+    <div class="sign">FIN DEL CURSO · M00–M44 · 44 MÓDULOS</div>
+  </div>
+</div>
+
+<script>
+function makeRunner(outId,bodyId){
+  return function(code){
+    var out=document.getElementById(outId),body=document.getElementById(bodyId);
+    body.innerHTML='';var logs=[];var origLog=console.log;
+    console.log=function(){var a=[].slice.call(arguments);logs.push({level:'log',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')})};
+    var al=function(msg){logs.push({level:'alert',text:String(msg)})};
+    try{new Function('alert','console',code)(al,console)}catch(e){logs.push({level:'error',text:e.message})}finally{console.log=origLog}
+    if(!logs.length)logs.push({level:'log',text:'(sin salida visible)'});
+    logs.forEach(function(l){
+      var line=document.createElement('div');line.className='out-line';
+      var tag=document.createElement('span');tag.className='out-tag '+l.level;tag.textContent=l.level;
+      var txt=document.createElement('span');txt.className='out-text';txt.textContent=l.text;
+      line.appendChild(tag);line.appendChild(txt);body.appendChild(line);
+    });
+    out.classList.add('show');
+  };
+}
+
+function runArch(){
+  makeRunner('outArch','outArchBody')("\n    \"use strict\";\n    const Api={\n      fakeFetch(path){\n        return new Promise(resolve=>{\n          setTimeout(()=>{\n            if(path.includes('fail')) resolve({ok:false,error:'recurso no encontrado'});\n            else resolve({ok:true,items:['tarea 1','tarea 2']});\n          },200);\n        });\n      }\n    };\n    const App={\n      state:{tareas:[],tema:'oscuro'},\n      init(){try{this.state=JSON.parse(localStorage.getItem('app-state'))||this.state}catch(e){}},\n      save(){localStorage.setItem('app-state',JSON.stringify(this.state))}\n    };\n    App.init();\n    console.log('arquitectura cargada:');\n    console.log('  App expone:',Object.keys(App));\n    console.log('  Api expone:',Object.keys(Api));\n    console.log('  state inicial:',App.state);\n    Api.fakeFetch('/api/tareas').then(r=>console.log('mock /tareas:',r));\n    Api.fakeFetch('/api/fail').then(r=>console.log('mock /fail:',r));\n  ");
+}
+</script>
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

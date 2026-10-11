@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M14 · Buenas prácticas HTML y proyecto final del bloque — Curso HTML+CSS+JS</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#110F18; --bg-s3:#15131F; --bg-s4:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --cyan:#67E8F9; --cyan-soft:rgba(95,208,224,.06); --cyan-border:rgba(95,208,224,.2);
+  --pink:#F9A8D4; --pink-soft:rgba(249,168,212,.06); --pink-border:rgba(249,168,212,.2);
+  --yellow:#F5C451; --green:#34D399; --red:#FB7185;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(34,184,207,.18),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.45);color:#C7B5FF;
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 10px var(--accent)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--accent)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#A78BFA,#7C3AED)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+.content-block strong{color:#EEEBF6}
+
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C7B5FF}
+.note{padding:14px 16px;border-radius:13px;background:rgba(167,139,250,.07);
+  border:1px solid rgba(167,139,250,.28);margin:16px 0}
+.note p{margin:0;color:#C7BFE0;font-size:14.5px;line-height:1.6}
+.note strong{color:#A78BFA}
+.note code{font-family:var(--font-mono);color:#C7B5FF}
+
+.layer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.layer{padding:16px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);text-align:center}
+.layer h4{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  text-transform:uppercase;margin-bottom:6px}
+.layer.html h4{color:#7FE0F0}
+.layer.css h4{color:#F5C451}
+.layer.js h4{color:#A78BFA}
+.layer p{font-size:13px;color:#9A97AC;line-height:1.5;margin:0}
+
+.rule-list{display:flex;flex-direction:column;gap:12px;margin:16px 0}
+.rule{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:12px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border)}
+.rule-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#A78BFA,#7C3AED)}
+.rule-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;
+  color:var(--text-pri);margin-bottom:3px}
+.rule-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.rule-body code{font-family:var(--font-mono);color:#C7B5FF;font-size:13px}
+.rule-body strong{color:#EEEBF6}
+
+.checklist{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid rgba(167,139,250,.3);border-radius:18px;
+  padding:clamp(22px,4vw,32px);margin:0 0 clamp(24px,4vw,38px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9)}
+.cl-head{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.cl-icon{width:28px;height:28px;border-radius:8px;background:linear-gradient(145deg,#A78BFA,#7C3AED);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cl-icon svg{width:16px;height:16px;color:#06120B}
+.cl-head h3{font-family:var(--font-head);font-weight:700;font-size:18px;
+  color:#F4F2FB;margin:0}
+.check-list{display:flex;flex-direction:column;gap:12px}
+.check{display:flex;gap:12px;align-items:flex-start;cursor:pointer;padding:10px 14px;
+  border-radius:10px;background:rgba(255,255,255,.02);border:1px solid var(--border);
+  transition:all .2s}
+.check:hover{background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.25)}
+.check input{display:none}
+.check .box{flex-shrink:0;width:22px;height:22px;border-radius:7px;border:2px solid #5E5C6E;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
+.check .box svg{width:13px;height:13px;color:#06120B;opacity:0;transition:opacity .15s}
+.check input:checked + .box{background:linear-gradient(145deg,#A78BFA,#7C3AED);border-color:transparent}
+.check input:checked + .box svg{opacity:1}
+.check .label{color:#C7CDE0;font-size:14.5px;line-height:1.5}
+.check input:checked ~ .label{color:#7A7590;text-decoration:line-through}
+
+.req{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:12px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);margin-bottom:10px}
+.req-num{font-family:var(--font-head);font-weight:700;font-size:13px;width:26px;height:26px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.req-body h4{font-family:var(--font-head);font-weight:600;font-size:15px;color:#EEEBF6;
+  margin-bottom:4px}
+.req-body p{color:#9A97AC;font-size:13.5px;line-height:1.55;margin:0}
+.req-body code{font-family:var(--font-mono);color:#7FE0F0;font-size:12.5px}
+
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(95,208,224,.08);border-color:rgba(95,208,224,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,#A78BFA,#7C3AED);color:#06120B;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(167,139,250,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(167,139,250,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+@media(max-width:640px){
+  .layer-grid{grid-template-columns:1fr}
+}
+</style>
+</head><body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 14 · PROYECTO FINAL DEL BLOQUE HTML
+    </div>
+    <h1>Buenas prácticas y <span class="hl">proyecto final</span></h1>
+    <p>Llegas al último módulo del bloque HTML con todo lo aprendido: estructura, formularios, accesibilidad, SEO, canvas. Ahora toca integrarlo en una página web completa y verificarla como un profesional. Este es tu proyecto final antes de pasar al CSS.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+        Validación W3C + Lighthouse
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        Proyecto final entregable
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ~120 min de lectura
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 · VALIDACIÓN W3C ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">Validación W3C</span>
+    </div>
+    <div class="card">
+      <p>El validador de la W3C (<a style="color:#7FE0F0" href="https://validator.w3.org/" target="_blank" rel="noopener">validator.w3.org</a>) lee tu HTML y lista cada etiqueta mal cerrada, cada atributo mal escrito, cada anidamiento imposible. Es el <strong>lint del HTML</strong>: pásalo antes de entregar cualquier página.</p>
+      <div class="content-block">
+        <h3>Los tres errores más comunes</h3>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · errores típicos</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- 1. Etiqueta sin cerrar --&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>Hola<span class="code-cmt"> &lt;!-- falta &lt;/p&gt; --&gt;</span>
+
+<span class="code-cmt">&lt;!-- 2. Anidamiento imposible --&gt;</span>
+<span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#"</span><span class="code-kw">&gt;&lt;button&gt;</span>...<span class="code-kw">&lt;/button&gt;&lt;/a&gt;</span>   <span class="code-cmt">&lt;!-- un botón NO puede vivir dentro de un enlace --&gt;</span>
+
+<span class="code-cmt">&lt;!-- 3. Atributo duplicado o no permitido --&gt;</span>
+<span class="code-kw">&lt;img</span> <span class="code-fn">src</span>=<span class="code-str">"a.jpg"</span> <span class="code-fn">src</span>=<span class="code-str">"b.jpg"</span><span class="code-kw">&gt;</span>           <span class="code-cmt">&lt;!-- src dos veces --&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <p>Pega la URL de tu página (o sube el archivo) en validator.w3.org y corrige hasta que el informe diga <strong>"Document checking completed. No errors or warnings"</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 · SEPARACIÓN DE CAPAS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">Separación de capas</span>
+    </div>
+    <div class="card">
+      <p>La regla de oro del frontend moderno: <strong>HTML estructura, CSS estila, JS comporta</strong>. Cada capa tiene un trabajo y no debe hacer el de la otra. Mezclarlas genera código que no se mantiene.</p>
+      <div class="layer-grid">
+        <div class="layer html">
+          <h4>HTML · estructura</h4>
+          <p>El esqueleto semántico: qué es cada cosa (un botón, un artículo, un nav).</p>
+        </div>
+        <div class="layer css">
+          <h4>CSS · estilo</h4>
+          <p>Cómo se ve: color, tamaño, posición, animación. Vive en su archivo .css.</p>
+        </div>
+        <div class="layer js">
+          <h4>JS · comportamiento</h4>
+          <p>Qué hace al interactuar: listeners, lógica, peticiones. Vive en su .js.</p>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · mala vs buena práctica</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- ✗ Mezclar estilos y comportamiento en el HTML --&gt;</span>
+<span class="code-kw">&lt;div</span> <span class="code-fn">style</span>=<span class="code-str">"color:red"</span> <span class="code-fn">onclick</span>=<span class="code-str">"alert('hola')"</span><span class="code-kw">&gt;</span>Saludar<span class="code-kw">&lt;/div&gt;</span>
+
+<span class="code-cmt">&lt;!-- ✓ Cada capa en su sitio --&gt;</span>
+<span class="code-kw">&lt;button</span> <span class="code-fn">class</span>=<span class="code-str">"btn-saludar"</span><span class="code-kw">&gt;</span>Saludar<span class="code-kw">&lt;/button&gt;</span>
+<span class="code-cmt">&lt;!-- CSS: .btn-saludar{color:red}  ·  JS: addEventListener('click', ...) --&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 · DEFER Y LAZY ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">defer para scripts, lazy para imágenes</span>
+    </div>
+    <div class="card">
+      <p>Dos atributos que mejoran el rendimiento sin tocar tu lógica: <code style="font-family:var(--font-mono);color:#7FE0F0">defer</code> en los <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;script&gt;</code> y <code style="font-family:var(--font-mono);color:#7FE0F0">loading="lazy"</code> en las imágenes no críticas.</p>
+      <div class="rule-list">
+        <div class="rule">
+          <span class="rule-num">1</span>
+          <div class="rule-body">
+            <h4><code>defer</code> en todos los &lt;script&gt;</h4>
+            <p>El navegador descarga el script en paralelo sin bloquear el render del HTML y lo ejecuta al parsear la página. Sin <code>defer</code>, el script pausa el pintado.</p>
+          </div>
+        </div>
+        <div class="rule">
+          <span class="rule-num">2</span>
+          <div class="rule-body">
+            <h4><code>loading="lazy"</code> en imágenes no críticas</h4>
+            <p>Las imágenes fuera de la ventana visible se cargan solo cuando el usuario hace scroll hacia ellas. Ahorra ancho de banda y acelera el primer render.</p>
+          </div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · defer + lazy</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- Script sin bloquear --&gt;</span>
+<span class="code-kw">&lt;script</span> <span class="code-fn">src</span>=<span class="code-str">"app.js"</span> <span class="code-fn">defer</span><span class="code-kw">&gt;&lt;/script&gt;</span>
+
+<span class="code-cmt">&lt;!-- Imagen diferida --&gt;</span>
+<span class="code-kw">&lt;img</span> <span class="code-fn">src</span>=<span class="code-str">"hero.jpg"</span> <span class="code-fn">alt</span>=<span class="code-str">"..."</span> <span class="code-fn">width</span>=<span class="code-str">"640"</span> <span class="code-fn">height</span>=<span class="code-str">"360"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;img</span> <span class="code-fn">src</span>=<span class="code-str">"galeria/06.jpg"</span> <span class="code-fn">alt</span>=<span class="code-str">"..."</span> <span class="code-fn">width</span>=<span class="code-str">"400"</span> <span class="code-fn">height</span>=<span class="code-str">"300"</span> <span class="code-fn">loading</span>=<span class="code-str">"lazy"</span><span class="code-kw">&gt;</span></code></pre>
+      </div>
+      <div class="note">
+        <p><strong>DevTools:</strong> revisa páginas con el <strong>Inspector</strong>, la pestaña <strong>Accesibilidad</strong> y la pestaña <strong>Red</strong> (conceptual — el curso no usa red real).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 · PROYECTO FINAL ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">Proyecto final del bloque HTML</span>
+    </div>
+    <div class="card">
+      <p>Construye una <strong>página web completa</strong> (tema: portfolio personal o negocio local) que cumpla los cinco requisitos siguientes. Es la culminación de todos los módulos anteriores en un solo archivo.</p>
+      <div class="req">
+        <span class="req-num">1</span>
+        <div class="req-body">
+          <h4>Estructura semántica completa</h4>
+          <p><code>&lt;header&gt;</code> con <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code> con 2 <code>&lt;section&gt;</code> + 1 <code>&lt;aside&gt;</code>, <code>&lt;footer&gt;</code> con <code>&lt;address&gt;</code>. Usa <code>&lt;article&gt;</code> para entradas. Un único <code>&lt;h1&gt;</code> y jerarquía <code>&lt;h2&gt;</code>–<code>&lt;h3&gt;</code> correcta.</p>
+        </div>
+      </div>
+      <div class="req">
+        <span class="req-num">2</span>
+        <div class="req-body">
+          <h4>Imágenes accesibles</h4>
+          <p>Mínimo 3 <code>&lt;img&gt;</code> con <code>alt</code> informativo, <code>width</code>/<code>height</code> explícitos y <code>loading="lazy"</code>. Usa <code>&lt;figure&gt;</code> + <code>&lt;figcaption&gt;</code> en al menos una.</p>
+        </div>
+      </div>
+      <div class="req">
+        <span class="req-num">3</span>
+        <div class="req-body">
+          <h4>Tabla de productos/servicios</h4>
+          <p>Un <code>&lt;table&gt;</code> con <code>&lt;caption&gt;</code>, <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, <code>&lt;tfoot&gt;</code>, <code>&lt;th scope&gt;</code> y un <code>&lt;td colspan&gt;</code> o <code>rowspan</code>.</p>
+        </div>
+      </div>
+      <div class="req">
+        <span class="req-num">4</span>
+        <div class="req-body">
+          <h4>Formulario de contacto</h4>
+          <p><code>&lt;form&gt;</code> con <code>&lt;label&gt;</code> por cada campo, tipos variados (<code>text</code>, <code>email</code>, <code>tel</code>, <code>&lt;select&gt;</code>, <code>&lt;textarea&gt;</code>), <code>&lt;fieldset&gt;</code>/<code>&lt;legend&gt;</code> y validación nativa (<code>required</code>, <code>pattern</code>, <code>minlength</code>). Incluye <code>&lt;button type="submit"&gt;</code>.</p>
+        </div>
+      </div>
+      <div class="req">
+        <span class="req-num">5</span>
+        <div class="req-body">
+          <h4>Metadatos SEO y social</h4>
+          <p><code>&lt;title&gt;</code>, <code>&lt;meta name="description"&gt;</code>, Open Graph completo (<code>og:title</code>, <code>og:description</code>, <code>og:image</code>), Twitter Card, <code>&lt;link rel="canonical"&gt;</code>, JSON-LD con <code>@type</code> adecuado (p.ej. <code>LocalBusiness</code> o <code>Person</code>), favicon y <code>&lt;meta name="theme-color" content="#A78BFA"&gt;</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 05 · CHECKLIST DE VERIFICACIÓN ═══ -->
+  <div class="checklist">
+    <div class="cl-head">
+      <div class="cl-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h3>Verificación final</h3>
+    </div>
+    <div class="check-list">
+      <label class="check">
+        <input type="checkbox">
+        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+        <span class="label">Pasa el validador W3C sin errores (<a style="color:#7FE0F0" href="https://validator.w3.org/" target="_blank" rel="noopener">validator.w3.org</a>)</span>
+      </label>
+      <label class="check">
+        <input type="checkbox">
+        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+        <span class="label">Lighthouse Accessibility ≥ 90</span>
+      </label>
+      <label class="check">
+        <input type="checkbox">
+        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+        <span class="label">Todas las imágenes llevan <code style="font-family:var(--font-mono);color:#7FE0F0">alt</code> (decorativa → vacío, informativa → descriptivo)</span>
+      </label>
+      <label class="check">
+        <input type="checkbox">
+        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+        <span class="label">Todos los <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;script&gt;</code> llevan <code style="font-family:var(--font-mono);color:#7FE0F0">defer</code></span>
+      </label>
+      <label class="check">
+        <input type="checkbox">
+        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+        <span class="label">Todos los <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;img&gt;</code> no críticos llevan <code style="font-family:var(--font-mono);color:#7FE0F0">loading="lazy"</code></span>
+      </label>
+    </div>
+    <div class="note" style="margin-top:16px">
+      <p><strong>Nota:</strong> Las imágenes responsivas con <code>srcset</code>/<code>&lt;picture&gt;</code> se añaden en el proyecto CSS (M27), tras M21.</p>
+    </div>
+  </div>
+
+  <!-- ═══ 06 · RECURSOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span>
+      <span class="num-title">Recursos</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://validator.w3.org/" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">W3C Markup Validator</div>
+          <div class="res-desc">El validador oficial de HTML de la W3C. Pega URL o sube archivo.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/en-US/docs/MDN/Writing_guidelines/Writing_style_guide" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · HTML best practices</div>
+          <div class="res-desc">Guía de estilo y buenas prácticas de MDN Web Docs.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://web.dev/measure" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">web.dev · Measure (Lighthouse)</div>
+          <div class="res-desc">Lanza Lighthouse online y mide rendimiento, a11y y SEO.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ CTA · FIN DEL BLOQUE ═══ -->
+  <div class="cta">
+    <div class="cta-label">Has completado el bloque HTML</div>
+    <h2>¡Felicidades! Ya escribes HTML como un profesional</h2>
+    <p>Has cubierto estructura, semántica, formularios, accesibilidad, SEO, canvas y validación. El bloque HTML está cerrado. El siguiente paso es darle vida visual: el bloque CSS te espera.</p>
+    <a class="cta-btn" href="../02_CSS/M01_Selectores_Cascada.html">
+      BLOQUE CSS · Selectores y cascada
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+// Persist checkbox state to localStorage so the checklist survives reloads
+document.querySelectorAll('.check input').forEach(function(box, i){
+  var key = 'm14-check-' + i;
+  if(localStorage.getItem(key) === '1') box.checked = true;
+  box.addEventListener('change', function(){
+    localStorage.setItem(key, box.checked ? '1' : '0');
+  });
+});
+</script>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M04 · Texto y encabezados — Curso HTML+CSS+JS</title>
+<style>
+/* ═══ RESET ═══ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#110F18; --bg-s3:#15131F; --bg-s4:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --cyan:#67E8F9; --cyan-soft:rgba(95,208,224,.06); --cyan-border:rgba(95,208,224,.2);
+  --pink:#F9A8D4; --pink-soft:rgba(249,168,212,.06); --pink-border:rgba(249,168,212,.2);
+  --yellow:#F5C451; --green:#34D399; --red:#FB7185;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+/* ═══ BACKGROUND GLOW ═══ */
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(34,184,207,.18),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+/* ═══ LAYOUT ═══ */
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* ═══ HERO ═══ */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(95,208,224,.12);border:1px solid rgba(95,208,224,.32);color:#7FE0F0;
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--cyan)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* ═══ SECTION CARD ═══ */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+/* ═══ NUMBERED SECTION ═══ */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* ═══ CONTENT BLOCKS ═══ */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+.content-block strong{color:#EEEBF6}
+.content-block ul{margin:8px 0 12px 18px;color:#A7A4B8;line-height:1.75;font-size:15px}
+.content-block li{margin-bottom:4px}
+.content-block li code{font-family:var(--font-mono);color:#7FE0F0}
+
+/* ═══ CODE BLOCK ═══ */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text-sec);font-family:var(--font-body);
+  font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+.code-btn.primary{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#7FE0F0}
+.code-tag{color:#7FE0F0}
+
+/* ═══ PREVIEW BLOCK (RENDERED HTML) ═══ */
+.preview-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;display:none;background:#fff}
+.preview-block.show{display:block}
+.preview-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;
+  text-transform:uppercase}
+.preview-frame{width:100%;min-height:140px;border:0;background:#fff}
+
+/* ═══ STEP LIST ═══ */
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;
+  color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body kbd{font-family:var(--font-mono);background:rgba(255,255,255,.06);padding:2px 6px;
+  border-radius:5px;border:1px solid var(--border);font-size:12px}
+.step-body strong{color:#EEEBF6}
+.step-body code{font-family:var(--font-mono);color:#7FE0F0}
+
+/* ═══ RESOURCE LINKS ═══ */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(95,208,224,.08);border-color:rgba(95,208,224,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* ═══ CTA ═══ */
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,#22B8CF,#0EA5C7);color:#06120B;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(34,184,207,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(34,184,207,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 04 · TEXTO Y ENCABEZADOS
+    </div>
+    <h1>El <span class="hl">texto</span> es el rey</h1>
+    <p>El 80 % de la web es texto. Encabezados, párrafos, citas, énfasis, fechas, código — todos tienen su etiqueta. Elegir bien no es una manía de perfeccionista: es lo que hace que tu página se entienda, se posicione bien en Google y llegue a lectores de pantalla. Este módulo es el vocabulario completo del HTML con pelo.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+        Encabezados, citas, código
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        Runner en vivo
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ~75 min de lectura
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 · JERARQUÍA DE ENCABEZADOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">Jerarquía de encabezados h1–h6</span>
+    </div>
+    <div class="card">
+      <p>Los encabezados no son solo "texto más grande". Son la <strong>estructura del documento</strong> para buscadores y lectores de pantalla. Imagina el índice de un libro: cada encabezado es una entrada. Si los saltas o los desordenas, el índice se rompe.</p>
+      <div class="content-block">
+        <h3>Seis niveles, una sola regla: orden</h3>
+        <p>HTML te da seis niveles: <code>h1</code> (principal, uno por página), <code>h2</code> (sección), <code>h3</code> (subsección)… hasta <code>h6</code>. La regla de oro: <strong>nunca salts niveles</strong>. De <code>h1</code> a <code>h2</code>, no de <code>h1</code> a <code>h4</code>.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · jerarquía correcta vs rota</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- CORRECTO: cada nivel anida en el anterior --&gt;</span>
+<span class="code-kw">&lt;h1&gt;</span>Mi Blog<span class="code-kw">&lt;/h1&gt;</span>
+  <span class="code-kw">&lt;h2&gt;</span>Recetas<span class="code-kw">&lt;/h2&gt;</span>
+    <span class="code-kw">&lt;h3&gt;</span>Pan<span class="code-kw">&lt;/h3&gt;</span>
+    <span class="code-kw">&lt;h3&gt;</span>Pizza<span class="code-kw">&lt;/h3&gt;</span>
+  <span class="code-kw">&lt;h2&gt;</span>Viajes<span class="code-kw">&lt;/h2&gt;</span>
+
+<span class="code-cmt">&lt;!-- MAL: salta del h1 al h4. El \u00edndice se rompe. --&gt;</span>
+<span class="code-kw">&lt;h1&gt;</span>Mi Blog<span class="code-kw">&lt;/h1&gt;</span>
+  <span class="code-kw">&lt;h4&gt;</span>Recetas<span class="code-kw">&lt;/h4&gt;</span>   <span class="code-cmt">&lt;!-- \u00bfY el h2 y el h3? --&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>El tamaño es cosa del CSS, no del HTML</h3>
+        <p>No elijas <code>h1</code> o <code>h4</code> porque quieras que el texto se vea más grande o más pequeño: eso es trabajo del CSS. Elige en función de la <strong>jerarquía del contenido</strong>. Con CSS, puedes hacer que un <code>h4</code> se vea enorme; sigue siendo semánticamente un <code>h4</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 · PÁRRAFOS, BR Y HR ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">Párrafos, &lt;br&gt; y &lt;hr&gt;</span>
+    </div>
+    <div class="card">
+      <p>El texto se organiza en párrafos. A veces necesitas un salto de línea sin abrir párrafo nuevo; a veces una separación visual entre temas. Para eso existen <code>&lt;br&gt;</code> y <code>&lt;hr&gt;</code>, los dos void elements que ya conoces.</p>
+      <div class="content-block">
+        <h3><code>&lt;p&gt;</code> — el párrafo</h3>
+        <p>La unidad básica de texto. El navegador añade automáticamente un margen antes y después. <strong>Nunca</strong> uses <code>&lt;p&gt;</code> solo para crear espacio: eso es trabajo del CSS. El <code>&lt;p&gt;</code> es para párrafos, no para—even layouts.</p>
+      </div>
+      <div class="content-block">
+        <h3><code>&lt;br&gt;</code> — salto de línea forzado</h3>
+        <p>Úsalo solo donde el salto es <strong>parte del contenido</strong>: una dirección postal, un verso de un poema, una firma. No lo uses para crear espacio vertical entre bloques — eso es CSS.</p>
+      </div>
+      <div class="content-block">
+        <h3><code>&lt;hr&gt;</code> — separador temático</h3>
+        <p>Indica un cambio de tema dentro de un mismo contenido. Originalmente era una línea horizontal (de ahí su nombre, <em>horizontal rule</em>), pero su significado real es "aquí termina un tema y empieza otro".</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · p, br, hr</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;p&gt;</span>Querido equipo:<span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>
+  Rubén Menacho<span class="code-kw">&lt;br&gt;</span>
+  Director del proyecto<span class="code-kw">&lt;br&gt;</span>
+  email@ejemplo.com
+<span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;hr&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>Y ahora, cambiamos de tema...<span class="code-kw">&lt;/p&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 · ÉNFASIS SEMÁNTICO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">Énfasis semántico</span>
+    </div>
+    <div class="card">
+      <p>HTML distingue <strong>cómo</strong> se ve el texto de <strong>qué significa</strong>. Tienes etiquetas para marcar que una palabra es importante, subíndice, superíndice, destacada o pequeña. No las uses por su aspecto: úsalas por lo que significan.</p>
+      <div class="content-block">
+        <h3>Importancia y énfasis</h3>
+        <ul>
+          <li><code>&lt;strong&gt;</code> — importancia (se muestra en negrita)</li>
+          <li><code>&lt;em&gt;</code> — énfasis, cambio de tono (se muestra en cursiva)</li>
+          <li><code>&lt;mark&gt;</code> — texto destacado, como subrayado de papel (fondo amarillo)</li>
+        </ul>
+      </div>
+      <div class="content-block">
+        <h3>Tamaño y posición</h3>
+        <ul>
+          <li><code>&lt;small&gt;</code> — comentarios al margen, letra pequeña legal</li>
+          <li><code>&lt;sub&gt;</code> — subíndice: <code>H₂O</code></li>
+          <li><code>&lt;sup&gt;</code> — superíndice: <code>E=mc²</code></li>
+        </ul>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · énfasis semántico</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;p&gt;</span>Fórmula del agua: H<span class="code-kw">&lt;sub&gt;</span>2<span class="code-kw">&lt;/sub&gt;</span>O<span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>Einstein escribió E=mc<span class="code-kw">&lt;sup&gt;</span>2<span class="code-kw">&lt;/sup&gt;</span><span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>Esto es <span class="code-kw">&lt;strong&gt;</span>muy importante<span class="code-kw">&lt;/strong&gt;</span>.<span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>Yo <span class="code-kw">&lt;em&gt;</span>creo<span class="code-kw">&lt;/em&gt;</span> que sí, no lo sé.<span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>La capital de España es &lt;mark&gt;Madrid&lt;/mark&gt;.<span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;p&gt;&lt;small&gt;</span>© 2026 — todos los derechos reservados<span class="code-kw">&lt;/small&gt;&lt;/p&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 · CITAS Y DATOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">Citas y datos estructurados</span>
+    </div>
+    <div class="card">
+      <p>Cuando citas a alguien, menciones una fecha o una abreviatura, existen etiquetas específicas. No son adornos: comunican a buscadores y a otros programas qué tipo de dato es, no solo cómo se muestra.</p>
+      <div class="content-block">
+        <h3>Citas — <code>&lt;blockquote&gt;</code> <code>&lt;q&gt;</code> <code>&lt;cite&gt;</code></h3>
+        <ul>
+          <li><code>&lt;blockquote&gt;</code> — cita en bloque, para textos largos. Sangrada por el navegador.</li>
+          <li><code>&lt;q&gt;</code> — cita corta en línea. El navegador añade comillas tipográficas.</li>
+          <li><code>&lt;cite&gt;</code> — el título de la obra o el nombre del autor (en cursiva por defecto).</li>
+        </ul>
+      </div>
+      <div class="content-block">
+        <h3>Datos con significado — <code>&lt;abbr&gt;</code> <code>&lt;time&gt;</code> <code>&lt;address&gt;</code></h3>
+        <ul>
+          <li><code>&lt;abbr title="..."&gt;</code> — abreviatura con su significado en el tooltip <code>title</code>.</li>
+          <li><code>&lt;time datetime="..."&gt;</code> — fecha o hora legible por máquinas en el atributo <code>datetime</code>.</li>
+          <li><code>&lt;address&gt;</code> — información de contacto del autor (email, dirección física).</li>
+        </ul>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · citas y datos</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;blockquote</span> <span class="code-fn">cite</span>=<span class="code-str">"https://...exupery"</span><span class="code-kw">&gt;</span>
+  Lo esencial es invisible a los ojos.
+<span class="code-kw">&lt;/blockquote&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>— <span class="code-kw">&lt;cite&gt;</span>El Principito<span class="code-kw">&lt;/cite&gt;</span>, A. de Saint-Exupéry.<span class="code-kw">&lt;/p&gt;</span>
+
+<span class="code-kw">&lt;p&gt;</span>Dijo: <span class="code-kw">&lt;q&gt;</span>Bien hecho es mejor que bien dicho<span class="code-kw">&lt;/q&gt;</span>.<span class="code-kw">&lt;/p&gt;</span>
+
+<span class="code-kw">&lt;p&gt;</span>La <span class="code-kw">&lt;abbr</span> <span class="code-fn">title</span>=<span class="code-str">"Sociedad de Responsabilidad Limitada"</span><span class="code-kw">&gt;</span>SRL<span class="code-kw">&lt;/abbr&gt;</span> surge en...<span class="code-kw">&lt;/p&gt;</span>
+
+<span class="code-kw">&lt;p&gt;</span>Carta del <span class="code-kw">&lt;time</span> <span class="code-fn">datetime</span>=<span class="code-str">"2026-07-05"</span><span class="code-kw">&gt;</span>5 de julio de 2026<span class="code-kw">&lt;/time&gt;</span>.<span class="code-kw">&lt;/p&gt;</span>
+
+<span class="code-kw">&lt;address&gt;</span>
+  Rubén Menacho&lt;br&gt;
+  email@ejemplo.com
+<span class="code-kw">&lt;/address&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <p>El atributo <code>datetime</code> usa un formato ISO (<code>YYYY-MM-DD</code>), que entienden buscadores y calendarios. El contenido entre las etiquetas puede ser texto humano ("5 de julio de 2026"). <strong>Los dos trabajan juntos</strong>: lo bonito para los humanos, lo exacto para las máquinas.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 05 · CÓDIGO Y TERMINAL ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span>
+      <span class="num-title">Código y elementos de terminal</span>
+    </div>
+    <div class="card">
+      <p>Si necesitas escribir código fuente, teclas, salidas de comandos o variables, HTML tiene etiquetas específicas. A diferencia del resto, estas <strong>no formatan</strong>: solo marcan qué es cada cosa. El formato visual es trabajo del CSS.</p>
+      <div class="content-block">
+        <h3>Las cinco etiquetas del código</h3>
+        <ul>
+          <li><code>&lt;code&gt;</code> — fragmento de código fuente en línea</li>
+          <li><code>&lt;pre&gt;</code> — bloque preformateado: <strong>respeta espacios y saltos de línea</strong></li>
+          <li><code>&lt;kbd&gt;</code> — tecla o combinación del teclado: <code>Ctrl+C</code></li>
+          <li><code>&lt;samp&gt;</code> — salida de un programa o de una terminal</li>
+          <li><code>&lt;var&gt;</code> — variable en un contexto matemático o de programación</li>
+        </ul>
+      </div>
+      <div class="content-block">
+        <h3>El dúo dinámico: <code>&lt;pre&gt;&lt;code&gt;</code></h3>
+        <p>Para mostrar bloques de código con indentación, envuelve <code>&lt;code&gt;</code> dentro de <code>&lt;pre&gt;</code>. El <code>&lt;pre&gt;</code> respeta los espacios, el <code>&lt;code&gt;</code> marca que es código. <strong>Son inseparables</strong>.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · código y terminal</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- Código en línea --&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>Usa la función <span class="code-kw">&lt;code&gt;</span>console.log()<span class="code-kw">&lt;/code&gt;</span> para depurar.<span class="code-kw">&lt;/p&gt;</span>
+
+<span class="code-cmt">&lt;!-- Bloque de código: respeta los espacios --&gt;</span>
+<span class="code-kw">&lt;pre&gt;&lt;code&gt;</span>function saludar() {
+  console.log("Hola");
+}<span class="code-kw">&lt;/code&gt;&lt;/pre&gt;</span>
+
+<span class="code-cmt">&lt;!-- Tecla y salida de terminal --&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>Pulsa <span class="code-kw">&lt;kbd&gt;</span>Ctrl<span class="code-kw">&lt;/kbd&gt;</span>+<span class="code-kw">&lt;kbd&gt;</span>C<span class="code-kw">&lt;/kbd&gt;</span> para copiar.<span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>Salida: <span class="code-kw">&lt;samp&gt;</span>Build successful in 4.2s<span class="code-kw">&lt;/samp&gt;</span><span class="code-kw">&lt;/p&gt;</span>
+
+<span class="code-cmt">&lt;!-- Variable --&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>Sea <span class="code-kw">&lt;var&gt;</span>x<span class="code-kw">&lt;/var&gt;</span> un entero positivo.<span class="code-kw">&lt;/p&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 06 · EJERCICIO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span>
+      <span class="num-title">Tu ejercicio: marca una carta</span>
+    </div>
+    <div class="card">
+      <p>Vas a crear una carta formal en HTML — el tipo de texto que muestra todo: encabezados, dirección, fecha con <code style="font-family:var(--font-mono);color:#7FE0F0">time</code>, cita con <code style="font-family:var(--font-mono);color:#7FE0F0">blockquote</code>, abreviatura con <code style="font-family:var(--font-mono);color:#7FE0F0">abbr</code> y un bloque de código con <code style="font-family:var(--font-mono);color:#7FE0F0">pre</code>.</p>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-body">
+            <h4>Crea <code>carta.html</code> con la estructura mínima</h4>
+            <p>El molde del M01, cambiando el <code>&lt;title&gt;</code> y el <code>lang</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-body">
+            <h4>Añade un <code>&lt;h1&gt;</code> y un <code>&lt;address&gt;</code></h4>
+            <p>Un <code>&lt;h1&gt;</code> con el asunto de la carta ("Carta al equipo"). Debajo, un <code>&lt;address&gt;</code> con tu nombre y email (inventados para el ejemplo).</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-body">
+            <h4>Párrafo con <code>&lt;time&gt;</code></h4>
+            <p>Un párrafo de apertura que incluya <code>&lt;time datetime="2026-07-05"&gt;5 de julio de 2026&lt;/time&gt;</code>. El contenido visible es humano, el atributo <code>datetime</code> es para máquinas.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <div class="step-body">
+            <h4>Inserta un <code>&lt;blockquote&gt;</code> y una <code>&lt;abbr&gt;</code></h4>
+            <p>Una cita célebre envuelta en <code>&lt;blockquote&gt;</code>, atribuida con <code>&lt;cite&gt;</code>. En un párrafo, un <code>&lt;q&gt;</code> corto con <code>&lt;abbr title="Sociedad de Responsabilidad Limitada"&gt;SRL&lt;/abbr&gt;</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">5</span>
+          <div class="step-body">
+            <h4>Bloque de código, tecla y salida</h4>
+            <p>Un <code>&lt;pre&gt;&lt;code&gt;</code> con un fragmento HTML inventado, una tecla <code>&lt;kbd&gt;Ctrl+C&lt;/kbd&gt;</code> y un mensaje de salida <code>&lt;samp&gt;</code> simulando una terminal. Verifica: <code>&lt;pre&gt;</code> respeta los espacios, <code>&lt;cite&gt;</code> va en cursiva, <code>&lt;time&gt;</code> es legible por buscadores.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 07 · RUNNER EN VIVO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">7</span>
+      <span class="num-title">Pruébalo aquí mismo</span>
+    </div>
+    <div class="card">
+      <p>Pulsa <strong>Ejecutar</strong> para ver renderizado el cuerpo de una carta con todos los elementos que acabas de aprender: encabezado, <code style="font-family:var(--font-mono);color:#7FE0F0">address</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">time</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">blockquote</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">q</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">abbr</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">pre/code</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">kbd</code> y <code style="font-family:var(--font-mono);color:#7FE0F0">samp</code>.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · carta.html</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runHTML()">Ejecutar</button>
+          </div>
+        </div>
+<pre><code><span class="code-kw">&lt;h1&gt;</span>Carta al equipo<span class="code-kw">&lt;/h1&gt;</span>
+<span class="code-kw">&lt;address&gt;</span>Rubén Menacho · email@ejemplo.com<span class="code-kw">&lt;/address&gt;</span>
+
+<span class="code-kw">&lt;p&gt;</span>Barcelona, <span class="code-kw">&lt;time</span> <span class="code-fn">datetime</span>=<span class="code-str">"2026-07-05"</span><span class="code-kw">&gt;</span>5 de julio de 2026<span class="code-kw">&lt;/time&gt;</span>.<span class="code-kw">&lt;/p&gt;</span>
+
+<span class="code-kw">&lt;p&gt;</span>Equipo, como dijo <span class="code-kw">&lt;q&gt;</span>el que lee mucho y anda mucho,
+ve mucho y sabe mucho<span class="code-kw">&lt;/q&gt;</span> — <span class="code-kw">&lt;cite&gt;</span>Cervantes<span class="code-kw">&lt;/cite&gt;</span>.<span class="code-kw">&lt;/p&gt;</span>
+
+<span class="code-kw">&lt;blockquote&gt;</span>
+  Lo esencial es invisible a los ojos.
+<span class="code-kw">&lt;/blockquote&gt;</span>
+
+<span class="code-kw">&lt;p&gt;</span>Nuestra <span class="code-kw">&lt;abbr</span> <span class="code-fn">title</span>=<span class="code-str">"Sociedad de Responsabilidad Limitada"</span><span class="code-kw">&gt;</span>SRL<span class="code-kw">&lt;/abbr&gt;</span> cumple hoy 5 años.<span class="code-kw">&lt;/p&gt;</span>
+
+<span class="code-kw">&lt;p&gt;</span>Pulsa <span class="code-kw">&lt;kbd&gt;</span>Ctrl<span class="code-kw">&lt;/kbd&gt;</span>+<span class="code-kw">&lt;kbd&gt;</span>C<span class="code-kw">&lt;/kbd&gt;</span> para copiar. Salida: <span class="code-kw">&lt;samp&gt;</span>Build OK<span class="code-kw">&lt;/samp&gt;</span><span class="code-kw">&lt;/p&gt;</span>
+
+<span class="code-kw">&lt;pre&gt;&lt;code&gt;</span>function cumple() {
+  return "¡Felicidades!";
+}<span class="code-kw">&lt;/code&gt;&lt;/pre&gt;</span></code></pre>
+      </div>
+      <div class="preview-block" id="previewHTML">
+        <div class="preview-head">Vista previa renderizada</div>
+        <iframe class="preview-frame" id="previewFrame" sandbox="allow-same-origin" title="Vista previa"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 08 · RECURSOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">8</span>
+      <span class="num-title">Recursos</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/HTML/Element/Heading_Elements" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Encabezados &lt;h1&gt;–&lt;h6&gt;</div>
+          <div class="res-desc">La referencia completa de los encabezados y sus reglas de uso.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Learn/HTML/Introduction_to_HTML/HTML_text_fundamentals" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Fundamentos de texto HTML</div>
+          <div class="res-desc">Párrafos, listas, énfasis y todo lo que necesitas para estructurar texto.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/HTML/Element/time" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · &lt;time&gt; y el atributo datetime</div>
+          <div class="res-desc">Cómo marcar fechas y horas para que las entiendan buscadores y calendarios.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="cta">
+    <div class="cta-label">Tu siguiente paso</div>
+    <h2>Conecta tus páginas con enlaces</h2>
+    <p>El texto ya tiene estructura. El siguiente módulo te enseña el elemento más poderoso de la web: el enlace <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;a&gt;</code>. La etiqueta que convirtió documentos sueltos en una red.</p>
+    <a class="cta-btn" href="M05_Enlaces_Navegacion.html">
+      MÓDULO 05 · Enlaces y navegación
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+// ═══ INLINE HTML RUNNER ═══
+function runHTML(){
+  var src = '<!DOCTYPE html>\n' +
+    '<html lang="es">\n' +
+    '  <head>\n' +
+    '    <meta charset="utf-8">\n' +
+    '    <title>Carta</title>\n' +
+    '  </head>\n' +
+    '  <body style="font-family:Georgia,serif;line-height:1.7;color:#111;margin:20px;max-width:600px">\n' +
+    '    <h1 style="margin:0 0 8px">Carta al equipo</h1>\n' +
+    '    <address style="font-style:normal;color:#555;margin-bottom:16px">Rub\u00e9n Menacho \u00b7 email@ejemplo.com</address>\n' +
+    '    <p style="margin:0 0 14px">Barcelona, <time datetime="2026-07-05">5 de julio de 2026</time>.</p>\n' +
+    '    <p style="margin:0 0 14px">Equipo, como dijo <q>el que lee mucho y anda mucho, ve mucho y sabe mucho</q> \u2014 <cite>Cervantes</cite>.</p>\n' +
+    '    <blockquote style="margin:0 0 14px;padding:10px 18px;border-left:3px solid #bbb;color:#444;font-style:italic">Lo esencial es invisible a los ojos.</blockquote>\n' +
+    '    <p style="margin:0 0 14px">Nuestra <abbr title="Sociedad de Responsabilidad Limitada">SRL</abbr> cumple hoy 5 a\u00f1os.</p>\n' +
+    '    <p style="margin:0 0 14px">Pulsa <kbd>Ctrl</kbd>+<kbd>C</kbd> para copiar. Salida: <samp>Build OK</samp></p>\n' +
+    '    <pre style="background:#f4f4f4;padding:12px;border-radius:6px;overflow:auto;font-family:ui-monospace,monospace;font-size:13px"><code>function cumple() {\n  return "\u00a1Felicidades!";\n}</code></pre>\n' +
+    '  </body>\n' +
+    '</html>';
+  var frame = document.getElementById('previewFrame');
+  var block = document.getElementById('previewHTML');
+  block.classList.add('show');
+  frame.srcdoc = src;
+  frame.style.minHeight = '500px';
+}
+</script>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M17 · Generador de output — Curso Bug Report Tool</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --yellow:#F5C451; --red:#FB7185; --green:#34D399; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(245,196,81,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(245,196,81,.18),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(167,139,250,.08),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(34,184,207,.05),transparent 60%)}
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(245,196,81,.12);border:1px solid rgba(245,196,81,.32);color:var(--yellow);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--yellow)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);margin-bottom:clamp(24px,4vw,38px)}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;margin:0 0 20px;max-width:62ch}
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;height:30px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;color:#1a1a1a;background:linear-gradient(145deg,#F5C451,#F59E0B)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;color:var(--text-mut);text-transform:uppercase}
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+.content-block code{font-family:var(--font-mono);font-size:13px;background:rgba(245,196,81,.1);padding:2px 6px;border-radius:5px;color:var(--yellow)}
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(245,196,81,.16);border-color:rgba(245,196,81,.22);color:var(--yellow)}
+.code-btn.primary{background:rgba(245,196,81,.16);border-color:rgba(245,196,81,.22);color:var(--yellow)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+.code-prop{color:#93C5FD}
+.output-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;overflow:hidden;display:none}
+.output-block.show{display:block}
+.output-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.output-body{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6}
+.out-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.out-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.out-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.out-text{color:#C7CDE0;white-space:pre-wrap}
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;height:30px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;color:#1a1a1a;background:linear-gradient(145deg,#F5C451,#F59E0B)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body code{font-family:var(--font-mono);font-size:13px;background:rgba(245,196,81,.1);padding:2px 6px;border-radius:5px;color:var(--yellow)}
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;
+  border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(245,196,81,.08);border-color:rgba(245,196,81,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px;color:#F4F2FB}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;
+  background:linear-gradient(145deg,#F59E0B,#D97706);color:#1a1a1a;font-family:var(--font-body);
+  font-size:15px;font-weight:600;box-shadow:0 8px 24px -8px rgba(245,196,81,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(245,196,81,.8)}
+.cta-btn svg{width:18px;height:18px}
+@media(max-width:640px){.step{flex-direction:column;gap:6px}}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="wrap">
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 17 · JS AVANZADO — OUTPUT</div>
+    <h1>Generador de <span class="hl">output</span>: de formulario a texto final</h1>
+    <p>El tester llena el formulario y, a la derecha, la herramienta genera automáticamente el texto que pegará en el issue tracker. Ese texto se construye recorriendo el schema, aplicando plantillas y modo <code>joined</code> o <code>lines</code>. En este módulo vemos cómo <code>buildOutput</code> convierte los valores del formulario en el texto final.</p>
+    <div class="meta-chips">
+      <span class="chip">⚡ JS Avanzado</span>
+      <span class="chip">~12 min de lectura</span>
+      <span class="chip">Nivel: intermedio</span>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">1</span><span class="num-title">La idea en una imagen</span></div>
+    <div class="card">
+      <p>Imagina una máquina embutidora: por un lado entran los valores del formulario (team, región, mapa...) y por el otro sale un texto formateado listo para pegar. Cada campo tiene su plantilla (<code>"COD {value}"</code> → <code>"COD 12345"</code>) y la sección decide si todo va en una línea (<code>joined</code>) o en líneas separadas (<code>lines</code>).</p>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">2</span><span class="num-title">buildOutput: recorrer secciones y aplicar plantillas</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>La función que genera el texto final</h3>
+        <p><code>buildOutput(inst)</code> es el corazón del generador. Recibe una instancia (los valores del bug) y produce un objeto con <code>full</code> (texto completo), <code>summary</code> (primera línea) y <code>description</code> (el resto). Estos chunks sirven para los botones "Copiar resumen" y "Copiar descripción".</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — buildOutput (simplificado)</span></div>
+        <pre><code><span class="code-kw">function</span> <span class="code-fn">buildOutput</span>(inst) {
+  <span class="code-kw">const</span> form = <span class="code-fn">getForm</span>(inst.formId);
+  <span class="code-kw">const</span> fx = <span class="code-fn">evalFieldRules</span>(form, inst); <span class="code-cmt">// campos ocultos</span>
+  <span class="code-kw">const</span> blocks = [];
+
+  form.sections.<span class="code-fn">forEach</span>(sec => {
+    <span class="code-kw">const</span> lines = [];
+    <span class="code-kw">if</span> (sec.mode === <span class="code-str">"joined"</span>) {
+      <span class="code-cmt">// Todos los campos en una línea con separadores</span>
+      <span class="code-kw">let</span> line = <span class="code-str">""</span>;
+      sec.fields.<span class="code-fn">forEach</span>(field => {
+        <span class="code-kw">if</span> (fx[field.id].hidden) <span class="code-kw">return</span>;
+        <span class="code-kw">const</span> part = <span class="code-fn">fieldOutputPart</span>(field, inst);
+        <span class="code-kw">if</span> (part == <span class="code-kw">null</span>) <span class="code-kw">return</span>;
+        line += (line ? sec.sep : <span class="code-str">""</span>) + part;
+      });
+      <span class="code-kw">if</span> (line) lines.<span class="code-fn">push</span>(line);
+    } <span class="code-kw">else</span> {
+      <span class="code-cmt">// Cada campo aporta su(s) línea(s)</span>
+      sec.fields.<span class="code-fn">forEach</span>(field => {
+        <span class="code-kw">if</span> (fx[field.id].hidden) <span class="code-kw">return</span>;
+        <span class="code-kw">const</span> part = <span class="code-fn">fieldOutputPart</span>(field, inst);
+        <span class="code-kw">if</span> (part != <span class="code-kw">null</span>) lines.<span class="code-fn">push</span>(...part);
+      });
+      <span class="code-kw">if</span> (sec.heading) lines.<span class="code-fn">unshift</span>(sec.heading);
+    }
+    <span class="code-kw">if</span> (lines.length) blocks.<span class="code-fn">push</span>({ lines, noGap: !!sec.noGap });
+  });
+
+  <span class="code-kw">return</span> { full: out.<span class="code-fn">join</span>(<span class="code-str">"\n"</span>), summary, description };
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">3</span><span class="num-title">Modo joined: todo en una línea</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Separadores y plantillas que se concatenan</h3>
+        <p>En modo <code>joined</code>, todos los campos de la sección se unen en una sola línea. El separador puede ser <code>" - "</code> (por defecto), <code>" "</code> o cualquier texto. Cada campo tiene una <strong>plantilla</strong> que transforma su valor: <code>"COD {value}"</code> → <code>"COD 12345"</code>.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JSON — sección joined del schema</span></div>
+        <pre><code>{
+  <span class="code-str">"id"</span>: <span class="code-str">"resumen"</span>,
+  <span class="code-str">"label"</span>: <span class="code-str">"Resumen (encabezado)"</span>,
+  <span class="code-str">"mode"</span>: <span class="code-str">"joined"</span>,
+  <span class="code-str">"sep"</span>: <span class="code-str">" - "</span>,
+  <span class="code-str">"fields"</span>: [
+    { <span class="code-str">"id"</span>: <span class="code-str">"team"</span>, <span class="code-str">"label"</span>: <span class="code-str">"Team"</span>, <span class="code-str">"type"</span>: <span class="code-str">"text"</span> },
+    { <span class="code-str">"id"</span>: <span class="code-str">"version"</span>, <span class="code-str">"label"</span>: <span class="code-str">"Versión"</span>, <span class="code-str">"type"</span>: <span class="code-str">"text"</span> }
+  ]
+}
+<span class="code-cmt">// Output: "QA EU - 1.0.4567 - PC(MSS) - MP - Highrise ..."</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">4</span><span class="num-title">Modo lines: cada campo en su línea</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>heading, joinPrev y perLine</h3>
+        <p>En modo <code>lines</code>, cada campo aporta una o más líneas. Tres propiedades controlan cómo se formatean:</p>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><h4>heading</h4><p>Encabezado que se antepone a las líneas de la sección. Ej: <code>"+Información de Compilación:+</code> → se pone como primera línea.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><h4>joinPrev</h4><p>El campo se une a la línea anterior (sin salto de línea). Ej: la zona horaria <code>tz</code> se pega al final de la línea del timestamp.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><h4>perLine</h4><p>Aplica la plantilla a cada línea escrita. Ej: los pasos para reproducir (uno por línea) se convierten en <code>"# Paso 1"</code>, <code>"# Paso 2"</code>, etc.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">5</span><span class="num-title">omitValue y emptyAs: valores vacíos</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Cuándo omitir y cuándo sustituir</h3>
+        <p>Dos propiedades controlan el comportamiento cuando un campo está vacío:</p>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><h4>omitValue</h4><p>Si el valor coincide con <code>omitValue</code>, el campo se omite del output. Ej: <code>omitValue: "N/A"</code> → si BSP CL es "N/A", no aparece en el output.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><h4>emptyAs</h4><p>Si el campo está vacío, se usa <code>emptyAs</code> como valor en la plantilla. Ej: <code>emptyAs: "N/A"</code> → si CCS está vacío, el output dice "CCS/FFOTD: N/A".</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">6</span><span class="num-title">Chunks: summary y description</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Por qué el output se divide en dos</h3>
+        <p>El output se divide en <strong>summary</strong> (la primera línea, que se genera en la sección <code>joined</code>) y <strong>description</strong> (todas las demás secciones). Así el tester puede copiar solo el resumen con el botón "Copiar resumen" para el título del issue, o copiar todo con "Copiar todo" para el cuerpo.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">7</span><span class="num-title">Tu primer momento: generar output</span></div>
+    <div class="card">
+      <p>Pulsa <strong>Ejecutar</strong> para ver cómo <code>buildOutput</code> recorre un schema de 2 secciones (una joined y una lines) y genera el texto final a partir de los valores.</p>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — buildOutput simplificado</span>
+          <div class="code-btns"><button class="code-btn primary" onclick="runOutput()">Ejecutar</button></div></div>
+        <pre><code><span class="code-cmt">// Schema simplificado de 2 secciones</span>
+<span class="code-kw">var</span> sections = [
+  { mode:<span class="code-str">"joined"</span>, sep:<span class="code-str">" - "</span>, fields:[
+    { id:<span class="code-str">"team"</span>, template:<span class="code-str">"{value}"</span> },
+    { id:<span class="code-str">"version"</span>, template:<span class="code-str">"{value}"</span> }
+  ]},
+  { mode:<span class="code-str">"lines"</span>, heading:<span class="code-str">"+Build:"</span>, fields:[
+    { id:<span class="code-str">"cl"</span>, template:<span class="code-str">"CL: {value}"</span> }
+  ]}
+];
+<span class="code-kw">var</span> values = { team:<span class="code-str">"QA"</span>, version:<span class="code-str">"1.0.4567"</span>, cl:<span class="code-str">"12345"</span> };
+
+<span class="code-cmt">// Generar output:</span>
+<span class="code-kw">var</span> lines = [];
+sections[0].fields.<span class="code-fn">forEach</span>(<span class="code-kw">function</span>(f){
+  <span class="code-kw">var</span> v = values[f.id];
+  <span class="code-kw">if</span>(v) lines.<span class="code-fn">push</span>(f.template.<span class="code-fn">replace</span>(<span class="code-str">"{value}"</span>, v));
+});
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(lines.<span class="code-fn">join</span>(<span class="code-str">" - "</span>)); <span class="code-cmt">// resumen</span>
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"+Build:"</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"CL: "</span> + values.cl);</code></pre>
+      </div>
+      <div class="output-block" id="outBuild">
+        <div class="output-head">Output generado</div>
+        <div class="output-body" id="outBuildBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">8</span><span class="num-title">Ejercicio</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Generar output de un schema de 3 secciones</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Define un schema</h4><p>3 secciones: una joined con 3 campos, una lines con heading y 2 campos, y una con perLine.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Asigna valores</h4><p>Crea un objeto <code>values</code> con valores para cada campo.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Genera el output</h4><p>Recorre las secciones aplicando plantillas y separadores. Imprime el resultado con <code>console.log</code>.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">9</span><span class="num-title">Recursos</span></div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/String/replace" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · String.replace</div>
+        <div class="res-desc">Reemplazar texto con plantillas y regex.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Array/join" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Array.join</div>
+        <div class="res-desc">Unir elementos de array con separador.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div class="cta-label">Siguiente paso</div>
+    <h2>¿Cómo se guarda y exporta todo?</h2>
+    <p>Ya sabemos generar el output. Ahora veremos cómo la herramienta guarda en localStorage, exporta a HTML autocontenido y maneja CSVs.</p>
+    <a class="cta-btn" href="M18_persistencia.html">
+      MÓDULO 18 · Persistencia y exportación
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+<script>
+"use strict";
+function runOutput(){
+  var out=document.getElementById('outBuild'),body=document.getElementById('outBuildBody');
+  body.innerHTML='';
+  var logs=[];
+  var origLog=console.log;
+  console.log=function(){var a=[].slice.call(arguments);logs.push({level:'log',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')})};
+  try{
+    var sections=[
+      {mode:"joined",sep:" - ",fields:[
+        {id:"team",template:"{value}"},
+        {id:"version",template:"{value}"}
+      ]},
+      {mode:"lines",heading:"+Build:",fields:[
+        {id:"cl",template:"CL: {value}"}
+      ]}
+    ];
+    var values={team:"QA",version:"1.0.4567",cl:"12345"};
+    var lines=[];
+    sections[0].fields.forEach(function(f){
+      var v=values[f.id];
+      if(v)lines.push(f.template.replace("{value}",v));
+    });
+    console.log(lines.join(" - "));
+    console.log("+Build:");
+    console.log("CL: "+values.cl);
+  }catch(e){logs.push({level:'log',text:'Error: '+e.message})}finally{console.log=origLog}
+  if(!logs.length)logs.push({level:'log',text:'(sin salida visible)'});
+  logs.forEach(function(l){
+    var line=document.createElement('div');line.className='out-line';
+    var tag=document.createElement('span');tag.className='out-tag '+l.level;tag.textContent=l.level;
+    var txt=document.createElement('span');txt.className='out-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);body.appendChild(line);
+  });
+  out.classList.add('show');
+}
+</script>
+</body>
+</html>

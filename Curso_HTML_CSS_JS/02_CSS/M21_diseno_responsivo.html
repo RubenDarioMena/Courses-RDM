@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M21 · Diseño responsivo — Curso HTML+CSS+JS</title>
+<style>*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg-base:#09080F;--bg-s1:#0C0B13;--bg-s2:#0E0D16;--bg-s3:#110F18;--bg-s4:#13111D;--bg-s5:#1B1926;--text-pri:#EEEBF6;--text-sec:#C7CDE0;--text-mut:#8B889C;--text-sub:#5E5C6E;--accent:#A78BFA;--accent-soft:rgba(139,92,246,.16);--accent-border:rgba(167,139,250,.35);--green:#34D399;--green-soft:rgba(52,211,153,.12);--green-border:rgba(52,211,153,.22);--green-hi:rgba(52,211,153,.35);--red:#FB7185;--yellow:#F5C451;--cyan:#67E8F9;--border:rgba(255,255,255,.07);--border-hi:rgba(255,255,255,.12);--font-head:'Space Grotesk',system-ui,sans-serif;--font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(52,211,153,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(900px 520px at 78% -10%,rgba(52,211,153,.20),transparent 60%),radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.11),transparent 55%),radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);color:var(--green);font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--green)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));border:1px solid var(--border);border-radius:18px;padding:clamp(20px,4vw,30px);box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);margin-bottom:clamp(24px,4vw,38px)}
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#06120B;background:linear-gradient(145deg,var(--green),#10B981)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;color:var(--text-mut);text-transform:uppercase}
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(52,211,153,.16);border-color:var(--green-border);color:var(--green)}
+.code-btn.primary{background:rgba(52,211,153,.16);border-color:var(--green-border);color:var(--green)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-sel{color:#34D399}
+.code-prop-name{color:#93C5FD}
+.code-val{color:#ECC48D}
+.code-brace{color:#A78BFA}
+.sel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px}
+.sel-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:13px;padding:15px 17px}
+.sel-card-name{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:4px}
+.sel-card-code{font-family:var(--font-mono);font-size:13px;color:var(--green);background:rgba(52,211,153,.08);padding:4px 8px;border-radius:6px;display:inline-block;margin-bottom:6px}
+.sel-card-desc{font-size:13.5px;color:var(--text-mut);line-height:1.55}
+.preview-box{margin-top:14px;border:1px solid var(--border);border-radius:13px;overflow:hidden;background:#fff}
+.preview-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.preview-body{padding:18px;background:#f8fafc;display:flex;justify-content:center}
+#inlinePreview{display:flex;flex-direction:column;gap:14px;width:100%;max-width:560px;background:#fff;border:2px solid #cbd5e1;border-radius:12px;padding:16px;box-shadow:0 4px 18px rgba(15,23,42,.08);font-family:system-ui,sans-serif;color:#0f172a;align-items:stretch}
+#inlinePreview .pv-img{width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,#34D399 0%,#10B981 50%,#059669 100%);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;flex-shrink:0}
+#inlinePreview .pv-body h4{font-size:18px;margin-bottom:6px}
+#inlinePreview .pv-body .price{color:#10B981;font-weight:700;font-size:16px;margin-bottom:8px}
+#inlinePreview .pv-body p{color:#475569;font-size:14px;line-height:1.5}
+#inlinePreview .pv-tag{display:inline-block;font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(52,211,153,.16);color:#10B981;font-weight:600;margin-top:8px}
+@media(min-width:600px){#inlinePreview{flex-direction:row;align-items:center;gap:20px}#inlinePreview .pv-img{width:200px;aspect-ratio:1/1}}
+.fab{position:fixed;bottom:22px;right:22px;z-index:50;background:none;border:0;padding:0;cursor:pointer;transition:all .25s}
+.fab-btn{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#34D399,#10B981);box-shadow:0 8px 24px -6px rgba(52,211,153,.5);transition:all .25s}
+.fab:hover .fab-btn{transform:scale(1.08)}
+.fab-btn svg{width:24px;height:24px}
+.backdrop{position:fixed;inset:0;z-index:60;background:rgba(4,3,8,.62);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .35s ease}
+.backdrop.show{opacity:1;pointer-events:auto}
+.panel{position:fixed;z-index:70;top:0;right:0;height:100vh;width:min(660px,94vw);background:var(--bg-s2);border-left:1px solid var(--border);box-shadow:-20px 0 60px rgba(0,0,0,.5);transform:translateX(106%);transition:transform .4s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.panel.show{transform:translateX(0)}
+@media(max-width:768px){.panel{top:0;left:0;right:0;bottom:0;width:100%;height:100vh;transform:translateY(100%);border-left:none}.panel.show{transform:translateY(0)}}
+.panel-head{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:var(--bg-s4);border-bottom:1px solid var(--border)}
+.panel-tabs{display:flex;gap:4px}
+.ptab{padding:6px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--font-body);background:transparent;color:var(--text-mut);border:1px solid transparent;transition:all .15s}
+.ptab.active{background:var(--accent-soft);color:#CBBEFB;border-color:var(--accent-border)}
+.ptab:hover:not(.active){color:var(--text-sec)}
+.panel-close{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;color:#A6A3B6;cursor:pointer;transition:all .15s}
+.panel-close:hover{background:rgba(255,255,255,.1);color:#fff}
+.panel-close svg{width:18px;height:18px}
+.panel-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.editor-area{flex:1;position:relative;overflow:hidden}
+.edit-area{position:absolute;inset:0;padding:12px 16px;background:var(--bg-s1);border:none;color:var(--text-sec);font-family:var(--font-mono);font-size:13.5px;line-height:1.75;resize:none;white-space:pre;tab-size:2;outline:none;display:none}
+.edit-area.active{display:block;overflow:auto}
+.panel-foot{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--bg-s4);border-top:1px solid var(--border)}
+.run-btn{margin-left:auto;padding:7px 18px;border-radius:10px;border:0;cursor:pointer;background:linear-gradient(145deg,#34D399,#10B981);color:#06120B;font-family:var(--font-body);font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;transition:all .2s}
+.run-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px -4px rgba(52,211,153,.5)}
+.run-btn svg{width:14px;height:14px}
+.out-tab{padding:6px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;background:transparent;color:var(--text-mut);border:1px solid transparent;font-family:var(--font-body)}
+.out-tab.active{background:var(--accent-soft);color:#CBBEFB;border-color:var(--accent-border)}
+.clear-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text-mut);font-size:12px;cursor:pointer}
+.clear-btn:hover{color:var(--text-sec)}
+.output-panel{flex:1;overflow:auto;display:none;position:relative;background:var(--bg-s1)}
+.output-panel.active{display:block}
+#pgFrame{width:100%;height:100%;border:0;background:#fff}
+#pgConsole{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6;overflow:auto}
+.pg-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.pg-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.pg-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.pg-tag.warn{color:var(--yellow);background:rgba(245,196,81,.1)}
+.pg-tag.error{color:#FF8E8E;background:rgba(255,142,142,.1)}
+.pg-tag.alert{color:#C4B5FD;background:rgba(196,181,253,.1)}
+.pg-text{color:#C7CDE0}
+.pg-empty{color:var(--text-sub);font-size:13px;padding:20px;text-align:center}
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#06120B;background:linear-gradient(145deg,#34D399,#10B981)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(52,211,153,.08);border-color:var(--green-border)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-family:var(--font-head);font-weight:700;font-size:clamp(22px,3.5vw,30px);color:#F4F2FB;margin:0 0 14px;letter-spacing:-.015em}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;background:linear-gradient(145deg,#34D399,#10B981);color:#06120B;font-family:var(--font-body);font-size:15px;font-weight:600;box-shadow:0 8px 24px -8px rgba(52,211,153,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(52,211,153,.8)}
+.cta-btn svg{width:18px;height:18px}
+@media(max-width:640px){.step{flex-direction:column;gap:6px}}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="wrap">
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 21 · RESPONSIVE</div>
+    <h1>Diseño <span class="hl">responsivo</span></h1>
+    <p>Una página responsiva se ve bien en un móvil de 360px, en una tablet de 768px y en un monitor 4K — con el mismo HTML. CSS te da las herramientas: <code>@media</code> para los saltos, <code>vw/vh/clamp()</code> para tamaños fluidos, y <code>srcset</code>/<code>&lt;picture&gt;</code> para que las imágenes manden la versión correcta al navegador.</p>
+    <div class="meta-chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#5FD0E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>Sin instalar nada</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>Pruébalo en el editor</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>~12 min</span>
+    </div>
+  </div>
+
+  <!-- 01 · META VIEWPORT + MEDIA QUERIES -->
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">1</span><span class="num-title">El meta viewport y los @media</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3><code>&lt;meta viewport&gt;</code> (repaso rápido)</h3>
+        <p>Sin esta línea, los móviles renderizan tu página como si fuera un escritorio de 980px y la缩小 toda para que entre. <strong>Es obligatorio</strong> en cualquier página responsiva. Va en el <code>&lt;head&gt;</code>:</p>
+        <div class="code-block"><pre><code><span class="code-sel">&lt;meta</span> <span class="code-prop-name">name</span>=<span class="code-val">"viewport"</span> <span class="code-prop-name">content</span>=<span class="code-val">"width=device-width, initial-scale=1"</span><span class="code-sel">&gt;</span></code></pre></div>
+      </div>
+      <div class="content-block">
+        <h3><code>@media</code> y mobile-first</h3>
+        <p>Una <strong>media query</strong> aplica un bloque de CSS solo cuando se cumple una condición (ancho, alto, orientación, prefers-color-scheme…). La filosofía <strong>mobile-first</strong>: escribe primero los estilos para móvil, y luego añade breakpoints con <code>min-width</code> que <em>añaden</em> complejidad conforme la pantalla crece. Es lo contrario de "diseñar para desktop y restar con max-width".</p>
+        <div class="code-block"><pre><code><span class="code-cmt">/* base: móvil */</span>
+<span class="code-sel">.nav</span> <span class="code-brace">{</span> <span class="code-prop-name">flex-direction</span>: <span class="code-val">column</span>; <span class="code-brace">}</span>
+
+<span class="code-cmt">/* tablet ≥ 768px */</span>
+<span class="code-sel">@media (min-width: 768px)</span> <span class="code-brace">{</span>
+  <span class="code-sel">.nav</span> <span class="code-brace">{</span> <span class="code-prop-name">flex-direction</span>: <span class="code-val">row</span>; <span class="code-brace">}</span>
+<span class="code-brace">}</span>
+
+<span class="code-cmt">/* desktop ≥ 1024px */</span>
+<span class="code-sel">@media (min-width: 1024px)</span> <span class="code-brace">{</span>
+  <span class="code-sel">.container</span> <span class="code-brace">{</span> <span class="code-prop-name">max-width</span>: <span class="code-val">1200px</span>; <span class="code-prop-name">margin</span>: <span class="code-val">0 auto</span>; <span class="code-brace">}</span>
+<span class="code-brace">}</span></code></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 · UNIDADES DE VIEWPORT Y FLUIDEZ -->
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">2</span><span class="num-title">Unidades de viewport y tamaño fluido</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3><code>vw</code>, <code>vh</code>, <code>vmin</code>, <code>vmax</code></h3>
+        <p>Las unidades <code>vw</code>/<code>vh</code> son relativas al viewport: <code>1vw</code> = 1% del ancho de la ventana, <code>1vh</code> = 1% del alto. <code>vmin</code> toma el menor entre ancho y alto, <code>vmax</code> el mayor — útiles para elementos que deben escalar con la pantalla (un hero a pantalla completa, un banner…).</p>
+        <div class="code-block"><pre><code><span class="code-sel">.hero</span>   <span class="code-brace">{</span> <span class="code-prop-name">min-height</span>: <span class="code-val">100vh</span>; <span class="code-brace">}</span>   <span class="code-cmt">/* pantalla completa */</span>
+<span class="code-sel">.anuncio</span> <span class="code-brace">{</span> <span class="code-prop-name">width</span>: <span class="code-val">50vmin</span>; <span class="code-brace">}</span>  <span class="code-cmt">/* mitad del lado más corto */</span>
+<span class="code-sel">.texto</span>  <span class="code-brace">{</span> <span class="code-prop-name">font-size</span>: <span class="code-val">4vmax</span>; <span class="code-brace">}</span> <span class="code-cmt">/* escala con el lado más largo  */</span></code></pre></div>
+      </div>
+      <div class="content-block">
+        <h3>Tipografía fluida con <code>clamp()</code>, <code>min()</code>, <code>max()</code></h3>
+        <p><code>clamp(MIN, FLUIDO, MAX)</code> devuelve un valor que crece con el viewport, pero acotado entre MIN y MAX. La fórmula clásica con <code>vw</code> + <code>rem</code> te da tipografía que escala sin saltos:</p>
+        <div class="code-block"><pre><code><span class="code-sel">h1</span> <span class="code-brace">{</span>
+  <span class="code-prop-name">font-size</span>: <span class="code-val">clamp(1.25rem, 1rem + 2vw, 2rem)</span>;
+  <span class="code-cmt">/* 20px mínimo · crece 2% del viewport · máximo 32px */</span>
+<span class="code-brace">}</span>
+<span class="code-sel">.ancho</span> <span class="code-brace">{</span> <span class="code-prop-name">width</span>: <span class="code-val">min(100% - 32px, 800px)</span>; <span class="code-brace">}</span>  <span class="code-cmt">/* nunca más ancho que 800px */</span></code></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 · IMÁGENES RESPONSIVAS -->
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">3</span><span class="num-title">Imágenes responsivas: que el navegador pida la correcta</span></div>
+    <div class="card">
+      <p>Este módulo es donde aparece por fin el sistema de imágenes que se referencia desde M07 y M14. Sirve para no enviar una foto de 4K a un móvil o servir un PNG gigante donde bastaba un WebP pequeño.</p>
+      <div class="sel-grid">
+        <div class="sel-card"><div class="sel-card-name"><code>srcset</code></div><div class="sel-card-code">srcset="a.jpg 1x, b.jpg 2x"</div><div class="sel-card-desc">Lista de imágenes con su densidad. El navegador elige la adecuada según el píxel-ratio del dispositivo.</div></div>
+        <div class="sel-card"><div class="sel-card-name"><code>sizes</code></div><div class="sel-card-code">sizes="(min-width:768px) 50vw, 100vw"</div><div class="sel-card-desc">Le dice al navegador cuánto ocupará la imagen para que calcule qué fuente descargar.</div></div>
+        <div class="sel-card"><div class="sel-card-name"><code>&lt;picture&gt;</code> + <code>&lt;source&gt;</code></div><div class="sel-card-code">&lt;source media="..." srcset="..."&gt;</div><div class="sel-card-desc">Permite recorte o formato distinto por breakpoint: WebP moderno + JPG fallback, o imagen cuadrada en móvil y panorámica en desktop.</div></div>
+        <div class="sel-card"><div class="sel-card-name"><code>object-fit</code> + <code>aspect-ratio</code></div><div class="sel-card-code">object-fit: cover; aspect-ratio: 4/3;</div><div class="sel-card-desc">Para que una imagen ocupe una caja sin deformarse: cover recorta, contain muestra entera, aspect-ratio fija la proporción.</div></div>
+      </div>
+      <div class="code-block"><pre><code><span class="code-sel">&lt;picture&gt;</span>
+  <span class="code-sel">&lt;source</span> <span class="code-prop-name">media</span>=<span class="code-val">"(max-width: 767px)"</span> <span class="code-prop-name">srcset</span>=<span class="code-val">"movil.jpg 1x, movil-retina.jpg 2x"</span><span class="code-sel">&gt;</span>
+  <span class="code-sel">&lt;source</span> <span class="code-prop-name">media</span>=<span class="code-val">"(min-width: 768px)"</span> <span class="code-prop-name">srcset</span>=<span class="code-val">"desktop.jpg"</span><span class="code-sel">&gt;</span>
+  <span class="code-sel">&lt;img</span> <span class="code-prop-name">src</span>=<span class="code-val">"desktop.jpg"</span> <span class="code-prop-name">alt</span>=<span class="code-val">"Producto"</span>
+       <span class="code-prop-name">style</span>=<span class="code-val">"object-fit:cover; aspect-ratio: 4/3; width:100%"</span><span class="code-sel">&gt;</span>
+<span class="code-sel">&lt;/picture&gt;</span></code></pre></div>
+    </div>
+  </div>
+
+  <!-- 04 · TU PRIMER MOMENTO -->
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">4</span><span class="num-title">Tu primer momento: tarjeta responsiva</span></div>
+    <div class="card">
+      <p>Una <strong>tarjeta de producto</strong> debe apilarse verticalmente en móvil (imagen arriba, texto abajo) y colocarse horizontal en desktop (imagen izq, texto der). Aquí ves el resultado final. Cambia el <code>flex-direction</code> en el código y pulsa <strong>Ejecutar</strong> para alternar entre los dos layouts sin tocar el HTML.</p>
+      <div class="code-block">
+        <div class="code-head"><span>CSS · .tarjeta-producto</span><div class="code-btns"><button class="code-btn primary" onclick="runIntro()">Ejecutar</button></div></div>
+        <pre><code><span class="code-sel">#inlinePreview</span> <span class="code-brace">{</span>
+  <span class="code-cmt">/* cambia a row y verás la card horizontal; a column y vuelve vertical */</span>
+  <span class="code-prop-name">flex-direction</span>: <span class="code-val">row</span>;
+  <span class="code-prop-name">gap</span>: <span class="code-val">20px</span>;
+  <span class="code-prop-name">align-items</span>: <span class="code-val">center</span>;
+<span class="code-brace">}</span>
+<span class="code-sel">#inlinePreview .pv-img</span> <span class="code-brace">{</span> <span class="code-prop-name">width</span>: <span class="code-val">200px</span>; <span class="code-prop-name">aspect-ratio</span>: <span class="code-val">1/1</span>; <span class="code-brace">}</span></code></pre>
+      </div>
+      <div class="preview-box">
+        <div class="preview-head">Vista previa · cambia el ancho del navegador para ver el @media</div>
+        <div class="preview-body">
+          <div id="inlinePreview">
+            <div class="pv-img">Imagen<br>(picture)</div>
+            <div class="pv-body">
+              <h4>Auriculares Pro</h4>
+              <div class="price">€89,00</div>
+              <p>Cancelación de ruido activa, 30h de batería y estuche de carga inalámbrica.</p>
+              <span class="pv-tag">EN STOCK</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-block" style="margin-top:18px">
+        <h3>El @media en juego (mira el CSS de la preview)</h3>
+        <p>La preview ya tiene un <code>@media (min-width: 600px)</code> declarado en sus estilos: por debajo de 600px, la imagen vuelve a ocupar el 100% arriba y el texto baja. Cambia el <code>flex-direction</code> en el código de arriba y observa cómo la composición responde. Y abre el editor con el FAB para ver el <code>&lt;picture&gt;</code> en acción con dos <code>&lt;source&gt;</code> reales.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 · RECURSOS -->
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">5</span><span class="num-title">Recursos para profundizar</span></div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Learn/CSS/CSS_layout/Responsive_Design" target="_blank" rel="noopener"><div><div class="res-name">MDN · Diseño web responsivo</div><div class="res-desc">La guía base sobre responsive: media queries, layouts fluidos, imágenes.</div></div><svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images" target="_blank" rel="noopener"><div><div class="res-name">MDN · Imágenes responsivas</div><div class="res-desc">srcset, sizes, picture, source — toda la teoría y casos prácticos.</div></div><svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
+      <a class="res-link" href="https://web.dev/learn/design" target="_blank" rel="noopener"><div><div class="res-name">web.dev · Learn Responsive Design</div><div class="res-desc">Curso guiado de Google con ejercicios interactivos sobre layout adaptativo.</div></div><svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <div class="cta-label">Tu web ya se adapta a cualquier pantalla</div>
+    <h2>¿Listo para darle color y vida?</h2>
+    <p>Hasta ahora todo era forma y posición. Ahora toca la parte más jugosa: colores, fondos, gradientes y bordes redondeados — el alma visual de una interfaz.</p>
+    <a class="cta-btn" href="M22_colores_fondos.html">
+      MÓDULO 22 · Colores y fondos
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+
+<button class="fab" id="fab" onclick="openPlayground()"><div class="fab-btn"><svg viewBox="0 0 24 24" fill="none" stroke="#06120B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg></div></button>
+<div class="backdrop" id="backdrop" onclick="closePlayground()"></div>
+<div class="panel" id="panel">
+  <div class="panel-head">
+    <div class="panel-tabs"><button class="ptab active" onclick="setTab('html')">HTML</button><button class="ptab" onclick="setTab('css')">CSS</button><button class="ptab" onclick="setTab('js')">JS</button></div>
+    <button class="panel-close" onclick="closePlayground()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="panel-body">
+    <div class="editor-area"><textarea class="edit-area active" id="taHtml" spellcheck="false"></textarea><textarea class="edit-area" id="taCss" spellcheck="false"></textarea><textarea class="edit-area" id="taJs" spellcheck="false"></textarea></div>
+    <div class="panel-foot">
+      <button class="out-tab active" onclick="setOutTab('preview')">Vista</button>
+      <button class="out-tab" onclick="setOutTab('console')">Consola</button>
+      <button class="clear-btn" onclick="clearConsole()">Limpiar</button>
+      <button class="run-btn" onclick="runPlayground()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>Ejecutar</button>
+    </div>
+    <div class="output-panel active" id="previewPanel" style="min-height:200px"><iframe id="pgFrame" sandbox="allow-scripts" title="Vista previa"></iframe></div>
+    <div class="output-panel" id="consolePanel" style="min-height:200px"><div id="pgConsole"><div class="pg-empty">La consola está vacía. Pulsa Ejecutar para ver la salida.</div></div></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+function runIntro(){
+  var css=document.querySelector('.code-block pre code').textContent;
+  var el=document.getElementById('inlinePreview');
+  el.removeAttribute('style');
+  // Apply ALL rules (the code has two rules separated by `}`)
+  var rules=css.split(/(?<=\})/);
+  rules.forEach(function(ruleText){
+    ruleText=ruleText.trim();
+    if(!ruleText)return;
+    // Get selector and declarations
+    var m=ruleText.match(/^([^{]+)\{([\s\S]*?)\}$/);
+    if(!m)return;
+    var sel=m[1].trim();
+    var declsBlock=m[2];
+    var target=document.querySelector(sel);
+    if(!target)return;
+    declsBlock.split(';').forEach(function(d){
+      d=d.replace(/\/\*[\s\S]*?\*\//g,'').trim();
+      if(!d)return;
+      var idx=d.indexOf(':');
+      if(idx===-1)return;
+      var prop=d.substring(0,idx).trim();
+      var val=d.substring(idx+1).trim();
+      try{target.style.setProperty(prop,val)}catch(e){}
+    });
+  });
+}
+var pgState={tab:'html',outTab:'preview',pgConsole:[]};
+var defaultCode={
+  html:'<picture>\n  <source media="(max-width: 767px)" srcset="movil.jpg 1x, movil-retina.jpg 2x">\n  <source media="(min-width: 768px)" srcset="desktop.jpg">\n  <img src="desktop.jpg" alt="Producto" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block; border-radius:8px; background:linear-gradient(135deg,#34D399,#10B981)">\n</picture>\n<h2 style="margin:14px 0 4px">Auriculares Pro</h2>\n<p class="p">Cancelación de ruido activa · 30h de batería</p>\n<strong style="color:#10B981">€89,00</strong>',
+  css:'body{font-family:system-ui,sans-serif;padding:24px;background:#f8fafc;color:#0f172a}\n.p{color:#475569;font-size:14px;margin-bottom:10px}\nimg{max-width:100%;min-height:120px}\n@media (min-width: 768px) { body { padding: 40px; } }',
+  js:'console.log("Responsive: cambia el ancho del iframe para ver el @media");'
+};
+var tagMap={log:'log',warn:'warn',error:'error',alert:'alert'};
+function openPlayground(){
+  if(!document.getElementById('taHtml').value)document.getElementById('taHtml').value=defaultCode.html;
+  if(!document.getElementById('taCss').value)document.getElementById('taCss').value=defaultCode.css;
+  if(!document.getElementById('taJs').value)document.getElementById('taJs').value=defaultCode.js;
+  document.getElementById('backdrop').classList.add('show');
+  document.getElementById('panel').classList.add('show');
+  document.getElementById('fab').style.opacity='0';document.getElementById('fab').style.pointerEvents='none';
+  runPlayground();
+}
+function closePlayground(){
+  document.getElementById('backdrop').classList.remove('show');
+  document.getElementById('panel').classList.remove('show');
+  document.getElementById('fab').style.opacity='1';document.getElementById('fab').style.pointerEvents='auto';
+}
+function setTab(tab){
+  pgState.tab=tab;
+  document.querySelectorAll('.ptab').forEach(function(t,i){t.classList.toggle('active',['html','css','js'][i]===tab)});
+  document.querySelectorAll('.edit-area').forEach(function(a){a.classList.remove('active')});
+  var id={html:'taHtml',css:'taCss',js:'taJs'}[tab];
+  document.getElementById(id).classList.add('active');
+}
+function setOutTab(tab){
+  pgState.outTab=tab;
+  document.querySelectorAll('.out-tab').forEach(function(t,i){t.classList.toggle('active',['preview','console'][i]===tab)});
+  document.getElementById('previewPanel').classList.toggle('active',tab==='preview');
+  document.getElementById('consolePanel').classList.toggle('active',tab==='console');
+}
+function clearConsole(){pgState.pgConsole=[];renderConsole()}
+function renderConsole(){
+  var c=document.getElementById('pgConsole');
+  if(!pgState.pgConsole.length){c.innerHTML='<div class="pg-empty">La consola está vacía. Pulsa Ejecutar para ver la salida.</div>';return}
+  c.innerHTML='';
+  pgState.pgConsole.forEach(function(l){
+    var line=document.createElement('div');line.className='pg-line';
+    var tag=document.createElement('span');tag.className='pg-tag '+(tagMap[l.level]||'log');tag.textContent=tagMap[l.level]||'log';
+    var txt=document.createElement('span');txt.className='pg-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);c.appendChild(line);
+  });
+}
+function runPlayground(){
+  pgState.pgConsole=[];
+  var html=document.getElementById('taHtml').value;
+  var css=document.getElementById('taCss').value;
+  var js=document.getElementById('taJs').value;
+  var src='<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>'+css+'</style></head><body>'+html+
+    '<scr'+'ipt>(function(){var send=function(level,args){try{parent.postMessage({__pg:true,level:level,text:args.map(function(a){try{return typeof a==="string"?a:JSON.stringify(a)}catch(e){return String(a)}}).join(" ")},"*")}catch(e){}};var _l=console.log,_w=console.warn,_e=console.error;console.log=function(){send("log",[].slice.call(arguments));_l.apply(console,arguments)};console.warn=function(){send("warn",[].slice.call(arguments));_w.apply(console,arguments)};console.error=function(){send("error",[].slice.call(arguments));_e.apply(console,arguments)};window.alert=function(){send("alert",[].slice.call(arguments))};window.onerror=function(m){send("error",[m]);return false};})();<\/scr'+'ipt>'+
+    '<scr'+'ipt>try{'+js+'}catch(e){console.error((e.name||"Error")+": "+e.message)}<\/scr'+'ipt>'+
+    '</body></html>';
+  var frame=document.getElementById('pgFrame');
+  frame.srcdoc=src;
+  renderConsole();
+}
+window.addEventListener('message',function(e){
+  if(e&&e.data&&e.data.__pg){
+    pgState.pgConsole.push({level:e.data.level,text:e.data.text});
+    renderConsole();
+  }
+});
+</script>
+</body>
+</html>

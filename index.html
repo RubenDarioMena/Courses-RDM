@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cursos Templates</title>
+  <meta name="description" content="Biblioteca publica de cursos autocontenidos en HTML, CSS y JavaScript.">
+  <style>
+    :root{
+      --bg:#081018;
+      --bg-soft:#101b27;
+      --panel:#132131;
+      --panel-2:#17293d;
+      --text:#eef4fb;
+      --muted:#9db1c6;
+      --line:rgba(255,255,255,.1);
+      --html:#6ee7f9;
+      --css:#57d9a3;
+      --js:#f4c95d;
+      --accent:#ff8c42;
+      --shadow:0 20px 50px rgba(0,0,0,.28);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(110,231,249,.12), transparent 30%),
+        radial-gradient(circle at top right, rgba(255,140,66,.12), transparent 26%),
+        linear-gradient(180deg, #09111a 0%, #081018 100%);
+      color:var(--text);
+      min-height:100vh;
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{
+      width:min(1120px, calc(100% - 32px));
+      margin:0 auto;
+      padding:40px 0 72px;
+    }
+    .hero{
+      padding:32px;
+      border:1px solid var(--line);
+      border-radius:32px;
+      background:linear-gradient(180deg, rgba(19,33,49,.94), rgba(11,20,30,.94));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      inset:auto -80px -80px auto;
+      width:240px;
+      height:240px;
+      background:radial-gradient(circle, rgba(255,140,66,.24), transparent 68%);
+      pointer-events:none;
+    }
+    .eyebrow{
+      display:inline-block;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    h1{
+      margin:18px 0 14px;
+      font-size:clamp(2.2rem, 4vw, 4.4rem);
+      line-height:.98;
+      max-width:10ch;
+    }
+    .lead{
+      margin:0;
+      color:var(--muted);
+      font-size:1.08rem;
+      line-height:1.7;
+      max-width:64ch;
+    }
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:24px;
+    }
+    .button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:48px;
+      padding:0 18px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      font-weight:700;
+    }
+    .button.primary{
+      background:var(--accent);
+      color:#1f1207;
+      border-color:transparent;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+      gap:18px;
+      margin-top:28px;
+    }
+    .card{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      padding:22px;
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(23,41,61,.95), rgba(16,27,39,.95));
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+    }
+    .badge-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      min-height:28px;
+      padding:0 10px;
+      border-radius:999px;
+      font-size:.82rem;
+      font-weight:700;
+    }
+    .badge.html{background:rgba(110,231,249,.12); color:var(--html)}
+    .badge.css{background:rgba(87,217,163,.12); color:var(--css)}
+    .badge.js{background:rgba(244,201,93,.12); color:var(--js)}
+    .badge.tool{background:rgba(255,140,66,.12); color:#ffb37f}
+    h2{
+      margin:0;
+      font-size:1.5rem;
+      line-height:1.15;
+    }
+    .card p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.65;
+    }
+    .meta{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:10px;
+    }
+    .meta div{
+      padding:12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .meta strong{
+      display:block;
+      font-size:.78rem;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+    .meta span{
+      font-weight:700;
+    }
+    .steps{
+      margin-top:30px;
+      padding:24px;
+      border-radius:28px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(12,22,32,.95), rgba(9,16,24,.95));
+    }
+    .steps h3{
+      margin:0 0 14px;
+      font-size:1.2rem;
+    }
+    .steps ol{
+      margin:0;
+      padding-left:20px;
+      color:var(--muted);
+      line-height:1.8;
+    }
+    .steps code{
+      color:var(--text);
+      background:rgba(255,255,255,.06);
+      padding:2px 6px;
+      border-radius:8px;
+    }
+    .note{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:.95rem;
+      line-height:1.7;
+    }
+    @media (max-width:700px){
+      .wrap{width:min(100% - 20px, 1120px); padding-top:20px}
+      .hero{padding:24px}
+      .steps{padding:20px}
+      .meta{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <span class="eyebrow">Biblioteca publica de cursos</span>
+      <h1>Cursos listos para verse desde cualquier navegador</h1>
+      <p class="lead">Este sitio reune cursos autocontenidos en HTML. No necesitan login, backend ni instalacion. Son ideales para publicarlos gratis en Netlify y compartir un solo enlace con cualquiera.</p>
+      <div class="hero-actions">
+        <a class="button primary" href="./arena/">Entrar a Arena Python</a>
+        <a class="button primary" href="./Curso_HTML_CSS_JS/">Entrar al curso principal</a>
+        <a class="button" href="./Curso_bug_tool_project/">Ver curso del bug tool</a>
+      </div>
+    </section>
+
+    <section class="grid" aria-label="Cursos publicados">
+      <article class="card">
+        <div class="badge-row">
+          <span class="badge css">Arena</span>
+          <span class="badge html">Python</span>
+          <span class="badge tool">Aprende haciendo</span>
+        </div>
+        <h2>Arena · Base Aurora</h2>
+        <p>Aprende Python desde cero con 40 misiones: ejercicios guiados, retos progresivos y una estación SVG que responde a tu código. La IA para generar variantes es opcional y usa tu propia clave.</p>
+        <div class="meta">
+          <div><strong>Primera ruta</strong><span>Python · 10 temas</span></div>
+          <div><strong>Después</strong><span>JavaScript / Web y SQL</span></div>
+        </div>
+        <a class="button primary" href="./arena/">Empezar la expedición</a>
+      </article>
+
+      <article class="card">
+        <div class="badge-row">
+          <span class="badge html">HTML</span>
+          <span class="badge css">CSS</span>
+          <span class="badge js">JavaScript</span>
+        </div>
+        <h2>Curso HTML + CSS + JavaScript</h2>
+        <p>Ruta formativa completa para principiantes absolutos con 45 modulos, ejemplos interactivos y archivos HTML autocontenidos.</p>
+        <div class="meta">
+          <div><strong>Entrada</strong><span>M00_Bienvenido</span></div>
+          <div><strong>Formato</strong><span>45 HTMLs</span></div>
+        </div>
+        <a class="button primary" href="./Curso_HTML_CSS_JS/">Abrir indice</a>
+      </article>
+
+      <article class="card">
+        <div class="badge-row">
+          <span class="badge tool">Proyecto</span>
+          <span class="badge js">JavaScript</span>
+        </div>
+        <h2>Curso Bug Report Tool</h2>
+        <p>Curso aplicado para estudiar una herramienta real de reporte de bugs construida en un solo archivo HTML + CSS + JS.</p>
+        <div class="meta">
+          <div><strong>Entrada</strong><span>M00_Bienvenida</span></div>
+          <div><strong>Formato</strong><span>21 modulos</span></div>
+        </div>
+        <a class="button primary" href="./Curso_bug_tool_project/">Abrir indice</a>
+      </article>
+
+      <article class="card">
+        <div class="badge-row">
+          <span class="badge css">Referencia</span>
+        </div>
+        <h2>Design System y referencias</h2>
+        <p>Material de apoyo para la linea visual y documentos que te sirven como respaldo o contexto editorial del contenido.</p>
+        <div class="meta">
+          <div><strong>Design</strong><span><a href="./DESIGN_SYSTEM_SPEC.md">Spec raiz</a></span></div>
+          <div><strong>Carpetas</strong><span><a href="./Design_System/00-Introduccion.html">Design System</a></span></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="steps">
+      <h3>Como publicarlo gratis en Netlify</h3>
+      <ol>
+        <li>Sube esta carpeta completa a un repositorio de GitHub o arrastrala directo a Netlify Drop.</li>
+        <li>El archivo <code>index.html</code> de la raiz sera la portada publica del sitio.</li>
+        <li>Comparte la URL <code>*.netlify.app</code> y mas adelante, si quieres, conectas tu dominio propio sin rehacer el contenido.</li>
+      </ol>
+      <p class="note">Los cursos principales ya estan preparados como sitio estatico puro, asi que no necesitas build, Node, base de datos ni plan de pago para ponerlos en linea.</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M37 · Manejo de errores — Curso HTML+CSS+JS</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --yellow:#F5C451; --yellow-soft:rgba(245,196,81,.12); --yellow-border:rgba(245,196,81,.22);
+  --red:#FB7185; --red-soft:rgba(251,113,133,.10); --red-border:rgba(251,113,133,.25);
+  --green:#34D399; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(245,196,81,.32);color:#06120B}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(245,196,81,.20),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(251,113,133,.10),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(245,196,81,.12);border:1px solid rgba(245,196,81,.32);color:var(--yellow);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);
+  box-shadow:0 0 10px var(--yellow)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--yellow)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,var(--yellow),#EAB308)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+.content-block strong{color:#EEEBF6}
+.content-block code{font-family:var(--font-mono);background:rgba(245,196,81,.08);
+  color:#F5C451;padding:1px 6px;border-radius:5px;font-size:13.5px}
+
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-kw{color:#C4B5FD}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+
+/* DEMO */
+.demo-box{margin-top:14px;border:1px solid var(--border);border-radius:13px;overflow:hidden}
+.demo-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;
+  text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.demo-head .btns{display:flex;gap:6px;flex-wrap:wrap}
+.demo-head button{font-family:var(--font-body);font-size:11.5px;font-weight:600;
+  background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text-sec);
+  padding:3px 10px;border-radius:6px;cursor:pointer;transition:all .15s}
+.demo-head button:hover{background:rgba(245,196,81,.16);color:var(--yellow);border-color:var(--yellow-border)}
+.demo-body{background:#0a0913;padding:14px 16px;font-family:var(--font-mono);font-size:13px;
+  line-height:1.7;max-height:320px;overflow-y:auto}
+.demo-line{display:flex;gap:8px;margin:2px 0;align-items:flex-start}
+.demo-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;text-transform:uppercase}
+.demo-tag.log{color:#82AAFF;background:rgba(130,170,255,.12)}
+.demo-tag.warn{color:#F5C451;background:rgba(245,196,81,.12)}
+.demo-tag.error{color:#FF8E8E;background:rgba(255,142,142,.12)}
+.demo-tag.ok{color:#34D399;background:rgba(52,211,153,.12)}
+.demo-text{color:#C7CDE0;word-break:break-word}
+.demo-text.err{color:#FF8E8E}
+
+.cmp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+.cmp-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:13px;padding:14px 16px}
+.cmp-card-name{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:4px}
+.cmp-card-code{font-family:var(--font-mono);font-size:13px;color:var(--yellow);
+  background:rgba(245,196,81,.08);padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:6px}
+.cmp-card-desc{font-size:13.5px;color:var(--text-mut);line-height:1.55}
+
+.note-box{background:rgba(251,113,133,.06);border:1px solid rgba(251,113,133,.2);
+  border-radius:12px;padding:14px 16px;margin-top:14px;display:flex;gap:12px;align-items:flex-start}
+.note-box svg{flex-shrink:0;width:20px;height:20px;margin-top:2px}
+.note-box p{color:#A7A4B8;font-size:14.5px;line-height:1.6;margin:0}
+.note-box strong{color:var(--red)}
+
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(245,196,81,.08);border-color:var(--yellow-border)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,var(--yellow),#EAB308);color:#06120B;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(245,196,81,.5);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(245,196,81,.7)}
+.cta-btn svg{width:18px;height:18px}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 37 · ERRORES
+    </div>
+    <h1>Manejo de <span class="hl">errores</span></h1>
+    <p>Todo falla. Siempre. La pregunta no es <em>si</em> tu código fallará, sino <strong>qué pasa cuando falle</strong>. <code>try...catch</code> es el cinturón de seguridad: no evita el accidente, pero evita que la página explote en la cara del usuario.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        try / catch / finally
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#FB7185" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        throw new Error
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg>
+        ~15 min de lectura
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 · TRY / CATCH / FINALLY ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">try / catch / finally</span>
+    </div>
+    <div class="card">
+      <p>Tres bloques. <strong>try</strong> ejecuta el código peligroso. Si lanza un error, <strong>catch</strong> lo atrapa (y tu script sigue vivo). <strong>finally</strong> corre siempre, haya error o no — perfecto para limpiar.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>JavaScript · try / catch / finally</span>
+        </div>
+<pre><code><span class="code-kw">try</span> {
+  <span class="code-kw">const</span> data = <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(userInput);
+  <span class="code-fn">render</span>(data);
+} <span class="code-kw">catch</span> (err) {
+  <span class="code-fn">console</span>.<span class="code-fn">error</span>(<span class="code-str">'JSON malformado:'</span>, err.message);
+  <span class="code-fn">showUserFriendlyError</span>();
+} <span class="code-kw">finally</span> {
+  <span class="code-fn">hideLoadingSpinner</span>();  <span class="code-cmt">// SIEMPRE se ejecuta</span>
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 · THROW ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">throw new Error: lanza tus propios errores</span>
+    </div>
+    <div class="card">
+      <p>No esperes a que JS lance un error. Si una precondición no se cumple, <strong>tú mismo lo lanzas</strong> con un mensaje claro. Usa el tipo de error que mejor describa el problema.</p>
+      <div class="cmp-grid">
+        <div class="cmp-card">
+          <div class="cmp-card-name">Error</div>
+          <div class="cmp-card-code">throw new Error('msg')</div>
+          <div class="cmp-card-desc">Genérico. Úsalo cuando ninguno de los específicos encaje.</div>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-card-name">TypeError</div>
+          <div class="cmp-card-code">throw new TypeError(...)</div>
+          <div class="cmp-card-desc">Tipo incorrecto: pasaste un número donde va un string, leíste <code>null.foo</code>, etc.</div>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-card-name">RangeError</div>
+          <div class="cmp-card-code">throw new RangeError(...)</div>
+          <div class="cmp-card-desc">Valor fuera de rango: índice de array negativo, número fuera de los límites esperados.</div>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-card-name">SyntaxError</div>
+          <div class="cmp-card-code">throw new SyntaxError(...)</div>
+          <div class="cmp-card-desc">Texto malformado: JSON corrupto, regex inválida, código que no parsea.</div>
+        </div>
+      </div>
+      <div class="code-block" style="margin-top:14px">
+        <div class="code-head">
+          <span>JavaScript · throw con tipos</span>
+        </div>
+<pre><code><span class="code-kw">function</span> <span class="code-fn">dividir</span>(a, b) {
+  <span class="code-kw">if</span> (b === <span class="code-fn">0</span>) <span class="code-kw">throw new</span> <span class="code-fn">RangeError</span>(<span class="code-str">'División por cero'</span>);
+  <span class="code-kw">if</span> (<span class="code-kw">typeof</span> a !== <span class="code-str">'number'</span> || <span class="code-kw">typeof</span> b !== <span class="code-str">'number'</span>)
+    <span class="code-kw">throw new</span> <span class="code-fn">TypeError</span>(<span class="code-str">'Ambos argumentos deben ser números'</span>);
+  <span class="code-kw">return</span> a / b;
+}
+
+<span class="code-kw">try</span> { <span class="code-fn">dividir</span>(<span class="code-fn">10</span>, <span class="code-fn">0</span>); }
+<span class="code-kw">catch</span> (e) {
+  <span class="code-fn">console</span>.<span class="code-fn">error</span>(e.name, e.message);  <span class="code-cmt">// "RangeError" "División por cero"</span>
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 · STACK TRACE ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">Leer un stack trace</span>
+    </div>
+    <div class="card">
+      <p>Cuando algo falla en consola, ves un <strong>stack trace</strong>: una lista de llamadas que llevó al error. Se lee <strong>de arriba (donde saltó) hacia abajo (la llamada inicial)</strong>. Cada línea dice archivo, función y número de línea.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>Consola · ejemplo de stack trace</span>
+        </div>
+<pre><code><span class="code-fn">TypeError</span>: Cannot read properties of null (reading 'foo')
+    at <span class="code-fn">handleClick</span> (app.js:<span class="code-fn">42</span>:<span class="code-fn">17</span>)       <span class="code-cmt">// ← aquí saltó</span>
+    at <span class="code-fn">HTMLButtonElement</span>.&lt;computed&gt; (app.js:<span class="code-fn">88</span>:<span class="code-fn">5</span>)  <span class="code-cmt">// ← quien lo llamó</span>
+    at <span class="code-fn">HTMLButtonElement</span>.<span class="code-fn">dispatchEvent</span>          <span class="code-cmt">// ← evento del DOM</span></code></pre>
+      </div>
+      <p>La línea superior es donde el error <em>saltó</em>. Las inferiores son la cadena de llamadas que llevó ahí. En M43 profundizaremos en el debugger visual de DevTools.</p>
+    </div>
+  </div>
+
+  <!-- ═══ 04 · ESTRATEGIAS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">Estrategias: cuándo capturar y cuándo no</span>
+    </div>
+    <div class="card">
+      <div class="note-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#FB7185" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+        <p><strong>Antipatrón:</strong> un <code>catch(e) {}</code> vacío <strong>se traga el error</strong> y tu script sigue como si nada. Bugs invisibles. Si vas a capturar, haz algo: log, mensaje al usuario, re-throw.</p>
+      </div>
+      <div class="content-block">
+        <h3>Validación temprana &gt; catch</h3>
+        <p>Es mejor <strong>prevenir</strong> el error que <strong>atraparlo</strong>. Si una función espera un email, valida el formato <em>antes</em> de procesar. <code>try...catch</code> es el cinturón, no el parche.</p>
+      </div>
+      <div class="content-block">
+        <h3>Errores asíncronos (intro)</h3>
+        <p><code>try...catch</code> <strong>no atrapa errores dentro de callbacks ni de promesas</strong>. Para eso existen <code>.catch()</code> en promesas y <code>try/catch</code> con <code>async/await</code>. Lo verás en detalle en M38.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 05 · TU PRIMER MOMENTO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span>
+      <span class="num-title">Pruébalo aquí mismo</span>
+    </div>
+    <div class="card">
+      <p>Una consola interactiva con 4 escenarios: división normal, división por cero, parsear edad, y un <code>TypeError</code> deliberado para ver el stack trace. Pulsa los botones:</p>
+      <div class="demo-box">
+        <div class="demo-head">
+          <span>Demo · manejo de errores en vivo</span>
+          <div class="btns">
+            <button onclick="demoDiv()">dividir(10, 2)</button>
+            <button onclick="demoDivZero()">dividir(10, 0)</button>
+            <button onclick="demoParse('34')">parsearEdad('34')</button>
+            <button onclick="demoParse('abc')">parsearEdad('abc')</button>
+            <button onclick="demoNull()">null.foo (TypeError)</button>
+            <button onclick="clearDemo()">Limpiar</button>
+          </div>
+        </div>
+        <div class="demo-body" id="demoBody">
+          <div style="color:#5E5C6E;font-style:italic">Pulsa los botones para ejecutar cada escenario…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 06 · RECURSOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span>
+      <span class="num-title">Recursos para profundizar</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Statements/try...catch" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · try...catch</div>
+          <div class="res-desc">Referencia completa: try, catch, finally, optional catch binding, throw.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://javascript.info/try-catch" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">javascript.info · Error handling</div>
+          <div class="res-desc">Tutorial práctico: try/catch, errores personalizados, finally, re-throw.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Error" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Error</div>
+          <div class="res-desc">El constructor Error: propiedades (message, name, stack) y tipos nativos.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="cta">
+    <div class="cta-label">Tu siguiente paso</div>
+    <h2>Ahora a esperar sin bloquear</h2>
+    <p>Los errores síncronos ya están bajo control. Pero las llamadas a la red y a las APIs modernas no son síncronas: devuelven <strong>promesas</strong>. El siguiente módulo te enseña a manejar el tiempo en JS sin perder la cabeza.</p>
+    <a class="cta-btn" href="M38_Async_fetch.html">
+      MÓDULO 38 · Async, promesas y fetch
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+// ═══ DEMO DE MANEJO DE ERRORES ═══
+var demoEl;
+function logLine(level, text, isErr){
+  var line = document.createElement('div');
+  line.className = 'demo-line';
+  var tag = document.createElement('span');
+  tag.className = 'demo-tag ' + level;
+  tag.textContent = level;
+  var txt = document.createElement('span');
+  txt.className = 'demo-text' + (isErr ? ' err' : '');
+  txt.textContent = text;
+  line.appendChild(tag); line.appendChild(txt);
+  demoEl.appendChild(line);
+  demoEl.scrollTop = demoEl.scrollHeight;
+}
+function logOk(text){ logLine('ok', text, false); }
+function logInfo(text){ logLine('log', text, false); }
+function logErr(name, message, stack){
+  logLine('error', name + ': ' + message, true);
+  if(stack){
+    var firstLine = stack.split('\n')[1] || stack.split('\n')[0];
+    logLine('warn', '   ↑ ' + firstLine.trim(), true);
+  }
+}
+function clearDemo(){
+  demoEl.innerHTML = '<div style="color:#5E5C6E;font-style:italic">Pulsa los botones para ejecutar cada escenario…</div>';
+}
+
+// Función del ejercicio 1
+function dividir(a, b){
+  if(b === 0) throw new RangeError('División por cero');
+  if(typeof a !== 'number' || typeof b !== 'number') throw new TypeError('Ambos argumentos deben ser números');
+  return a / b;
+}
+// Función del ejercicio 3
+function parsearEdad(input){
+  if(typeof input !== 'string') throw new TypeError('parsearEdad espera un string, recibí ' + typeof input);
+  var n = parseInt(input, 10);
+  if(isNaN(n)) throw new SyntaxError('"' + input + '" no es un número válido');
+  if(n < 0 || n > 150) throw new RangeError('Edad fuera de rango: ' + n);
+  return n;
+}
+
+function demoDiv(){
+  try {
+    var r = dividir(10, 2);
+    logOk('dividir(10, 2) → ' + r);
+  } catch(e){ logErr(e.name, e.message, e.stack); }
+  finally { logInfo('finally: operación finalizada'); }
+}
+function demoDivZero(){
+  try {
+    var r = dividir(10, 0);
+    logOk('dividir(10, 0) → ' + r);
+  } catch(e){ logErr(e.name, e.message, e.stack); }
+  finally { logInfo('finally: operación finalizada (aun con error)'); }
+}
+function demoParse(input){
+  try {
+    var n = parsearEdad(input);
+    logOk('parsearEdad("' + input + '") → ' + n);
+  } catch(e){ logErr(e.name, e.message, e.stack); }
+}
+function demoNull(){
+  try {
+    var x = null;
+    x.foo;
+  } catch(e){ logErr(e.name, e.message, e.stack); }
+}
+document.addEventListener('DOMContentLoaded', function(){
+  demoEl = document.getElementById('demoBody');
+});
+</script>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

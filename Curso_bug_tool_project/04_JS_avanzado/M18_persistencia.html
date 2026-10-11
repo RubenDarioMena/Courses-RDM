@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M18 · Persistencia y exportación — Curso Bug Report Tool</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --yellow:#F5C451; --red:#FB7185; --green:#34D399; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(245,196,81,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(245,196,81,.18),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(167,139,250,.08),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(34,184,207,.05),transparent 60%)}
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(245,196,81,.12);border:1px solid rgba(245,196,81,.32);color:var(--yellow);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--yellow)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);margin-bottom:clamp(24px,4vw,38px)}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;margin:0 0 20px;max-width:62ch}
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;height:30px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;color:#1a1a1a;background:linear-gradient(145deg,#F5C451,#F59E0B)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;color:var(--text-mut);text-transform:uppercase}
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+.content-block code{font-family:var(--font-mono);font-size:13px;background:rgba(245,196,81,.1);padding:2px 6px;border-radius:5px;color:var(--yellow)}
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(245,196,81,.16);border-color:rgba(245,196,81,.22);color:var(--yellow)}
+.code-btn.primary{background:rgba(245,196,81,.16);border-color:rgba(245,196,81,.22);color:var(--yellow)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+.code-prop{color:#93C5FD}
+.output-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;overflow:hidden;display:none}
+.output-block.show{display:block}
+.output-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.output-body{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6}
+.out-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.out-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.out-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.out-text{color:#C7CDE0}
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;height:30px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;color:#1a1a1a;background:linear-gradient(145deg,#F5C451,#F59E0B)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body code{font-family:var(--font-mono);font-size:13px;background:rgba(245,196,81,.1);padding:2px 6px;border-radius:5px;color:var(--yellow)}
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;
+  border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(245,196,81,.08);border-color:rgba(245,196,81,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px;color:#F4F2FB}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;
+  background:linear-gradient(145deg,#A78BFA,#7C3AED);color:#fff;font-family:var(--font-body);
+  font-size:15px;font-weight:600;box-shadow:0 8px 24px -8px rgba(167,139,250,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(167,139,250,.8)}
+.cta-btn svg{width:18px;height:18px}
+@media(max-width:640px){.step{flex-direction:column;gap:6px}}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="wrap">
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 18 · CIERRE — PERSISTENCIA</div>
+    <h1>Persistencia, <span class="hl">exportación</span> y cierre del sistema</h1>
+    <p>La herramienta guarda todo en el navegador con <code>localStorage</code>, exporta un HTML autocontenido con tu config modificada, y se arranca con una secuencia precisa. En este último módulo cerramos el sistema viendo cómo se guarda, se exporta y se reinicia.</p>
+    <div class="meta-chips">
+      <span class="chip">⚡ JS Avanzado</span>
+      <span class="chip">~12 min de lectura</span>
+      <span class="chip">Módulo final</span>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">1</span><span class="num-title">La idea en una imagen</span></div>
+    <div class="card">
+      <p>Imagina un cuaderno que se escribe a sí mismo: cada vez que escribes algo, el cuaderno lo guarda automáticamente 300ms después. Y si quieres compartir ese cuaderno con su configuración, pulsas un botón y se descarga como una copia nueva que otros pueden usar sin instalar nada.</p>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">2</span><span class="num-title">scheduleSave + debounce: guardar en localStorage</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>El patrón debounce: no guardar en cada tecla</h3>
+        <p>Si la herramienta guardara en <code>localStorage</code> cada vez que el tester pulsa una tecla, haría decenas de escrituras por segundo. La solución es <strong>debounce</strong>: esperar a que el usuario deje de escribir 300ms antes de guardar. Si escribe otra tecla dentro de esos 300ms, el contador se reinicia.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — scheduleSave con debounce</span></div>
+        <pre><code><span class="code-kw">let</span> saveTimer = <span class="code-kw">null</span>;
+
+<span class="code-kw">function</span> <span class="code-fn">scheduleSave</span>() {
+  <span class="code-kw">if</span> (saveTimer) <span class="code-fn">clearTimeout</span>(saveTimer);  <span class="code-cmt">// cancela el anterior</span>
+  <span class="code-fn">setSaveIndicator</span>(<span class="code-str">"saving"</span>);       <span class="code-cmt">// punto ámbar</span>
+  saveTimer = <span class="code-fn">setTimeout</span>(() => {
+    <span class="code-fn">saveAll</span>();                        <span class="code-cmt">// escribe en localStorage</span>
+    <span class="code-fn">setSaveIndicator</span>(<span class="code-str">"saved"</span>);       <span class="code-cmt">// punto verde</span>
+  }, 300);                              <span class="code-cmt">// espera 300ms</span>
+}</code></pre>
+      </div>
+      <div class="content-block">
+        <h3>saveAll y loadSession: config y sesión por separado</h3>
+        <p>La herramienta guarda dos cosas en <code>localStorage</code>:</p>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>CONFIG_KEY ("bug_tool_v2_config")</h4><p>El schema + los datos (listas, reglas). Es lo que el equipo de Database edita.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>SESSION_KEY ("bug_tool_v2_session")</h4><p>Las instancias de bugs abiertas y las preferencias (pestaña activa, tiles colapsadas).</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">3</span><span class="num-title">exportToolHtml: el truco del HTML autocontenido</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>PRISTINE_HTML: el ADN original</h3>
+        <p>Al cargar la página, antes de que JS pinte nada, se captura el HTML completo: <code>const PRISTINE_HTML = document.documentElement.outerHTML</code>. Esto es el "ADN" del archivo: el HTML con el JSON original sin tocar.</p>
+      </div>
+      <div class="content-block">
+        <h3>Reemplazar el JSON y descargar</h3>
+        <p>Cuando el usuario pulsa "Exportar herramienta", la función busca el bloque <code>vanillaConfig</code> dentro de <code>PRISTINE_HTML</code>, lo reemplaza con el <code>config</code> actual (serializado con <code>JSON.stringify</code>), y descarga el resultado como un nuevo <code>bug_tool.html</code>. El nuevo archivo es idéntico al original pero con el JSON actualizado.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — exportToolHtml (simplificado)</span></div>
+        <pre><code><span class="code-kw">function</span> <span class="code-fn">exportToolHtml</span>() {
+  <span class="code-cmt">// Serializar la config actual, escapando </script</span>
+  <span class="code-kw">const</span> json = <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(config, <span class="code-kw">null</span>, 2);
+
+  <span class="code-cmt">// Buscar el bloque vanillaConfig en el HTML prístina</span>
+  <span class="code-kw">const</span> marker = <span class="code-str">'id="vanillaConfig">'</span>;
+  <span class="code-kw">const</span> start = PRISTINE_HTML.<span class="code-fn">indexOf</span>(marker);
+  <span class="code-kw">const</span> end = PRISTINE_HTML.<span class="code-fn">indexOf</span>(SCRIPT_END, start);
+
+  <span class="code-cmt">// Reemplazar el JSON y descargar como nuevo .html</span>
+  <span class="code-kw">const</span> out = PRISTINE_HTML.<span class="code-fn">slice</span>(0, start + marker.length)
+            + <span class="code-str">"\n"</span> + json + <span class="code-str">"\n"</span>
+            + PRISTINE_HTML.<span class="code-fn">slice</span>(end);
+
+  <span class="code-fn">downloadFile</span>(<span class="code-str">"bug_tool.html"</span>, out);
+}</code></pre>
+      </div>
+      <div class="content-block">
+        <h3>El escapamiento de &lt;/script&gt;</h3>
+        <p>Si el JSON contiene el texto <code>&lt;/script&gt;</code>, el navegador cerraría el <code>&lt;script&gt;</code> prematuramente. Por eso <code>JSON.stringify</code> se post-procesa reemplazando <code>&lt;/"</code> por <code>&lt;\/"</code>, y <code>SCRIPT_END</code> se construye en dos partes para evitar que el propio código fuente rompa el parser HTML.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">4</span><span class="num-title">CSV import/export: datos sin tocar código</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Dos CSVs para dos audiencias</h3>
+        <p>La herramienta tiene dos flujos de CSV para el equipo de Database:</p>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><h4>bug_data.csv</h4><p>Listas y reglas: <code>regions</code>, <code>platforms</code>, <code>maps</code>, <code>pois</code>, <code>kw_count</code>, etc. El equipo de Database lo edita en Excel y lo importa.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><h4>bug_fields.csv</h4><p>Schema de formularios: secciones, campos, tipos, plantillas, validaciones. Define la estructura del formulario sin tocar JavaScript.</p></div></div>
+      </div>
+      <div class="content-block">
+        <p>El parser de CSV (<code>parseCsvLine</code>) maneja comillas, comas dentro de textos entrecomillados y saltos de línea. La exportación usa <code>csvEscape</code> para envolver valores con comas en comillas dobles.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">5</span><span class="num-title">boot(): la secuencia de arranque</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>El orden importa</h3>
+        <p>Cuando el navegador termina de cargar el HTML, se ejecuta <code>boot()</code>. El orden de las operaciones es crítico: si se renderiza antes de cargar la config, no hay nada que pintar.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — boot()</span></div>
+        <pre><code><span class="code-kw">function</span> <span class="code-fn">boot</span>() {
+  <span class="code-fn">loadVanillaConfig</span>();     <span class="code-cmt">// 1. Leer JSON del &lt;script type="application/json"&gt;</span>
+  <span class="code-fn">migrateListsToTree</span>(vanilla); <span class="code-cmt">// 2. Migrar listas a estructura de árbol</span>
+  <span class="code-fn">loadConfig</span>();           <span class="code-cmt">// 3. Leer de localStorage o clonar vanilla</span>
+  <span class="code-fn">loadSession</span>();          <span class="code-cmt">// 4. Restaurar instancias y preferencias</span>
+
+  <span class="code-cmt">// 5. Sanear sesión: filtrar instancias de forms que ya no existen</span>
+  state.instances = state.instances.<span class="code-fn">filter</span>(i => <span class="code-fn">getForm</span>(i.formId));
+
+  <span class="code-cmt">// 6. Cablear eventos estáticos (botones, menús de la barra superior)</span>
+  <span class="code-fn">wireStaticControls</span>();
+  <span class="code-fn">wireMediaPanel</span>();
+
+  <span class="code-cmt">// 7. Renderizar todo por primera vez</span>
+  <span class="code-fn">refreshAll</span>();
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">6</span><span class="num-title">beforeunload y visibilitychange</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>La última oportunidad de guardar</h3>
+        <p>Si el usuario cierra la pestaña o cambia de aplicación, la herramienta tiene dos eventos para guardar antes de que sea tarde:</p>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><h4>beforeunload</h4><p>Se dispara justo antes de cerrar la pestaña. La herramienta llama <code>saveAll()</code> aquí. No hay tiempo para debounce: hay que escribir síncrono.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><h4>visibilitychange</h4><p>Se dispara cuando el usuario cambia a otra pestaña del navegador (la página se oculta). También dispara <code>saveAll()</code> para no perder cambios.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">7</span><span class="num-title">Tu primer momento: simular exportToolHtml</span></div>
+    <div class="card">
+      <p>Pulsa <strong>Ejecutar</strong> para ver cómo se reemplazaría el bloque JSON dentro de un HTML y se generaría el archivo exportado (simplificado).</p>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — exportToolHtml simplificado</span>
+          <div class="code-btns"><button class="code-btn primary" onclick="runExport()">Ejecutar</button></div></div>
+        <pre><code><span class="code-cmt">// HTML prístina simulada (con un JSON antiguo):</span>
+<span class="code-kw">var</span> pristine = <span class="code-str">'&lt;script id="vanillaConfig"&gt;'
+  + '{"version":1,"data":{"regions":["NA"]}}'
+  + '&lt;/script&gt;'</span>;
+
+<span class="code-cmt">// Config actual (modificada por el usuario):</span>
+<span class="code-kw">var</span> config = { version: 2, data: { regions: [<span class="code-str">"NA"</span>, <span class="code-str">"EU"</span>, <span class="code-str">"LATAM"</span>] } };
+
+<span class="code-cmt">// Reemplazar el JSON:</span>
+<span class="code-kw">var</span> json = <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(config, <span class="code-kw">null</span>, 2);
+<span class="code-kw">var</span> marker = <span class="code-str">'id="vanillaConfig"&gt;'</span>;
+<span class="code-kw">var</span> start = pristine.<span class="code-fn">indexOf</span>(marker);
+<span class="code-kw">var</span> end = pristine.<span class="code-fn">indexOf</span>(<span class="code-str">"&lt;/script&gt;"</span>, start);
+
+<span class="code-kw">var</span> exported = pristine.<span class="code-fn">slice</span>(0, start + marker.length)
+  + <span class="code-str">"\n"</span> + json + <span class="code-str">"\n"</span>
+  + pristine.<span class="code-fn">slice</span>(end);
+
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"HTML exportado:"</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(exported);</code></pre>
+      </div>
+      <div class="output-block" id="outExport">
+        <div class="output-head">HTML exportado</div>
+        <div class="output-body" id="outExportBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">8</span><span class="num-title">Ejercicio final</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Exportar un HTML autocontenido con config modificada</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Abre bug_tool.html</h4><p>Doble clic. La herramienta carga con la config vanilla.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Modifica algo en la pestaña Data</h4><p>Añade una región nueva a la lista "regions". El indicador cambia a "Config modificada".</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Pulsa "Exportar herramienta"</h4><p>Se descarga un nuevo <code>bug_tool.html</code>. Ábrelo y verifica que la región nueva ya está en el JSON embebido.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>El nuevo archivo es autónomo</h4><p>No necesita el archivo anterior. El JSON modificado vive dentro de él. Cópialo al sharefolder y funciona.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">9</span><span class="num-title">Recursos</span></div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/API/Window/localStorage" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · localStorage</div>
+        <div class="res-desc">Guardar datos en el navegador sin servidor.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/API/Blob" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Blob + downloadFile</div>
+        <div class="res-desc">Crear archivos descargables sin servidor.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/Events/beforeunload" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · beforeunload</div>
+        <div class="res-desc">El evento de "¿estás seguro de salir?".</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div class="cta-label">Has llegado al final</div>
+    <h2>🎉 Curso completado</h2>
+    <p>Has recorrido las tres capas de la herramienta: HTML (estructura), CSS (diseño) y JavaScript (estado, widgets, validación, output, persistencia). Ahora entiendes cómo funciona <code>bug_tool.html</code> pieza por pieza.</p>
+    <a class="cta-btn" href="../01_HTML/M00_Bienvenida.html">
+      Volver al inicio del curso
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+<script>
+"use strict";
+function runExport(){
+  var out=document.getElementById('outExport'),body=document.getElementById('outExportBody');
+  body.innerHTML='';
+  var logs=[];
+  var origLog=console.log;
+  console.log=function(){var a=[].slice.call(arguments);logs.push({level:'log',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x,null,2)}).join(' ')})};
+  try{
+    var pristine='<script id="vanillaConfig">'+'{"version":1,"data":{"regions":["NA"]}}'+'<\/script>';
+    var config={version:2,data:{regions:["NA","EU","LATAM"]}};
+    var json=JSON.stringify(config,null,2);
+    var marker='id="vanillaConfig">';
+    var start=pristine.indexOf(marker);
+    varend=pristine.indexOf("<\/script>",start);
+    end=end||pristine.indexOf("</scr"+"ipt>",start);
+    var exported=pristine.slice(0,start+marker.length)+"\n"+json+"\n"+pristine.slice(end);
+    console.log("HTML exportado:");
+    console.log(exported);
+  }catch(e){logs.push({level:'log',text:'Error: '+e.message})}finally{console.log=origLog}
+  if(!logs.length)logs.push({level:'log',text:'(sin salida visible)'});
+  logs.forEach(function(l){
+    var line=document.createElement('div');line.className='out-line';
+    var tag=document.createElement('span');tag.className='out-tag '+l.level;tag.textContent=l.level;
+    var txt=document.createElement('span');txt.className='out-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);body.appendChild(line);
+  });
+  out.classList.add('show');
+}
+</script>
+</body>
+</html>

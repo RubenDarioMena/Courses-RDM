@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M07 · Imágenes y multimedia — Curso HTML+CSS+JS</title>
+<style>
+/* ═══ RESET ═══ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#110F18; --bg-s3:#15131F; --bg-s4:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --cyan:#67E8F9; --cyan-soft:rgba(95,208,224,.06); --cyan-border:rgba(95,208,224,.2);
+  --pink:#F9A8D4; --pink-soft:rgba(249,168,212,.06); --pink-border:rgba(249,168,212,.2);
+  --yellow:#F5C451; --green:#34D399; --red:#FB7185;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(95,208,224,.32);color:#06120B}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(95,208,224,.20),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.10),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(95,208,224,.12);border:1px solid rgba(95,208,224,.32);color:#7FE0F0;
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--cyan)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+.content-block strong{color:#EEEBF6}
+.content-block code{font-family:var(--font-mono);background:rgba(95,208,224,.08);
+  color:#7FE0F0;padding:1px 6px;border-radius:5px;font-size:13.5px}
+
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text-sec);font-family:var(--font-body);
+  font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+.code-btn.primary{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-tag{color:#67E8F9}
+.code-attr{color:#93C5FD}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+
+.preview-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;display:none}
+.preview-block.show{display:block}
+.preview-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;
+  text-transform:uppercase}
+.preview-frame{width:100%;border:0;background:#fff;display:block;min-height:120px}
+
+/* FORMAT CARDS */
+.fmt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:14px}
+.fmt-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:11px;padding:12px 14px}
+.fmt-card-name{font-family:var(--font-mono);font-size:13.5px;color:var(--cyan);
+  background:rgba(95,208,224,.08);padding:3px 8px;border-radius:5px;display:inline-block;margin-bottom:5px}
+.fmt-card-desc{font-size:13px;color:var(--text-mut);line-height:1.5}
+.fmt-card-use{font-size:12px;color:#9A97AC;margin-top:4px;font-style:italic}
+
+.note-box{background:rgba(245,196,81,.06);border:1px solid rgba(245,196,81,.2);
+  border-radius:12px;padding:14px 16px;margin-top:14px;display:flex;gap:12px;align-items:flex-start}
+.note-box svg{flex-shrink:0;width:20px;height:20px;margin-top:2px}
+.note-box p{color:#A7A4B8;font-size:14.5px;line-height:1.6;margin:0}
+.note-box strong{color:var(--yellow)}
+
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(95,208,224,.08);border-color:var(--cyan-border)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,#67E8F9,#22B8CF);color:#06120B;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(95,208,224,.5);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(95,208,224,.7)}
+.cta-btn svg{width:18px;height:18px}
+
+@media(max-width:640px){.step{flex-direction:column;gap:6px}}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 07 · MULTIMEDIA
+    </div>
+    <h1>Imágenes y <span class="hl">multimedia</span></h1>
+    <p>HTML puede con todo lo visual: fotos, dibujos vectoriales, audio, vídeo. Hay una etiqueta para cada caso, y todas comparten una regla: <strong>describe siempre lo que muestras</strong> con un texto alternativo. La web se ve con los ojos y se lee con los lectores de pantalla.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+        &lt;img&gt; y &lt;figure&gt;
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F9A8D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        &lt;video&gt; y &lt;audio&gt;
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg>
+        ~15 min de lectura
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 · IMG ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">El elemento &lt;img&gt;</span>
+    </div>
+    <div class="card">
+      <p>La etiqueta <code>&lt;img&gt;</code> es <strong>void</strong>: no tiene contenido ni cierre. Toda la información va en atributos. Los esenciales son <code>src</code> (la URL) y <code>alt</code> (la descripción).</p>
+      <div class="content-block">
+        <h3>Atributos que importan</h3>
+        <div class="code-block">
+          <div class="code-head">
+            <span>HTML · img con todo lo necesario</span>
+          </div>
+<pre><code><span class="code-tag">&lt;img</span>
+  <span class="code-attr">src</span>=<span class="code-str">"rover.jpg"</span>
+  <span class="code-attr">alt</span>=<span class="code-str">"Foto del rover Curiosity en el cráter Jezero"</span>
+  <span class="code-attr">width</span>=<span class="code-str">"800"</span>
+  <span class="code-attr">height</span>=<span class="code-str">"533"</span>
+  <span class="code-attr">loading</span>=<span class="code-str">"lazy"</span><span class="code-tag">&gt;</span>
+
+<span class="code-cmt">└─ ruta al fichero (relativa o absoluta)
+   └─ alt: DESCRIPTOR obligatorio. Vacío "" si es decorativa.
+      └─ width/height: reservan el espacio y evitan saltos de layout
+         └─ loading="lazy": difiere la carga hasta que sea visible</span></code></pre>
+        </div>
+      </div>
+      <div class="content-block">
+        <h3>El atributo alt: dos casos, dos formas</h3>
+        <p><strong>Imagen informativa</strong> (transmite información): describe lo que se ve para que un lector de pantalla lo lea en voz alta. <em>"Gráfico de barras: ventas Q1 = 120, Q2 = 180".</em></p>
+        <p><strong>Imagen decorativa</strong> (no aporta información): usa <code>alt=""</code> vacío. El lector de pantalla la salta. <em>Una foto de fondo, un patrón ornamental, una flecha visual al lado de un texto que ya dice "siguiente".</em></p>
+        <div class="note-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+          <p><strong>Regla de oro:</strong> si quitas la imagen y el significado de la página cambia, escribe un <code>alt</code> descriptivo. Si la quitas y no pasa nada, <code>alt=""</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 · FIGURE ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">&lt;figure&gt; y &lt;figcaption&gt;</span>
+    </div>
+    <div class="card">
+      <p>Cuando una imagen necesita un pie de foto, una leyenda o una atribución, HTML tiene un contenedor pensado para eso: <code>&lt;figure&gt;</code>. Dentro va la imagen y opcionalmente un <code>&lt;figcaption&gt;</code>.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · figure + figcaption</span>
+        </div>
+<pre><code><span class="code-tag">&lt;figure&gt;</span>
+  <span class="code-tag">&lt;img</span>
+    <span class="code-attr">src</span>=<span class="code-str">"marte.jpg"</span>
+    <span class="code-attr">alt</span>=<span class="code-str">"Superficie rocosa de Marte al atardecer"</span>
+    <span class="code-attr">width</span>=<span class="code-str">"800"</span> <span class="code-attr">height</span>=<span class="code-str">"450"</span> <span class="code-attr">loading</span>=<span class="code-str">"lazy"</span><span class="code-tag">&gt;</span>
+  <span class="code-tag">&lt;figcaption&gt;</span>
+    Figura 1 — El rover Curiosity capturó esta panorámica en el sol 2872.
+  <span class="code-tag">&lt;/figcaption&gt;</span>
+<span class="code-tag">&lt;/figure&gt;</span></code></pre>
+      </div>
+      <p>Es válido para imágenes, pero también para <strong>código fuente, citas, diagramas, tablas, fragmentos</strong> — cualquier contenido que necesite una leyenda.</p>
+    </div>
+  </div>
+
+  <!-- ═══ 03 · VIDEO Y AUDIO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">Vídeo y audio nativos</span>
+    </div>
+    <div class="card">
+      <p>HTML5 introdujo <code>&lt;video&gt;</code> y <code>&lt;audio&gt;</code>: el navegador reproduce el contenido sin plugins. Dentro van uno o varios <code>&lt;source&gt;</code> con formatos alternativos, y un texto de respaldo por si nada funciona.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · video con dos fuentes</span>
+        </div>
+<pre><code><span class="code-tag">&lt;video</span> <span class="code-attr">controls</span> <span class="code-attr">muted</span> <span class="code-attr">loop</span> <span class="code-attr">width</span>=<span class="code-str">"640"</span> <span class="code-attr">height</span>=<span class="code-str">"360"</span><span class="code-tag">&gt;</span>
+  <span class="code-tag">&lt;source</span> <span class="code-attr">src</span>=<span class="code-str">"clip.mp4"</span>  <span class="code-attr">type</span>=<span class="code-str">"video/mp4"</span><span class="code-tag">&gt;</span>
+  <span class="code-tag">&lt;source</span> <span class="code-attr">src</span>=<span class="code-str">"clip.webm"</span> <span class="code-attr">type</span>=<span class="code-str">"video/webm"</span><span class="code-tag">&gt;</span>
+  Tu navegador no soporta vídeo HTML5.
+<span class="code-tag">&lt;/video&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Atributos clave de &lt;video&gt;</h3>
+        <p><strong>controls</strong> muestra la barra de reproducción nativa. <strong>autoplay</strong> inicia al cargar (pero muchos navegadores lo bloquean sin <code>muted</code>). <strong>muted</strong> silencia el audio. <strong>loop</strong> repite. <strong>poster</strong> indica una imagen a mostrar antes de reproducir.</p>
+      </div>
+      <div class="content-block">
+        <h3>El elemento &lt;track&gt; para subtítulos</h3>
+        <p>Para accesibilidad, <code>&lt;track kind="subtitles"&gt;</code> carga un archivo de subtítulos en formato WebVTT. Es la forma correcta de subtitular un vídeo en HTML.</p>
+        <div class="code-block">
+          <div class="code-head">
+            <span>HTML · vídeo con subtítulos</span>
+          </div>
+<pre><code><span class="code-tag">&lt;video</span> <span class="code-attr">controls</span><span class="code-tag">&gt;</span>
+  <span class="code-tag">&lt;source</span> <span class="code-attr">src</span>=<span class="code-str">"clip.mp4"</span> <span class="code-attr">type</span>=<span class="code-str">"video/mp4"</span><span class="code-tag">&gt;</span>
+  <span class="code-tag">&lt;track</span> <span class="code-attr">kind</span>=<span class="code-str">"subtitles"</span> <span class="code-attr">src</span>=<span class="code-str">"subs-es.vtt"</span> <span class="code-attr">srclang</span>=<span class="code-str">"es"</span> <span class="code-attr">label</span>=<span class="code-str">"Español"</span> <span class="code-attr">default</span><span class="code-tag">&gt;</span>
+<span class="code-tag">&lt;/video&gt;</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 · FORMATOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">Formatos: cuál usar y cuándo</span>
+    </div>
+    <div class="card">
+      <p>Cada formato tiene sus puntos fuertes. La regla de oro: <strong>WebP para todo lo que puedas</strong> (es el más moderno y comprime mejor), y un fallback en PNG/JPEG por compatibilidad.</p>
+      <div class="fmt-grid">
+        <div class="fmt-card">
+          <div class="fmt-card-name">WebP</div>
+          <div class="fmt-card-desc">Compresión excelente, soporta transparencia y animación. Reemplaza a PNG y JPEG en la mayoría de casos.</div>
+          <div class="fmt-card-use">Para casi todo en web moderna.</div>
+        </div>
+        <div class="fmt-card">
+          <div class="fmt-card-name">PNG</div>
+          <div class="fmt-card-desc">Compresión sin pérdida, soporta transparencia. Ficheros más grandes.</div>
+          <div class="fmt-card-use">Logos, iconos, capturas de pantalla.</div>
+        </div>
+        <div class="fmt-card">
+          <div class="fmt-card-name">JPEG</div>
+          <div class="fmt-card-desc">Compresión con pérdida, sin transparencia. Ficheros pequeños.</div>
+          <div class="fmt-card-use">Fotografías, fondos, imágenes grandes.</div>
+        </div>
+        <div class="fmt-card">
+          <div class="fmt-card-name">SVG</div>
+          <div class="fmt-card-desc">Vectorial, escala sin perder calidad. Editable como texto.</div>
+          <div class="fmt-card-use">Logos, iconos, ilustraciones, gráficos.</div>
+        </div>
+        <div class="fmt-card">
+          <div class="fmt-card-name">GIF</div>
+          <div class="fmt-card-desc">Animaciones, pero ficheros enormes. Está siendo reemplazado por vídeo silenciado o WebP animado.</div>
+          <div class="fmt-card-use">Solo para animaciones cortas y simples.</div>
+        </div>
+        <div class="fmt-card">
+          <div class="fmt-card-name">AVIF / MP4 / WebM</div>
+          <div class="fmt-card-desc">Formatos de vídeo. MP4 = máxima compatibilidad. WebM = open source, mejor compresión. AVIF = siguiente generación.</div>
+          <div class="fmt-card-use">Vídeo: ofrece varios &lt;source&gt; con type.</div>
+        </div>
+      </div>
+      <div class="note-box" style="margin-top:18px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.5.4 1 1 1 1.7V18h6v-1.6c0-.7.5-1.3 1-1.7A7 7 0 0 0 12 2z"/></svg>
+        <p><strong>Lo que viene después:</strong> las imágenes responsivas (<code>srcset</code>, <code>sizes</code>, <code>&lt;picture&gt;</code>) se cubren en <strong>M21 · Diseño responsivo</strong>, donde ya tendrás el contexto de viewport y media queries.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 05 · TU PRIMER MOMENTO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span>
+      <span class="num-title">Pruébalo aquí mismo</span>
+    </div>
+    <div class="card">
+      <p>Una mini-galería con tres <code>&lt;figure&gt;</code>. Como aquí no tenemos red, las imágenes son <strong>SVGs inline</strong> (texto con forma) — en tu proyecto real serán <code>.jpg</code>/<code>.webp</code> en una carpeta. Pulsa <strong>Ejecutar</strong>.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · galeria.html</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runDemo()">Ejecutar</button>
+          </div>
+        </div>
+<pre><code><span class="code-tag">&lt;figure&gt;</span>
+  <span class="code-tag">&lt;img</span> <span class="code-attr">src</span>=<span class="code-str">"rover.jpg"</span>
+       <span class="code-attr">alt</span>=<span class="code-str">"Rover Curiosity fotografiado por el satélite MRO"</span>
+       <span class="code-attr">width</span>=<span class="code-str">"400"</span> <span class="code-attr">height</span>=<span class="code-str">"300"</span> <span class="code-attr">loading</span>=<span class="code-str">"lazy"</span><span class="code-tag">&gt;</span>
+  <span class="code-tag">&lt;figcaption&gt;</span>Curiosity en el cráter Gale (2015).<span class="code-tag">&lt;/figcaption&gt;</span>
+<span class="code-tag">&lt;/figure&gt;</span>
+
+<span class="code-tag">&lt;figure&gt;</span>
+  <span class="code-tag">&lt;img</span> <span class="code-attr">src</span>=<span class="code-str">"marte.jpg"</span>
+       <span class="code-attr">alt</span>=<span class="code-str">"Atardecer azul en el cráter Jezero"</span>
+       <span class="code-attr">width</span>=<span class="code-str">"400"</span> <span class="code-attr">height</span>=<span class="code-str">"300"</span> <span class="code-attr">loading</span>=<span class="code-str">"lazy"</span><span class="code-tag">&gt;</span>
+  <span class="code-tag">&lt;figcaption&gt;</span>Por qué los atardeceres marcianos son azules.<span class="code-tag">&lt;/figcaption&gt;</span>
+<span class="code-tag">&lt;/figure&gt;</span>
+
+<span class="code-tag">&lt;figure&gt;</span>
+  <span class="code-tag">&lt;img</span> <span class="code-attr">src</span>=<span class="code-str">"logo.svg"</span> <span class="code-attr">alt</span>=<span class="code-str">""</span>
+       <span class="code-attr">width</span>=<span class="code-str">"400"</span> <span class="code-attr">height</span>=<span class="code-str">"300"</span><span class="code-tag">&gt;</span>
+  <span class="code-tag">&lt;figcaption&gt;</span>Logo decorativo (alt vacío).<span class="code-tag">&lt;/figcaption&gt;</span>
+<span class="code-tag">&lt;/figure&gt;</span></code></pre>
+      </div>
+      <div class="preview-block" id="preview">
+        <div class="preview-head">Vista previa (SVGs de muestra — sustituye por tus imágenes reales)</div>
+        <iframe class="preview-frame" id="previewFrame" sandbox="allow-same-origin" title="Vista previa"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 06 · RECURSOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span>
+      <span class="num-title">Recursos para profundizar</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Learn/HTML/Multimedia_and_embedding/Images_in_HTML" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Imágenes en HTML</div>
+          <div class="res-desc">Todo sobre &lt;img&gt;, &lt;figure&gt;, formatos y cómo escribir un buen alt.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Learn/HTML/Multimedia_and_embedding/Video_and_audio_content" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Vídeo y audio</div>
+          <div class="res-desc">Controles, codecs, subtítulos, accesibilidad de audio y vídeo.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://web.dev/learn/html/images" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">web.dev · Images</div>
+          <div class="res-desc">Buenas prácticas modernas: formato, tamaño, lazy loading, priorización.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="cta">
+    <div class="cta-label">Tu siguiente paso</div>
+    <h2>Ahora datos tabulares con sentido</h2>
+    <p>Las imágenes son contenido visual suelto. Pero a veces los datos van en cuadrícula: horarios, comparativas, listas de productos. HTML tiene una etiqueta pensada para eso: <strong>la tabla</strong>.</p>
+    <a class="cta-btn" href="M08_Tablas.html">
+      MÓDULO 08 · Tablas
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+function runDemo(){
+  // Generamos SVGs inline data URI (no red, todo local)
+  var svg1 = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="%23b45309"/><stop offset="100%" stop-color="%23ea580c"/></linearGradient></defs><rect width="400" height="300" fill="url(%23g1)"/><circle cx="200" cy="180" r="35" fill="%231f2937"/><rect x="180" y="180" width="40" height="10" fill="%231f2937"/><rect x="170" y="190" width="60" height="6" fill="%23374151"/><circle cx="190" cy="195" r="8" fill="%2399f6e4"/><circle cx="210" cy="195" r="8" fill="%2399f6e4"/><text x="200" y="270" text-anchor="middle" fill="white" font-family="sans-serif" font-size="14">Rover Curiosity (muestra)</text></svg>';
+  var svg2 = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="%231e3a8a"/><stop offset="100%" stop-color="%23dc2626"/></linearGradient></defs><rect width="400" height="300" fill="url(%23g2)"/><circle cx="200" cy="240" r="20" fill="%23fbbf24"/><path d="M0 250 L400 250" stroke="%23fef3c7" stroke-width="2" opacity="0.4"/><text x="200" y="280" text-anchor="middle" fill="white" font-family="sans-serif" font-size="14">Atardecer marciano (muestra)</text></svg>';
+  var svg3 = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="%23111827"/><circle cx="200" cy="150" r="60" fill="%2367E8F9" opacity="0.9"/><text x="200" y="160" text-anchor="middle" fill="%2309080F" font-family="monospace" font-size="22" font-weight="bold">LOGO</text><text x="200" y="270" text-anchor="middle" fill="%2367E8F9" font-family="sans-serif" font-size="14">Logo decorativo (muestra)</text></svg>';
+  var b64_1 = btoa(svg1);
+  var b64_2 = btoa(svg2);
+  var b64_3 = btoa(svg3);
+
+  var src = '<!DOCTYPE html>\n' +
+    '<html lang="es">\n' +
+    '  <head><meta charset="utf-8"><title>Galer&iacute;a</title></head>\n' +
+    '  <body style="font-family:system-ui,sans-serif;padding:24px;background:%23f8fafc;color:%231f2937;max-width:680px;margin:0 auto;line-height:1.6">\n' +
+    '    <h1>Galer&iacute;a Mars Rover</h1>\n' +
+    '    <p>Im&aacute;genes de muestra en SVG — sustituye por tus ficheros.</p>\n' +
+    '    <figure style="background:white;padding:12px;border-radius:10px;margin:18px 0;box-shadow:0 2px 6px rgba(0,0,0,0.1)">\n' +
+    '      <img src="data:image/svg+xml;base64,' + b64_1 + '" alt="Rover Curiosity fotografiado por el sat&eacute;lite MRO" width="400" height="300" style="display:block;width:100%;height:auto">\n' +
+    '      <figcaption style="color:%236b7280;font-size:14px;margin-top:8px"><strong>Curiosity en el cr&aacute;ter Gale (2015).</strong></figcaption>\n' +
+    '    </figure>\n' +
+    '    <figure style="background:white;padding:12px;border-radius:10px;margin:18px 0;box-shadow:0 2px 6px rgba(0,0,0,0.1)">\n' +
+    '      <img src="data:image/svg+xml;base64,' + b64_2 + '" alt="Atardecer azul en el cr&aacute;ter Jezero" width="400" height="300" style="display:block;width:100%;height:auto">\n' +
+    '      <figcaption style="color:%236b7280;font-size:14px;margin-top:8px"><strong>Por qu&eacute; los atardeceres marcianos son azules.</strong></figcaption>\n' +
+    '    </figure>\n' +
+    '    <figure style="background:white;padding:12px;border-radius:10px;margin:18px 0;box-shadow:0 2px 6px rgba(0,0,0,0.1)">\n' +
+    '      <img src="data:image/svg+xml;base64,' + b64_3 + '" alt="" width="400" height="300" style="display:block;width:100%;height:auto">\n' +
+    '      <figcaption style="color:%236b7280;font-size:14px;margin-top:8px"><strong>Logo decorativo (alt vac&iacute;o).</strong></figcaption>\n' +
+    '    </figure>\n' +
+    '  </body>\n' +
+    '</html>';
+  var frame = document.getElementById('previewFrame');
+  var block = document.getElementById('preview');
+  block.classList.add('show');
+  frame.srcdoc = src;
+  frame.style.minHeight = '1100px';
+}
+</script>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

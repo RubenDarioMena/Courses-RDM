@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M10 · Formularios (parte 2) y interactividad — Curso HTML+CSS+JS</title>
+<style>
+/* ═══ RESET ═══ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#110F18; --bg-s3:#15131F; --bg-s4:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --cyan:#67E8F9; --cyan-soft:rgba(95,208,224,.06); --cyan-border:rgba(95,208,224,.2);
+  --pink:#F9A8D4; --pink-soft:rgba(249,168,212,.06); --pink-border:rgba(249,168,212,.2);
+  --yellow:#F5C451; --green:#34D399; --red:#FB7185;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+/* ═══ BACKGROUND GLOW ═══ */
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(34,184,207,.18),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+/* ═══ LAYOUT ═══ */
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* ═══ HERO ═══ */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(95,208,224,.12);border:1px solid rgba(95,208,224,.32);color:#7FE0F0;
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--cyan)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* ═══ SECTION CARD ═══ */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+/* ═══ NUMBERED SECTION ═══ */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* ═══ CONTENT BLOCKS ═══ */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+.content-block strong{color:#EEEBF6}
+
+/* ═══ CODE BLOCK ═══ */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text-sec);font-family:var(--font-body);
+  font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+.code-btn.primary{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#7FE0F0}
+.code-tag{color:#7FE0F0}
+
+/* ═══ PREVIEW BLOCK ═══ */
+.preview-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;display:none;background:#fff}
+.preview-block.show{display:block}
+.preview-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;
+  text-transform:uppercase}
+.preview-frame{width:100%;min-height:240px;border:0;background:#fff}
+
+/* ═══ STEP LIST ═══ */
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;
+  color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body kbd{font-family:var(--font-mono);background:rgba(255,255,255,.06);padding:2px 6px;
+  border-radius:5px;border:1px solid var(--border);font-size:12px}
+.step-body strong{color:#EEEBF6}
+
+/* ═══ TABLE ═══ */
+.tbl{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+.tbl th,.tbl td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--border)}
+.tbl th{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  text-transform:uppercase;letter-spacing:.12em}
+.tbl td{color:#C7CDE0}
+.tbl td:first-child{font-family:var(--font-mono);color:#7FE0F0}
+.tbl tr:last-child td{border-bottom:0}
+
+/* ═══ RESOURCE LINKS ═══ */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(95,208,224,.08);border-color:rgba(95,208,224,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* ═══ CTA ═══ */
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,#22B8CF,#0EA5C7);color:#06120B;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(34,184,207,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(34,184,207,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 10 · FORMULARIOS (PARTE 2) E INTERACTIVIDAD
+    </div>
+    <h1>Interactividad <span class="hl">sin JavaScript</span></h1>
+    <p>El navegador moderno ya sabe hacer mucho sin que escribas una sola línea de JS: acordeones que se expanden, modales que aparecen sobre el contenido, selectores de color y barra de progreso. En este módulo aprendes los elementos nativos que sustituyen a librerías enteras.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+        HTML puro
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        Pruébalo sin salir de aquí
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ~75 min de lectura
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 · TIPOS AVANZADOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">Tipos avanzados de input</span>
+    </div>
+    <div class="card">
+      <p>Más allá del clásico <code style="font-family:var(--font-mono);color:#7FE0F0">text</code>, el navegador trae selectores dedicados para color, rango, archivo, teléfono, URL y búsqueda. Cada uno muestra una interfaz nativa adaptada al dispositivo.</p>
+      <table class="tbl">
+        <tr><th>Tipo</th><th>Uso</th></tr>
+        <tr><td>color</td><td>Selector visual de color (rueda / hex)</td></tr>
+        <tr><td>range</td><td>Deslizador numérico con min/max/step</td></tr>
+        <tr><td>file</td><td>Subida de archivos; con <code style="font-family:var(--font-mono);color:#7FE0F0">accept</code> filtra tipos</td></tr>
+        <tr><td>hidden</td><td>Dato invisible al usuario, enviado en el formulario</td></tr>
+        <tr><td>search</td><td>Como text, pero el móvil muestra botón "Buscar" y tecla de lupa</td></tr>
+        <tr><td>tel</td><td>Activa teclado numérico en móvil; valida patrón con <code style="font-family:var(--font-mono);color:#7FE0F0">pattern</code></td></tr>
+        <tr><td>url</td><td>Valida que el contenido sea una URL absoluta</td></tr>
+      </table>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · tipos avanzados</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;input</span> <span class="code-fn">type</span>=<span class="code-str">"color"</span> <span class="code-fn">value</span>=<span class="code-str">"#67E8F9"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;input</span> <span class="code-fn">type</span>=<span class="code-str">"range"</span> <span class="code-fn">min</span>=<span class="code-str">"0"</span> <span class="code-fn">max</span>=<span class="code-str">"100"</span> <span class="code-fn">value</span>=<span class="code-str">"50"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;input</span> <span class="code-fn">type</span>=<span class="code-str">"file"</span> <span class="code-fn">accept</span>=<span class="code-str">"image/*"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;input</span> <span class="code-fn">type</span>=<span class="code-str">"hidden"</span> <span class="code-fn">name</span>=<span class="code-str">"id"</span> <span class="code-fn">value</span>=<span class="code-str">"42"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;input</span> <span class="code-fn">type</span>=<span class="code-str">"search"</span> <span class="code-fn">name</span>=<span class="code-str">"q"</span> <span class="code-fn">placeholder</span>=<span class="code-str">"Buscar…"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;input</span> <span class="code-fn">type</span>=<span class="code-str">"tel"</span> <span class="code-fn">pattern</span>=<span class="code-str">"[0-9]{9}"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;input</span> <span class="code-fn">type</span>=<span class="code-str">"url"</span> <span class="code-fn">name</span>=<span class="code-str">"web"</span><span class="code-kw">&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 · DATALIST, OUTPUT, PROGRESS, METER ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">datalist, output, progress &amp; meter</span>
+    </div>
+    <div class="card">
+      <p>Cuatro elementos poco conocidos que ahorran decenas de líneas de JS: <code style="font-family:var(--font-mono);color:#7FE0F0">datalist</code> autocompleta, <code style="font-family:var(--font-mono);color:#7FE0F0">output</code> muestra resultados de cálculo, <code style="font-family:var(--font-mono);color:#7FE0F0">progress</code> dibuja una barra de progreso y <code style="font-family:var(--font-mono);color:#7FE0F0">meter</code> muestra un valor dentro de un rango con zonas baja/alta/óptima.</p>
+      <div class="content-block">
+        <h3>&lt;datalist&gt;: autocompletar nativo</h3>
+        <p>Se enlaza a un input mediante el atributo <code style="font-family:var(--font-mono);color:#7FE0F0">list</code>. El usuario puede escribir o elegir una sugerencia del desplegable.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · datalist</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;input</span> <span class="code-fn">type</span>=<span class="code-str">"search"</span> <span class="code-fn">list</span>=<span class="code-str">"sugerencias"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;datalist</span> <span class="code-fn">id</span>=<span class="code-str">"sugerencias"</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;option</span> <span class="code-fn">value</span>=<span class="code-str">"factura"</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;option</span> <span class="code-fn">value</span>=<span class="code-str">"envío"</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;option</span> <span class="code-fn">value</span>=<span class="code-str">"devolución"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;/datalist&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>&lt;progress&gt; y &lt;meter&gt;</h3>
+        <p><code style="font-family:var(--font-mono);color:#7FE0F0">progress</code> muestra cuánto de una tarea se ha completado; <code style="font-family:var(--font-mono);color:#7FE0F0">meter</code> muestra un valor dentro de un rango con zonas baja/alta/óptima.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · progress &amp; meter</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;progress</span> <span class="code-fn">value</span>=<span class="code-str">"7"</span> <span class="code-fn">max</span>=<span class="code-str">"10"</span><span class="code-kw">&gt;&lt;/progress&gt;</span>
+
+<span class="code-kw">&lt;meter</span> <span class="code-fn">value</span>=<span class="code-str">"0.6"</span> <span class="code-fn">min</span>=<span class="code-str">"0"</span> <span class="code-fn">max</span>=<span class="code-str">"1"</span>
+  <span class="code-fn">low</span>=<span class="code-str">"0.3"</span> <span class="code-fn">high</span>=<span class="code-str">"0.7"</span> <span class="code-fn">optimum</span>=<span class="code-str">"0.9"</span><span class="code-kw">&gt;&lt;/meter&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 · DETAILS / SUMMARY ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">Acordeones nativos: details &amp; summary</span>
+    </div>
+    <div class="card">
+      <p><code style="font-family:var(--font-mono);color:#7FE0F0">&lt;details&gt;</code> crea una región plegable. <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;summary&gt;</code>, su primer hijo, es la etiqueta visible que el usuario pulsa para abrir/cerrar. Con el atributo <code style="font-family:var(--font-mono);color:#7FE0F0">open</code> empieza abierto. <strong>Cero JavaScript</strong>.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · details/summary</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;details</span> <span class="code-fn">open</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;summary&gt;</span>¿Cómo restablezco mi contraseña?<span class="code-kw">&lt;/summary&gt;</span>
+  <span class="code-kw">&lt;p&gt;</span>Haz clic en "Olvidé mi contraseña" en la pantalla de login…<span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;/details&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 · DIALOG ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">Modales nativos: dialog</span>
+    </div>
+    <div class="card">
+      <p><code style="font-family:var(--font-mono);color:#7FE0F0">&lt;dialog&gt;</code> es el modal nativo del navegador. <code style="font-family:var(--font-mono);color:#7FE0F0">showModal()</code> lo abre como ventana flotante con backdrop y foco gestionado; <code style="font-family:var(--font-mono);color:#7FE0F0">close()</code> lo cierra. En esta demo usaremos el mínimo de JS necesario para invocar estos métodos.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · dialog</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;dialog</span> <span class="code-fn">id</span>=<span class="code-str">"aviso"</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;p&gt;</span>¡Bienvenido al centro de ayuda!<span class="code-kw">&lt;/p&gt;</span>
+  <span class="code-kw">&lt;button</span> <span class="code-fn">type</span>=<span class="code-str">"button"</span> <span class="code-fn">onclick</span>=<span class="code-str">"aviso.close()"</span><span class="code-kw">&gt;</span>Cerrar<span class="code-kw">&lt;/button&gt;</span>
+<span class="code-kw">&lt;/dialog&gt;</span>
+
+<span class="code-kw">&lt;button</span> <span class="code-fn">onclick</span>=<span class="code-str">"aviso.showModal()"</span><span class="code-kw">&gt;</span>Abrir modal<span class="code-kw">&lt;/button&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 05 · RUNNER EN VIVO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span>
+      <span class="num-title">Pruébalo aquí mismo</span>
+    </div>
+    <div class="card">
+      <p>Pulsa <strong>Ejecutar</strong> y verás un FAQ con acordeones, una búsqueda con <code style="font-family:var(--font-mono);color:#7FE0F0">datalist</code>, un modal nativo y una barra de <code style="font-family:var(--font-mono);color:#7FE0F0">progress</code>/<code style="font-family:var(--font-mono);color:#7FE0F0">meter</code>. Todo sin una librería.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · faq-form</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runM10()">Ejecutar</button>
+          </div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- FAQ con details/summary --&gt;</span>
+<span class="code-kw">&lt;details</span> <span class="code-fn">open</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;summary&gt;</span>¿Cómo restablezco mi contraseña?<span class="code-kw">&lt;/summary&gt;</span>
+  <span class="code-kw">&lt;p&gt;</span>Haz clic en "Olvidé mi contraseña"…<span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;/details&gt;</span>
+
+<span class="code-cmt">&lt;!-- Búsqueda con datalist --&gt;</span>
+<span class="code-kw">&lt;input</span> <span class="code-fn">type</span>=<span class="code-str">"search"</span> <span class="code-fn">list</span>=<span class="code-str">"sug"</span> <span class="code-fn">placeholder</span>=<span class="code-str">"Buscar"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;datalist</span> <span class="code-fn">id</span>=<span class="code-str">"sug"</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;option</span> <span class="code-fn">value</span>=<span class="code-str">"factura"</span><span class="code-kw">&gt;&lt;option</span> <span class="code-fn">value</span>=<span class="code-str">"envío"</span><span class="code-kw">&gt;&lt;option</span> <span class="code-fn">value</span>=<span class="code-str">"devolución"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;/datalist&gt;</span>
+
+<span class="code-cmt">&lt;!-- Modal nativo --&gt;</span>
+<span class="code-kw">&lt;dialog</span> <span class="code-fn">id</span>=<span class="code-str">"aviso"</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;p&gt;</span>¡Bienvenido!<span class="code-kw">&lt;/p&gt;</span>
+  <span class="code-kw">&lt;button</span> <span class="code-fn">onclick</span>=<span class="code-str">"aviso.close()"</span><span class="code-kw">&gt;</span>Cerrar<span class="code-kw">&lt;/button&gt;</span>
+<span class="code-kw">&lt;/dialog&gt;</span>
+<span class="code-kw">&lt;button</span> <span class="code-fn">onclick</span>=<span class="code-str">"aviso.showModal()"</span><span class="code-kw">&gt;</span>Abrir modal<span class="code-kw">&lt;/button&gt;</span>
+
+<span class="code-cmt">&lt;!-- Estados --&gt;</span>
+<span class="code-kw">&lt;progress</span> <span class="code-fn">value</span>=<span class="code-str">"7"</span> <span class="code-fn">max</span>=<span class="code-str">"10"</span><span class="code-kw">&gt;&lt;/progress&gt;</span>
+<span class="code-kw">&lt;meter</span> <span class="code-fn">value</span>=<span class="code-str">"0.6"</span> <span class="code-fn">min</span>=<span class="code-str">"0"</span> <span class="code-fn">max</span>=<span class="code-str">"1"</span> <span class="code-fn">low</span>=<span class="code-str">"0.3"</span> <span class="code-fn">high</span>=<span class="code-str">"0.7"</span> <span class="code-fn">optimum</span>=<span class="code-str">"0.9"</span><span class="code-kw">&gt;&lt;/meter&gt;</span></code></pre>
+      </div>
+      <div class="preview-block" id="previewM10">
+        <div class="preview-head">Vista previa renderizada</div>
+        <iframe class="preview-frame" id="previewFrameM10" sandbox="allow-same-origin" title="Vista previa"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 06 · EJERCICIO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span>
+      <span class="num-title">Ejercicio: FAQ + formulario interactivo</span>
+    </div>
+    <div class="card">
+      <p>Crea un archivo <code style="font-family:var(--font-mono);color:#7FE0F0">faq-form.html</code> con un centro de ayuda que combine todo lo aprendido en una sola página real.</p>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-body">
+            <h4>Crea la base</h4>
+            <p>Estructura mínima del documento con un <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;h1&gt;</code> "Centro de ayuda".</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-body">
+            <h4>Añade 3 acordeones FAQ</h4>
+            <p>Tres <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;details&gt;</code>, cada uno con su <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;summary&gt;</code> + <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;p&gt;</code>. El primero con <code style="font-family:var(--font-mono);color:#7FE0F0">open</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-body">
+            <h4>Formulario de búsqueda con datalist</h4>
+            <p>Un <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;input type="search" list="sugerencias"&gt;</code> con un <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;datalist&gt;</code> de 5 opciones (factura, envío, devolución…).</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <div class="step-body">
+            <h4>Modal nativo</h4>
+            <p>Un <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;dialog&gt;</code> con un botón de cierre y, fuera, un botón que llama a <code style="font-family:var(--font-mono);color:#7FE0F0">dialog.showModal()</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">5</span>
+          <div class="step-body">
+            <h4>Añade <code style="font-family:var(--font-mono);color:#7FE0F0">progress</code> y <code style="font-family:var(--font-mono);color:#7FE0F0">meter</code></h4>
+            <p>Verifica en el navegador: los acordeones se expanden sin JS, el datalist sugiere, el modal flota y las barras se ven.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 07 · RECURSOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">7</span>
+      <span class="num-title">Recursos</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/HTML/Element/details" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · &lt;details&gt;</div>
+          <div class="res-desc">El acordeón plegable nativo, atributos y eventos.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/HTML/Element/dialog" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · &lt;dialog&gt;</div>
+          <div class="res-desc">Modales nativos: showModal, backdrop y foco.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/HTML/Element/datalist" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · &lt;datalist&gt;</div>
+          <div class="res-desc">Autocompletar nativo enlazado a un input.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="cta">
+    <div class="cta-label">Tu siguiente paso</div>
+    <h2>Haz tu web para todos</h2>
+    <p>Ya sabes construir interfaces interactivas. En el siguiente módulo harás que cualquiera —incluido quien usa lector de pantalla— pueda navegarlas: HTML semántico, ARIA y auditorías con Lighthouse.</p>
+    <a class="cta-btn" href="M11_Accesibilidad.html">
+      MÓDULO 11 · Accesibilidad
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+function runM10(){
+  var src = '<!DOCTYPE html>\n<html lang="es"><head><meta charset="utf-8">' +
+    '<style>body{font-family:system-ui,sans-serif;padding:18px;color:#1a1a2e}' +
+    'h1{margin:0 0 12px;font-size:18px}' +
+    'details{border:1px solid #ddd;border-radius:8px;padding:10px 14px;margin-bottom:8px}' +
+    'summary{cursor:pointer;font-weight:600}' +
+    'input,button{padding:6px 10px;border:1px solid #ccc;border-radius:6px;font-size:14px}' +
+    'button{background:#67E8F9;border:none;color:#06120B;font-weight:600;cursor:pointer}' +
+    'dialog{border:1px solid #A78BFA;border-radius:10px;padding:20px}' +
+    'dialog::backdrop{background:rgba(9,8,15,.6)}' +
+    'progress,meter{width:100%;height:18px;margin-top:6px}</style></head><body>' +
+    '<h1>Centro de ayuda</h1>' +
+    '<details open><summary>¿Cómo restablezco mi contraseña?</summary>' +
+    '<p>Haz clic en "Olvidé mi contraseña" en la pantalla de login…</p></details>' +
+    '<details><summary>¿Cómo cancelo mi suscripción?</summary>' +
+    '<p>Ve a Ajustes → Plan → Cancelar.</p></details>' +
+    '<details><summary>¿Cómo contacto con soporte?</summary>' +
+    '<p>Escríbenos a soporte@example.com.</p></details>' +
+    '<hr style="margin:14px 0;border:none;border-top:1px solid #eee">' +
+    '<input type="search" list="sug" placeholder="Buscar ayuda…">' +
+    '<datalist id="sug"><option value="factura"><option value="envío"><option value="devolución"><option value="contraseña"><option value="suscripción"></datalist>' +
+    '<hr style="margin:14px 0;border:none;border-top:1px solid #eee">' +
+    '<dialog id="aviso"><p>¡Bienvenido al centro de ayuda!</p>' +
+    '<button type="button" onclick="aviso.close()">Cerrar</button></dialog>' +
+    '<button onclick="aviso.showModal()">Abrir modal</button>' +
+    '<hr style="margin:14px 0;border:none;border-top:1px solid #eee">' +
+    '<label>Progreso: 7/10</label><progress value="7" max="10"></progress>' +
+    '<label>Meter: 0.6</label><meter value="0.6" min="0" max="1" low="0.3" high="0.7" optimum="0.9"></meter>' +
+    '</body></html>';
+  var frame = document.getElementById('previewFrameM10');
+  var block = document.getElementById('previewM10');
+  block.classList.add('show');
+  frame.srcdoc = src;
+  frame.style.minHeight = '320px';
+}
+</script>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

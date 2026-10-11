@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M03 · Estructura semántica — Curso HTML+CSS+JS</title>
+<style>
+/* ═══ RESET ═══ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#110F18; --bg-s3:#15131F; --bg-s4:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --cyan:#67E8F9; --cyan-soft:rgba(95,208,224,.06); --cyan-border:rgba(95,208,224,.2);
+  --pink:#F9A8D4; --pink-soft:rgba(249,168,212,.06); --pink-border:rgba(249,168,212,.2);
+  --yellow:#F5C451; --green:#34D399; --red:#FB7185;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+/* ═══ BACKGROUND GLOW ═══ */
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(34,184,207,.18),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+/* ═══ LAYOUT ═══ */
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* ═══ HERO ═══ */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(95,208,224,.12);border:1px solid rgba(95,208,224,.32);color:#7FE0F0;
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--cyan)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* ═══ SECTION CARD ═══ */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+/* ═══ NUMBERED SECTION ═══ */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* ═══ CONTENT BLOCKS ═══ */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+.content-block strong{color:#EEEBF6}
+.content-block ul{margin:8px 0 12px 18px;color:#A7A4B8;line-height:1.75;font-size:15px}
+.content-block li{margin-bottom:4px}
+.content-block li code{font-family:var(--font-mono);color:#7FE0F0}
+
+/* ═══ CODE BLOCK ═══ */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text-sec);font-family:var(--font-body);
+  font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+.code-btn.primary{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#7FE0F0}
+.code-tag{color:#7FE0F0}
+
+/* ═══ PREVIEW BLOCK (RENDERED HTML) ═══ */
+.preview-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;display:none;background:#fff}
+.preview-block.show{display:block}
+.preview-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;
+  text-transform:uppercase}
+.preview-frame{width:100%;min-height:140px;border:0;background:#fff}
+
+/* ═══ STEP LIST ═══ */
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;
+  color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body kbd{font-family:var(--font-mono);background:rgba(255,255,255,.06);padding:2px 6px;
+  border-radius:5px;border:1px solid var(--border);font-size:12px}
+.step-body strong{color:#EEEBF6}
+.step-body code{font-family:var(--font-mono);color:#7FE0F0}
+
+/* ═══ RESOURCE LINKS ═══ */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(95,208,224,.08);border-color:rgba(95,208,224,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* ═══ CTA ═══ */
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,#22B8CF,#0EA5C7);color:#06120B;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(34,184,207,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(34,184,207,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 03 · ESTRUCTURA SEMÁNTICA
+    </div>
+    <h1>Dale a tu web <span class="hl">significado</span></h1>
+    <p>Un <code style="font-family:var(--font-mono);color:#7FE0F0">div</code> no dice nada. Un <code style="font-family:var(--font-mono);color:#7FE0F0">header</code>, un <code style="font-family:var(--font-mono);color:#7FE0F0">nav</code> o un <code style="font-family:var(--font-mono);color:#7FE0F0">article</code> cuentan al navegador, a los buscadores y a los lectores de pantalla qué papel juega cada bloque. En este módulo aprenderás a estructurar una página con etiquetas que <strong>describen el contenido</strong>, no solo lo envuelven.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+        HTML semántico
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        Runner en vivo
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ~75 min de lectura
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 · LOS SIETE ELEMENTOS SEMÁNTICOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">Los siete elementos semánticos</span>
+    </div>
+    <div class="card">
+      <p>HTML5 introdujo un puñado de etiquetas que describen las partes comunes de cualquier página. No cambian el aspecto visual (eso es trabajo del CSS), pero sí le dicen al navegador y a las máquinas qué es cada bloque. Memoriza este mapa: describe el 90 % de las webs modernas.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · mapa semántico</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;body&gt;</span>
+  <span class="code-kw">&lt;header&gt;</span>   <span class="code-cmt">&lt;!-- logo, título, intro de la página o sección --&gt;</span>
+    <span class="code-kw">&lt;nav&gt;</span>         <span class="code-cmt">&lt;!-- men\u00fa principal de navegaci\u00f3n --&gt;</span>
+      <span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"/"</span><span class="code-kw">&gt;</span>Inicio<span class="code-kw">&lt;/a&gt;</span>
+      <span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"/blog"</span><span class="code-kw">&gt;</span>Blog<span class="code-kw">&lt;/a&gt;</span>
+    <span class="code-kw">&lt;/nav&gt;</span>
+  <span class="code-kw">&lt;/header&gt;</span>
+
+  <span class="code-kw">&lt;main&gt;</span>      <span class="code-cmt">&lt;!-- contenido central y \u00fanico de la p\u00e1gina --&gt;</span>
+    <span class="code-kw">&lt;article&gt;</span>   <span class="code-cmt">&lt;!-- contenido aut\u00f3nomo: un post, una noticia... --&gt;</span>
+      <span class="code-kw">&lt;h2&gt;</span>T\u00edtulo del post<span class="code-kw">&lt;/h2&gt;</span>
+      <span class="code-kw">&lt;p&gt;</span>Contenido...<span class="code-kw">&lt;/p&gt;</span>
+    <span class="code-kw">&lt;/article&gt;</span>
+    <span class="code-kw">&lt;aside&gt;</span>    <span class="code-cmt">&lt;!-- contenido relacionado: sidebar, publicidad... --&gt;</span>
+      <span class="code-kw">&lt;h3&gt;</span>Enlaces<span class="code-kw">&lt;/h3&gt;</span>
+      <span class="code-kw">&lt;ul&gt;&lt;li&gt;</span>...<span class="code-kw">&lt;/li&gt;&lt;/ul&gt;</span>
+    <span class="code-kw">&lt;/aside&gt;</span>
+  <span class="code-kw">&lt;/main&gt;</span>
+
+  <span class="code-kw">&lt;footer&gt;</span>   <span class="code-cmt">&lt;!-- info de cierre: copyright, autor, enlaces... --&gt;</span>
+    <span class="code-kw">&lt;p&gt;</span>© 2026 Mi Blog<span class="code-kw">&lt;/p&gt;</span>
+  <span class="code-kw">&lt;/footer&gt;</span>
+<span class="code-kw">&lt;/body&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Siete etiquetas, siete roles</h3>
+        <ul>
+          <li><code>&lt;header&gt;</code> — cabecera de página o de sección (logo, título, intro)</li>
+          <li><code>&lt;nav&gt;</code> — menú de navegación principal o secundario</li>
+          <li><code>&lt;main&gt;</code> — el contenido central y único de la página (uno solo por documento)</li>
+          <li><code>&lt;article&gt;</code> — contenido autónomo que podría vivir solo (un post, una noticia)</li>
+          <li><code>&lt;section&gt;</code> — agrupación temática de contenido con su propio encabezado</li>
+          <li><code>&lt;aside&gt;</code> — contenido relacionado, tangencial al principal (sidebar,_related)</li>
+          <li><code>&lt;footer&gt;</code> — pie de la página o de una sección (copyright, contacto, enlaces)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 · DIV VS SECTION VS ARTICLE ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">&lt;div&gt; vs &lt;section&gt; vs &lt;article&gt;</span>
+    </div>
+    <div class="card">
+      <p>Las tres etiquetas sirven para agrupar, pero su <strong>intención</strong> es diferente. Elegir bien comunica significado a buscadores y lectores de pantalla; elegir mal lo confunde. Esta es la regla que casi nadie explica bien.</p>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-body">
+            <h4><code>&lt;article&gt;</code> — contenido autónomo</h4>
+            <p>¿Podrías copiar este bloque, pegarlo en otro sitio y seguiría teniendo sentido por sí solo? Si la respuesta es <strong>sí</strong>, es un <code>article</code>. Ejemplos: un post de blog, una noticia, un comentario, un producto en una lista.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-body">
+            <h4><code>&lt;section&gt;</code> — agrupación temática</h4>
+            <p>¿Tiene sentido como unidad y <strong>lleva un encabezado propio</strong> (<code>h2</code>, <code>h3</code>…)? Si la respuesta es <strong>sí</strong>, es una <code>section</code>. Ejemplos: "Capítulos", "Comentarios", "Sección de contacto".</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-body">
+            <h4><code>&lt;div&gt;</code> — agrupación neutra</h4>
+            <p>¿No tiene significado semántico, solo sirve para CSS o layout? Si la respuesta es <strong>sí</strong>, usa <code>div</code>. Es la caja genérica. No la uses si una etiqueta semántica describe mejor el contenido.</p>
+          </div>
+        </div>
+      </div>
+      <div class="content-block">
+        <p>Pueden anidarse. Un <code>&lt;article&gt;</code> puede contener varios <code>&lt;section&gt;</code>; una página puede tener varios <code>&lt;article&gt;</code> dentro de un <code>&lt;main&gt;</code>. La clave es siempre preguntarte: <strong>¿este bloque es autónomo, temático o neutro?</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 · CSS Y JS EXTERNOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">Enlazando CSS y JavaScript externos</span>
+    </div>
+    <div class="card">
+      <p>El HTML es el esqueleto. El CSS es la piel. El JavaScript es el sistema nervioso. Para que se unan, el HTML los enlaza en el <code style="font-family:var(--font-mono);color:#7FE0F0">head</code> — con dos etiquetas muy distintas.</p>
+      <div class="content-block">
+        <h3>CSS — <code>&lt;link rel="stylesheet"&gt;</code></h3>
+        <p>Es un <strong>void element</strong>. No lleva cierre. Apunta a un archivo CSS externo con el atributo <code>href</code>.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · enlazar CSS</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;link</span> <span class="code-fn">rel</span>=<span class="code-str">"stylesheet"</span> <span class="code-fn">href</span>=<span class="code-str">"styles.css"</span><span class="code-kw">&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>JavaScript — <code>&lt;script src defer&gt;</code></h3>
+        <p>El navegador lee el HTML de arriba abajo. Si encuentra un <code>&lt;script&gt;</code> sin más, <strong>se detiene</strong> a descargarlo y ejecutarlo antes de seguir. Eso ralentiza la página. La solución mágica es el atributo <code>defer</code>.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · enlazar JS con defer</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- defer: descarga el JS en paralelo, pero lo ejecuta DESPUÉS del HTML --&gt;</span>
+<span class="code-kw">&lt;script</span> <span class="code-fn">src</span>=<span class="code-str">"script.js"</span> <span class="code-fn">defer</span><span class="code-kw">&gt;&lt;/script&gt;</span>
+
+<span class="code-cmt">&lt;!-- sin defer: el navegador se para hasta que el JS se ejecute. MAL. --&gt;</span>
+<span class="code-kw">&lt;script</span> <span class="code-fn">src</span>=<span class="code-str">"lento.js"</span><span class="code-kw">&gt;&lt;/script&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Por qué <code>defer</code> te va a ahorrar dolores de cabeza</h3>
+        <p>Sin <code>defer</code>, si tu JS intenta seleccionar un elemento del DOM que aún no existe, falla. Con <code>defer</code>, el JavaScript se ejecuta cuando el HTML ya está completo, así que <strong>todo el DOM está disponible</strong>. Tu vida como desarrollador acaba de mejorar.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 · EJERCICIO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">Tu ejercicio: estructura un blog</span>
+    </div>
+    <div class="card">
+      <p>Vas a construir el esqueleto de un blog completo. Un <code style="font-family:var(--font-mono);color:#7FE0F0">header</code> con título y navegación, un <code style="font-family:var(--font-mono);color:#7FE0F0">main</code> con dos <code style="font-family:var(--font-mono);color:#7FE0F0">article</code>, un <code style="font-family:var(--font-mono);color:#7FE0F0">aside</code> con enlaces y un <code style="font-family:var(--font-mono);color:#7FE0F0">footer</code> global.</p>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-body">
+            <h4>Crea <code>blog.html</code> con la estructura mínima</h4>
+            <p><code>&lt;!DOCTYPE html&gt;</code>, <code>&lt;html lang="es"&gt;</code>, <code>&lt;head&gt;</code> con <code>charset</code> y <code>viewport</code>, y <code>&lt;body&gt;</code> vacío.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-body">
+            <h4>Añade el <code>&lt;header&gt;</code> con un <code>&lt;nav&gt;</code></h4>
+            <p>Dentro del header: un <code>&lt;h1&gt;</code> con el nombre del blog, y una <code>&lt;nav&gt;</code> con 3 enlaces ("Inicio", "Artículos", "Contacto").</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-body">
+            <h4>Inserta el <code>&lt;main&gt;</code> con dos <code>&lt;article&gt;</code></h4>
+            <p>Cada <code>article</code>: un <code>&lt;h2&gt;</code> con el título del post, un <code>&lt;p&gt;</code> con el contenido y un <code>&lt;footer&gt;</code> con la fecha (texto plano por ahora).</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <div class="step-body">
+            <h4>Añade un <code>&lt;aside&gt;</code> con enlaces recomendados</h4>
+            <p>Una <code>&lt;ul&gt;</code> con tres <code>&lt;li&gt;</code> y dentro de cada uno un <code>&lt;a href="#"&gt;</code>. Puede ir dentro del <code>main</code> o antes del <code>footer</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">5</span>
+          <div class="step-body">
+            <h4>Cierra con un <code>&lt;footer&gt;</code> global</h4>
+            <p>Incluye un <code>&lt;p&gt;</code> con tu nombre y el año. Enlaza un CSS ficticio y un JS con <code>defer</code>: <code>&lt;link rel="stylesheet" href="styles.css"&gt;</code> y <code>&lt;script src="script.js" defer&gt;&lt;/script&gt;</code>. Abre DevTools y verifica el árbol semántico.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 05 · RUNNER EN VIVO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span>
+      <span class="num-title">Pruébalo aquí mismo</span>
+    </div>
+    <div class="card">
+      <p>Pulsa <strong>Ejecutar</strong> para ver renderizado el esqueleto semántico de un blog. Observa cómo <code style="font-family:var(--font-mono);color:#7FE0F0">header</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">nav</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">main</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">article</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">aside</code> y <code style="font-family:var(--font-mono);color:#7FE0F0">footer</code> se apilan por su contenido, sin un solo <code style="font-family:var(--font-mono);color:#7FE0F0">div</code>.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · blog.html</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runHTML()">Ejecutar</button>
+          </div>
+        </div>
+<pre><code><span class="code-kw">&lt;body&gt;</span>
+  <span class="code-kw">&lt;header&gt;</span>
+    <span class="code-kw">&lt;h1&gt;</span>Mi Blog de Cocina<span class="code-kw">&lt;/h1&gt;</span>
+    <span class="code-kw">&lt;nav&gt;</span>
+      <span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#"</span><span class="code-kw">&gt;</span>Inicio<span class="code-kw">&lt;/a&gt;</span> ·
+      <span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#"</span><span class="code-kw">&gt;</span>Artículos<span class="code-kw">&lt;/a&gt;</span> ·
+      <span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#"</span><span class="code-kw">&gt;</span>Contacto<span class="code-kw">&lt;/a&gt;</span>
+    <span class="code-kw">&lt;/nav&gt;</span>
+  <span class="code-kw">&lt;/header&gt;</span>
+
+  <span class="code-kw">&lt;main&gt;</span>
+    <span class="code-kw">&lt;article&gt;</span>
+      <span class="code-kw">&lt;h2&gt;</span>Pan de masa madre<span class="code-kw">&lt;/h2&gt;</span>
+      <span class="code-kw">&lt;p&gt;</span>Tras 24 horas de fermentación...<span class="code-kw">&lt;/p&gt;</span>
+      <span class="code-kw">&lt;footer&gt;</span>5 de julio de 2026<span class="code-kw">&lt;/footer&gt;</span>
+    <span class="code-kw">&lt;/article&gt;</span>
+
+    <span class="code-kw">&lt;article&gt;</span>
+      <span class="code-kw">&lt;h2&gt;</span>Croissants rápidos<span class="code-kw">&lt;/h2&gt;</span>
+      <span class="code-kw">&lt;p&gt;</span>Una versión simplificada...<span class="code-kw">&lt;/p&gt;</span>
+      <span class="code-kw">&lt;footer&gt;</span>3 de julio de 2026<span class="code-kw">&lt;/footer&gt;</span>
+    <span class="code-kw">&lt;/article&gt;</span>
+
+    <span class="code-kw">&lt;aside&gt;</span>
+      <span class="code-kw">&lt;h3&gt;</span>También te puede interesar<span class="code-kw">&lt;/h3&gt;</span>
+      <span class="code-kw">&lt;ul&gt;</span>
+        <span class="code-kw">&lt;li&gt;&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#"</span><span class="code-kw">&gt;</span>Pizza napoletana<span class="code-kw">&lt;/a&gt;&lt;/li&gt;</span>
+        <span class="code-kw">&lt;li&gt;&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#"</span><span class="code-kw">&gt;</span>Pasta fresca<span class="code-kw">&lt;/a&gt;&lt;/li&gt;</span>
+        <span class="code-kw">&lt;li&gt;&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#"</span><span class="code-kw">&gt;</span>Tiramisú<span class="code-kw">&lt;/a&gt;&lt;/li&gt;</span>
+      <span class="code-kw">&lt;/ul&gt;</span>
+    <span class="code-kw">&lt;/aside&gt;</span>
+  <span class="code-kw">&lt;/main&gt;</span>
+
+  <span class="code-kw">&lt;footer&gt;</span>
+    <span class="code-kw">&lt;p&gt;</span>© 2026 Mi Blog de Cocina<span class="code-kw">&lt;/p&gt;</span>
+  <span class="code-kw">&lt;/footer&gt;</span>
+<span class="code-kw">&lt;/body&gt;</span></code></pre>
+      </div>
+      <div class="preview-block" id="previewHTML">
+        <div class="preview-head">Vista previa renderizada</div>
+        <iframe class="preview-frame" id="previewFrame" sandbox="allow-same-origin" title="Vista previa"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 06 · RECURSOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span>
+      <span class="num-title">Recursos</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Learn/HTML/Introduction_to_HTML/Document_and_website_structure" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Estructura y layout con HTML</div>
+          <div class="res-desc">Cómo organizar una página web con elementos semánticos, paso a paso.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://web.dev/learn/html/semantic-html" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">web.dev · Semantic HTML</div>
+          <div class="res-desc">Guía moderna sobre por qué el HTML semántico mejora SEO y accesibilidad.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/HTML/Element/script" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · &lt;script&gt; y el atributo defer</div>
+          <div class="res-desc">Documentación completa del elemento script, defer, async y cuándo usar cada uno.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="cta">
+    <div class="cta-label">Tu siguiente paso</div>
+    <h2>Rellena el esqueleto con texto</h2>
+    <p>Ya tienes la estructura. El siguiente módulo te enseña las etiquetas del contenido: encabezados con jerarquía, párrafos, citas, énfasis y código. Las palabras que viven dentro de las secciones.</p>
+    <a class="cta-btn" href="M04_Texto_Encabezados.html">
+      MÓDULO 04 · Texto y encabezados
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+// ═══ INLINE HTML RUNNER ═══
+function runHTML(){
+  var src = '<!DOCTYPE html>\n' +
+    '<html lang="es">\n' +
+    '  <head>\n' +
+    '    <meta charset="utf-8">\n' +
+    '    <title>Blog sem\u00e1ntico</title>\n' +
+    '  </head>\n' +
+    '  <body style="font-family:system-ui,sans-serif;line-height:1.6;color:#111;margin:0;padding:20px;max-width:640px">\n' +
+    '    <header style="border-bottom:2px solid #ddd;padding-bottom:14px;margin-bottom:20px">\n' +
+    '      <h1 style="margin:0 0 10px">Mi Blog de Cocina</h1>\n' +
+    '      <nav><a href="#" style="margin-right:10px">Inicio</a>\n' +
+    '        <a href="#" style="margin-right:10px">Art\u00edculos</a>\n' +
+    '        <a href="#">Contacto</a></nav>\n' +
+    '    </header>\n' +
+    '    <main>\n' +
+    '      <article style="margin-bottom:22px;padding-bottom:16px;border-bottom:1px dashed #ccc">\n' +
+    '        <h2 style="margin:0 0 6px">Pan de masa madre</h2>\n' +
+    '        <p style="margin:0 0 8px">Tras 24 horas de fermentaci\u00f3n lenta, el pan developa un flavor profundo y una miga alveolada.</p>\n' +
+    '        <footer style="font-size:13px;color:#666">5 de julio de 2026</footer>\n' +
+    '      </article>\n' +
+    '      <article style="margin-bottom:22px;padding-bottom:16px;border-bottom:1px dashed #ccc">\n' +
+    '        <h2 style="margin:0 0 6px">Croissants r\u00e1pidos</h2>\n' +
+    '        <p style="margin:0 0 8px">Una versi\u00f3n simplificada del cl\u00e1sico franc\u00e9s, lista en dos horas.</p>\n' +
+    '        <footer style="font-size:13px;color:#666">3 de julio de 2026</footer>\n' +
+    '      </article>\n' +
+    '      <aside style="background:#f4f4f4;padding:14px 18px;border-radius:8px;margin-top:20px">\n' +
+    '        <h3 style="margin:0 0 8px">Tambi\u00e9n te puede interesar</h3>\n' +
+    '        <ul style="margin:0;padding-left:18px"><li><a href="#">Pizza napoletana</a></li>\n' +
+    '          <li><a href="#">Pasta fresca</a></li>\n' +
+    '          <li><a href="#">Tiramis\u00fa</a></li></ul>\n' +
+    '      </aside>\n' +
+    '    </main>\n' +
+    '    <footer style="margin-top:26px;padding-top:14px;border-top:2px solid #ddd;text-align:center;color:#666">\n' +
+    '      <p style="margin:0">\u00a9 2026 Mi Blog de Cocina</p>\n' +
+    '    </footer>\n' +
+    '  </body>\n' +
+    '</html>';
+  var frame = document.getElementById('previewFrame');
+  var block = document.getElementById('previewHTML');
+  block.classList.add('show');
+  frame.srcdoc = src;
+  frame.style.minHeight = '520px';
+}
+</script>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

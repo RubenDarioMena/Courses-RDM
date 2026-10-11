@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M02 · Sintaxis y elementos — Curso HTML+CSS+JS</title>
+<style>
+/* ═══ RESET ═══ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#110F18; --bg-s3:#15131F; --bg-s4:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --cyan:#67E8F9; --cyan-soft:rgba(95,208,224,.06); --cyan-border:rgba(95,208,224,.2);
+  --pink:#F9A8D4; --pink-soft:rgba(249,168,212,.06); --pink-border:rgba(249,168,212,.2);
+  --yellow:#F5C451; --green:#34D399; --red:#FB7185;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+/* ═══ BACKGROUND GLOW ═══ */
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(34,184,207,.18),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+/* ═══ LAYOUT ═══ */
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* ═══ HERO ═══ */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(95,208,224,.12);border:1px solid rgba(95,208,224,.32);color:#7FE0F0;
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--cyan)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* ═══ SECTION CARD ═══ */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+/* ═══ NUMBERED SECTION ═══ */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* ═══ CONTENT BLOCKS ═══ */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+.content-block strong{color:#EEEBF6}
+.content-block ul{margin:8px 0 12px 18px;color:#A7A4B8;line-height:1.75;font-size:15px}
+.content-block li{margin-bottom:4px}
+.content-block li code{font-family:var(--font-mono);color:#7FE0F0}
+
+/* ═══ CODE BLOCK ═══ */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text-sec);font-family:var(--font-body);
+  font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+.code-btn.primary{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#7FE0F0}
+.code-tag{color:#7FE0F0}
+
+/* ═══ PREVIEW BLOCK (RENDERED HTML) ═══ */
+.preview-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;display:none;background:#fff}
+.preview-block.show{display:block}
+.preview-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;
+  text-transform:uppercase}
+.preview-frame{width:100%;min-height:140px;border:0;background:#fff}
+
+/* ═══ STEP LIST ═══ */
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;
+  color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body kbd{font-family:var(--font-mono);background:rgba(255,255,255,.06);padding:2px 6px;
+  border-radius:5px;border:1px solid var(--border);font-size:12px}
+.step-body strong{color:#EEEBF6}
+.step-body code{font-family:var(--font-mono);color:#7FE0F0}
+
+/* ═══ RESOURCE LINKS ═══ */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(95,208,224,.08);border-color:rgba(95,208,224,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* ═══ CTA ═══ */
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,#22B8CF,#0EA5C7);color:#06120B;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(34,184,207,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(34,184,207,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 02 · SINTAXIS Y ELEMENTOS
+    </div>
+    <h1>La <span class="hl">gramática</span> del HTML</h1>
+    <p>Cada etiqueta se abre, cada etiqueta se cierra, cada elemento sigue reglas. En este módulo aprenderás a construir etiquetas correctamente — qué son los atributos, qué pinta el anidamiento y cuándo una etiqueta no necesita cierre. Estas son las cinco reglas que nadie que escriba HTML debería romper nunca.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+        Etiquetas y atributos
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        Runner en vivo
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ~60 min de lectura
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 · LA ANATOMÍA DE UN ELEMENTO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">La anatomía de un elemento</span>
+    </div>
+    <div class="card">
+      <p>Un elemento HTML no es magia: es un molde predecible con cuatro piezas. Una vez que lo entiendes, leer cualquier HTML del mundo te resulta tan sencillo como leer una frase.</p>
+      <div class="content-block">
+        <h3>Las cuatro partes de un elemento</h3>
+        <p>Un elemento tiene etiqueta de apertura, contenido y etiqueta de cierre. Entre los dos van los atributos, modificadores pares <code>nombre="valor"</code> que configuran el elemento:</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · anatomía de un elemento</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"https://mdn.dev"</span> <span class="code-fn">class</span>=<span class="code-str">"enlace"</span><span class="code-kw">&gt;</span>           <span class="code-cmt">&lt;!-- 1. Apertura + atributos --&gt;</span>
+  Documentación MDN                                     <span class="code-cmt">&lt;!-- 2. Contenido --&gt;</span>
+<span class="code-kw">&lt;/a&gt;</span>                                                 <span class="code-cmt">&lt;!-- 3. Cierre --&gt;</span>
+<span class="code-cmt">&lt;!--  Todo eso junto es el elemento  --&gt;</span>                                  <span class="code-cmt">&lt;!-- 4. El elemento completo --&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Cinco piezas, cinco roles</h3>
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">1</span>
+            <div class="step-body">
+              <h4>Etiqueta de apertura — <code>&lt;a&gt;</code></h4>
+              <p>El nombre del elemento entre ángulos. Le dice al navegador: <strong>esto empieza aquí</strong>.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">2</span>
+            <div class="step-body">
+              <h4>Atributos — <code>href="..."</code> <code>class="..."</code></h4>
+              <p>Pares <code>nombre="valor"</code> que modifican o configuran el elemento. Van siempre en la etiqueta de apertura, separados por espacios. El orden no importa.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">3</span>
+            <div class="step-body">
+              <h4>Contenido</h4>
+              <p>Texto, otros elementos, o nada. Lo que va entre la apertura y el cierre es lo que el usuario <strong>ve</strong> (en la mayoría de casos).</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">4</span>
+            <div class="step-body">
+              <h4>Etiqueta de cierre — <code>&lt;/a&gt;</code></h4>
+              <p>El mismo nombre, con una barra <code>/</code> delante. Le dice al navegador: <strong>esto termina aquí</strong>.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">5</span>
+            <div class="step-body">
+              <h4>El elemento</h4>
+              <p>Apertura + atributos + contenido + cierre: <strong>todo el conjunto</strong> es el elemento. Si te lo llevas, te lo llevas entero.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 · ELEMENTOS DE BLOQUE VS. EN LÍNEA ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">Elementos de bloque vs. en línea</span>
+    </div>
+    <div class="card">
+      <p>No todas las etiquetas se comportan igual. Unas ocupan todo el ancho disponible y empujan al siguiente elemento abajo. Otras viven en línea, fluyendo con el texto, como palabras. Llamarlas correctamente es saber de qué tipo es cada una.</p>
+      <div class="content-block">
+        <h3>Bloque — <code>&lt;p&gt;</code> <code>&lt;div&gt;</code> <code>&lt;h1&gt;</code> <code>&lt;ul&gt;</code></h3>
+        <p>Ocupan todo el ancho del contenedor. Provocan un salto de línea antes y después. Apilados verticalmente, uno debajo de otro. Son los <strong>ladrillos</strong> de la página.</p>
+      </div>
+      <div class="content-block">
+        <h3>En línea — <code>&lt;a&gt;</code> <code>&lt;strong&gt;</code> <code>&lt;em&gt;</code> <code>&lt;span&gt;</code></h3>
+        <p>Ocupan solo lo que ocupa su contenido. No rompen el flujo del texto. Pueden mezclarse con otros en una misma línea. Son el <strong>cemento</strong> que rodea a los ladrillos.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · bloque vs línea</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- Elemento de bloque: ocupa toda la línea --&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>Mi libro favorito es <span class="code-kw">&lt;strong&gt;</span>El Principito<span class="code-kw">&lt;/strong&gt;</span>.<span class="code-kw">&lt;/p&gt;</span>
+<span class="code-cmt">&lt;!--  ↑ bloque               ↑ en línea, dentro del bloque  --&gt;</span>
+
+<span class="code-cmt">&lt;!-- En línea se pueden anidar varios en la misma línea --&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>Texto <span class="code-kw">&lt;em&gt;</span>cursiva<span class="code-kw">&lt;/em&gt;</span> y <span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#"</span><span class="code-kw">&gt;</span>enlace<span class="code-kw">&lt;/a&gt;</span>.<span class="code-kw">&lt;/p&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Regla de anidamiento</h3>
+        <p>Los elementos en línea pueden vivir dentro de un bloque. Un bloque dentro de otro bloque, sin problema. <strong>Pero no metas un bloque dentro de un en línea</strong> — te arriesgas a resultados impredecibles.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 · ELEMENTOS VOID ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">Void elements: etiquetas sin cierre</span>
+    </div>
+    <div class="card">
+      <p>Algunos elementos no tienen contenido, no tienen cierre, son una sola pieza. Se llaman <strong>void</strong> y son los únicos que rompen la regla general. Memorízalos — son tan comunes que los usarás cada cinco minutos.</p>
+      <div class="content-block">
+        <h3>Los void que verás siempre</h3>
+        <ul>
+          <li><code>&lt;img src="..." alt="..."&gt;</code> — imágenes</li>
+          <li><code>&lt;br&gt;</code> — salto de línea</li>
+          <li><code>&lt;hr&gt;</code> — separador horizontal</li>
+          <li><code>&lt;input type="..."&gt;</code> — campos de formulario</li>
+          <li><code>&lt;meta charset="utf-8"&gt;</code> — metadatos (los viste en M01)</li>
+          <li><code>&lt;link rel="stylesheet" href="..."&gt;</code> — enlaces a recursos externos</li>
+        </ul>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · void elements</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- Sin/contentido = sin cierre. Una sola etiqueta y basta. --&gt;</span>
+<span class="code-kw">&lt;img</span> <span class="code-fn">src</span>=<span class="code-str">"gato.jpg"</span> <span class="code-fn">alt</span>=<span class="code-str">"Un gato naranja"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;br&gt;</span>
+<span class="code-kw">&lt;hr&gt;</span>
+<span class="code-kw">&lt;input</span> <span class="code-fn">type</span>=<span class="code-str">"email"</span> <span class="code-fn">placeholder</span>=<span class="code-str">"tucorreo@ejemplo.com"</span><span class="code-kw">&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <p>El navegador acepta la forma con barra final <code>&lt;br /&gt;</code> (herencia de XHTML), pero en HTML5 ya no hace falta. Usa <code>&lt;br&gt;</code> sin más: más limpio y más moderno.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 · COMENTARIOS Y ENTIDADES ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">Comentarios y entidades HTML</span>
+    </div>
+    <div class="card">
+      <p>A veces necesitas escribir cosas que el navegador no debe interpretar como HTML. Para eso existen los comentarios (notas invisibles) y las entidades (caracteres reservados).</p>
+      <div class="content-block">
+        <h3>Comentarios — <code>&lt;!-- ... --&gt;</code></h3>
+        <p>Texto que el navegador ignora. Sirven para documentar tu código o desactivar temporalmente un trozo. <strong>No llegan al usuario</strong>, pero sí al código fuente, así que no pongas nada sensible en ellos.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · comentarios</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- Este párrafo muestra el uso de em, strong y cite --&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>Mi libro favorito es <span class="code-kw">&lt;cite&gt;</span>El Principito<span class="code-kw">&lt;/cite&gt;</span>.<span class="code-kw">&lt;/p&gt;</span>
+
+<span class="code-cmt">&lt;!--
+  Comentario multilinea:
+  útil para marcar secciones o dejar notas
+  a tu yo del futuro.
+--&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Entidades — <code>&amp;lt;</code> <code>&amp;amp;</code> <code>&amp;nbsp;</code></h3>
+        <p>Hay tres caracteres que HTML reserva para sí mismo y no puedes escribirlos a pelo: <code>&lt;</code> <code>&gt;</code> <code>&amp;</code>. Para mostrarlos usas <strong>entidades</strong>, comodines que empiezan con <code>&amp;</code> y terminan con <code>;</code>.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · entidades</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- Mostrar literalmente los caracteres reservados --&gt;</span>
+&amp;lt;          <span class="code-cmt">&lt;!-- se ve así:   &amp;lt;   --&gt;</span>
+&amp;gt;          <span class="code-cmt">&lt;!-- se ve así:   &amp;gt;   --&gt;</span>
+&amp;amp;         <span class="code-cmt">&lt;!-- se ve así:   &amp;amp;  --&gt;</span>
+
+<span class="code-cmt">&lt;!-- Espacio no rompible: une dos palabras para que no separan en salto de línea --&gt;</span>
+Arte &amp;amp; Ciencia&amp;nbsp;&amp;nbsp;(con dos espacios)
+
+<span class="code-cmt">&lt;!-- Comillas tipográficas --&gt;</span>
+&amp;ldquo;Hola&amp;rdquo;       <span class="code-cmt">&lt;!-- se ve así:   &amp;ldquo;Hola&amp;rdquo;   --&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 05 · EJERCICIO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span>
+      <span class="num-title">Tu ejercicio: marca un párrafo</span>
+    </div>
+    <div class="card">
+      <p>Hora de mancharte las manos. Vas a crear un archivo <code style="font-family:var(--font-mono);color:#7FE0F0">sintaxis.html</code> y escribir un párrafo sobre tu libro favorito usando todo lo que acabas de aprender.</p>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-body">
+            <h4>Crea <code>sintaxis.html</code></h4>
+            <p>Abre tu editor, pega la estructura mínima del M01 (<code>&lt;!DOCTYPE html&gt;</code>, <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;body&gt;</code>) y guárdalo como <code>sintaxis.html</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-body">
+            <h4>Escribe un párrafo sobre tu libro favorito</h4>
+            <p>Dentro del <code>&lt;body&gt;</code>, escribe un <code>&lt;p&gt;</code> usando <code>&lt;cite&gt;</code> para el título del libro, <code>&lt;strong&gt;</code> para el autor y <code>&lt;em&gt;</code> para una frase clave.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-body">
+            <h4>Añade un comentario antes del párrafo</h4>
+            <p>Explica de qué trata el párrafo con <code>&lt;!-- ... --&gt;</code>. No se verá en el navegador, pero queda documentado para tu yo del futuro.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <div class="step-body">
+            <h4>Separador y entidad</h4>
+            <p>Debajo, añade un <code>&lt;hr&gt;</code> y un segundo párrafo con la entidad <code>&amp;amp;</code> y dos espacios <code>&amp;nbsp;</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">5</span>
+          <div class="step-body">
+            <h4>Guarda y abre</h4>
+            <p>Doble clic en el archivo. Verifica: <code>&lt;cite&gt;</code> en cursiva, <code>&lt;strong&gt;</code> en negrita, <code>&lt;em&gt;</code> en cursiva, <code>&amp;amp;</code> mostrando un <strong>&amp;</strong> y los espacios renderizados.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 06 · RUNNER EN VIVO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span>
+      <span class="num-title">Pruébalo aquí mismo</span>
+    </div>
+    <div class="card">
+      <p>Pulsa <strong>Ejecutar</strong> para ver cómo el navegador interpreta el párrafo con <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;cite&gt;</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;strong&gt;</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;em&gt;</code>, un separador <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;hr&gt;</code> y una entidad <code style="font-family:var(--font-mono);color:#7FE0F0">&amp;amp;</code>.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · sintaxis.html</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runHTML()">Ejecutar</button>
+          </div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- Este párrafo muestra el uso de em, strong y cite --&gt;</span>
+<span class="code-kw">&lt;p&gt;</span>Mi libro favorito es <span class="code-kw">&lt;cite&gt;</span>El Principito<span class="code-kw">&lt;/cite&gt;</span>
+  de <span class="code-kw">&lt;strong&gt;</span>Antoine de Saint-Exupéry<span class="code-kw">&lt;/strong&gt;</span>,
+  porque nos recuerda que <span class="code-kw">&lt;em&gt;</span>lo esencial es invisible a los ojos<span class="code-kw">&lt;/em&gt;</span>.<span class="code-kw">&lt;/p&gt;</span>
+
+<span class="code-kw">&lt;hr&gt;</span>
+
+<span class="code-kw">&lt;p&gt;</span>Arte &amp;amp; Ciencia&amp;nbsp;&amp;nbsp;(con dos espacios)<span class="code-kw">&lt;/p&gt;</span></code></pre>
+      </div>
+      <div class="preview-block" id="previewHTML">
+        <div class="preview-head">Vista previa renderizada</div>
+        <iframe class="preview-frame" id="previewFrame" sandbox="allow-same-origin" title="Vista previa"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 07 · RECURSOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">7</span>
+      <span class="num-title">Recursos</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/HTML/Element" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Elementos HTML</div>
+          <div class="res-desc">La referencia completa de cada etiqueta HTML, con ejemplos y atributos.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/HTML/Block-level_elements" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Elementos de bloque vs en línea</div>
+          <div class="res-desc">Cómo se diferencian y cuándo conviene cada uno — la base del layout.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Glossary/Entity" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Entidades HTML</div>
+          <div class="res-desc">Todo el listado de entidades para escribir caracteres reservados y símbolos.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="cta">
+    <div class="cta-label">Tu siguiente paso</div>
+    <h2>Dales estructura semántica</h2>
+    <p>Ya sabes abrir y cerrar etiquetas. Ahora aprenderás a organizarlas con sentido: <code style="font-family:var(--font-mono);color:#7FE0F0">header</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">nav</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">main</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">article</code> — las piezas que convierten un puñado de bloques en una web con jerarquía.</p>
+    <a class="cta-btn" href="M03_Estructura_Semantica.html">
+      MÓDULO 03 · Estructura semántica
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+// ═══ INLINE HTML RUNNER ═══
+function runHTML(){
+  var src = '<!DOCTYPE html>\n' +
+    '<html lang="es">\n' +
+    '  <head>\n' +
+    '    <meta charset="utf-8">\n' +
+    '    <title>Sintaxis</title>\n' +
+    '  </head>\n' +
+    '  <body style="font-family:system-ui,sans-serif;line-height:1.7;color:#111;margin:20px">\n' +
+    '    <!-- Este p\u00e1rrafo muestra el uso de em, strong y cite -->\n' +
+    '    <p>Mi libro favorito es <cite>El Principito</cite>\n' +
+    '      de <strong>Antoine de Saint-Exup\u00e9ry</strong>,\n' +
+    '      porque nos recuerda que <em>lo esencial es invisible a los ojos</em>.</p>\n' +
+    '    <hr>\n' +
+    '    <p>Arte &amp; Ciencia&nbsp;&nbsp;(con dos espacios)</p>\n' +
+    '  </body>\n' +
+    '</html>';
+  var frame = document.getElementById('previewFrame');
+  var block = document.getElementById('previewHTML');
+  block.classList.add('show');
+  frame.srcdoc = src;
+  frame.style.minHeight = '180px';
+}
+</script>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

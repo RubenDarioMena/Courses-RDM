@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Indice del Curso Bug Report Tool</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --panel:#ffffff;
+      --panel-2:#eef2f8;
+      --text:#17202c;
+      --muted:#5b6a7b;
+      --line:rgba(23,32,44,.1);
+      --accent:#3d7eff;
+      --accent-2:#ff8c42;
+      --shadow:0 18px 40px rgba(13,24,38,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(61,126,255,.08), transparent 24%),
+        radial-gradient(circle at top right, rgba(255,140,66,.1), transparent 20%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{
+      width:min(1160px, calc(100% - 28px));
+      margin:0 auto;
+      padding:28px 0 60px;
+    }
+    .back{
+      display:inline-flex;
+      align-items:center;
+      min-height:42px;
+      padding:0 14px;
+      border-radius:12px;
+      background:rgba(255,255,255,.8);
+      border:1px solid var(--line);
+      color:var(--muted);
+      font-weight:700;
+      margin-bottom:18px;
+    }
+    .hero{
+      padding:28px;
+      border-radius:28px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,253,.96));
+      box-shadow:var(--shadow);
+      margin-bottom:22px;
+    }
+    .eyebrow{
+      color:var(--accent);
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      font-weight:800;
+    }
+    h1{
+      margin:12px 0 10px;
+      font-size:clamp(2rem, 4vw, 3.4rem);
+      line-height:1;
+    }
+    .hero p{
+      margin:0;
+      color:var(--muted);
+      max-width:70ch;
+      line-height:1.7;
+    }
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:20px;
+    }
+    .button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:46px;
+      padding:0 16px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--panel);
+      font-weight:700;
+      box-shadow:var(--shadow);
+    }
+    .button.primary{
+      background:var(--accent);
+      color:#fff;
+      border-color:transparent;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+      gap:18px;
+    }
+    .group{
+      padding:22px;
+      border-radius:24px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(244,247,251,.98));
+      box-shadow:var(--shadow);
+    }
+    .tag{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(61,126,255,.08);
+      color:var(--accent);
+      font-size:.82rem;
+      font-weight:800;
+      margin-bottom:10px;
+    }
+    h2{
+      margin:0 0 8px;
+      font-size:1.28rem;
+    }
+    .group p{
+      margin:0 0 14px;
+      color:var(--muted);
+      line-height:1.6;
+    }
+    ol{
+      margin:0;
+      padding-left:20px;
+    }
+    li{
+      margin:0 0 10px;
+      color:var(--muted);
+      line-height:1.55;
+    }
+    li a{
+      color:var(--text);
+      font-weight:700;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <a class="back" href="../">Volver a la biblioteca</a>
+
+    <section class="hero">
+      <div class="eyebrow">Curso aplicado sobre una herramienta real</div>
+      <h1>Curso Bug Report Tool</h1>
+      <p>Este recorrido usa una herramienta concreta como objeto de estudio. Es ideal para quien ya vio algo de HTML y CSS y quiere entender como se arma una app real en un solo archivo.</p>
+      <div class="actions">
+        <a class="button primary" href="./01_HTML/M00_Bienvenida.html">Empezar desde M00</a>
+        <a class="button" href="./bug_tool.html">Abrir la herramienta final</a>
+        <a class="button" href="./00_TEMARIO.md">Ver temario</a>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="group">
+        <span class="tag">Bloque I · HTML</span>
+        <h2>Estructura estatica</h2>
+        <p>Del esqueleto del documento al schema embebido en JSON.</p>
+        <ol>
+          <li><a href="./01_HTML/M00_Bienvenida.html">M00 · Bienvenida</a></li>
+          <li><a href="./01_HTML/M01_HTML_esqueleto.html">M01 · HTML esqueleto</a></li>
+          <li><a href="./01_HTML/M02_JSON_embebido.html">M02 · JSON embebido</a></li>
+          <li><a href="./01_HTML/M03_schema_campos.html">M03 · Schema y campos</a></li>
+        </ol>
+      </article>
+
+      <article class="group">
+        <span class="tag">Bloque II · CSS</span>
+        <h2>UI y layout</h2>
+        <p>Reset, layout principal, paneles colapsables y modales.</p>
+        <ol>
+          <li><a href="./02_CSS/M04_reset_base.html">M04 · Reset y base</a></li>
+          <li><a href="./02_CSS/M05_flexbox_layout.html">M05 · Flexbox y layout</a></li>
+          <li><a href="./02_CSS/M06_secciones_colapsables.html">M06 · Secciones colapsables</a></li>
+          <li><a href="./02_CSS/M07_modales_menus.html">M07 · Modales y menus</a></li>
+        </ol>
+      </article>
+
+      <article class="group">
+        <span class="tag">Bloque III · JS basico</span>
+        <h2>Estado, config y render</h2>
+        <p>Variables, helpers, instancias y render dinamico del formulario.</p>
+        <ol>
+          <li><a href="./03_JS_basico/M08_variables_constantes.html">M08 · Variables y constantes</a></li>
+          <li><a href="./03_JS_basico/M09_utilidades.html">M09 · Utilidades</a></li>
+          <li><a href="./03_JS_basico/M10_config.html">M10 · Config</a></li>
+          <li><a href="./03_JS_basico/M11_instancias.html">M11 · Instancias</a></li>
+          <li><a href="./03_JS_basico/M12_render.html">M12 · Render</a></li>
+        </ol>
+      </article>
+
+      <article class="group">
+        <span class="tag">Bloque IV-V · JS avanzado</span>
+        <h2>Widgets, output y tiles</h2>
+        <p>Autocomplete, validacion, persistencia y sistema visual de feedback.</p>
+        <ol>
+          <li><a href="./04_JS_avanzado/M13_autocomplete.html">M13 · Autocomplete</a></li>
+          <li><a href="./04_JS_avanzado/M14_keywords.html">M14 · Keywords</a></li>
+          <li><a href="./04_JS_avanzado/M15_validacion.html">M15 · Validacion</a></li>
+          <li><a href="./04_JS_avanzado/M16_expresiones.html">M16 · Expresiones</a></li>
+          <li><a href="./04_JS_avanzado/M17_output.html">M17 · Output</a></li>
+          <li><a href="./04_JS_avanzado/M18_persistencia.html">M18 · Persistencia</a></li>
+          <li><a href="./05_Tiles/M19_tiles_automaticas.html">M19 · Tiles automaticas</a></li>
+          <li><a href="./05_Tiles/M20_tiles_personalizadas.html">M20 · Tiles personalizadas</a></li>
+          <li><a href="./05_Tiles/M21_resaltado_cruzado.html">M21 · Resaltado cruzado</a></li>
+        </ol>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

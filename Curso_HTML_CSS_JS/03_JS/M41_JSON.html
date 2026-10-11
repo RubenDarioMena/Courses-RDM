@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M41 · JSON — Curso HTML+CSS+JS</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --yellow:#F5C451; --yellow-soft:rgba(245,196,81,.12); --yellow-border:rgba(245,196,81,.22);
+  --red:#FB7185; --green:#34D399; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(139,92,246,.20),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(34,184,207,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* HERO */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(245,196,81,.12);border:1px solid rgba(245,196,81,.32);color:var(--yellow);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--accent)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* CARD */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;font-size:clamp(21px,3vw,27px);
+  color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;margin:0 0 20px;max-width:62ch}
+
+/* NUM SECTION */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,var(--yellow),#EAB308)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* CONTENT */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+.content-block ul{color:#A7A4B8;line-height:1.75;font-size:15.5px;max-width:60ch;margin:6px 0 8px 22px}
+.content-block li{margin:3px 0}
+.content-block code,.content-block kbd{font-family:var(--font-mono);font-size:13.5px;background:rgba(255,255,255,.05);
+  padding:1px 6px;border-radius:5px;color:var(--yellow)}
+
+/* CODE BLOCK */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
+  background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(245,196,81,.16);border-color:var(--yellow-border);color:var(--yellow)}
+.code-btn.primary{background:rgba(245,196,81,.16);border-color:var(--yellow-border);color:var(--yellow)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+.code-prop{color:#93C5FD}
+.code-num{color:#F5C451}
+.code-bool{color:#FB7185}
+
+/* OUTPUT */
+.output-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;overflow:hidden;display:none}
+.output-block.show{display:block}
+.output-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.output-body{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6}
+.out-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.out-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.out-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.out-tag.alert{color:#C4B5FD;background:rgba(196,181,253,.1)}
+.out-tag.error{color:#FF8E8E;background:rgba(255,142,142,.1)}
+.out-text{color:#C7CDE0}
+.out-text pre{margin:0;padding:0;background:transparent;display:inline}
+
+/* HERO IMAGE */
+.idea-img{background:linear-gradient(135deg,rgba(245,196,81,.08),rgba(139,92,246,.05));
+  border:1px solid var(--border);border-radius:18px;padding:24px 20px;margin:0 0 clamp(24px,4vw,38px);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px}
+.idea-box{text-align:center;padding:14px 10px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);border-radius:12px}
+.idea-box .ibox-title{font-family:var(--font-head);font-weight:600;font-size:15px;color:var(--yellow);margin-bottom:4px}
+.idea-box .ibox-sub{font-size:12.5px;color:var(--text-mut);font-family:var(--font-mono)}
+
+/* TYPES GRID */
+.types-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:14px}
+.type-cell{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
+.type-name{font-family:var(--font-mono);font-size:12.5px;color:var(--yellow);font-weight:600}
+.type-example{font-size:12px;color:var(--text-mut);margin-top:3px;font-family:var(--font-mono)}
+
+/* STEPS */
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#A78BFA,#8B5CF6)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body code{font-family:var(--font-mono);font-size:13px;background:rgba(255,255,255,.05);
+  padding:1px 6px;border-radius:5px;color:var(--yellow)}
+
+/* TABLE PREVIEW */
+.table-preview{margin-top:14px;background:rgba(255,255,255,.02);border:1px solid var(--border);
+  border-radius:13px;padding:14px 16px;font-family:var(--font-mono);font-size:13px;color:var(--text-sec);
+  overflow-x:auto}
+.table-preview table{width:100%;border-collapse:collapse}
+.table-preview th,.table-preview td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);font-size:12.5px}
+.table-preview th{color:var(--yellow);font-weight:600;font-family:var(--font-head)}
+.table-preview tr:last-child td{border-bottom:0}
+.table-preview td.num{color:var(--cyan);text-align:right}
+
+/* RESOURCES */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;
+  border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* CTA */
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;
+  background:linear-gradient(145deg,#8B5CF6,#7C3AED);color:#fff;font-family:var(--font-body);
+  font-size:15px;font-weight:600;box-shadow:0 8px 24px -8px rgba(139,92,246,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(139,92,246,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 41 · JSON</div>
+    <h1><span class="hl">JSON</span>: el idioma de la web</h1>
+    <p>JSON (JavaScript Object Notation) es el formato universal para mover datos. Si abriste una API, una app móvil, un backend o un archivo <code>.json</code> de configuración, ya te cruzaste con él. Es solo texto, pero con reglas muy concretas que todos los lenguajes saben leer y escribir.</p>
+    <div class="meta-chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Texto estructurado</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>stringify + parse</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>APIs, config, storage</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>~8 min de lectura</span>
+    </div>
+  </div>
+
+  <!-- LA IDEA EN UNA IMAGEN -->
+  <div class="idea-img">
+    <div class="idea-box">
+      <div class="ibox-title">OBJETO { }</div>
+      <div class="ibox-sub">clave: valor</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">ARRAY [ ]</div>
+      <div class="ibox-sub">lista ordenada</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">STRING ""</div>
+      <div class="ibox-sub">con comillas dobles</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">NUMBER</div>
+      <div class="ibox-sub">entero o decimal</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">BOOL / null</div>
+      <div class="ibox-sub">true, false, null</div>
+    </div>
+  </div>
+
+  <!-- 01 · SINTAXIS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span><span class="num-title">Sintaxis: solo 6 tipos</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Las reglas de JSON en una página</h3>
+        <p>Aunque parece flexible, JSON solo admite <strong>seis tipos</strong> de datos: objeto, array, string, número, booleano y <code>null</code>. No hay funciones, no hay comentarios, no hay <code>undefined</code>, y las claves van siempre entre <strong>comillas dobles</strong>. Si lo que escribes cabe en esa lista, es JSON válido.</p>
+      </div>
+      <div class="types-grid">
+        <div class="type-cell"><div class="type-name">{ ... }</div><div class="type-example">objeto</div></div>
+        <div class="type-cell"><div class="type-name">[ ... ]</div><div class="type-example">array</div></div>
+        <div class="type-cell"><div class="type-name">"texto"</div><div class="type-example">string</div></div>
+        <div class="type-cell"><div class="type-name">42 / 3.14</div><div class="type-example">número</div></div>
+        <div class="type-cell"><div class="type-name">true/false</div><div class="type-example">booleano</div></div>
+        <div class="type-cell"><div class="type-name">null</div><div class="type-example">ausencia</div></div>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>JSON de ejemplo · producto</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runSyntax()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-kw">const</span> json = <span class="code-str">`{
+  "id": 17,
+  "nombre": "Auriculares",
+  "precio": 59.90,
+  "disponible": true,
+  "tags": ["audio", "inalámbrico"],
+  "descuento": null
+}`</span>;
+
+<span class="code-cmt">// parsearlo: de texto a objeto</span>
+<span class="code-kw">const</span> obj = <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(json);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(obj.nombre);        <span class="code-cmt">// Auriculares</span>
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(obj.tags[<span class="code-num">0</span>]);     <span class="code-cmt">// audio</span>
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(obj.descuento);    <span class="code-cmt">// null</span>
+
+<span class="code-cmt">// stringify: de objeto a texto formateado</span>
+<span class="code-kw">const</span> texto = <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(obj, <span class="code-bool">null</span>, <span class="code-num">2</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(texto);</code></pre>
+      </div>
+      <div class="output-block" id="outSyntax">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outSyntaxBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 · STRINGIFY AVANZADO -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span><span class="num-title">JSON.stringify a fondo</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>El argumento <code>spaces</code> solo indenta</h3>
+        <p>El segundo y tercer argumento controlan el formato: <code>JSON.stringify(obj, null, 2)</code> devuelve texto con saltos de línea y 2 espacios de indentación. Es ideal para que un humano lo lea. Para máquinas o传输, suele dejarse sin indentar para ahorrar bytes.</p>
+      </div>
+      <div class="content-block">
+        <h3>El <code>replacer</code>: filtro o transformador</h3>
+        <p>El segundo argumento también puede ser una <strong>función</strong> que recibe cada par clave/valor y decide qué hacer. Si devuelves <code>undefined</code>, esa propiedad se excluye del resultado. Si devuelves un valor transformado, ese se serializa en su lugar. Sirve para filtrar secretos, normalizar fechas o quitar <em>data</em> ruidosa.</p>
+      </div>
+      <div class="content-block">
+        <h3><code>toJSON</code>: el atajo en la propia clase</h3>
+        <p>Si una clase define un método <code>toJSON()</code>, <code>JSON.stringify</code> lo usará automáticamente. Es la forma idiomática de controlar cómo se serializa un objeto complejo: devuelve <em>un objeto plano</em> con la forma que quieres que tenga en el JSON final.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>replacer + toJSON</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runStringify()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-kw">class</span> <span class="code-fn">Usuario</span> {
+  <span class="code-fn">constructor</span>(nombre, password, rol) {
+    <span class="code-kw">this</span>.nombre = nombre;
+    <span class="code-kw">this</span>.password = password;  <span class="code-cmt">// NUNCA exponer</span>
+    <span class="code-kw">this</span>.rol = rol;
+  }
+  <span class="code-cmt">// se invoca solo al serializar</span>
+  <span class="code-fn">toJSON</span>() {
+    <span class="code-kw">return</span> { nombre: <span class="code-kw">this</span>.nombre, rol: <span class="code-kw">this</span>.rol };
+  }
+}
+
+<span class="code-kw">const</span> u = <span class="code-kw">new</span> <span class="code-fn">Usuario</span>(<span class="code-str">'Ada'</span>, <span class="code-str">'s3creto!'</span>, <span class="code-str">'admin'</span>);
+
+<span class="code-cmt">// replacer como filtro: solo deja pasar 'rol' y 'nombre'</span>
+<span class="code-kw">const</span> filtrado = <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(u, (k, v) =&gt; k === <span class="code-str">'password'</span> ? <span class="code-bool">undefined</span> : v);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'replacer:'</span>, filtrado);
+<span class="code-cmt">// toJSON ya hace lo mismo automáticamente:</span>
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'toJSON  :'</span>, <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(u));</code></pre>
+      </div>
+      <div class="output-block" id="outStringify">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outStringifyBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 · JSON.parse CON REVIVER -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span><span class="num-title">JSON.parse y el reviver</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>El reviver: post-procesar al deserializar</h3>
+        <p><code>JSON.parse</code> acepta un segundo argumento: una función que se llama con cada par <em>(clave, valor)</em> justo antes de devolverlo. El truco es que va en <strong>orden inverso</strong>: el motor parsea primero los nodos hoja y va subiendo. Eso te permite detectar strings ISO y convertirlos en <code>Date</code> reales, por ejemplo.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>parse con reviver</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runReviver()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-kw">const</span> data = <span class="code-str">`{
+  "evento": "Lanzamiento",
+  "fecha": "2026-08-15T18:30:00Z",
+  "asistentes": [
+    { "nombre": "Ada",  "fecha": "2026-08-15T18:00:00Z" },
+    { "nombre": "Lin",  "fecha": "2026-08-15T18:15:00Z" }
+  ]
+}`</span>;
+
+<span class="code-cmt">// reviver: si el valor parece fecha ISO, lo convierte a Date</span>
+<span class="code-kw">const</span> isoDate = <span class="code-str">/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/</span>;
+<span class="code-kw">const</span> obj = <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(data, (key, value) =&gt; {
+  <span class="code-kw">if</span> (<span class="code-kw">typeof</span> value === <span class="code-str">'string'</span> &amp;&amp; isoDate.<span class="code-fn">test</span>(value)) {
+    <span class="code-kw">return new</span> <span class="code-fn">Date</span>(value);
+  }
+  <span class="code-kw">return</span> value;
+});
+
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(obj.fecha <span class="code-kw">instanceof</span> Date);  <span class="code-cmt">// true</span>
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(obj.fecha.<span class="code-fn">toLocaleDateString</span>(<span class="code-str">'es'</span>));
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(obj.asistentes[<span class="code-num">0</span>].fecha.<span class="code-fn">getHours</span>());</code></pre>
+      </div>
+      <div class="output-block" id="outReviver">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outReviverBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 · LIMITACIONES -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span><span class="num-title">Lo que JSON no sabe hacer</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Lo que pierdes al cruzar la frontera</h3>
+        <p>JSON es texto plano, así que ciertos valores del mundo JS no sobreviven al viaje. Si los serializas tal cual, <strong>desaparecen</strong> o se transforman en otra cosa:</p>
+        <ul>
+          <li><code>undefined</code> → se omite. No existe en JSON.</li>
+          <li><code>Date</code> → se convierte en string ISO. Pierdes métodos como <code>.getHours()</code>.</li>
+          <li><code>Map</code> / <code>Set</code> → quedan como <code>{}</code> (objeto vacío). Se pierde la información de tipo.</li>
+          <li><code>Function</code>, <code>Symbol</code>, <code>BigInt</code> → también desaparecen o lanzan error.</li>
+        </ul>
+        <p>El truco es <strong>convertir a una forma plana</strong> antes de serializar (clase → POJO) y <strong>reconstruir</strong> al deserializar (reviver, factory o <code>Object.assign(new X(), obj)</code>).</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>Limitaciones reales</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runLimits()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-kw">const</span> raro = {
+  a: <span class="code-bool">undefined</span>,
+  b: <span class="code-bool">null</span>,
+  c: <span class="code-kw">new</span> <span class="code-fn">Date</span>(),
+  d: <span class="code-kw">new</span> <span class="code-fn">Map</span>([[<span class="code-str">'k'</span>, <span class="code-str">'v'</span>]]),
+  e: [<span class="code-num">1</span>, <span class="code-num">2</span>, <span class="code-num">3</span>]
+};
+
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(raro));
+<span class="code-cmt">// a → desaparece, c → string ISO, d → {}</span>
+
+<span class="code-kw">const</span> back = <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(<span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(raro));
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'back.c es Date?'</span>, back.c <span class="code-kw">instanceof</span> Date);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'back.d es Map?'</span>, back.d <span class="code-kw">instanceof</span> Map);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'back.d keys:'</span>, <span class="code-fn">Object</span>.<span class="code-fn">keys</span>(back.d));</code></pre>
+      </div>
+      <div class="output-block" id="outLimits">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outLimitsBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 · TU PRIMER MOMENTO + RECURSOS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span><span class="num-title">Tu primer momento JSON</span>
+    </div>
+    <div class="card">
+      <p>Vamos a serializar un array de productos, excluir el <code>stock</code> con un replacer, deserializar y dibujar la tabla resultante en el DOM. Pulsa <strong>Ejecutar</strong> para ver la salida y la tabla renderizada.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>Serializar + renderizar</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runProducts()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-kw">const</span> productos = [
+  { id: <span class="code-num">1</span>, nombre: <span class="code-str">"Café"</span>,      precio: <span class="code-num">3.5</span>,  stock: <span class="code-num">120</span> },
+  { id: <span class="code-num">2</span>, nombre: <span class="code-str">"Tostada"</span>,   precio: <span class="code-num">2.0</span>,  stock: <span class="code-num">40</span>  },
+  { id: <span class="code-num">3</span>, nombre: <span class="code-str">"Zumo"</span>,     precio: <span class="code-num">2.8</span>,  stock: <span class="code-num">75</span>  }
+];
+
+<span class="code-cmt">// 1) Serializamos EXCLUYENDO 'stock' con un replacer</span>
+<span class="code-kw">const</span> replacer = (k, v) =&gt; k === <span class="code-str">'stock'</span> ? <span class="code-bool">undefined</span> : v;
+<span class="code-kw">const</span> texto = <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(productos, replacer, <span class="code-num">2</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'JSON (sin stock):'</span>, texto);
+
+<span class="code-cmt">// 2) Deserializamos y dibujamos la tabla</span>
+<span class="code-kw">const</span> data = <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(texto);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'recovered:'</span>, data.length, <span class="code-str">'productos'</span>);</code></pre>
+      </div>
+      <div class="output-block" id="outProducts">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outProductsBody"></div>
+      </div>
+      <div class="content-block" style="margin-top:18px">
+        <h3>Tabla renderizada desde JSON</h3>
+        <p>Así queda la tabla generada con DOM a partir del array recuperado:</p>
+      </div>
+      <div class="table-preview" id="tablePreview">
+        <table>
+          <thead><tr><th>id</th><th>nombre</th><th>precio (€)</th></tr></thead>
+          <tbody id="tableBody">
+            <tr><td colspan="3" style="color:var(--text-mut);text-align:center">Pulsa <strong>Ejecutar</strong> para generar la tabla</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 · RECURSOS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span><span class="num-title">Recursos para tu aventura</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/JSON" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · JSON</div>
+        <div class="res-desc">Referencia completa del objeto <code>JSON</code>: <code>stringify</code>, <code>parse</code> y casos de uso.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · JSON.stringify</div>
+        <div class="res-desc">Sintaxis detallada: <code>replacer</code>, <code>space</code>, <code>toJSON</code> y todas las opciones.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://javascript.info/json" target="_blank" rel="noopener">
+        <div><div class="res-name">javascript.info · JSON</div>
+        <div class="res-desc">Tutorial con ejemplos reales: peticiones HTTP, localStorage y configuración.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <div class="cta-label">JSON bajo la manga</div>
+    <h2>¿Listo para que esos datos sobrevivan a un refresh?</h2>
+    <p>Ahora que dominas el formato, vamos a darle superpoderes: <code>localStorage</code> los guarda entre sesiones, sincroniza pestañas y convierte tu web en algo que recuerda al usuario.</p>
+    <a class="cta-btn" href="M42_localStorage.html">
+      MÓDULO 42 · localStorage
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+
+<script>
+"use strict";
+function makeRunner(outId,bodyId){
+  return function(code){
+    var out=document.getElementById(outId),body=document.getElementById(bodyId);
+    body.innerHTML='';var logs=[];var origLog=console.log;
+    console.log=function(){var a=[].slice.call(arguments);logs.push({level:'log',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')})};
+    var al=function(msg){logs.push({level:'alert',text:String(msg)})};
+    try{new Function('alert','console',code)(al,console)}catch(e){logs.push({level:'error',text:e.message})}finally{console.log=origLog}
+    if(!logs.length)logs.push({level:'log',text:'(sin salida visible)'});
+    logs.forEach(function(l){
+      var line=document.createElement('div');line.className='out-line';
+      var tag=document.createElement('span');tag.className='out-tag '+l.level;tag.textContent=l.level;
+      var txt=document.createElement('span');txt.className='out-text';txt.textContent=l.text;
+      line.appendChild(tag);line.appendChild(txt);body.appendChild(line);
+    });
+    out.classList.add('show');
+  };
+}
+
+function runSyntax(){
+  makeRunner('outSyntax','outSyntaxBody')("\n    const json = `{\n      \"id\": 17,\n      \"nombre\": \"Auriculares\",\n      \"precio\": 59.90,\n      \"disponible\": true,\n      \"tags\": [\"audio\", \"inal\\u00e1mbrico\"],\n      \"descuento\": null\n    }`;\n    const obj = JSON.parse(json);\n    console.log(obj.nombre);\n    console.log(obj.tags[0]);\n    console.log(obj.descuento);\n    const texto = JSON.stringify(obj, null, 2);\n    console.log(texto);\n  ");
+}
+
+function runStringify(){
+  makeRunner('outStringify','outStringifyBody')("\n    class Usuario {\n      constructor(nombre, password, rol) {\n        this.nombre = nombre;\n        this.password = password;\n        this.rol = rol;\n      }\n      toJSON() {\n        return { nombre: this.nombre, rol: this.rol };\n      }\n    }\n    const u = new Usuario('Ada', 's3creto!', 'admin');\n    const filtrado = JSON.stringify(u, (k, v) => k === 'password' ? undefined : v);\n    console.log('replacer:', filtrado);\n    console.log('toJSON  :', JSON.stringify(u));\n  ");
+}
+
+function runReviver(){
+  makeRunner('outReviver','outReviverBody')("\n    const data = `{\n      \"evento\": \"Lanzamiento\",\n      \"fecha\": \"2026-08-15T18:30:00Z\",\n      \"asistentes\": [\n        { \"nombre\": \"Ada\",  \"fecha\": \"2026-08-15T18:00:00Z\" },\n        { \"nombre\": \"Lin\",  \"fecha\": \"2026-08-15T18:15:00Z\" }\n      ]\n    }`;\n    const isoDate = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}/;\n    const obj = JSON.parse(data, (key, value) => {\n      if (typeof value === 'string' && isoDate.test(value)) return new Date(value);\n      return value;\n    });\n    console.log('fecha es Date:', obj.fecha instanceof Date);\n    console.log('fecha formateada:', obj.fecha.toLocaleDateString('es'));\n    console.log('hora de Ada:', obj.asistentes[0].fecha.getHours());\n  ");
+}
+
+function runLimits(){
+  makeRunner('outLimits','outLimitsBody')("\n    const raro = {\n      a: undefined,\n      b: null,\n      c: new Date(),\n      d: new Map([['k', 'v']]),\n      e: [1, 2, 3]\n    };\n    console.log(JSON.stringify(raro));\n    const back = JSON.parse(JSON.stringify(raro));\n    console.log('back.c es Date?', back.c instanceof Date);\n    console.log('back.d es Map?', back.d instanceof Map);\n    console.log('back.d keys:', Object.keys(back.d));\n  ");
+}
+
+function runProducts(){
+  makeRunner('outProducts','outProductsBody')("\n    const productos = [\n      { id: 1, nombre: \"Caf\\u00e9\",    precio: 3.5, stock: 120 },\n      { id: 2, nombre: \"Tostada\", precio: 2.0, stock: 40 },\n      { id: 3, nombre: \"Zumo\",   precio: 2.8, stock: 75 }\n    ];\n    const replacer = (k, v) => k === 'stock' ? undefined : v;\n    const texto = JSON.stringify(productos, replacer, 2);\n    console.log('JSON (sin stock):', texto);\n    const data = JSON.parse(texto);\n    console.log('recovered:', data.length, 'productos');\n  ");
+  var productos=[
+    {id:1,nombre:"Café",precio:3.5},
+    {id:2,nombre:"Tostada",precio:2.0},
+    {id:3,nombre:"Zumo",precio:2.8}
+  ];
+  var tb=document.getElementById('tableBody');
+  tb.innerHTML='';
+  productos.forEach(function(p){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td class="num">'+p.id+'</td><td>'+p.nombre+'</td><td class="num">'+p.precio.toFixed(2)+'</td>';
+    tb.appendChild(tr);
+  });
+}
+</script>
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

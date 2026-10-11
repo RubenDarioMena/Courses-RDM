@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 01: Fundamentos de JavaScript</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <!-- CodeMirror Editor -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/css/css.min.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        pre, code { font-family: 'Fira Code', monospace; }
+        /* Smooth transitions (align with 01_Fundamentos.html) */
+        body, h1, h2, p, li, strong, a, div, button, svg, pre {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        .accordion { cursor: pointer; width: 100%; text-align: left; border: none; outline: none; transition: background-color 0.4s ease; position: relative; }
+        .accordion:after { content: '\002B'; font-size: 1.5em; position: absolute; right: 1.5rem; top: 50%; transform: translateY(-50%); transition: transform 0.3s ease; }
+        .accordion.active:after { content: "\2212"; transform: translateY(-50%) rotate(180deg); }
+        .panel { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+        .gemini-explanation-box { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+        .CodeMirror { height: 100%; font-size: 16px; }
+        .tab.active { background-color: #4f46e5; color: white; }
+        /* Layout variables */
+        :root { 
+            --editor-width-desktop: 45vw; /* editor slightly less than half */
+            --main-open-width-desktop: 50vw; /* course content exactly half */
+        }
+
+        /* Desktop: when editor is open, allocate space without crushing text */
+        @media (min-width: 768px) {
+            body.editor-open #main-content { 
+                width: var(--main-open-width-desktop);
+                max-width: var(--main-open-width-desktop) !important;
+                margin-left: 0; /* align to left when editor is open */
+                margin-right: auto;
+                padding-right: 0;
+            }
+            /* Force editor panel width to be a bit less than half */
+            #editor-panel { width: var(--editor-width-desktop) !important; }
+        }
+        
+        #darkModeToggle { transition: right 0.3s ease-in-out; }
+        @media (min-width: 768px) {
+            body.editor-open #darkModeToggle { right: calc(var(--editor-width-desktop) + 1rem); }
+        }
+        
+        @media (max-width: 767px) {
+            body.editor-open #darkModeToggle { display: none; }
+        }
+        /* Improve wrapping inside CodeMirror when enabled */
+        .CodeMirror pre { word-break: break-word; }
+        .CodeMirror-wrap pre { white-space: pre-wrap; word-break: break-word; }
+        
+        /* Basic Syntax Highlighting Styles (match 01_Fundamentos.html) */
+        .code-comment { color: #6a9955; }
+        .code-string { color: #ce9178; }
+        .code-keyword { color: #569cd6; }
+        .code-number  { color: #b5cea8; }
+        .code-variable{ color: #9cdcfe; }
+        .code-function{ color: #c586c0; }
+
+        /* Mobile portrait: keep close button visible and simplify header */
+        @media (max-width: 767px) and (orientation: portrait) {
+            #layout-group { display: none !important; }
+            #run-code-btn span { display: none; }
+            #editor-header { flex-wrap: wrap; padding-right: 2.5rem; }
+            #close-editor-btn { position: absolute; right: 0.5rem; top: 0.5rem; z-index: 20; }
+        }
+
+        /* Small-height landscape (phones turned sideways): use full-screen overlay and simplify header */
+        @media (orientation: landscape) and (max-height: 500px) {
+            #editor-panel {
+                top: 0 !important; right: 0 !important; bottom: 0 !important; left: 0 !important;
+                width: 100% !important; height: 100% !important;
+                background-color: rgba(0,0,0,0.5) !important;
+            }
+            body.editor-open #darkModeToggle { display: none !important; }
+            #layout-group { display: none !important; }
+            #run-code-btn span { display: none; }
+            #editor-header { flex-wrap: wrap; padding-right: 2.5rem; }
+            #close-editor-btn { position: absolute; right: 0.5rem; top: 0.5rem; z-index: 20; }
+        }
+    </style>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased transition-all duration-300">
+
+    <!-- Dark Mode Toggle Button -->
+    <div id="darkModeToggle" class="fixed top-4 right-4 z-50">
+        <button class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900 focus:ring-indigo-500">
+            <svg id="sunIcon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <svg id="moonIcon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        </button>
+    </div>
+
+    <!-- Main Content Container -->
+    <div id="main-content" class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 transition-all duration-300">
+        
+        <header class="text-center mb-10">
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white">Módulo 01: Fundamentos de JavaScript <span class="text-4xl">🏗️</span></h1>
+        </header>
+
+        <main class="space-y-4">
+             <p class="text-lg text-center mb-8">¡Felicidades por llegar aquí! En el módulo anterior, preparamos el terreno. Ahora, vamos a poner los cimientos: aprenderemos las reglas básicas del idioma para darle nuestras primeras instrucciones al navegador.</p>
+
+            <!-- Accordion Item 1 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 1: La Estructura del Código</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Declaraciones: Las Órdenes que Damos</h3>
+                        <p>Una "declaración" (o <em>statement</em>) es simplemente una instrucción. Es una orden que le das al motor de JavaScript. Imagina que cada línea de código es una frase en un manual de instrucciones: "haz esto", "luego haz aquello".</p>
+                        <p>Para que todo sea más claro (para nosotros y para el navegador), solemos escribir cada instrucción en una nueva línea y terminarla con un punto y coma (<code>;</code>).</p>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code><span class="code-function">alert</span>(<span class="code-string">'Hola, mundo!'</span>);
+<span class="code-function">alert</span>(<span class="code-string">'¡Estoy aprendiendo JS!'</span>);</code></pre>
+                        <p class="text-sm bg-yellow-100 dark:bg-yellow-900 p-3 rounded-md"><strong>¿Y si no pongo el punto y coma?</strong> JavaScript a menudo lo añade por ti, pero es como un corrector automático que a veces se equivoca. Es una buena práctica ponerlo siempre para evitar errores raros. ¡No confíes en la magia!</p>
+                        
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400 mt-6">Comentarios: Notas para tu "Yo" del Futuro</h3>
+                        <p>Los comentarios son texto que el navegador ignora por completo. Son notas adhesivas que dejas en tu código para explicar qué hace una parte, por qué tomaste una decisión o para recordarte algo. ¡Tu "yo" de dentro de seis meses te lo agradecerá!</p>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code><span class="code-comment">// Esto es un comentario de una sola línea. Sirve para notas rápidas.</span>
+<span class="code-function">alert</span>(<span class="code-string">'Hola!'</span>); <span class="code-comment">// También puedes ponerlos al final de una línea.</span>
+
+<span class="code-comment">/*
+  Esto es un comentario de varias líneas.
+  Es perfecto para explicaciones más
+  largas y detalladas.
+*/</span>
+<span class="code-function">alert</span>(<span class="code-string">'Mundo'</span>);</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Item 2 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <button class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 2: Variables, las Cajas para Guardar Cosas</button>
+                <div class="panel px-6">
+                    <div class="py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+                        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">¿Qué es una Variable?</h3>
+                        <p>Una <strong>variable</strong> es como una caja con una etiqueta. Puedes guardar datos dentro (un número, un texto, lo que sea) y luego usar la etiqueta para referirte a esos datos fácilmente. Es la forma fundamental de almacenar y manejar información.</p>
+                        
+                        <h4 class="text-xl font-semibold">Declarando Variables: `let` y `const`</h4>
+                        <p>En el JavaScript moderno, tenemos dos tipos de "cajas":</p>
+                        <ul class="list-disc list-inside space-y-2">
+                           <li><code>let</code>: Es una caja normal. Puedes cambiar su contenido cuando quieras. Úsala para valores que esperas que cambien, como la puntuación de un jugador o un contador.</li>
+                           <li><code>const</code>: Es una "caja de seguridad". Una vez que guardas algo en ella, no puedes cambiarlo. Es perfecta para valores que no deberían cambiar nunca, como una fecha de nacimiento o el valor de PI.</li>
+                        </ul>
+                        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code><span class="code-comment">// Usamos let para un valor que puede cambiar.</span>
+<span class="code-keyword">let</span> <span class="code-variable">puntuacion</span> = <span class="code-number">100</span>;
+<span class="code-function">alert</span>(<span class="code-variable">puntuacion</span>); <span class="code-comment">// Muestra 100</span>
+
+<span class="code-variable">puntuacion</span> = <span class="code-number">150</span>; <span class="code-comment">// ¡Podemos cambiar el valor!</span>
+<span class="code-function">alert</span>(<span class="code-variable">puntuacion</span>); <span class="code-comment">// Ahora muestra 150</span>
+
+<span class="code-comment">// Usamos const para un valor que no cambiará.</span>
+<span class="code-keyword">const</span> <span class="code-variable">nombreUsuario</span> = <span class="code-string">'Ana'</span>;
+<span class="code-function">alert</span>(<span class="code-variable">nombreUsuario</span>);
+
+<span class="code-comment">// Si intentas esto, ¡tendrás un error en la consola!</span>
+<span class="code-comment">// nombreUsuario = 'Pepe'; // TypeError: Assignment to constant variable.</span></code></pre>
+
+                        <h4 class="text-xl font-semibold mt-4">¿Y qué pasa con `var`?</h4>
+                        <p class="text-sm bg-yellow-100 dark:bg-yellow-900 p-3 rounded-md">Verás <code>var</code> en código antiguo. Es la forma original de crear variables, pero se comporta de manera extraña y puede causar errores. Piensa en `var` como un teléfono de disco: funcionaba, pero hoy tenemos smartphones (`let` y `const`) que son mucho mejores. <strong class="font-semibold">Regla simple: usa `let` y `const`, y evita `var`.</strong></p>
+
+                        <h4 class="text-xl font-semibold mt-4">Nombrando tus Cajas</h4>
+                        <p>Elegir buenos nombres es un superpoder. Un buen nombre describe el contenido. La convención en JS es usar <strong>camelCase</strong>: la primera palabra en minúsculas y las siguientes empiezan con mayúscula.</p>
+                        <ul class="list-disc list-inside space-y-1 text-base">
+                            <li>✔️ Bien: <code>let userScore;</code>, <code>const itemsInCart;</code></li>
+                            <li>❌ Mal: <code>let userscore;</code>, <code>const Itemsincart;</code>, <code>let x;</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Code Editor FAB -->
+    <button id="editor-fab" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 z-40">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+    </button>
+    
+    <!-- Code Editor Panel -->
+    <div id="editor-panel" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40 md:inset-auto md:top-0 md:right-0 md:w-1/2 md:h-full md:bg-transparent">
+        <div class="flex flex-col h-full bg-gray-800 shadow-2xl">
+            <!-- Editor Header -->
+            <header id="editor-header" class="flex-shrink-0 bg-gray-900 p-2 flex items-center justify-between border-b border-gray-700 text-sm relative">
+                <div id="editor-tabs" class="flex items-center space-x-1">
+                    <button data-mode="xml" class="tab active px-3 py-1 rounded-md">HTML</button>
+                    <button data-mode="css" class="tab px-3 py-1 rounded-md">CSS</button>
+                    <button data-mode="javascript" class="tab px-3 py-1 rounded-md">JS</button>
+                </div>
+                <div class="flex items-center space-x-2">
+                     <div id="layout-group" class="flex items-center space-x-1 bg-gray-700 rounded-md p-1">
+                        <button id="layout-editor-full" title="Editor a pantalla completa" class="p-1 rounded-md hover:bg-gray-600"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10V4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6M3 14v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6"/></svg></button>
+                        <button id="layout-split" title="Vista dividida" class="p-1 rounded-md hover:bg-gray-600 bg-gray-600"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"></line><line x1="3" y1="12" x2="21" y2="12"></line></svg></button>
+                        <button id="layout-preview-full" title="Preview a pantalla completa" class="p-1 rounded-md hover:bg-gray-600"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6M14 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg></button>
+                     </div>
+                     <select id="layout-select" class="md:hidden text-xs bg-gray-700 text-white rounded-md px-2 py-1 ml-2">
+                        <option value="split">Dividida</option>
+                        <option value="editor-full">Editor</option>
+                        <option value="preview-full">Preview</option>
+                     </select>
+                    <button id="run-code-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-md flex items-center space-x-2"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg><span>Ejecutar</span></button>
+                    <button id="close-editor-btn" class="text-gray-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                </div>
+            </header>
+
+            <!-- Editor Content -->
+            <div id="editor-content" class="flex-grow min-h-0 relative">
+                 <div data-mode="xml" class="w-full h-full"><textarea class="editor-instance"></textarea></div>
+                 <div data-mode="css" class="w-full h-full hidden"><textarea class="editor-instance"></textarea></div>
+                 <div data-mode="javascript" class="w-full h-full hidden"><textarea class="editor-instance"></textarea></div>
+            </div>
+
+            <!-- Output Area -->
+            <div id="output-area" class="flex-shrink-0 border-t border-gray-700 flex flex-col">
+                <div id="output-tabs" class="flex-shrink-0 flex items-center space-x-1 p-2 bg-gray-900">
+                     <button data-mode="preview" class="tab active px-3 py-1 rounded-md text-sm">Preview</button>
+                     <button data-mode="console" class="tab px-3 py-1 rounded-md text-sm">Consola</button>
+                </div>
+                <div id="output-content" class="flex-grow min-h-0 relative bg-white dark:bg-gray-900">
+                    <iframe id="preview-frame" data-mode="preview" class="w-full h-full border-0"></iframe>
+                    <pre id="console-output" data-mode="console" class="w-full h-full p-4 bg-gray-900 text-gray-100 overflow-y-auto text-sm whitespace-pre-wrap hidden"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const editorState = {
+                editors: {},
+                activeEditor: 'xml',
+                code: {
+                    xml: '<h1>¡Hola, Mundo!</h1>\n<p>Escribe tu HTML aquí.</p>\n<button onclick="saludar()">Haz Clic</button>',
+                    css: 'body {\n  font-family: sans-serif;\n  padding: 1rem;\n  background-color: #f0f0f0;\n}\n\nbutton {\n  padding: 8px 16px;\n  border-radius: 5px;\n  cursor: pointer;\n}',
+                    javascript: 'function saludar() {\n  alert("¡Funciona desde JS!");\n  console.log("Botón presionado a las", new Date().toLocaleTimeString());\n}'
+                },
+                isInitialized: false
+            };
+
+            const uiElements = {
+                fab: document.getElementById('editor-fab'),
+                panel: document.getElementById('editor-panel'),
+                closeBtn: document.getElementById('close-editor-btn'),
+                runBtn: document.getElementById('run-code-btn'),
+                editorTabs: document.getElementById('editor-tabs'),
+                editorContent: document.getElementById('editor-content'),
+                outputTabs: document.getElementById('output-tabs'),
+                outputContent: document.getElementById('output-content'),
+                previewFrame: document.getElementById('preview-frame'),
+                consoleOutput: document.getElementById('console-output'),
+                layoutEditorFull: document.getElementById('layout-editor-full'),
+                layoutSplit: document.getElementById('layout-split'),
+                layoutPreviewFull: document.getElementById('layout-preview-full'),
+                editorContentArea: document.getElementById('editor-content'),
+                outputArea: document.getElementById('output-area'),
+                layoutSelect: document.getElementById('layout-select')
+            };
+
+            let userSetLayout = false;
+            const computePreferredLayout = () => {
+                const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+                const isSmallHeight = window.innerHeight <= 500;
+                return (isLandscape && isSmallHeight) ? 'editor-full' : 'split';
+            };
+            const applyResponsiveLayoutIfNeeded = () => {
+                if (userSetLayout) return;
+                if (!uiElements.panel.classList.contains('hidden')) {
+                    setLayout(computePreferredLayout());
+                }
+            };
+
+            const initializeEditors = () => {
+                if (editorState.isInitialized) return;
+                document.querySelectorAll('.editor-instance').forEach(textarea => {
+                    const mode = textarea.parentElement.dataset.mode;
+                    const editor = CodeMirror.fromTextArea(textarea, {
+                        lineNumbers: true,
+                        theme: 'dracula',
+                        mode: mode,
+                        indentUnit: 2,
+                        lineWrapping: true
+                    });
+                    editor.setValue(editorState.code[mode]);
+                    editor.on('change', (instance) => {
+                        editorState.code[mode] = instance.getValue();
+                    });
+                    editorState.editors[mode] = editor;
+                });
+                editorState.isInitialized = true;
+                setTimeout(() => Object.values(editorState.editors).forEach(e => e.refresh()), 50);
+            };
+
+            const openEditor = () => {
+                uiElements.panel.classList.remove('hidden');
+                document.body.classList.add('editor-open');
+                initializeEditors();
+                // Choose layout based on orientation/height (avoid cramped UI)
+                setLayout(computePreferredLayout());
+            };
+
+            const closeEditor = () => {
+                uiElements.panel.classList.add('hidden');
+                document.body.classList.remove('editor-open');
+                userSetLayout = false;
+            };
+
+            const runCode = () => {
+                const { xml, css, javascript } = editorState.code;
+                const source = `
+                    <html>
+                        <head><style>${css}</style></head>
+                        <body>
+                            ${xml}
+                            <script>
+                                // --- Console Interceptor ---
+                                const originalConsoleLog = console.log;
+                                const originalConsoleError = console.error;
+                                const originalConsoleWarn = console.warn;
+                                const sendToParent = (level, ...args) => {
+                                    try {
+                                        const serialized = args.map(arg => {
+                                            try { return (typeof arg === 'string') ? arg : JSON.stringify(arg, null, 2); } catch { return String(arg); }
+                                        });
+                                        window.parent.postMessage({ type: 'console', level, args: serialized }, '*');
+                                    } catch(_){}
+                                };
+                                console.log = (...args) => { sendToParent('log', ...args); originalConsoleLog.apply(console, args); };
+                                console.warn = (...args) => { sendToParent('warn', ...args); originalConsoleWarn.apply(console, args); };
+                                console.error = (...args) => { sendToParent('error', ...args); originalConsoleError.apply(console, args); };
+                                window.addEventListener('error', (e) => {
+                                    sendToParent('error', e.message, e.filename + ':' + e.lineno + ':' + e.colno);
+                                });
+                                window.addEventListener('unhandledrejection', (e) => {
+                                    sendToParent('error', 'Unhandled promise rejection:', e.reason);
+                                });
+                                try {
+                                    ${javascript}
+                                } catch (e) {
+                                    console.error('❌ Error:', e.message);
+                                }
+                            <\/script>
+                        </body>
+                    </html>`;
+                uiElements.previewFrame.srcdoc = source;
+                uiElements.consoleOutput.textContent = '';
+            };
+            
+            window.addEventListener('message', (event) => {
+                if (event.data && event.data.type === 'console') {
+                    const level = event.data.level ? String(event.data.level).toUpperCase() : 'LOG';
+                    uiElements.consoleOutput.textContent += `[${level}] ${event.data.args.join(' ')}\n`;
+                }
+            });
+
+            const switchTab = (tabsContainer, contentContainer, newMode) => {
+                tabsContainer.querySelector('.active').classList.remove('active');
+                tabsContainer.querySelector(`[data-mode="${newMode}"]`).classList.add('active');
+                
+                Array.from(contentContainer.children).forEach(child => {
+                    child.classList.toggle('hidden', child.dataset.mode !== newMode);
+                });
+
+                if(editorState.editors[newMode]) {
+                    editorState.editors[newMode].focus();
+                    editorState.editors[newMode].refresh();
+                }
+            };
+
+            const setLayout = (layout) => {
+                const { editorContentArea, outputArea } = uiElements;
+                editorContentArea.style.transition = 'height 0.3s ease';
+                outputArea.style.transition = 'height 0.3s ease';
+                
+                let editorHeight = '50%';
+                let outputHeight = '50%';
+
+                if (layout === 'editor-full') { editorHeight = '100%'; outputHeight = '0%'; }
+                if (layout === 'preview-full') { editorHeight = '0%'; outputHeight = '100%'; }
+                
+                editorContentArea.style.height = editorHeight;
+                outputArea.style.height = outputHeight;
+
+                document.querySelectorAll('#layout-editor-full, #layout-split, #layout-preview-full').forEach(btn => btn.classList.remove('bg-gray-600'));
+                document.getElementById(`layout-${layout}`).classList.add('bg-gray-600');
+
+                if (uiElements.layoutSelect) {
+                    uiElements.layoutSelect.value = layout;
+                }
+            };
+
+
+            uiElements.fab.addEventListener('click', openEditor);
+            uiElements.closeBtn.addEventListener('click', closeEditor);
+            uiElements.runBtn.addEventListener('click', runCode);
+            uiElements.editorTabs.addEventListener('click', (e) => e.target.dataset.mode && switchTab(uiElements.editorTabs, uiElements.editorContent, e.target.dataset.mode));
+            uiElements.outputTabs.addEventListener('click', (e) => e.target.dataset.mode && switchTab(uiElements.outputTabs, uiElements.outputContent, e.target.dataset.mode));
+            
+            uiElements.layoutEditorFull.addEventListener('click', () => { userSetLayout = true; setLayout('editor-full'); });
+            uiElements.layoutSplit.addEventListener('click', () => { userSetLayout = true; setLayout('split'); });
+            uiElements.layoutPreviewFull.addEventListener('click', () => { userSetLayout = true; setLayout('preview-full'); });
+
+            if (uiElements.layoutSelect) {
+                uiElements.layoutSelect.addEventListener('change', (e) => {
+                    userSetLayout = true;
+                    setLayout(e.target.value);
+                });
+            }
+
+            window.addEventListener('resize', applyResponsiveLayoutIfNeeded);
+            window.addEventListener('orientationchange', applyResponsiveLayoutIfNeeded);
+        });
+
+         // --- Dark Mode & Accordion Logic (Simplified, kept outside main logic) ---
+        document.addEventListener('DOMContentLoaded', () => {
+             const darkModeToggle = document.getElementById('darkModeToggle');
+             const sunIcon = darkModeToggle.querySelector('#sunIcon');
+             const moonIcon = darkModeToggle.querySelector('#moonIcon');
+             const html = document.documentElement;
+             const setTheme = (theme) => {
+                 if (theme === 'dark') { html.classList.add('dark'); sunIcon.classList.add('hidden'); moonIcon.classList.remove('hidden'); localStorage.setItem('theme', 'dark'); } 
+                 else { html.classList.remove('dark'); sunIcon.classList.remove('hidden'); moonIcon.classList.add('hidden'); localStorage.setItem('theme', 'light'); }
+             };
+             darkModeToggle.addEventListener('click', () => { setTheme(localStorage.getItem('theme') === 'light' ? 'dark' : 'light'); });
+             const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+             setTheme(savedTheme);
+
+             // Accordion behavior (match other pages)
+             const accordions = document.getElementsByClassName('accordion');
+             for (let i = 0; i < accordions.length; i++) {
+                 accordions[i].addEventListener('click', function() {
+                     this.classList.toggle('active');
+                     const panel = this.nextElementSibling;
+                     if (panel.style.maxHeight) {
+                         panel.style.maxHeight = null;
+                     } else {
+                         panel.style.maxHeight = panel.scrollHeight + 'px';
+                     }
+                 });
+             }
+        });
+
+    </script>
+</body>
+</html>

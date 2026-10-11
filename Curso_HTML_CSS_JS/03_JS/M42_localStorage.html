@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M42 · localStorage — Curso HTML+CSS+JS</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --yellow:#F5C451; --yellow-soft:rgba(245,196,81,.12); --yellow-border:rgba(245,196,81,.22);
+  --red:#FB7185; --green:#34D399; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(139,92,246,.20),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(34,184,207,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* HERO */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(245,196,81,.12);border:1px solid rgba(245,196,81,.32);color:var(--yellow);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--accent)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* CARD */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;font-size:clamp(21px,3vw,27px);
+  color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;margin:0 0 20px;max-width:62ch}
+
+/* NUM SECTION */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,var(--yellow),#EAB308)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* CONTENT */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+.content-block ul{color:#A7A4B8;line-height:1.75;font-size:15.5px;max-width:60ch;margin:6px 0 8px 22px}
+.content-block li{margin:3px 0}
+.content-block code{font-family:var(--font-mono);font-size:13.5px;background:rgba(255,255,255,.05);
+  padding:1px 6px;border-radius:5px;color:var(--yellow)}
+
+/* CODE BLOCK */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
+  background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(245,196,81,.16);border-color:var(--yellow-border);color:var(--yellow)}
+.code-btn.primary{background:rgba(245,196,81,.16);border-color:var(--yellow-border);color:var(--yellow)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+.code-prop{color:#93C5FD}
+.code-num{color:#F5C451}
+.code-bool{color:#FB7185}
+
+/* OUTPUT */
+.output-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;overflow:hidden;display:none}
+.output-block.show{display:block}
+.output-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.output-body{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6}
+.out-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.out-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.out-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.out-tag.alert{color:#C4B5FD;background:rgba(196,181,253,.1)}
+.out-tag.error{color:#FF8E8E;background:rgba(255,142,142,.1)}
+.out-text{color:#C7CDE0}
+
+/* HERO IMAGE */
+.idea-img{background:linear-gradient(135deg,rgba(245,196,81,.08),rgba(139,92,246,.05));
+  border:1px solid var(--border);border-radius:18px;padding:24px 20px;margin:0 0 clamp(24px,4vw,38px);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px}
+.idea-box{text-align:center;padding:14px 10px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);border-radius:12px}
+.idea-box .ibox-title{font-family:var(--font-head);font-weight:600;font-size:15px;color:var(--yellow);margin-bottom:4px}
+.idea-box .ibox-sub{font-size:12.5px;color:var(--text-mut);font-family:var(--font-mono)}
+
+/* TODO APP (live) */
+.todo-app{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:13px;padding:16px;margin-top:14px}
+.todo-row{display:flex;gap:8px;margin-bottom:12px}
+.todo-input{flex:1;padding:10px 12px;background:var(--bg-s1);border:1px solid var(--border);
+  border-radius:9px;color:var(--text-sec);font-family:var(--font-body);font-size:14px;outline:none}
+.todo-input:focus{border-color:var(--yellow-border)}
+.todo-add{padding:10px 18px;border-radius:9px;border:0;background:linear-gradient(145deg,var(--yellow),#EAB308);
+  color:#06120B;font-weight:700;font-family:var(--font-body);font-size:13.5px;cursor:pointer}
+.todo-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.todo-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,.04);
+  border:1px solid var(--border);border-radius:9px;font-size:14px;color:var(--text-sec)}
+.todo-item.done span{text-decoration:line-through;opacity:.5}
+.todo-item input[type=checkbox]{accent-color:var(--yellow);width:15px;height:15px;cursor:pointer}
+.todo-item .del{margin-left:auto;background:transparent;border:0;color:var(--text-mut);
+  cursor:pointer;font-size:16px;padding:2px 6px;border-radius:6px}
+.todo-item .del:hover{color:var(--red);background:rgba(251,113,133,.1)}
+.todo-empty{color:var(--text-mut);text-align:center;padding:14px;font-size:13.5px}
+.todo-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;
+  padding-top:10px;border-top:1px solid var(--border);font-size:12.5px;color:var(--text-mut);font-family:var(--font-mono)}
+
+/* THEME TOGGLE */
+.theme-toggle{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-sec);
+  font-family:var(--font-body);font-size:13px;cursor:pointer;transition:all .2s}
+.theme-toggle:hover{border-color:var(--yellow-border);color:var(--yellow)}
+
+/* RESOURCES */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;
+  border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* CTA */
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;
+  background:linear-gradient(145deg,#8B5CF6,#7C3AED);color:#fff;font-family:var(--font-body);
+  font-size:15px;font-weight:600;box-shadow:0 8px 24px -8px rgba(139,92,246,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(139,92,246,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+  .todo-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 42 · ALMACENAMIENTO</div>
+    <h1>localStorage: <span class="hl">persiste</span> en el navegador</h1>
+    <p>El navegador te regala una pequeña base de datos clave/valor que sobrevive a recargas, cierres de pestaña e incluso al reinicio del equipo. No necesitas servidor, ni cookies, ni <code>fetch</code>. Es el lugar perfecto para preferencias, borradores, listas locales y cualquier dato que no merezca salir al backend.</p>
+    <div class="meta-chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>~5-10 MB</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Persiste</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Tema + tareas</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>~9 min de lectura</span>
+    </div>
+  </div>
+
+  <!-- LA IDEA EN UNA IMAGEN -->
+  <div class="idea-img">
+    <div class="idea-box">
+      <div class="ibox-title">SETITEM</div>
+      <div class="ibox-sub">guardar</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">GETITEM</div>
+      <div class="ibox-sub">leer</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">REMOVE</div>
+      <div class="ibox-sub">borrar 1</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">CLEAR</div>
+      <div class="ibox-sub">borrar todo</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">STORAGE</div>
+      <div class="ibox-sub">sync pestañas</div>
+    </div>
+  </div>
+
+  <!-- 01 · API BÁSICA -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span><span class="num-title">La API mínima</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>localStorage vs sessionStorage</h3>
+        <p>Ambos exponen la <strong>misma API</strong> (los mismos métodos, misma sintaxis). La diferencia está en la duración: <code>localStorage</code> sobrevive hasta que el usuario borre los datos del sitio o cierre sesión; <code>sessionStorage</code> se borra <strong>al cerrar la pestaña</strong>. Si tu dato debe vivir más allá de la sesión actual, necesitas localStorage.</p>
+      </div>
+      <div class="content-block">
+        <h3>5 métodos para dominar el mundo</h3>
+        <ul>
+          <li><code>setItem(k, v)</code> — guarda un par. Los valores siempre son <strong>strings</strong>.</li>
+          <li><code>getItem(k)</code> — devuelve el valor o <code>null</code> si no existe.</li>
+          <li><code>removeItem(k)</code> — borra un par específico.</li>
+          <li><code>clear()</code> — borra todo el almacenamiento de tu origen.</li>
+          <li><code>key(i)</code> — devuelve el nombre de la clave en la posición <code>i</code>.</li>
+        </ul>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>CRUD básico con localStorage</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runBasic()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-cmt">// Crear / actualizar</span>
+<span class="code-fn">localStorage</span>.<span class="code-fn">setItem</span>(<span class="code-str">'usuario'</span>, <span class="code-str">'Ada Lovelace'</span>);
+<span class="code-fn">localStorage</span>.<span class="code-fn">setItem</span>(<span class="code-str">'nivel'</span>, <span class="code-str">'42'</span>);  <span class="code-cmt">// se guarda como string</span>
+
+<span class="code-cmt">// Leer</span>
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-fn">localStorage</span>.<span class="code-fn">getItem</span>(<span class="code-str">'usuario'</span>));
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-fn">localStorage</span>.<span class="code-fn">getItem</span>(<span class="code-str">'inexistente'</span>)); <span class="code-cmt">// null</span>
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'total claves:'</span>, <span class="code-fn">localStorage</span>.length);
+
+<span class="code-cmt">// Recorrer todas las claves</span>
+<span class="code-kw">for</span> (<span class="code-kw">let</span> i = <span class="code-num">0</span>; i &lt; <span class="code-fn">localStorage</span>.length; i++) {
+  <span class="code-kw">const</span> k = <span class="code-fn">localStorage</span>.<span class="code-fn">key</span>(i);
+  <span class="code-fn">console</span>.<span class="code-fn">log</span>(k, <span class="code-str">'→'</span>, <span class="code-fn">localStorage</span>.<span class="code-fn">getItem</span>(k));
+}
+
+<span class="code-cmt">// Borrar</span>
+<span class="code-fn">localStorage</span>.<span class="code-fn">removeItem</span>(<span class="code-str">'nivel'</span>);
+<span class="code-fn">localStorage</span>.<span class="code-fn">clear</span>();  <span class="code-cmt">// borra TODO del origen</span></code></pre>
+      </div>
+      <div class="output-block" id="outBasic">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outBasicBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 · JSON + STORAGE -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span><span class="num-title">JSON + localStorage</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>El truco que necesitas saber</h3>
+        <p>localStorage solo guarda <strong>strings</strong>. Para guardar un objeto, array, número o booleano, <strong>serializa con <code>JSON.stringify</code></strong> y <strong>deserializa con <code>JSON.parse</code></strong>. Recuerda: si haces <code>getItem</code> de una clave inexistente, recibes <code>null</code>, no <code>undefined</code>. Siempre comprueba antes de parsear.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>Guardar objetos completos</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runJSON()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-cmt">// Una app de notas: array de objetos</span>
+<span class="code-kw">const</span> notas = [
+  { id: <span class="code-num">1</span>, texto: <span class="code-str">'Estudiar JS'</span>,     hecho: <span class="code-bool">false</span> },
+  { id: <span class="code-num">2</span>, texto: <span class="code-str">'Terminar el módulo'</span>, hecho: <span class="code-bool">true</span>  }
+];
+
+<span class="code-cmt">// guardar</span>
+<span class="code-fn">localStorage</span>.<span class="code-fn">setItem</span>(<span class="code-str">'mis-notas'</span>, <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(notas));
+
+<span class="code-cmt">// leer (con fallback seguro)</span>
+<span class="code-kw">const</span> raw = <span class="code-fn">localStorage</span>.<span class="code-fn">getItem</span>(<span class="code-str">'mis-notas'</span>);
+<span class="code-kw">const</span> recuperadas = raw ? <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(raw) : [];
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'recuperadas:'</span>, recuperadas);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'hecho[1]:'</span>, recuperadas[<span class="code-num">1</span>].hecho);
+
+<span class="code-cmt">// helper DRY: evita repetir JSON.parse/stringify</span>
+<span class="code-kw">const</span> storage = {
+  <span class="code-fn">get</span>(k, fallback = <span class="code-bool">null</span>) {
+    <span class="code-kw">const</span> v = <span class="code-fn">localStorage</span>.<span class="code-fn">getItem</span>(k);
+    <span class="code-kw">try</span> { <span class="code-kw">return</span> v ? <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(v) : fallback; }
+    <span class="code-kw">catch</span> { <span class="code-kw">return</span> fallback; }
+  },
+  <span class="code-fn">set</span>(k, v) { <span class="code-fn">localStorage</span>.<span class="code-fn">setItem</span>(k, <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(v)); }
+};
+
+<span class="code-fn">storage</span>.<span class="code-fn">set</span>(<span class="code-str">'preferencias'</span>, { tema: <span class="code-str">'oscuro'</span>, fuente: <span class="code-num">16</span> });
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'helper:'</span>, <span class="code-fn">storage</span>.<span class="code-fn">get</span>(<span class="code-str">'preferencias'</span>));</code></pre>
+      </div>
+      <div class="output-block" id="outJSON">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outJSONBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 · EVENTO STORAGE -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span><span class="num-title">Sincronizar pestañas</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>El evento <code>storage</code></h3>
+        <p>Si abres la misma app en dos pestañas y modificas localStorage en una, la <strong>otra pestaña recibe un evento <code>storage</code></strong> en <code>window</code>. Eso te permite sincronizar UI entre pestañas: un cambio en una actualiza la otra automáticamente. No recibes el evento en la pestaña que hizo el cambio, solo en el resto.</p>
+      </div>
+      <div class="content-block">
+        <h3>Información que trae el evento</h3>
+        <ul>
+          <li><code>e.key</code> — la clave que cambió (o <code>null</code> si fue <code>clear()</code>).</li>
+          <li><code>e.oldValue</code> / <code>e.newValue</code> — antes y después.</li>
+          <li><code>e.url</code> — la URL de la pestaña que disparó el cambio.</li>
+          <li><code>e.storageArea</code> — qué storage cambió (local o session).</li>
+        </ul>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>Escuchar cambios entre pestañas</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runStorage()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-cmt">// Registrar un listener</span>
+<span class="code-kw">const</span> handler = (e) =&gt; {
+  <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'cambió:'</span>, e.key, <span class="code-str">'→'</span>, e.newValue);
+  <span class="code-cmt">// aquí re-renderizar la lista, recargar prefs, etc.</span>
+};
+<span class="code-fn">window</span>.<span class="code-fn">addEventListener</span>(<span class="code-str">'storage'</span>, handler);
+
+<span class="code-cmt">// simular el cambio (esto NO dispara el evento en esta pestaña)</span>
+<span class="code-fn">localStorage</span>.<span class="code-fn">setItem</span>(<span class="code-str">'contador'</span>, <span class="code-str">'42'</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'cambié en esta pestaña; el listener no se dispara aquí'</span>);
+
+<span class="code-cmt">// limpiar</span>
+<span class="code-fn">window</span>.<span class="code-fn">removeEventListener</span>(<span class="code-str">'storage'</span>, handler);</code></pre>
+      </div>
+      <div class="output-block" id="outStorage">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outStorageBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 · LÍMITES Y SEGURIDAD -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span><span class="num-title">Límites y seguridad</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Lo que tienes que saber antes de abusar</h3>
+        <ul>
+          <li><strong>Capacidad:</strong> ~5 MB por origen en la mayoría de navegadores. Si excedes, recibes <code>QuotaExceededError</code>.</li>
+          <li><strong>Es síncrono:</strong> cada llamada bloquea el hilo principal. No guardes megabytes en cada keystroke.</li>
+          <li><strong>Es de texto plano:</strong> cualquier extensión, devtools o script inyectado puede leerlo. No guardes contraseñas, tokens, ni datos personales.</li>
+          <li><strong>Es por origen:</strong> dos apps en el mismo dominio comparten el mismo storage. Usa prefijos (<code>app1.user</code>, <code>app2.user</code>).</li>
+          <li><strong>No es para blobs grandes:</strong> para eso existe <code>IndexedDB</code>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 · TU PRIMER MOMENTO: TODO + TEMA -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span><span class="num-title">Tu primer momento: todo + tema</span>
+    </div>
+    <div class="card">
+      <p>Una mini-app que <strong>persiste entre recargas</strong>. Añade tareas, marca hechas, borra, cambia el tema. Todo se guarda en localStorage. <strong>Pruébalo:</strong> añade una tarea, recarga la página con <kbd>⌘R</kbd> y la verás seguir ahí.</p>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <strong style="color:var(--text-pri);font-family:var(--font-head)">Mi todo-list</strong>
+        <button class="theme-toggle" id="themeBtn">🌓 Cambiar tema</button>
+      </div>
+
+      <div class="todo-app">
+        <div class="todo-row">
+          <input class="todo-input" id="todoInput" placeholder="Escribe una tarea y pulsa +" maxlength="80">
+          <button class="todo-add" id="todoAdd">+ Añadir</button>
+        </div>
+        <ul class="todo-list" id="todoList"></ul>
+        <div class="todo-foot">
+          <span id="todoCount">0 tareas</span>
+          <span>storage: <code id="storageSize">0</code> bytes</span>
+        </div>
+      </div>
+
+      <div class="code-block" style="margin-top:18px">
+        <div class="code-head">
+          <span>Cómo funciona la persistencia</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runDemo()">Ver claves en consola</button>
+          </div>
+        </div>
+        <pre><code><span class="code-cmt">// En cada cambio, reescribimos el array completo</span>
+<span class="code-kw">function</span> <span class="code-fn">persistir</span>(lista) {
+  <span class="code-fn">localStorage</span>.<span class="code-fn">setItem</span>(<span class="code-str">'todos'</span>, <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(lista));
+}
+
+<span class="code-cmt">// Al cargar la página, restauramos</span>
+<span class="code-kw">function</span> <span class="code-fn">cargar</span>() {
+  <span class="code-kw">try</span> {
+    <span class="code-kw">const</span> raw = <span class="code-fn">localStorage</span>.<span class="code-fn">getItem</span>(<span class="code-str">'todos'</span>);
+    <span class="code-kw">return</span> raw ? <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(raw) : [];
+  } <span class="code-kw">catch</span> {
+    <span class="code-kw">return</span> [];
+  }
+}
+
+<span class="code-cmt">// Sincronización entre pestañas</span>
+<span class="code-fn">window</span>.<span class="code-fn">addEventListener</span>(<span class="code-str">'storage'</span>, e =&gt; {
+  <span class="code-kw">if</span> (e.key === <span class="code-str">'todos'</span>) render();
+});</code></pre>
+      </div>
+      <div class="output-block" id="outDemo">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outDemoBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 · RECURSOS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span><span class="num-title">Recursos para tu aventura</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/API/Window/localStorage" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Window.localStorage</div>
+        <div class="res-desc">Referencia completa de la API: métodos, propiedades, eventos y excepciones.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/API/Window/storage_event" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Storage event</div>
+        <div class="res-desc">Cómo sincronizar pestañas con el evento <code>storage</code> disparado por <code>localStorage</code> o <code>sessionStorage</code>.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/API/Web_Storage_API" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Web Storage API</div>
+        <div class="res-desc">Visión general de la API, comparativa localStorage vs sessionStorage, cuotas y buenas prácticas.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <div class="cta-label">Tu web ya recuerda cosas</div>
+    <h2>¿Listo para escribir código que no se rompa en producción?</h2>
+    <p>Ahora que tu app persiste y sincroniza, vamos a ponerle un cinturón de seguridad: estilo, linter, formateador, debugger y estrategias para encontrar bugs en minutos.</p>
+    <a class="cta-btn" href="M43_Buenas_practicas_debug.html">
+      MÓDULO 43 · Buenas prácticas y debugging
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+
+<script>
+"use strict";
+// ═══ TODO APP (live, con persistencia) ═══
+var input=document.getElementById('todoInput'),addBtn=document.getElementById('todoAdd'),
+    list=document.getElementById('todoList'),count=document.getElementById('todoCount'),
+    sizeEl=document.getElementById('storageSize'),themeBtn=document.getElementById('themeBtn');
+
+function loadTodos(){
+  try{return JSON.parse(localStorage.getItem('todos'))||[]}catch(e){return []}
+}
+function saveTodos(arr){
+  localStorage.setItem('todos',JSON.stringify(arr));
+  updateSize();
+}
+function updateSize(){
+  var bytes=(localStorage.getItem('todos')||'').length;
+  sizeEl.textContent=bytes;
+}
+function render(){
+  var arr=loadTodos();
+  list.innerHTML='';
+  if(!arr.length){
+    list.innerHTML='<li class="todo-empty">Sin tareas. ¡Añade la primera!</li>';
+  } else {
+    arr.forEach(function(t,i){
+      var li=document.createElement('li');li.className='todo-item'+(t.done?' done':'');
+      var cb=document.createElement('input');cb.type='checkbox';cb.checked=t.done;
+      cb.addEventListener('change',function(){arr[i].done=cb.checked;saveTodos(arr);render()});
+      var sp=document.createElement('span');sp.textContent=t.texto;
+      var del=document.createElement('button');del.className='del';del.textContent='×';
+      del.addEventListener('click',function(){arr.splice(i,1);saveTodos(arr);render()});
+      li.appendChild(cb);li.appendChild(sp);li.appendChild(del);
+      list.appendChild(li);
+    });
+  }
+  count.textContent=arr.length+(arr.length===1?' tarea':' tareas');
+}
+addBtn.addEventListener('click',function(){
+  var v=input.value.trim();if(!v)return;
+  var arr=loadTodos();arr.push({texto:v,done:false,ts:Date.now()});
+  saveTodos(arr);input.value='';render();
+});
+input.addEventListener('keydown',function(e){if(e.key==='Enter')addBtn.click()});
+
+// Tema
+function applyTheme(t){
+  document.body.style.filter = (t==='light') ? 'invert(1) hue-rotate(180deg)' : 'none';
+  localStorage.setItem('tema',t);
+}
+function loadTheme(){
+  var t = localStorage.getItem('tema');
+  if(!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) t='light';
+  if(t) applyTheme(t);
+}
+themeBtn.addEventListener('click',function(){
+  applyTheme(localStorage.getItem('tema')==='light'?'dark':'light');
+});
+window.addEventListener('storage',function(e){
+  if(e.key==='todos')render();
+  if(e.key==='tema' && e.newValue) applyTheme(e.newValue);
+});
+loadTodos();render();loadTheme();updateSize();
+
+// ═══ INLINE RUNNERS ═══
+function makeRunner(outId,bodyId){
+  return function(code){
+    var out=document.getElementById(outId),body=document.getElementById(bodyId);
+    body.innerHTML='';var logs=[];var origLog=console.log;
+    console.log=function(){var a=[].slice.call(arguments);logs.push({level:'log',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')})};
+    var al=function(msg){logs.push({level:'alert',text:String(msg)})};
+    try{new Function('alert','console',code)(al,console)}catch(e){logs.push({level:'error',text:e.message})}finally{console.log=origLog}
+    if(!logs.length)logs.push({level:'log',text:'(sin salida visible)'});
+    logs.forEach(function(l){
+      var line=document.createElement('div');line.className='out-line';
+      var tag=document.createElement('span');tag.className='out-tag '+l.level;tag.textContent=l.level;
+      var txt=document.createElement('span');txt.className='out-text';txt.textContent=l.text;
+      line.appendChild(tag);line.appendChild(txt);body.appendChild(line);
+    });
+    out.classList.add('show');
+  };
+}
+
+function runBasic(){makeRunner('outBasic','outBasicBody')("\n    localStorage.setItem('usuario','Ada Lovelace');\n    localStorage.setItem('nivel','42');\n    console.log(localStorage.getItem('usuario'));\n    console.log('inexistente:',localStorage.getItem('inexistente'));\n    console.log('total claves:',localStorage.length);\n    for(let i=0;i<localStorage.length;i++){\n      const k=localStorage.key(i);\n      console.log(k,'->',localStorage.getItem(k));\n    }\n    localStorage.removeItem('nivel');\n    console.log('despues removeItem nivel:',localStorage.getItem('nivel'));\n  ")}
+
+function runJSON(){makeRunner('outJSON','outJSONBody')("\n    const notas=[\n      {id:1,texto:'Estudiar JS',hecho:false},\n      {id:2,texto:'Terminar el módulo',hecho:true}\n    ];\n    localStorage.setItem('mis-notas',JSON.stringify(notas));\n    const raw=localStorage.getItem('mis-notas');\n    const recuperadas=raw?JSON.parse(raw):[];\n    console.log('recuperadas:',recuperadas);\n    console.log('hecho[1]:',recuperadas[1].hecho);\n    const storage={\n      get(k,fallback=null){const v=localStorage.getItem(k);try{return v?JSON.parse(v):fallback}catch{return fallback}},\n      set(k,v){localStorage.setItem(k,JSON.stringify(v))}\n    };\n    storage.set('preferencias',{tema:'oscuro',fuente:16});\n    console.log('helper:',storage.get('preferencias'));\n  ")}
+
+function runStorage(){makeRunner('outStorage','outStorageBody')("\n    const handler=(e)=>{\n      console.log('cambió en otra pestaña:',e.key,'->',e.newValue);\n    };\n    window.addEventListener('storage',handler);\n    localStorage.setItem('contador','42');\n    console.log('este set NO dispara el listener en esta pestaña');\n    console.log('abre otra pestaña del mismo sitio y verás el evento');\n    window.removeEventListener('storage',handler);\n  ")}
+
+function runDemo(){makeRunner('outDemo','outDemoBody')("\n    const claves=[];\n    for(let i=0;i<localStorage.length;i++) claves.push(localStorage.key(i));\n    console.log('claves guardadas:',claves);\n    const todos=JSON.parse(localStorage.getItem('todos')||'[]');\n    console.log('tareas:',todos.length);\n    console.log('tema actual:',localStorage.getItem('tema')||'(no guardado)');\n    console.log('bytes usados:',(localStorage.getItem('todos')||'').length);\n  ")}
+</script>
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

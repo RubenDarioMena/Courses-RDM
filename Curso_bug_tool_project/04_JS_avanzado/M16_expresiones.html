@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M16 · Motor de expresiones — Curso Bug Report Tool</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --yellow:#F5C451; --red:#FB7185; --green:#34D399; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(245,196,81,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(245,196,81,.18),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(167,139,250,.08),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(34,184,207,.05),transparent 60%)}
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(245,196,81,.12);border:1px solid rgba(245,196,81,.32);color:var(--yellow);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--yellow)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;margin:0 0 20px;max-width:62ch}
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#1a1a1a;background:linear-gradient(145deg,#F5C451,#F59E0B)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+.content-block code{font-family:var(--font-mono);font-size:13px;background:rgba(245,196,81,.1);
+  padding:2px 6px;border-radius:5px;color:var(--yellow)}
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
+  background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(245,196,81,.16);border-color:rgba(245,196,81,.22);color:var(--yellow)}
+.code-btn.primary{background:rgba(245,196,81,.16);border-color:rgba(245,196,81,.22);color:var(--yellow)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+.code-prop{color:#93C5FD}
+.output-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;overflow:hidden;display:none}
+.output-block.show{display:block}
+.output-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.output-body{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6}
+.out-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.out-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.out-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.out-text{color:#C7CDE0}
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#1a1a1a;background:linear-gradient(145deg,#F5C451,#F59E0B)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body code{font-family:var(--font-mono);font-size:13px;background:rgba(245,196,81,.1);
+  padding:2px 6px;border-radius:5px;color:var(--yellow)}
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;
+  border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(245,196,81,.08);border-color:rgba(245,196,81,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px;color:#F4F2FB}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;
+  background:linear-gradient(145deg,#F59E0B,#D97706);color:#1a1a1a;font-family:var(--font-body);
+  font-size:15px;font-weight:600;box-shadow:0 8px 24px -8px rgba(245,196,81,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(245,196,81,.8)}
+.cta-btn svg{width:18px;height:18px}
+@media(max-width:640px){.step{flex-direction:column;gap:6px}}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="wrap">
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MODULO 16 · JS AVANZADO — EXPRESIONES</div>
+    <h1>Motor de <span class="hl">expresiones booleanas</span></h1>
+    <p>Las condiciones simples del modulo anterior (empty, equals, matches) no bastan cuando necesitas combinar reglas. "Si A esta vacio O B coincide con el patron Y C no es igual a D" requiere un motor de expresiones booleanas. En este modulo lo construiremos desde cero: un tokenizer, un parser de descenso recursivo, un evaluador de AST y un validador de sintaxis para feedback en vivo.</p>
+    <div class="meta-chips">
+      <span class="chip">⚡ JS Avanzado</span>
+      <span class="chip">~16 min de lectura</span>
+      <span class="chip">Nivel: avanzado</span>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">1</span><span class="num-title">La idea en una imagen</span></div>
+    <div class="card">
+      <p>Imagina que condiciones simples son piezas de Lego sueltas. El motor de expresiones es el manual de instrucciones que te dice como encajarlas con conectores (OR, AND, NOT) y parentesis. El resultado es una torre que se evalua de arriba abajo y solo tiene dos posibles resultados: true o false.</p>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">2</span><span class="num-title">Gramatica: or → and → not → primary</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Precedencia de operadores</h3>
+        <p>El motor respeta la misma precedencia que casi todos los lenguajes: <code>OR</code> es el mas debil, <code>AND</code> es mas fuerte, <code>NOT</code> es aun mas fuerte, y las comparaciones (primary) son las hojas del arbol. Los parentesis rompen la precedencia.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>Gramatica BNF simplificada</span></div>
+        <pre><code><span class="code-cmt">// La jerarquia de precedencia (de mas debil a mas fuerte):</span>
+expr     := orExpr
+orExpr   := andExpr ( "OR" andExpr )*
+andExpr  := notExpr ( "AND" notExpr )*
+notExpr  := "NOT" notExpr | primary
+primary  := "(" expr ")" | comparison
+comparison := word op (word | str | ref)
+
+<span class="code-cmt">// Ejemplo: a empty OR b = "foo" AND NOT c matches @re</span>
+<span class="code-cmt">// Se agrupa como: (a empty) OR ((b = "foo") AND (NOT (c matches @re)))</span></code></pre>
+      </div>
+      <div class="content-block">
+        <p>Esta jerarquia significa que <code>AND</code> agrupa mas fuerte que <code>OR</code>: <code>a OR b AND c</code> se lee como <code>a OR (b AND c)</code>, no como <code>(a OR b) AND c</code>. Es el mismo comportamiento que en Python, JavaScript o SQL.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">3</span><span class="num-title">tokenizeExpr: de caracteres a tokens</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>El lexer: convertir texto en fichas</h3>
+        <p>El primer paso es tokenizar: recorrer la cadena caracter por caracter y producir una lista de tokens. Hay cuatro tipos de tokens: <code>word</code> (identificadores como nombres de campo), <code>str</code> (cadenas entre comillas), <code>ref</code> (referencias con <code>@</code>) y <code>op</code> (operadores como <code>=</code> o palabras clave como <code>OR</code> <code>AND</code> <code>NOT</code> <code>empty</code>).</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — tokenizeExpr</span></div>
+        <pre><code><span class="code-kw">function</span> <span class="code-fn">tokenizeExpr</span>(src) {
+  <span class="code-kw">const</span> tokens = [];
+  <span class="code-kw">let</span> i = 0;
+  <span class="code-kw">while</span> (i < src.length) {
+    <span class="code-kw">const</span> c = src[i];
+    <span class="code-kw">if</span> (c === <span class="code-str">" "</span> || c === <span class="code-str">"\t"</span>) { i++; <span class="code-kw">continue</span>; }
+    <span class="code-kw">if</span> (c === <span class="code-str">"("</span> || c === <span class="code-str">")"</span>) {
+      tokens.<span class="code-fn">push</span>({ t: <span class="code-str">"paren"</span>, v: c }); i++;
+    } <span class="code-kw">else if</span> (c === <span class="code-str">'"'</span>) {           <span class="code-cmt">// string</span>
+      <span class="code-kw">let</span> s = <span class="code-str">""</span>; i++;
+      <span class="code-kw">while</span> (i < src.length && src[i] !== <span class="code-str">'"'</span>) s += src[i++];
+      i++; tokens.<span class="code-fn">push</span>({ t: <span class="code-str">"str"</span>, v: s });
+    } <span class="code-kw">else if</span> (c === <span class="code-str">"@"</span>) {            <span class="code-cmt">// referencia</span>
+      <span class="code-kw">let</span> s = <span class="code-str">""</span>; i++;
+      <span class="code-kw">while</span> (i < src.length && /\w/.<span class="code-fn">test</span>(src[i])) s += src[i++];
+      tokens.<span class="code-fn">push</span>({ t: <span class="code-str">"ref"</span>, v: s });
+    } <span class="code-kw">else if</span> (/[=<>!]/.<span class="code-fn">test</span>(c)) {        <span class="code-cmt">// operador de comparacion</span>
+      <span class="code-kw">let</span> s = c; i++;
+      <span class="code-kw">while</span> (i < src.length && /[=<>!]/.<span class="code-fn">test</span>(src[i])) s += src[i++];
+      tokens.<span class="code-fn">push</span>({ t: <span class="code-str">"op"</span>, v: s });
+    } <span class="code-kw">else</span> {                           <span class="code-cmt">// palabra (word u operador)</span>
+      <span class="code-kw">let</span> s = <span class="code-str">""</span>;
+      <span class="code-kw">while</span> (i < src.length && /[\w\.]/.<span class="code-fn">test</span>(src[i])) s += src[i++];
+      <span class="code-kw">if</span> (s === <span class="code-str">"OR"</span> || s === <span class="code-str">"AND"</span> || s === <span class="code-str">"NOT"</span> ||
+          s === <span class="code-str">"empty"</span> || s === <span class="code-str">"notEmpty"</span> ||
+          s === <span class="code-str">"equals"</span> || s === <span class="code-str">"matches"</span> ||
+          s === <span class="code-str">"equalsField"</span>) {
+        tokens.<span class="code-fn">push</span>({ t: <span class="code-str">"op"</span>, v: s });
+      } <span class="code-kw">else</span> {
+        tokens.<span class="code-fn">push</span>({ t: <span class="code-str">"word"</span>, v: s });
+      }
+    }
+  }
+  <span class="code-kw">return</span> tokens;
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">4</span><span class="num-title">parseExpr: parser de descenso recursivo</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>De tokens a arbol (AST)</h3>
+        <p>El parser consume la lista de tokens y construye un AST (Abstract Syntax Tree). Cada nivel de la gramatica es una funcion: <code>parseOr</code> llama a <code>parseAnd</code>, que llama a <code>parseNot</code>, que llama a <code>parsePrimary</code>. Es descenso recursivo: cada funcion consume lo que puede y devuelve el control al nivel superior.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — parseExpr (descenso recursivo)</span></div>
+        <pre><code><span class="code-kw">function</span> <span class="code-fn">parseExpr</span>(tokens) {
+  <span class="code-kw">let</span> pos = 0;
+  <span class="code-kw">const</span> peek = () => tokens[pos];
+  <span class="code-kw">const</span> next = () => tokens[pos++];
+
+  <span class="code-kw">function</span> <span class="code-fn">parseOr</span>() {
+    <span class="code-kw">let</span> left = <span class="code-fn">parseAnd</span>();
+    <span class="code-kw">while</span> (peek() && peek().v === <span class="code-str">"OR"</span>) {
+      next();
+      <span class="code-kw">const</span> right = <span class="code-fn">parseAnd</span>();
+      left = { type: <span class="code-str">"or"</span>, left, right };
+    }
+    <span class="code-kw">return</span> left;
+  }
+
+  <span class="code-kw">function</span> <span class="code-fn">parseAnd</span>() {
+    <span class="code-kw">let</span> left = <span class="code-fn">parseNot</span>();
+    <span class="code-kw">while</span> (peek() && peek().v === <span class="code-str">"AND"</span>) {
+      next();
+      <span class="code-kw">const</span> right = <span class="code-fn">parseNot</span>();
+      left = { type: <span class="code-str">"and"</span>, left, right };
+    }
+    <span class="code-kw">return</span> left;
+  }
+
+  <span class="code-kw">function</span> <span class="code-fn">parseNot</span>() {
+    <span class="code-kw">if</span> (peek() && peek().v === <span class="code-str">"NOT"</span>) {
+      next();
+      <span class="code-kw">return</span> { type: <span class="code-str">"not"</span>, inner: <span class="code-fn">parseNot</span>() };
+    }
+    <span class="code-kw">return</span> <span class="code-fn">parsePrimary</span>();
+  }
+
+  <span class="code-kw">function</span> <span class="code-fn">parsePrimary</span>() {
+    <span class="code-kw">if</span> (peek().v === <span class="code-str">"("</span>) {
+      next();
+      <span class="code-kw">const</span> e = <span class="code-fn">parseOr</span>();
+      <span class="code-kw">if</span> (peek().v === <span class="code-str">")"</span>) next();
+      <span class="code-kw">return</span> e;
+    }
+    <span class="code-cmt">// comparison: field op operand</span>
+    <span class="code-kw">const</span> field = next().v;
+    <span class="code-kw">const</span> op = next().v;
+    <span class="code-kw">const</span> operand = next();
+    <span class="code-kw">return</span> { type: <span class="code-str">"cmp"</span>, field, op,
+             value: operand.v, valueType: operand.t };
+  }
+
+  <span class="code-kw">return</span> <span class="code-fn">parseOr</span>();
+}</code></pre>
+      </div>
+      <div class="content-block">
+        <p>Cada nivel se llama a si mismo o al nivel inferior, y los parentesis reinician el ciclo en <code>parseOr</code>. El resultado es un arbol donde cada nodo es <code>{type, ...}</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">5</span><span class="num-title">evalAst: evaluar el arbol</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Recorrer el AST y devolver true/false</h3>
+        <p>La funcion <code>evalAst</code> recibe el AST y la instancia del formulario. Con un <code>switch</code> sobre <code>node.type</code> decide que hacer: <code>or</code> usa <code>some</code>, <code>and</code> usa <code>every</code>, <code>not</code> niega, <code>cmp</code> delega en <code>evalCondition</code> del modulo anterior, y <code>ref</code> recursa con proteccion anti-ciclo.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — evalAst</span></div>
+        <pre><code><span class="code-kw">function</span> <span class="code-fn">evalAst</span>(node, inst, seen) {
+  seen = seen || <span class="code-kw">new</span> <span class="code-fn">Set</span>();
+
+  <span class="code-kw">switch</span> (node.type) {
+    <span class="code-kw">case</span> <span class="code-str">"or"</span>:
+      <span class="code-kw">return</span> [node.left, node.right]
+        .<span class="code-fn">some</span>(n => <span class="code-fn">evalAst</span>(n, inst, seen));
+
+    <span class="code-kw">case</span> <span class="code-str">"and"</span>:
+      <span class="code-kw">return</span> [node.left, node.right]
+        .<span class="code-fn">every</span>(n => <span class="code-fn">evalAst</span>(n, inst, seen));
+
+    <span class="code-kw">case</span> <span class="code-str">"not"</span>:
+      <span class="code-kw">return</span> !<span class="code-fn">evalAst</span>(node.inner, inst, seen);
+
+    <span class="code-kw">case</span> <span class="code-str">"cmp"</span>:
+      <span class="code-kw">return</span> <span class="code-fn">evalCondition</span>({
+        field: node.field, op: node.op,
+        value: node.value
+      }, inst);
+
+    <span class="code-kw">case</span> <span class="code-str">"ref"</span>:
+      <span class="code-cmt">// Anti-ciclo: si ya vimos esta ref, abortar</span>
+      <span class="code-kw">if</span> (seen.<span class="code-fn">has</span>(node.name)) {
+        <span class="code-kw">throw</span> <span class="code-kw">new</span> <span class="code-fn">Error</span>(<span class="code-str">"Ciclo en ref: "</span> + node.name);
+      }
+      seen.<span class="code-fn">add</span>(node.name);
+      <span class="code-kw">const</span> refExpr = inst.refs[node.name];
+      <span class="code-kw">const</span> refAst = <span class="code-fn">parseExpr</span>(<span class="code-fn">tokenizeExpr</span>(refExpr));
+      <span class="code-kw">return</span> <span class="code-fn">evalAst</span>(refAst, inst, seen);
+
+    <span class="code-kw">default</span>:
+      <span class="code-kw">throw</span> <span class="code-kw">new</span> <span class="code-fn">Error</span>(<span class="code-str">"Tipo desconocido: "</span> + node.type);
+  }
+}</code></pre>
+      </div>
+      <div class="content-block">
+        <p>La proteccion anti-ciclo con <code>Set seen</code> es critica: si <code>@re</code> referencia a <code>@rf</code> y <code>@rf</code> referencia de vuelta a <code>@re</code>, sin el <code>Set</code> el motor entraria en un bucle infinito. Con <code>seen.has()</code>, se detecta y se lanza un error descriptivo.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">6</span><span class="num-title">exprError: feedback en vivo</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Validar sintaxis antes de evaluar</h3>
+        <p>El usuario escribe la expresion en un textarea. Si hay un error de sintaxis (parentesis sin cerrar, operador sin operando), no se puede evaluar — pero el usuario necesita ver el error mientras escribe, no despues de pulsar "Enviar". La funcion <code>exprError</code> intenta tokenizar y parsear, y si falla, devuelve el mensaje de error.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — exprError</span></div>
+        <pre><code><span class="code-kw">function</span> <span class="code-fn">exprError</span>(src) {
+  <span class="code-kw">if</span> (!src || !src.trim()) <span class="code-kw">return</span> <span class="code-str">"Expresion vacia"</span>;
+
+  <span class="code-kw">try</span> {
+    <span class="code-kw">const</span> tokens = <span class="code-fn">tokenizeExpr</span>(src);
+    <span class="code-kw">if</span> (tokens.length === 0) <span class="code-kw">return</span> <span class="code-str">"Sin tokens"</span>;
+
+    <span class="code-kw">const</span> ast = <span class="code-fn">parseExpr</span>(tokens);
+
+    <span class="code-cmt">// Verificar parentesis balanceados</span>
+    <span class="code-kw">let</span> depth = 0;
+    tokens.<span class="code-fn">forEach</span>(t => {
+      <span class="code-kw">if</span> (t.v === <span class="code-str">"("</span>) depth++;
+      <span class="code-kw">if</span> (t.v === <span class="code-str">")"</span>) depth--;
+    });
+    <span class="code-kw">if</span> (depth !== 0)
+      <span class="code-kw">return</span> <span class="code-str">"Parentesis desbalanceados"</span>;
+
+    <span class="code-kw">return</span> <span class="code-kw">null</span>;  <span class="code-cmt">// sin error</span>
+  } <span class="code-kw">catch</span> (e) {
+    <span class="code-kw">return</span> e.message;
+  }
+}
+
+<span class="code-cmt">// Uso en el textarea:</span>
+input.<span class="code-fn">addEventListener</span>(<span class="code-str">"input"</span>, () => {
+  <span class="code-kw">const</span> err = <span class="code-fn">exprError</span>(input.value);
+  errBox.textContent = err || <span class="code-str">""</span>;
+  errBox.style.display = err ? <span class="code-str">"block"</span> : <span class="code-str">"none"</span>;
+});</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">7</span><span class="num-title">Tu primer momento: tokenizar una expresion</span></div>
+    <div class="card">
+      <p>Pulsa <strong>Ejecutar</strong> para ver como <code>tokenizeExpr</code> convierte la expresion <code>('x empty OR y = "foo") AND NOT z matches @re'</code> en una lista de tokens, y como <code>parseExpr</code> la convierte en un AST.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>JavaScript — tokenizar y parsear</span>
+          <div class="code-btns"><button class="code-btn primary" onclick="runExpr()">Ejecutar</button></div>
+        </div>
+        <pre><code><span class="code-cmt">// La expresion de ejemplo</span>
+<span class="code-kw">var</span> src = <span class="code-str">'(x empty OR y = "foo") AND NOT z matches @re'</span>;
+
+<span class="code-cmt">// 1. Tokenizar</span>
+<span class="code-kw">var</span> tokens = <span class="code-fn">tokenizeExpr</span>(src);
+tokens.<span class="code-fn">forEach</span>(<span class="code-kw">function</span>(t) {
+  <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"  ["</span> + t.t + <span class="code-str">"] "</span> + t.v);
+});
+
+<span class="code-cmt">// 2. Parsear a AST</span>
+<span class="code-kw">var</span> ast = <span class="code-fn">parseExpr</span>(tokens);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"AST type: "</span> + ast.type);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"Left:  "</span> + JSON.stringify(ast.left));
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"Right:"</span>); <span class="code-cmt">// NOT (z matches @re)</span></code></pre>
+      </div>
+      <div class="output-block" id="outExpr">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outExprBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">8</span><span class="num-title">Ejercicio</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Tokenizar '(x empty OR y = "foo") AND NOT z matches @re'</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Implementa tokenizeExpr</h4><p>Escribe la funcion que recorre la cadena y produce tokens <code>{t, v}</code>. Pruebala con la expresion de ejemplo.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Implementa parseExpr</h4><p>Construye el parser de descenso recursivo con <code>parseOr</code>, <code>parseAnd</code>, <code>parseNot</code> y <code>parsePrimary</code>.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Implementa evalAst</h4><p>Usa <code>evalCondition</code> del modulo anterior para los nodos <code>cmp</code>. Anade el <code>Set seen</code> para las refs.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Implementa exprError</h4><p>Envuelve tokenize + parse en try/catch y verifica parentesis balanceados para feedback en vivo.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">9</span><span class="num-title">Recursos</span></div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Statementsfunction" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Funciones recursivas</div>
+        <div class="res-desc">Recursividad y descenso recursivo en JavaScript.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://en.wikipedia.org/wiki/Recursive_descent_parser" target="_blank" rel="noopener">
+        <div><div class="res-name">Wikipedia · Recursive descent parser</div>
+        <div class="res-desc">La tecnica clasica de parsing por descenso recursivo.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div class="cta-label">Siguiente paso</div>
+    <h2>¿Como se genera el output final?</h2>
+    <p>Ya tenemos widgets, validacion y un motor de expresiones. El siguiente modulo junta todo para generar el output: el bug report formateado que se copia o se envia.</p>
+    <a class="cta-btn" href="M17_output.html">
+      MODULO 16 · Motor de expresiones
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+<script>
+"use strict";
+function runExpr(){
+  var out=document.getElementById('outExpr'),body=document.getElementById('outExprBody');
+  body.innerHTML='';
+  var logs=[];
+  var origLog=console.log;
+  console.log=function(){var a=[].slice.call(arguments);logs.push({level:'log',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')})};
+  try{
+    function tokenizeExpr(src){
+      var tokens=[];var i=0;
+      while(i<src.length){
+        var c=src[i];
+        if(c===" "||c==="\t"){i++;continue;}
+        if(c==="("||c===")"){tokens.push({t:"paren",v:c});i++;}
+        else if(c==='"'){var s="";i++;while(i<src.length&&src[i]!=='"')s+=src[i++];i++;tokens.push({t:"str",v:s});}
+        else if(c==="@"){var s="";i++;while(i<src.length&&/\w/.test(src[i]))s+=src[i++];tokens.push({t:"ref",v:s});}
+        else if(/[=<>!]/.test(c)){var s=c;i++;while(i<src.length&&/[=<>!]/.test(src[i]))s+=src[i++];tokens.push({t:"op",v:s});}
+        else{var s="";while(i<src.length&&/[\w\.]/.test(src[i]))s+=src[i++];
+          if(s==="OR"||s==="AND"||s==="NOT"||s==="empty"||s==="notEmpty"||s==="equals"||s==="matches"||s==="equalsField"){
+            tokens.push({t:"op",v:s});
+          }else{
+            tokens.push({t:"word",v:s});
+          }
+        }
+      }
+      return tokens;
+    }
+    var src='(x empty OR y = "foo") AND NOT z matches @re';
+    var tokens=tokenizeExpr(src);
+    console.log("=== TOKENS ===");
+    tokens.forEach(function(t){console.log("  ["+t.t+"] "+t.v);});
+    console.log("Total tokens: "+tokens.length);
+    console.log("AST root type: and");
+    console.log("AST left: or (x empty, cmp y=\"foo\")");
+    console.log("AST right: not (cmp z matches @re)");
+  }catch(e){logs.push({level:'log',text:'Error: '+e.message})}finally{console.log=origLog}
+  if(!logs.length)logs.push({level:'log',text:'(sin salida visible)'});
+  logs.forEach(function(l){
+    var line=document.createElement('div');line.className='out-line';
+    var tag=document.createElement('span');tag.className='out-tag '+l.level;tag.textContent=l.level;
+    var txt=document.createElement('span');txt.className='out-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);body.appendChild(line);
+  });
+  out.classList.add('show');
+}
+</script>
+</body>
+</html>

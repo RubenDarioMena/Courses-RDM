@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M32 · Funciones — Curso HTML+CSS+JS</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --yellow:#F5C451; --yellow-soft:rgba(245,196,81,.12); --yellow-border:rgba(245,196,81,.32);
+  --red:#FB7185; --green:#34D399; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(245,196,81,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(245,196,81,.16),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(34,184,207,.10),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(245,196,81,.12);border:1px solid rgba(245,196,81,.32);color:var(--yellow);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--yellow)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;font-size:clamp(21px,3vw,27px);
+  color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;margin:0 0 20px;max-width:62ch}
+
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,var(--yellow),#EAB308)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
+  background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(245,196,81,.16);border-color:var(--yellow-border);color:var(--yellow)}
+.code-btn.primary{background:rgba(245,196,81,.16);border-color:var(--yellow-border);color:var(--yellow)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+.code-prop{color:#93C5FD}
+
+.output-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;overflow:hidden;display:none}
+.output-block.show{display:block}
+.output-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.output-body{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6}
+.out-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.out-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.out-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.out-tag.alert{color:#C4B5FD;background:rgba(196,181,253,.1)}
+.out-tag.error{color:#FF8E8E;background:rgba(255,142,142,.1)}
+.out-text{color:#C7CDE0}
+
+.cmp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+.cmp{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:13px 15px}
+.cmp h4{font-family:var(--font-head);font-size:15px;color:var(--yellow);font-weight:600;margin-bottom:5px}
+.cmp p{font-size:13.5px;color:#A7A4B8;line-height:1.55;margin-bottom:6px}
+.cmp code{font-family:var(--font-mono);font-size:12.5px;color:#ECC48D;background:rgba(0,0,0,.25);padding:1px 5px;border-radius:4px;display:block;margin-top:4px}
+
+.fab{position:fixed;bottom:22px;right:22px;z-index:50;background:none;border:0;padding:0;
+  cursor:pointer;transition:all .25s}
+.fab-btn{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(145deg,#F5C451,#EAB308);box-shadow:0 8px 24px -6px rgba(245,196,81,.55);
+  transition:all .25s}
+.fab:hover .fab-btn{transform:scale(1.08)}
+.fab-btn svg{width:24px;height:24px}
+
+.backdrop{position:fixed;inset:0;z-index:60;background:rgba(4,3,8,.62);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .35s ease}
+.backdrop.show{opacity:1;pointer-events:auto}
+
+.panel{position:fixed;z-index:70;top:0;right:0;height:100vh;width:min(660px,94vw);
+  background:var(--bg-s2);border-left:1px solid var(--border);
+  box-shadow:-20px 0 60px rgba(0,0,0,.5);
+  transform:translateX(106%);transition:transform .4s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.panel.show{transform:translateX(0)}
+@media(max-width:768px){
+  .panel{top:0;left:0;right:0;bottom:0;width:100%;height:100vh;transform:translateY(100%);border-left:none}
+  .panel.show{transform:translateY(0)}
+}
+.panel-head{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;background:var(--bg-s4);border-bottom:1px solid var(--border)}
+.panel-tabs{display:flex;gap:4px}
+.ptab{padding:6px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;
+  font-family:var(--font-body);background:transparent;color:var(--text-mut);border:1px solid transparent;
+  transition:all .15s}
+.ptab.active{background:var(--yellow-soft);color:var(--yellow);border-color:var(--yellow-border)}
+.ptab:hover:not(.active){color:var(--text-sec)}
+.panel-close{width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;
+  color:#A6A3B6;cursor:pointer;transition:all .15s}
+.panel-close:hover{background:rgba(255,255,255,.1);color:#fff}
+.panel-close svg{width:18px;height:18px}
+
+.panel-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.editor-area{flex:1;position:relative;overflow:hidden}
+.edit-area{position:absolute;inset:0;padding:12px 16px;background:var(--bg-s1);border:none;
+  color:var(--text-sec);font-family:var(--font-mono);font-size:13.5px;line-height:1.75;
+  resize:none;white-space:pre;tab-size:2;outline:none;display:none}
+.edit-area.active{display:block;overflow:auto}
+
+.panel-foot{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 12px;
+  background:var(--bg-s4);border-top:1px solid var(--border)}
+.run-btn{margin-left:auto;padding:7px 18px;border-radius:10px;border:0;cursor:pointer;
+  background:linear-gradient(145deg,#F5C451,#EAB308);color:#06120B;font-family:var(--font-body);
+  font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;transition:all .2s}
+.run-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px -4px rgba(245,196,81,.6)}
+.run-btn svg{width:14px;height:14px}
+.out-tab{padding:6px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;
+  background:transparent;color:var(--text-mut);border:1px solid transparent;font-family:var(--font-body)}
+.out-tab.active{background:var(--yellow-soft);color:var(--yellow);border-color:var(--yellow-border)}
+.clear-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text-mut);font-size:12px;cursor:pointer}
+.clear-btn:hover{color:var(--text-sec)}
+
+.output-panel{flex:1;overflow:auto;display:none;position:relative;background:var(--bg-s1)}
+.output-panel.active{display:block}
+#pgFrame{width:100%;height:100%;border:0;background:#fff}
+#pgConsole{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6;overflow:auto}
+.pg-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.pg-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.pg-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.pg-tag.warn{color:var(--yellow);background:rgba(245,196,81,.1)}
+.pg-tag.error{color:#FF8E8E;background:rgba(255,142,142,.1)}
+.pg-tag.alert{color:#C4B5FD;background:rgba(196,181,253,.1)}
+.pg-text{color:#C7CDE0}
+.pg-empty{color:var(--text-sub);font-size:13px;padding:20px;text-align:center}
+
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;
+  border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(245,196,81,.08);border-color:var(--yellow-border)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;
+  background:linear-gradient(145deg,#F5C451,#EAB308);color:#06120B;font-family:var(--font-body);
+  font-size:15px;font-weight:700;box-shadow:0 8px 24px -8px rgba(245,196,81,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(245,196,81,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+@media(max-width:640px){
+  .cmp-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 32 · FUNCIONES</div>
+    <h1>Funciones: <span class="hl">declaración</span> a arrow</h1>
+    <p>Una función es un bloque de código con nombre que puedes llamar cuando quieras. Es el ladrillo con el que se construyen programas que crecen sin volverse caóticos. Hoy ves declaración, expresión, arrow functions y callbacks.</p>
+    <div class="meta-chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>3 sintaxis</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M12 3v18"/></svg>Rest + default</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>~14 min de lectura</span>
+    </div>
+  </div>
+
+  <!-- 01 · LAS 3 FORMAS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span><span class="num-title">Las tres formas de crear funciones</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Declaración, expresión y arrow</h3>
+        <p>Las tres hacen lo mismo, pero se comportan distinto. Las <strong>declaraciones</strong> se "eleven" (hoisting): puedes llamarlas antes de escribirlas. Las <strong>expresiones</strong> y <strong>arrow functions</strong> son valores: se asignan a variables, se pasan como argumento, se devuelven.</p>
+        <div class="cmp-grid">
+          <div class="cmp">
+            <h4>Declaración</h4>
+            <p>Forma clásica. Se eleva completa: callable desde cualquier punto del scope.</p>
+            <code>function sumar(a, b){ return a + b; }</code>
+          </div>
+          <div class="cmp">
+            <h4>Expresión</h4>
+            <p>Una función asignada a variable. No se eleva; solo callable tras la asignación.</p>
+            <code>const sumar = function(a,b){...};</code>
+          </div>
+          <div class="cmp">
+            <h4>Arrow</h4>
+            <p>Concisa, sintaxis moderna. Sin <code>this</code> propio. Ideal para callbacks.</p>
+            <code>const sumar = (a, b) => a + b;</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 · TU PRIMER MOMENTO -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span><span class="num-title">Tu primer momento: callbacks en acción</span>
+    </div>
+    <div class="card">
+      <p>Pulsa <strong>Ejecutar</strong>. <code>aplicar(arr, fn)</code> es una función de orden superior: recibe otra función (<code>duplicar</code>, <code>triplicar</code>) y la aplica a cada elemento. Después, una función con parámetro por defecto y otra con <code>...rest</code> que suma lo que le pases.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>JavaScript · funciones.js</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runIntro()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-cmt">// HOF: función que recibe otra función</span>
+<span class="code-kw">function</span> <span class="code-fn">aplicar</span>(arr, fn) {
+  <span class="code-kw">const</span> out = [];
+  <span class="code-kw">for</span> (<span class="code-kw">const</span> x <span class="code-kw">of</span> arr) out.<span class="code-fn">push</span>(fn(x));
+  <span class="code-kw">return</span> out;
+}
+
+<span class="code-cmt">// Arrow functions con retorno implícito</span>
+<span class="code-kw">const</span> duplicar = x =&gt; x * <span class="code-str">2</span>;
+<span class="code-kw">const</span> triplicar = x =&gt; x * <span class="code-str">3</span>;
+
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"duplicar [1,2,3]:"</span>, <span class="code-fn">aplicar</span>([<span class="code-str">1</span>,<span class="code-str">2</span>,<span class="code-str">3</span>], duplicar));
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"triplicar [1,2,3]:"</span>, <span class="code-fn">aplicar</span>([<span class="code-str">1</span>,<span class="code-str">2</span>,<span class="code-str">3</span>], triplicar));
+
+<span class="code-cmt">// Parámetro por defecto</span>
+<span class="code-kw">function</span> <span class="code-fn">saludar</span>(nombre = <span class="code-str">"invitado"</span>) {
+  <span class="code-kw">return</span> <span class="code-str">"Hola, "</span> + nombre;
+}
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-fn">saludar</span>());        <span class="code-cmt">// "Hola, invitado"</span>
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-fn">saludar</span>(<span class="code-str">"Ana"</span>)); <span class="code-cmt">// "Hola, Ana"</span>
+
+<span class="code-cmt">// Rest: agrupa el resto de argumentos en un array</span>
+<span class="code-kw">function</span> <span class="code-fn">sumarTodo</span>(...nums) {
+  <span class="code-kw">return</span> nums.<span class="code-fn">reduce</span>((a, b) =&gt; a + b, <span class="code-str">0</span>);
+}
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"sumarTodo(1..5):"</span>, <span class="code-fn">sumarTodo</span>(<span class="code-str">1</span>,<span class="code-str">2</span>,<span class="code-str">3</span>,<span class="code-str">4</span>,<span class="code-str">5</span>));</code></pre>
+      </div>
+      <div class="output-block" id="outIntro">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outIntroBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 · PARÁMETROS AVANZADOS Y CALLBACKS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span><span class="num-title">Parámetros y funciones de orden superior</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Parámetros por defecto y rest</h3>
+        <p><strong>Por defecto:</strong> <code>function f(x = 10)</code> — si no pasas <code>x</code>, vale <code>10</code>. Útil para evitar <code>undefined</code>. <strong>Rest:</strong> <code>...args</code> agrupa los argumentos restantes en un array real (no un <code>arguments</code> exótico). Solo puede haber un <code>rest</code> y debe ir al final.</p>
+      </div>
+      <div class="content-block">
+        <h3>Funciones de orden superior y callbacks</h3>
+        <p>Una <strong>HOF</strong> (Higher-Order Function) recibe o devuelve otra función. <code>aplicar(arr, fn)</code> es HOF: recibe <code>fn</code> como <strong>callback</strong>. Los arrays de JS vienen repletos de HOFs: <code>map</code>, <code>filter</code>, <code>reduce</code> — todas reciben callbacks. Entenderlas ahora te prepara para el módulo de arrays.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 · RECURSOS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span><span class="num-title">Recursos para profundizar</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/JavaScript/Guide/Functions" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Guía de funciones</div>
+        <div class="res-desc">La guía oficial: declaración vs expresión, ámbito, closures, argumentos, recursión, IIFE.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Functions/Arrow_functions" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Arrow functions</div>
+        <div class="res-desc">Sintaxis completa de <code>=&gt;</code>: retorno implícito, sin <code>this</code>, sin <code>arguments</code>, casos de uso.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://javascript.info/function-basics" target="_blank" rel="noopener">
+        <div><div class="res-name">javascript.info · Funciones</div>
+        <div class="res-desc">Desde lo más básico hasta HOFs, con ejercicios para practicar declaración, expresión y arrow.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <div class="cta-label">Ya sabes encapsular comportamiento</div>
+    <h2>Ahora aprende a manejar colecciones con arrays</h2>
+    <p>Los arrays son listas ordenadas de valores. Y JS viene con un arsenal de métodos (<code>map</code>, <code>filter</code>, <code>reduce</code>) que te permiten transformarlos sin escribir bucles.</p>
+    <a class="cta-btn" href="M33_Arrays.html">
+      MÓDULO 33 · Arrays
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="openPlayground()">
+  <div class="fab-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#06120B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+  </div>
+</button>
+
+<div class="backdrop" id="backdrop" onclick="closePlayground()"></div>
+
+<div class="panel" id="panel">
+  <div class="panel-head">
+    <div class="panel-tabs">
+      <button class="ptab active" onclick="setTab('html')">HTML</button>
+      <button class="ptab" onclick="setTab('css')">CSS</button>
+      <button class="ptab" onclick="setTab('js')">JS</button>
+    </div>
+    <button class="panel-close" onclick="closePlayground()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="panel-body">
+    <div class="editor-area">
+      <textarea class="edit-area active" id="taHtml" spellcheck="false"></textarea>
+      <textarea class="edit-area" id="taCss" spellcheck="false"></textarea>
+      <textarea class="edit-area" id="taJs" spellcheck="false"></textarea>
+    </div>
+    <div class="panel-foot">
+      <button class="out-tab active" onclick="setOutTab('preview')">Vista</button>
+      <button class="out-tab" onclick="setOutTab('console')">Consola</button>
+      <button class="clear-btn" onclick="clearConsole()">Limpiar</button>
+      <button class="run-btn" onclick="runPlayground()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Ejecutar
+      </button>
+    </div>
+    <div class="output-panel active" id="previewPanel" style="min-height:200px">
+      <iframe id="pgFrame" sandbox="allow-scripts" title="Vista previa"></iframe>
+    </div>
+    <div class="output-panel" id="consolePanel" style="min-height:200px">
+      <div id="pgConsole"><div class="pg-empty">La consola está vacía. Pulsa Ejecutar para ver la salida.</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+function runIntro(){
+  var out=document.getElementById('outIntro'),body=document.getElementById('outIntroBody');
+  body.innerHTML='';
+  var logs=[];
+  var origLog=console.log, origErr=console.error;
+  console.log=function(){var a=[].slice.call(arguments);logs.push({level:'log',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')})};
+  console.error=function(){var a=[].slice.call(arguments);logs.push({level:'error',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')})};
+  try{
+    new Function('console',
+      "function aplicar(arr, fn){\n"+
+      "  const out = [];\n"+
+      "  for (const x of arr) out.push(fn(x));\n"+
+      "  return out;\n"+
+      "}\n"+
+      "const duplicar = x => x * 2;\n"+
+      "const triplicar = x => x * 3;\n"+
+      "console.log('duplicar [1,2,3]:', aplicar([1,2,3], duplicar));\n"+
+      "console.log('triplicar [1,2,3]:', aplicar([1,2,3], triplicar));\n"+
+      "function saludar(nombre = 'invitado'){ return 'Hola, ' + nombre; }\n"+
+      "console.log(saludar());\n"+
+      "console.log(saludar('Ana'));\n"+
+      "function sumarTodo(...nums){ return nums.reduce((a, b) => a + b, 0); }\n"+
+      "console.log('sumarTodo(1..5):', sumarTodo(1,2,3,4,5));"
+    )(console);
+  }catch(e){logs.push({level:'error',text:'Error: '+e.message})}
+  finally{console.log=origLog;console.error=origErr}
+  if(!logs.length)logs.push({level:'log',text:'(sin salida visible)'});
+  logs.forEach(function(l){
+    var line=document.createElement('div');line.className='out-line';
+    var tag=document.createElement('span');tag.className='out-tag '+l.level;tag.textContent=l.level;
+    var txt=document.createElement('span');txt.className='out-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);body.appendChild(line);
+  });
+  out.classList.add('show');
+}
+
+var pgState={tab:'html',outTab:'preview',pgConsole:[]};
+var defaultCode={
+  html:'<h1>Funciones</h1>',
+  css:'body{font-family:system-ui,sans-serif;padding:24px;color:#1f2937;background:#f8fafc}\nh1{color:#b8860b}',
+  js:"const cuadrado = x => x * x;\nconsole.log('cuadrado(5):', cuadrado(5));\nfunction suma(...n){ return n.reduce((a,b)=>a+b, 0); }\nconsole.log('suma 1..4:', suma(1,2,3,4));"
+};
+function openPlayground(){
+  if(!document.getElementById('taHtml').value)document.getElementById('taHtml').value=defaultCode.html;
+  if(!document.getElementById('taCss').value)document.getElementById('taCss').value=defaultCode.css;
+  if(!document.getElementById('taJs').value)document.getElementById('taJs').value=defaultCode.js;
+  document.getElementById('backdrop').classList.add('show');
+  document.getElementById('panel').classList.add('show');
+  document.getElementById('fab').style.opacity='0';document.getElementById('fab').style.pointerEvents='none';
+  runPlayground();
+}
+function closePlayground(){
+  document.getElementById('backdrop').classList.remove('show');
+  document.getElementById('panel').classList.remove('show');
+  document.getElementById('fab').style.opacity='1';document.getElementById('fab').style.pointerEvents='auto';
+}
+function setTab(tab){
+  pgState.tab=tab;
+  document.querySelectorAll('.ptab').forEach(function(t,i){t.classList.toggle('active',['html','css','js'][i]===tab)});
+  document.querySelectorAll('.edit-area').forEach(function(a){a.classList.remove('active')});
+  var id={html:'taHtml',css:'taCss',js:'taJs'}[tab];
+  document.getElementById(id).classList.add('active');
+}
+function setOutTab(tab){
+  pgState.outTab=tab;
+  document.querySelectorAll('.out-tab').forEach(function(t,i){t.classList.toggle('active',['preview','console'][i]===tab)});
+  document.getElementById('previewPanel').classList.toggle('active',tab==='preview');
+  document.getElementById('consolePanel').classList.toggle('active',tab==='console');
+}
+function clearConsole(){pgState.pgConsole=[];renderConsole()}
+function renderConsole(){
+  var c=document.getElementById('pgConsole');
+  if(!pgState.pgConsole.length){c.innerHTML='<div class="pg-empty">La consola está vacía. Pulsa Ejecutar para ver la salida.</div>';return}
+  c.innerHTML='';
+  pgState.pgConsole.forEach(function(l){
+    var line=document.createElement('div');line.className='pg-line';
+    var tag=document.createElement('span');tag.className='pg-tag '+(l.level==='warn'?'warn':(l.level==='error'?'error':(l.level==='alert'?'alert':'log')));tag.textContent=l.level;
+    var txt=document.createElement('span');txt.className='pg-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);c.appendChild(line);
+  });
+}
+function runPlayground(){
+  pgState.pgConsole=[];
+  var html=document.getElementById('taHtml').value;
+  var css=document.getElementById('taCss').value;
+  var js=document.getElementById('taJs').value;
+  var src='<!DOCTYPE html><html><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+
+    '<scr'+'ipt>(function(){var send=function(level,args){try{parent.postMessage({__pg:true,level:level,text:args.map(function(a){try{return typeof a==="string"?a:JSON.stringify(a)}catch(e){return String(a)}}).join(" ")},"*")}catch(e){}};var _l=console.log,_w=console.warn,_e=console.error;console.log=function(){send("log",[].slice.call(arguments));_l.apply(console,arguments)};console.warn=function(){send("warn",[].slice.call(arguments));_w.apply(console,arguments)};console.error=function(){send("error",[].slice.call(arguments));_e.apply(console,arguments)};window.alert=function(){send("alert",[].slice.call(arguments))};window.onerror=function(m){send("error",[m]);return false};})();<\\/scr'+'ipt>'+
+    '<scr'+'ipt>try{'+js+'}catch(e){console.error((e.name||"Error")+": "+e.message)}<\\/scr'+'ipt>'+
+    '</body></html>';
+  var frame=document.getElementById('pgFrame');
+  frame.srcdoc=src;
+  renderConsole();
+}
+window.addEventListener('message',function(e){
+  if(e&&e.data&&e.data.__pg){
+    pgState.pgConsole.push({level:e.data.level,text:e.data.text});
+    renderConsole();
+  }
+});
+</script>
+</body>
+</html>

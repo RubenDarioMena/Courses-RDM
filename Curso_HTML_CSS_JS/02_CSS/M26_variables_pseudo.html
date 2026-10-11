@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M26 · Variables CSS y pseudo-clases — Curso HTML+CSS+JS</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --green:#34D399; --green-soft:rgba(52,211,153,.12); --green-border:rgba(52,211,153,.22); --green-hi:rgba(52,211,153,.35);
+  --red:#FB7185; --yellow:#F5C451; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(52,211,153,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(52,211,153,.20),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* HERO */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);color:var(--green);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--green)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* CARD */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;font-size:clamp(21px,3vw,27px);
+  color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;margin:0 0 20px;max-width:62ch}
+
+/* NUM SECTION */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,var(--green),#10B981)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* CONTENT */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+
+/* CODE BLOCK */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
+  background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(52,211,153,.16);border-color:var(--green-border);color:var(--green)}
+.code-btn.primary{background:rgba(52,211,153,.16);border-color:var(--green-border);color:var(--green)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+.code-prop{color:#93C5FD}
+.code-sel{color:#34D399}
+.code-prop-name{color:#93C5FD}
+.code-val{color:#ECC48D}
+.code-brace{color:#A78BFA}
+
+/* OUTPUT */
+.output-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;overflow:hidden;display:none}
+.output-block.show{display:block}
+.output-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.output-body{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6}
+.out-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.out-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.out-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.out-tag.alert{color:#C4B5FD;background:rgba(196,181,253,.1)}
+.out-tag.error{color:#FF8E8E;background:rgba(255,142,142,.1)}
+.out-text{color:#C7CDE0}
+
+/* SELECTORS GRID */
+.sel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:16px}
+.sel-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:13px;padding:15px 17px}
+.sel-card-name{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:4px}
+.sel-card-code{font-family:var(--font-mono);font-size:13px;color:var(--green);background:rgba(52,211,153,.08);padding:4px 8px;border-radius:6px;display:inline-block;margin-bottom:6px}
+.sel-card-desc{font-size:13.5px;color:var(--text-mut);line-height:1.55}
+
+/* INLINE PREVIEW BOX */
+.preview-box{margin-top:14px;border:1px solid var(--border);border-radius:13px;overflow:hidden;background:#fff}
+.preview-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.preview-body{padding:24px;display:flex;align-items:center;justify-content:center;min-height:120px;background:#f8fafc}
+#inlinePreview{padding:14px 28px;border-radius:10px;border:2px solid #34D399;background:#10B981;color:#fff;font-family:system-ui,sans-serif;font-size:16px;font-weight:600}
+
+/* FAB */
+.fab{position:fixed;bottom:22px;right:22px;z-index:50;background:none;border:0;padding:0;
+  cursor:pointer;transition:all .25s}
+.fab-btn{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(145deg,#34D399,#10B981);box-shadow:0 8px 24px -6px rgba(52,211,153,.5);
+  transition:all .25s}
+.fab:hover .fab-btn{transform:scale(1.08)}
+.fab-btn svg{width:24px;height:24px}
+
+/* PLAYGROUND PANEL */
+.backdrop{position:fixed;inset:0;z-index:60;background:rgba(4,3,8,.62);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .35s ease}
+.backdrop.show{opacity:1;pointer-events:auto}
+
+.panel{position:fixed;z-index:70;top:0;right:0;height:100vh;width:min(660px,94vw);
+  background:var(--bg-s2);border-left:1px solid var(--border);
+  box-shadow:-20px 0 60px rgba(0,0,0,.5);
+  transform:translateX(106%);transition:transform .4s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.panel.show{transform:translateX(0)}
+@media(max-width:768px){
+  .panel{top:0;left:0;right:0;bottom:0;width:100%;height:100vh;transform:translateY(100%);border-left:none}
+  .panel.show{transform:translateY(0)}
+}
+.panel-head{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;background:var(--bg-s4);border-bottom:1px solid var(--border)}
+.panel-tabs{display:flex;gap:4px}
+.ptab{padding:6px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;
+  font-family:var(--font-body);background:transparent;color:var(--text-mut);border:1px solid transparent;
+  transition:all .15s}
+.ptab.active{background:var(--accent-soft);color:#CBBEFB;border-color:var(--accent-border)}
+.ptab:hover:not(.active){color:var(--text-sec)}
+.panel-close{width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;
+  color:#A6A3B6;cursor:pointer;transition:all .15s}
+.panel-close:hover{background:rgba(255,255,255,.1);color:#fff}
+.panel-close svg{width:18px;height:18px}
+
+.panel-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.editor-area{flex:1;position:relative;overflow:hidden}
+.edit-area{position:absolute;inset:0;padding:12px 16px;background:var(--bg-s1);border:none;
+  color:var(--text-sec);font-family:var(--font-mono);font-size:13.5px;line-height:1.75;
+  resize:none;white-space:pre;tab-size:2;outline:none;display:none}
+.edit-area.active{display:block;overflow:auto}
+.texthint{position:absolute;top:8px;right:12px;font-family:var(--font-mono);font-size:10px;
+  color:var(--text-sub);letter-spacing:.1em;text-transform:uppercase;pointer-events:none}
+
+.panel-foot{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 12px;
+  background:var(--bg-s4);border-top:1px solid var(--border)}
+.run-btn{margin-left:auto;padding:7px 18px;border-radius:10px;border:0;cursor:pointer;
+  background:linear-gradient(145deg,#34D399,#10B981);color:#06120B;font-family:var(--font-body);
+  font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;transition:all .2s}
+.run-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px -4px rgba(52,211,153,.5)}
+.run-btn svg{width:14px;height:14px}
+.out-tab{padding:6px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;
+  background:transparent;color:var(--text-mut);border:1px solid transparent;font-family:var(--font-body)}
+.out-tab.active{background:var(--accent-soft);color:#CBBEFB;border-color:var(--accent-border)}
+.clear-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text-mut);font-size:12px;cursor:pointer}
+.clear-btn:hover{color:var(--text-sec)}
+
+.output-panel{flex:1;overflow:auto;display:none;position:relative;background:var(--bg-s1)}
+.output-panel.active{display:block}
+#pgFrame{width:100%;height:100%;border:0;background:#fff}
+#pgConsole{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6;overflow:auto}
+.pg-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.pg-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.pg-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.pg-tag.warn{color:var(--yellow);background:rgba(245,196,81,.1)}
+.pg-tag.error{color:#FF8E8E;background:rgba(255,142,142,.1)}
+.pg-tag.alert{color:#C4B5FD;background:rgba(196,181,253,.1)}
+.pg-text{color:#C7CDE0}
+.pg-empty{color:var(--text-sub);font-size:13px;padding:20px;text-align:center}
+
+/* STEPS */
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#34D399,#10B981)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body a{color:var(--green);text-decoration:underline}
+
+/* RESOURCES */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;
+  border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(52,211,153,.08);border-color:var(--green-border)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* CTA */
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;
+  background:linear-gradient(145deg,#34D399,#10B981);color:#06120B;font-family:var(--font-body);
+  font-size:15px;font-weight:600;box-shadow:0 8px 24px -8px rgba(52,211,153,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(52,211,153,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 26 · CUSTOM PROPS</div>
+    <h1>Variables, <span class="hl">pseudo-clases</span> y pseudo-elementos</h1>
+    <p>Las <strong>custom properties</strong> son la manera nativa de CSS de tener variables. Las <strong>pseudo-clases</strong> capturan estados (:hover, :focus) y posiciones (:nth-child). Los <strong>pseudo-elementos</strong> crean contenido que no existe en el HTML (::before, ::after). Juntos son la columna vertebral de un CSS mantenible.</p>
+    <div class="meta-chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#5FD0E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>Sin instalar nada</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>Pruébalo en el editor</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>~12 min de lectura</span>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">i</span><span class="num-title">La idea en una imagen</span>
+    </div>
+    <div class="card">
+      <p>Las custom properties no son variables "de verdad" en el sentido de un lenguaje de programación — son <strong>valores que se evalúan en el momento en que se usan</strong>, no cuando se declaran. Esto permite que cambien con el contexto, respondan a media queries, e incluso se actualicen desde JavaScript. Los pseudo-clases y pseudo-elementos son la otra cara: selectores que apuntan a cosas que no se pueden marcar con un atributo, como "el primer hijo" o "la primera letra de un párrafo".</p>
+      <div class="sel-grid">
+        <div class="sel-card"><div class="sel-card-name">Custom property</div><div class="sel-card-code">--color: #34D399; color: var(--color);</div><div class="sel-card-desc">Declarada con <code>--</code>, consumida con <code>var()</code>. Heredable. Soporta fallback.</div></div>
+        <div class="sel-card"><div class="sel-card-name">Pseudo-clase</div><div class="sel-card-code">:hover · :focus · :nth-child(2n)</div><div class="sel-card-desc">Apuntan a un <strong>estado</strong> o posición: el primer hijo, el par, el focus, lo que no es X.</div></div>
+        <div class="sel-card"><div class="sel-card-name">Pseudo-elemento</div><div class="sel-card-code">::before · ::after · ::placeholder</div><div class="sel-card-desc">Generan contenido donde el HTML no lo tiene. Una línea decorativa, un icono, la primera letra.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">01</span><span class="num-title">Custom properties: --nombre y var()</span>
+    </div>
+    <div class="card">
+      <p>Una custom property se declara con dos guiones y se consume con <code>var()</code>. El lugar canónico para declararlas es <code>:root</code>, que las hace disponibles en todo el documento:</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>CSS</span>
+          
+        </div>
+        <pre><code>:root <span class="code-brace">{</span>
+  <span class="code-prop-name">--color-fondo</span>: <span class="code-val">#0f172a</span>;
+  <span class="code-prop-name">--color-texto</span>: <span class="code-val">#f8fafc</span>;
+  <span class="code-prop-name">--color-acento</span>: <span class="code-val">#34D399</span>;
+  <span class="code-prop-name">--radio</span>: <span class="code-val">12px</span>;
+  <span class="code-prop-name">--espacio</span>: <span class="code-val">16px</span>;
+<span class="code-brace">}</span>
+
+body <span class="code-brace">{</span>
+  <span class="code-prop-name">background</span>: <span class="code-val">var(--color-fondo)</span>;
+  <span class="code-prop-name">color</span>: <span class="code-val">var(--color-texto)</span>;
+  <span class="code-prop-name">font-family</span>: <span class="code-val">system-ui, sans-serif</span>;
+<span class="code-brace">}</span>
+button <span class="code-brace">{</span>
+  <span class="code-prop-name">background</span>: <span class="code-val">var(--color-acento)</span>;
+  <span class="code-prop-name">border-radius</span>: <span class="code-val">var(--radio)</span>;
+  <span class="code-prop-name">padding</span>: <span class="code-val">var(--espacio)</span>;
+<span class="code-brace">}</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Fallback: <code>var(--nombre, valor)</code></h3>
+        <p>El segundo argumento de <code>var()</code> es el valor que se usa si la variable no está definida. Útil para componentes que reciben tema desde afuera:</p>
+        <div class="code-block">
+        <div class="code-head">
+          <span>CSS</span>
+          
+        </div>
+        <pre><code>.tarjeta {
+  background: var(--tarjeta-bg, #1e293b);  /* gris oscuro si no hay tema */
+  color:      var(--tarjeta-fg, #f8fafc);
+  padding:    var(--tarjeta-p,  16px);
+}</code></pre>
+      </div>
+        <p>Las custom properties son <strong>heredables</strong>: si las declarás en <code>:root</code>, llegan a todo el árbol. Y son <strong>dinámicas</strong>: cambiar su valor con <code>element.style.setProperty("--color", "red")</code> actualiza todos los usos en vivo, sin recompilar nada.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">02</span><span class="num-title">Pseudo-clases: estado y posición</span>
+    </div>
+    <div class="card">
+      <p>Las pseudo-clases se escriben con <strong>dos puntos</strong> (<code>:hover</code>) y apuntan a un <em>estado</em> o una <em>posición</em> del elemento. No son lo mismo que las clases que escribís en el HTML: el navegador las aplica automáticamente según el contexto.</p>
+      <div class="content-block">
+        <h3>Estado del usuario</h3>
+        <p>Las más usadas en cualquier UI:</p>
+        <div class="code-block">
+        <div class="code-head">
+          <span>CSS</span>
+          
+        </div>
+        <pre><code>:hover     /* el cursor está encima */
+:focus     /* el elemento tiene el foco (inputs, links) */
+:active    /* el botón está siendo pulsado */
+:disabled  /* elemento deshabilitado en un form */
+:checked   /* checkbox o radio marcado */</code></pre>
+      </div>
+      </div>
+      <div class="content-block">
+        <h3>Posición: <code>:nth-child()</code> y compañía</h3>
+        <p>La más potente es <code>:nth-child()</code>. Acepta una fórmula tipo <code>an + b</code> o palabras clave:</p>
+        <div class="code-block">
+        <div class="code-head">
+          <span>CSS</span>
+          
+        </div>
+        <pre><code>:first-child            /* el primer hijo                      */
+:last-child             /* el último                           */
+:nth-child(2)           /* el segundo                          */
+:nth-child(even)        /* todos los pares                     */
+:nth-child(odd)         /* todos los impares                   */
+:nth-child(3n)          /* cada 3                              */
+:nth-child(3n+1)        /* cada 3, empezando en el 1          */
+:nth-last-child(2)      /* el penúltimo                        */</code></pre>
+      </div>
+        <p>Para hacer una lista cebra (alternar colores en filas pares), <code>:nth-child(even)</code> es la solución de una sola línea.</p>
+      </div>
+      <div class="content-block">
+        <h3>Lógica: <code>:not()</code>, <code>:is()</code>, <code>:where()</code>, <code>:has()</code></h3>
+        <p>La nueva generación permite componer selectores con lógica:</p>
+        <div class="code-block">
+        <div class="code-head">
+          <span>CSS</span>
+          
+        </div>
+        <pre><code>:not(.oculto)              /* todo lo que NO tenga .oculto    */
+:is(h1, h2, h3)             /* cualquiera de los tres          */
+:where(h1, h2, h3)          /* igual a :is() pero ESPECIFICIDAD CERO */
+:has(img)                   /* cualquier elemento que contiene un &lt;img&gt; */</code></pre>
+      </div>
+        <p><code>:where()</code> es mágico: aplica la regla pero con especificidad 0, así que nunca gana por especificidad — solo por orden. <code>:has()</code> es el "parent selector" que CSS nunca había tenido.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">03</span><span class="num-title">Pseudo-elementos: contenido que no está en el HTML</span>
+    </div>
+    <div class="card">
+      <p>Se escriben con <strong>doble dos puntos</strong> (<code>::before</code>) y representan una parte del elemento que no existe como nodo en el DOM. La excepción histórica son los "legacy" de un solo dos puntos (<code>:before</code>, <code>:first-line</code>) que CSS sigue aceptando por compatibilidad.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>CSS</span>
+          
+        </div>
+        <pre><code>.boton::before {
+  content: "→";                /* sin content, el pseudo-elemento no existe */
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+p::first-letter {
+  font-size: 2.5em;            /* letra capital tipo "drop cap" */
+  float: left;
+  margin-right: 6px;
+  color: #34D399;
+}
+
+::selection {                  /* color del texto seleccionado por el usuario */
+  background: #34D399;
+  color: #06120B;
+}
+
+input::placeholder {            /* el texto de ayuda dentro de un input vacío */
+  color: #94a3b8;
+  font-style: italic;
+}</code></pre>
+      </div>
+      <p><strong>Regla fundamental:</strong> <code>::before</code> y <code>::after</code> necesitan la propiedad <code>content</code> para existir. Aunque sea <code>content: ""</code> (un string vacío) — si no, el pseudo-elemento no se renderiza.</p>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">04</span><span class="num-title">Tu primer momento: tema claro/oscuro + lista cebra</span>
+    </div>
+    <div class="card">
+      <p>El bloque de la derecha aplica estilos al preview. Después abrí el playground completo para combinar HTML, CSS y JS — el JS de este módulo es una sola línea que alterna la clase del tema.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>CSS</span>
+          <div class="code-btns"><button class="code-btn primary" onclick="runIntro()">Ejecutar</button></div>
+        </div>
+        <pre><code><span class="code-cmt">/* === tema con custom properties === */</span>
+#themed <span class="code-brace">{</span>
+  <span class="code-prop-name">padding</span>: <span class="code-val">20px</span>;
+  <span class="code-prop-name">border-radius</span>: <span class="code-val">12px</span>;
+  <span class="code-prop-name">background</span>: <span class="code-val">#f8fafc</span>;
+  <span class="code-prop-name">color</span>: <span class="code-val">#0f172a</span>;
+  <span class="code-prop-name">border</span>: <span class="code-val">2px solid #34D399</span>;
+  <span class="code-prop-name">transition</span>: <span class="code-val">background 0.3s, color 0.3s</span>;
+<span class="code-brace">}</span>
+#themed.oscuro <span class="code-brace">{</span>
+  <span class="code-prop-name">background</span>: <span class="code-val">#0f172a</span>;
+  <span class="code-prop-name">color</span>: <span class="code-val">#f8fafc</span>;
+<span class="code-brace">}</span>
+#themed .acento <span class="code-brace">{</span> <span class="code-prop-name">color</span>: <span class="code-val">#10B981</span>; <span class="code-prop-name">font-weight</span>: <span class="code-val">600</span>; <span class="code-brace">}</span>
+
+<span class="code-cmt">/* === lista cebra con :nth-child(even) === */</span>
+#zebralist <span class="code-brace">{</span>
+  <span class="code-prop-name">list-style</span>: <span class="code-val">none</span>;
+  <span class="code-prop-name">margin</span>: <span class="code-val">0</span>;
+  <span class="code-prop-name">padding</span>: <span class="code-val">0</span>;
+  <span class="code-prop-name">width</span>: <span class="code-val">100%</span>;
+  <span class="code-prop-name">max-width</span>: <span class="code-val">320px</span>;
+  <span class="code-prop-name">font-family</span>: <span class="code-val">system-ui, sans-serif</span>;
+<span class="code-brace">}</span>
+#zebralist li <span class="code-brace">{</span>
+  <span class="code-prop-name">padding</span>: <span class="code-val">10px 14px</span>;
+  <span class="code-prop-name">background</span>: <span class="code-val">#f1f5f9</span>;
+  <span class="code-prop-name">color</span>: <span class="code-val">#0f172a</span>;
+  <span class="code-prop-name">border-bottom</span>: <span class="code-val">1px solid #e2e8f0</span>;
+<span class="code-brace">}</span>
+#zebralist <span class="code-prop-name">li</span>: <span class="code-val">nth-child(even) </span><span class="code-brace">{</span>
+  <span class="code-prop-name">background</span>: <span class="code-val">#34D399</span>;
+  <span class="code-prop-name">color</span>: <span class="code-val">#06120B</span>;
+  <span class="code-prop-name">font-weight</span>: <span class="code-val">600</span>;
+<span class="code-brace">}</span>
+#zebralist <span class="code-prop-name">li</span>: <span class="code-val">:before </span><span class="code-brace">{</span>
+  <span class="code-prop-name">content</span>: <span class="code-val"> </span><span class="code-val">"→ "</span>;
+  <span class="code-prop-name">color</span>: <span class="code-val">#10B981</span>;
+  <span class="code-prop-name">font-weight</span>: <span class="code-val">bold</span>;
+<span class="code-brace">}</span></code></pre>
+      </div>
+      <div class="preview-box">
+        <div class="preview-head">Vista previa · los pseudo-elementos y :nth-child en acción</div>
+        <div class="preview-body" style="background:#f8fafc">
+          <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;padding:24px;background:#fff">
+        <div id="themed" style="flex:1;min-width:200px">
+          <div>Tema <span class="acento">dinámico</span></div>
+          <div style="font-size:13px;margin-top:6px;opacity:.7">Probá a añadir la clase .oscuro</div>
+        </div>
+        <ul id="zebralist" style="flex:1;min-width:200px">
+          <li>Manzana</li>
+          <li>Banana</li>
+          <li>Cereza</li>
+          <li>Dátil</li>
+          <li>Frambuesa</li>
+          <li>Granada</li>
+        </ul>
+      </div>
+        </div>
+      </div>
+      <div class="content-block" style="margin-top:16px">
+        <h3>3 detalles que dan superpoderes</h3>
+        <div class="steps">
+          <div class="step"><span class="step-num">1</span><div class="step-body"><h4>Las custom properties se actualizan en vivo</h4><p>JS: <code>document.documentElement.style.setProperty("--color-acento", "#A78BFA")</code> cambia TODOS los usos de esa variable en la página al instante. Es la base de los temas dinámicos.</p></div></div>
+          <div class="step"><span class="step-num">2</span><div class="step-body"><h4>:where() tiene especificidad 0</h4><p>Sirve para escribir reglas base sin "ganar" el partido de la especificidad. Ideal para resets y para mantener un sistema fácil de sobrescribir.</p></div></div>
+          <div class="step"><span class="step-num">3</span><div class="step-body"><h4>::before necesita content</h4><p>Sin la propiedad <code>content</code>, el pseudo-elemento no existe aunque escribas todo lo demás. Es el único caso donde CSS se "salta" una regla entera.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">05</span><span class="num-title">Recursos para profundizar</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/CSS/--*" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Custom properties</div>
+        <div class="res-desc">Referencia completa de la sintaxis <code>--*</code> y <code>var()</code>.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/CSS/Pseudo-classes" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Pseudo-clases</div>
+        <div class="res-desc">Lista exhaustiva de todas las pseudo-clases estándar.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/CSS/Pseudo-elements" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Pseudo-elementos</div>
+        <div class="res-desc">Lista exhaustiva de los pseudo-elementos disponibles.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div class="cta-label">CSS mantenible, por fin</div>
+    <h2>Es hora de juntar todo en un proyecto real</h2>
+    <p>Ya tenés las herramientas para un sistema escalable. El último módulo sube la apuesta: container queries, nesting nativo, BEM y @layer — la arquitectura profesional de CSS moderno.</p>
+    <a class="cta-btn" href="M27_CSS_moderno_arquitectura.html">
+      MÓDULO 27 · CSS moderno y proyecto final
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="openPlayground()">
+  <div class="fab-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#06120B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+  </div>
+</button>
+
+<!-- BACKDROP -->
+<div class="backdrop" id="backdrop" onclick="closePlayground()"></div>
+
+<!-- PLAYGROUND PANEL -->
+<div class="panel" id="panel">
+  <div class="panel-head">
+    <div class="panel-tabs">
+      <button class="ptab active" onclick="setTab('html')">HTML</button>
+      <button class="ptab" onclick="setTab('css')">CSS</button>
+      <button class="ptab" onclick="setTab('js')">JS</button>
+    </div>
+    <button class="panel-close" onclick="closePlayground()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="panel-body">
+    <div class="editor-area">
+      <textarea class="edit-area active" id="taHtml" spellcheck="false"></textarea>
+      <textarea class="edit-area" id="taCss" spellcheck="false"></textarea>
+      <textarea class="edit-area" id="taJs" spellcheck="false"></textarea>
+    </div>
+    <div class="panel-foot">
+      <button class="out-tab active" onclick="setOutTab('preview')">Vista</button>
+      <button class="out-tab" onclick="setOutTab('console')">Consola</button>
+      <button class="clear-btn" onclick="clearConsole()">Limpiar</button>
+      <button class="run-btn" onclick="runPlayground()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Ejecutar
+      </button>
+    </div>
+    <div class="output-panel active" id="previewPanel" style="min-height:200px">
+      <iframe id="pgFrame" sandbox="allow-scripts" title="Vista previa"></iframe>
+    </div>
+    <div class="output-panel" id="consolePanel" style="min-height:200px">
+      <div id="pgConsole"><div class="pg-empty">La consola está vacía. Pulsa Ejecutar para ver la salida.</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+// ═══ INLINE CODE RUNNER (M15 intro snippet) ═══
+function runIntro(){
+  var css=document.querySelector('.code-block pre code').textContent;
+  // Extract the rule block from the visible code and reapply it live to #inlinePreview
+  // Simpler approach: apply a fixed set of properties matching the demo code
+  var el=document.getElementById('inlinePreview');
+  // Parse the declarations from the code block
+  var ruleText=css.replace(/^[^{]*\{/,'').replace(/\}[sS]*$/,'');
+  // Apply each declaration directly to the element
+  var decls=ruleText.split(';').map(function(s){return s.trim()}).filter(Boolean);
+  // Skip comment-only lines
+  decls.forEach(function(d){
+    if(d.indexOf('/*')>-1)return;
+    var idx=d.indexOf(':');
+    if(idx===-1)return;
+    var prop=d.substring(0,idx).trim();
+    var val=d.substring(idx+1).trim();
+    try{el.style.setProperty(prop,val)}catch(e){}
+  });
+}
+// Store the default preview style so we can reset
+var defaultInlineStyle='';
+window.addEventListener('load',function(){
+  var el=document.getElementById('inlinePreview');
+  defaultInlineStyle=el.getAttribute('style')||'';
+});
+
+// ═══ PLAYGROUND ═══
+var pgState={tab:'html',outTab:'preview',pgConsole:[]};
+var defaultCode={
+  html:'<button class="toggle" onclick="document.documentElement.classList.toggle(\'tema-oscuro\')">Toggle tema</button>
+<h1>Hola, <span class="acento">tema dinámico</span></h1>
+<ul class="lista">
+  <li>Manzana</li><li>Banana</li><li>Cereza</li>
+  <li>Dátil</li><li>Frambuesa</li><li>Granada</li>
+</ul>',
+  css:':root {
+  --color-fondo: #f8fafc;
+  --color-texto: #0f172a;
+  --color-acento: #34D399;
+}
+.tema-oscuro {
+  --color-fondo: #0f172a;
+  --color-texto: #f8fafc;
+  --color-acento: #34D399;
+}
+body {
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: system-ui, sans-serif;
+  padding: 32px;
+  transition: background 0.3s, color 0.3s;
+}
+.acento { color: var(--color-acento); font-weight: 600; }
+.lista { list-style: none; padding: 0; max-width: 320px; }
+.lista li {
+  padding: 10px 14px;
+  background: rgba(52, 211, 153, 0.1);
+  margin-bottom: 4px;
+  border-radius: 6px;
+}
+.lista li:nth-child(even) { background: var(--color-acento); color: #06120B; }
+.toggle {
+  background: var(--color-acento);
+  color: #06120B;
+  border: 0;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 16px;
+}',
+  js:'console.log("Pulsá el botón para alternar el tema");'
+};
+var colorMap={log:'#93C5FD',warn:'#F5C451',error:'#FF8E8E',alert:'#C4B5FD'};
+var tagMap={log:'log',warn:'warn',error:'error',alert:'alert'};
+var fmt=function(v){if(typeof v==='string')return v;if(v===undefined)return 'undefined';if(v===null)return 'null';try{return JSON.stringify(v)}catch(e){return String(v)}};
+
+function openPlayground(){
+  if(!document.getElementById('taHtml').value)document.getElementById('taHtml').value=defaultCode.html;
+  if(!document.getElementById('taCss').value)document.getElementById('taCss').value=defaultCode.css;
+  if(!document.getElementById('taJs').value)document.getElementById('taJs').value=defaultCode.js;
+  document.getElementById('backdrop').classList.add('show');
+  document.getElementById('panel').classList.add('show');
+  document.getElementById('fab').style.opacity='0';document.getElementById('fab').style.pointerEvents='none';
+  runPlayground();
+}
+function closePlayground(){
+  document.getElementById('backdrop').classList.remove('show');
+  document.getElementById('panel').classList.remove('show');
+  document.getElementById('fab').style.opacity='1';document.getElementById('fab').style.pointerEvents='auto';
+}
+function setTab(tab){
+  pgState.tab=tab;
+  document.querySelectorAll('.ptab').forEach(function(t,i){t.classList.toggle('active',['html','css','js'][i]===tab)});
+  document.querySelectorAll('.edit-area').forEach(function(a){a.classList.remove('active')});
+  var id={html:'taHtml',css:'taCss',js:'taJs'}[tab];
+  document.getElementById(id).classList.add('active');
+}
+function setOutTab(tab){
+  pgState.outTab=tab;
+  document.querySelectorAll('.out-tab').forEach(function(t,i){t.classList.toggle('active',['preview','console'][i]===tab)});
+  document.getElementById('previewPanel').classList.toggle('active',tab==='preview');
+  document.getElementById('consolePanel').classList.toggle('active',tab==='console');
+}
+function clearConsole(){pgState.pgConsole=[];renderConsole()}
+function renderConsole(){
+  var c=document.getElementById('pgConsole');
+  if(!pgState.pgConsole.length){c.innerHTML='<div class="pg-empty">La consola está vacía. Pulsa Ejecutar para ver la salida.</div>';return}
+  c.innerHTML='';
+  pgState.pgConsole.forEach(function(l){
+    var line=document.createElement('div');line.className='pg-line';
+    var tag=document.createElement('span');tag.className='pg-tag '+(tagMap[l.level]||'log');tag.textContent=tagMap[l.level]||'log';
+    var txt=document.createElement('span');txt.className='pg-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);c.appendChild(line);
+  });
+}
+function runPlayground(){
+  pgState.pgConsole=[];
+  var html=document.getElementById('taHtml').value;
+  var css=document.getElementById('taCss').value;
+  var js=document.getElementById('taJs').value;
+  var src='<!DOCTYPE html><html><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+
+    '<scr'+'ipt>(function(){var send=function(level,args){try{parent.postMessage({__pg:true,level:level,text:args.map(function(a){try{return typeof a==="string"?a:JSON.stringify(a)}catch(e){return String(a)}}).join(" ")},"*")}catch(e){}};var _l=console.log,_w=console.warn,_e=console.error;console.log=function(){send("log",[].slice.call(arguments));_l.apply(console,arguments)};console.warn=function(){send("warn",[].slice.call(arguments));_w.apply(console,arguments)};console.error=function(){send("error",[].slice.call(arguments));_e.apply(console,arguments)};window.alert=function(){send("alert",[].slice.call(arguments))};window.onerror=function(m){send("error",[m]);return false};})();<\/scr'+'ipt>'+
+    '<scr'+'ipt>try{'+js+'}catch(e){console.error((e.name||"Error")+": "+e.message)}<\/scr'+'ipt>'+
+    '</body></html>';
+  var frame=document.getElementById('pgFrame');
+  frame.srcdoc=src;
+  renderConsole();
+}
+window.addEventListener('message',function(e){
+  if(e&&e.data&&e.data.__pg){
+    pgState.pgConsole.push({level:e.data.level,text:e.data.text});
+    renderConsole();
+  }
+});
+
+// Reset alert after inline runner
+var origAlert=window.alert;
+window.alert=function(msg){return origAlert.call(window,msg)};
+</script>
+</body>
+</html>

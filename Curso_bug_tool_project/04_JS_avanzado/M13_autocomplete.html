@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M13 · Widget autocomplete — Curso Bug Report Tool</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --yellow:#F5C451; --red:#FB7185; --green:#34D399; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(245,196,81,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(245,196,81,.18),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(167,139,250,.08),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(34,184,207,.05),transparent 60%)}
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(245,196,81,.12);border:1px solid rgba(245,196,81,.32);color:var(--yellow);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--yellow)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;margin:0 0 20px;max-width:62ch}
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#1a1a1a;background:linear-gradient(145deg,#F5C451,#F59E0B)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+.content-block code{font-family:var(--font-mono);font-size:13px;background:rgba(245,196,81,.1);
+  padding:2px 6px;border-radius:5px;color:var(--yellow)}
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
+  background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(245,196,81,.16);border-color:rgba(245,196,81,.22);color:var(--yellow)}
+.code-btn.primary{background:rgba(245,196,81,.16);border-color:rgba(245,196,81,.22);color:var(--yellow)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+.code-prop{color:#93C5FD}
+.output-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;overflow:hidden;display:none}
+.output-block.show{display:block}
+.output-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.output-body{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6}
+.out-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.out-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.out-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.out-text{color:#C7CDE0}
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#1a1a1a;background:linear-gradient(145deg,#F5C451,#F59E0B)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body code{font-family:var(--font-mono);font-size:13px;background:rgba(245,196,81,.1);
+  padding:2px 6px;border-radius:5px;color:var(--yellow)}
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;
+  border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(245,196,81,.08);border-color:rgba(245,196,81,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px;color:#F4F2FB}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;
+  background:linear-gradient(145deg,#F59E0B,#D97706);color:#1a1a1a;font-family:var(--font-body);
+  font-size:15px;font-weight:600;box-shadow:0 8px 24px -8px rgba(245,196,81,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(245,196,81,.8)}
+.cta-btn svg{width:18px;height:18px}
+@media(max-width:640px){.step{flex-direction:column;gap:6px}}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="wrap">
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 13 · JS AVANZADO — WIDGETS</div>
+    <h1>Widget <span class="hl">autocomplete</span>: dropdown con texto libre</h1>
+    <p>El autocomplete es el widget más complejo de la herramienta. Permite escribir texto libre, muestra opciones filtradas, deja agregar nuevas opciones a la lista, borrar existentes, navegar con teclado y abre hacia arriba o abajo según el espacio disponible. En este módulo lo desmontamos pieza por pieza.</p>
+    <div class="meta-chips">
+      <span class="chip">⚡ JS Avanzado</span>
+      <span class="chip">~12 min de lectura</span>
+      <span class="chip">Nivel: intermedio</span>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">1</span><span class="num-title">La idea en una imagen</span></div>
+    <div class="card">
+      <p>Imagina el autocomplete como un buzón de correo: tú escribes una dirección y el cartero te muestra las que coinciden. Si no encuentras la que buscas, puedes añadir una nueva. Y si una dirección ya no sirve, la borras. Todo eso sin abrir la pestaña Data.</p>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">2</span><span class="num-title">wireAutocomplete: el widget completo</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>La función que conecta el input con el dropdown</h3>
+        <p>La herramienta no usa el elemento nativo <code>&lt;datalist&gt;</code>. Construye su propio dropdown desde cero porque necesita tres cosas que <code>&lt;datalist&gt;</code> no ofrece: botón de borrar opción (✕), fila "+ Agregar" para sumar texto libre a la lista, y apertura hacia arriba cuando no cabe abajo.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — wireAutocomplete (simplificado)</span></div>
+        <pre><code><span class="code-kw">function</span> <span class="code-fn">wireAutocomplete</span>(input, inst, form, field) {
+  <span class="code-kw">const</span> wrap = input.<span class="code-fn">closest</span>(<span class="code-str">".autocomplete"</span>);
+  <span class="code-kw">const</span> list = wrap.<span class="code-fn">querySelector</span>(<span class="code-str">".autocomplete-list"</span>);
+  <span class="code-kw">let</span> activeIdx = -1;  <span class="code-cmt">// índice para navegación por teclado</span>
+
+  <span class="code-kw">const</span> <span class="code-fn">renderList</span> = (showAll) => {
+    <span class="code-kw">const</span> all = <span class="code-fn">optionsForField</span>(field, inst); <span class="code-cmt">// lee la lista</span>
+    <span class="code-kw">const</span> q = input.value.trim().<span class="code-fn">toLowerCase</span>();
+    <span class="code-kw">let</span> items = all;
+    <span class="code-kw">if</span> (!showAll && q)
+      items = all.<span class="code-fn">filter</span>(v => v.<span class="code-fn">toLowerCase</span>().<span class="code-fn">includes</span>(q));
+    <span class="code-cmt">// ... pinta los items con <mark> para resaltar coincidencias</span>
+  };
+
+  input.<span class="code-fn">addEventListener</span>(<span class="code-str">"focus"</span>, () => <span class="code-fn">renderList</span>(<span class="code-kw">false</span>));
+  input.<span class="code-fn">addEventListener</span>(<span class="code-str">"input"</span>, () => <span class="code-fn">renderList</span>(<span class="code-kw">false</span>));
+  input.<span class="code-fn">addEventListener</span>(<span class="code-str">"keydown"</span>, handleKeys);
+}</code></pre>
+      </div>
+      <div class="content-block">
+        <h3>El flujo completo</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Focus → renderList(false)</h4><p>Al enfocar el input, se pinta el dropdown. Si hay texto escrito, filtra; si no, muestra todas las opciones.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Input → renderList(false)</h4><p>Cada tecla que escribes re-filtra la lista en tiempo real. El filtrado es case-insensitive con <code>toLowerCase()</code> + <code>includes()</code>.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Click en item → rellena input</h4><p>Al hacer clic en una opción, el input se rellena con el valor elegido y el dropdown se cierra.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Blur → cierra (con delay de 150ms)</h4><p>El delay permite que el clic en un item del dropdown se registre antes de que se cierre.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">3</span><span class="num-title">Filtrado y resaltado con &lt;mark&gt;</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Cómo se resaltan las coincidencias</h3>
+        <p>Cuando escribes "ofi", el dropdown no filtra solo — también pinta amarillo (con <code>&lt;mark&gt;</code>) la parte que coincide dentro de cada opción. Así el usuario ve por qué "Office A" coincide con "ofi".</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — resaltado</span></div>
+        <pre><code><span class="code-cmt">// Escapar el texto de búsqueda para usarlo en regex de forma segura</span>
+<span class="code-kw">const</span> re = q ? <span class="code-kw">new</span> <span class="code-fn">RegExp</span>(<span class="code-str">"("</span> + q
+  .<span class="code-fn">replace</span>(/[.*+?^${}()|[\]\\]/g, <span class="code-str">"\\$&"</span>) + <span class="code-str">")"</span>, <span class="code-str">"ig"</span>) : <span class="code-kw">null</span>;
+
+<span class="code-cmt">// Reemplazar el texto escapado por la versión con <mark></span>
+<span class="code-kw">const</span> marked = re
+  ? <span class="code-fn">escapeHtml</span>(v).<span class="code-fn">replace</span>(re, <span class="code-str">"&lt;mark&gt;$1&lt;/mark&gt;"</span>)
+  : <span class="code-fn">escapeHtml</span>(v);</code></pre>
+      </div>
+      <div class="content-block">
+        <p>El truco: primero se escapa el HTML del valor (para evitar inyección), y después se aplica el <code>&lt;mark&gt;</code> con <code>replace</code> sobre el texto ya escapado. El regex construido con <code>"\\$&"</code> evita que caracteres especiales como <code>.</code> o <code>$</code> del texto de búsqueda rompan el patrón.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">4</span><span class="num-title">Navegación por teclado</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>ArrowDown, ArrowUp, Enter, Escape</h3>
+        <p>El widget soporta navegación completa por teclado. Una variable <code>activeIdx</code> rastrea qué item está seleccionado. Las flechas mueven el índice, Enter lo confirma y Escape cierra sin seleccionar.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — navegación por teclado</span></div>
+        <pre><code>input.<span class="code-fn">addEventListener</span>(<span class="code-str">"keydown"</span>, (e) => {
+  <span class="code-kw">const</span> items = list.<span class="code-fn">querySelectorAll</span>(<span class="code-str">".autocomplete-item"</span>);
+  <span class="code-kw">if</span> (e.key === <span class="code-str">"ArrowDown"</span>) {
+    e.<span class="code-fn">preventDefault</span>();
+    activeIdx = <span class="code-fn">Math</span>.<span class="code-fn">min</span>(items.length - 1, activeIdx + 1);
+  } <span class="code-kw">else if</span> (e.key === <span class="code-str">"ArrowUp"</span>) {
+    e.<span class="code-fn">preventDefault</span>();
+    activeIdx = <span class="code-fn">Math</span>.<span class="code-fn">max</span>(0, activeIdx - 1);
+  } <span class="code-kw">else if</span> (e.key === <span class="code-str">"Enter"</span> && activeIdx >= 0) {
+    e.<span class="code-fn">preventDefault</span>();
+    input.value = items[activeIdx].dataset.v;  <span class="code-cmt">// confirma</span>
+    wrap.classList.<span class="code-fn">remove</span>(<span class="code-str">"open"</span>);
+    <span class="code-kw">return</span>;
+  } <span class="code-kw">else if</span> (e.key === <span class="code-str">"Escape"</span>) {
+    wrap.classList.<span class="code-fn">remove</span>(<span class="code-str">"open"</span>);
+    <span class="code-kw">return</span>;
+  }
+  <span class="code-cmt">// Marcar el item activo y hacer scroll dentro del dropdown</span>
+  items.<span class="code-fn">forEach</span>((it, i) => it.classList.<span class="code-fn">toggle</span>(<span class="code-str">"active"</span>, i === activeIdx));
+});</code></pre>
+      </div>
+      <div class="content-block">
+        <p>El scroll es inteligente: solo mueve el scroll del <em>dropdown</em>, no el de la página. Si el item activo queda fuera del viewport del dropdown, se desplaza con <code>scrollTop</code> para mantenerlo visible.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">5</span><span class="num-title">"+ Agregar" y "✕ Borrar" opciones</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Texto libre: agregar a la lista sin abrir la pestaña Data</h3>
+        <p>Si escribes un valor que no existe en la lista, el dropdown muestra una fila "+ Agregar «texto» a la lista" al final. Al hacer clic, se añade el valor a <code>config.data.lists</code> y el input se rellena. El usuario nunca tiene que abrir la pestaña Data para eso.</p>
+      </div>
+      <div class="content-block">
+        <h3>✕ Borrar: confirmación antes de eliminar</h3>
+        <p>Cada opción del dropdown tiene una ✕ a la derecha. Al hacer clic se abre un modal de confirmación. Si el usuario acepta, se borra el valor de <code>config.data.lists</code> y la lista se re-renderiza. También busca y elimina el valor de cualquier lista hija que lo contenga.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">6</span><span class="num-title">positionAutocomplete: abrir arriba o abajo</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Medir el espacio con getBoundingClientRect</h3>
+        <p>Normalmente el dropdown abre hacia abajo. Pero si el campo está cerca del borde inferior del viewport, no cabe. La función <code>positionAutocomplete</code> mide con <code>getBoundingClientRect()</code> y, si no hay espacio, añade la clase <code>.drop-up</code> para que abra hacia arriba.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head"><span>JavaScript — positionAutocomplete</span></div>
+        <pre><code><span class="code-kw">function</span> <span class="code-fn">positionAutocomplete</span>(wrap, list) {
+  <span class="code-kw">const</span> r = wrap.<span class="code-fn">getBoundingClientRect</span>();
+  <span class="code-kw">const</span> spaceBelow = window.innerHeight - r.bottom;
+  <span class="code-kw">const</span> listHeight = list.offsetHeight;
+  <span class="code-kw">if</span> (spaceBelow < listHeight && r.top > listHeight) {
+    wrap.classList.<span class="code-fn">add</span>(<span class="code-str">"drop-up"</span>);  <span class="code-cmt">// abre hacia arriba</span>
+  } <span class="code-kw">else</span> {
+    wrap.classList.<span class="code-fn">remove</span>(<span class="code-str">"drop-up"</span>);
+  }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">7</span><span class="num-title">Tu primer momento: filtrar una lista</span></div>
+    <div class="card">
+      <p>Pulsa <strong>Ejecutar</strong> para ver cómo <code>wireAutocomplete</code> filtra una lista de mapas en tiempo real mientras escribes. El código muestra el filtro básico sin resaltado ni teclado.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>JavaScript — filtro de autocomplete</span>
+          <div class="code-btns"><button class="code-btn primary" onclick="runFilter()">Ejecutar</button></div>
+        </div>
+        <pre><code><span class="code-cmt">// Lista de mapas (como en bug_tool.html)</span>
+<span class="code-kw">var</span> mapas = [<span class="code-str">"Highrise"</span>, <span class="code-str">"Terminal"</span>, <span class="code-str">"Scrapyard"</span>,
+              <span class="code-str">"Rust"</span>, <span class="code-str">"Nuketown"</span>, <span class="code-str">"Atlas"</span>];
+
+<span class="code-cmt">// Filtrar mientras escribo "rust"</span>
+<span class="code-kw">var</span> query = <span class="code-str">"rust"</span>;
+<span class="code-kw">var</span> filtrados = mapas.<span class="code-fn">filter</span>(<span class="code-kw">function</span>(m) {
+  <span class="code-kw">return</span> m.<span class="code-fn">toLowerCase</span>().<span class="code-fn">includes</span>(query.<span class="code-fn">toLowerCase</span>());
+});
+
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"Filtrando por: '"</span> + query + <span class="code-str">"'"</span>);
+filtrados.<span class="code-fn">forEach</span>(<span class="code-kw">function</span>(m) {
+  <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">"  ✓ "</span> + m);
+});</code></pre>
+      </div>
+      <div class="output-block" id="outFilter">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outFilterBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">8</span><span class="num-title">Ejercicio</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Construir un input con dropdown autocompletable</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Crea un HTML con un input y un div vacío</h4><p><code>&lt;input id="miInput"&gt;</code> y <code>&lt;div id="miList"&gt;</code> debajo, con <code>position:relative</code> en el contenedor.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Conecta el evento input</h4><p>Al escribir, filtra un array de strings y pinta los resultados en <code>#miList</code>.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Añade navegación con flechas</h4><p>Una variable <code>activeIdx</code> que se mueve con ArrowDown/ArrowUp y marca el item con una clase <code>.active</code>.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">9</span><span class="num-title">Recursos</span></div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/API/Element/getBoundingClientRect" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · getBoundingClientRect</div>
+        <div class="res-desc">Medir la posición de un elemento en pantalla.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/Events/keydown" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Eventos de teclado</div>
+        <div class="res-desc">keydown, keyup, KeyEvent y navigation.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div class="cta-label">Siguiente paso</div>
+    <h2>¿Y el widget de palabras clave?</h2>
+    <p>El autocomplete permite texto libre. Las palabras clave (chips) son diferentes: validan cantidad exacta, unicidad y solapamiento con el cuerpo del bug.</p>
+    <a class="cta-btn" href="M14_keywords.html">
+      MÓDULO 14 · Widget keywords
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+<script>
+"use strict";
+function runFilter(){
+  var out=document.getElementById('outFilter'),body=document.getElementById('outFilterBody');
+  body.innerHTML='';
+  var logs=[];
+  var origLog=console.log;
+  console.log=function(){var a=[].slice.call(arguments);logs.push({level:'log',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')})};
+  try{
+    var mapas=["Highrise","Terminal","Scrapyard","Rust","Nuketown","Atlas"];
+    var query="rust";
+    var filtrados=mapas.filter(function(m){return m.toLowerCase().includes(query.toLowerCase());});
+    console.log("Filtrando por: '"+query+"'");
+    filtrados.forEach(function(m){console.log("  \u2713 "+m);});
+  }catch(e){logs.push({level:'log',text:'Error: '+e.message})}finally{console.log=origLog}
+  if(!logs.length)logs.push({level:'log',text:'(sin salida visible)'});
+  logs.forEach(function(l){
+    var line=document.createElement('div');line.className='out-line';
+    var tag=document.createElement('span');tag.className='out-tag '+l.level;tag.textContent=l.level;
+    var txt=document.createElement('span');txt.className='out-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);body.appendChild(line);
+  });
+  out.classList.add('show');
+}
+</script>
+</body>
+</html>

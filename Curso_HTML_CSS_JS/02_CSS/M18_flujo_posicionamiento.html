@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M18 · Flujo y posicionamiento — Curso HTML+CSS+JS</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --green:#34D399; --green-soft:rgba(52,211,153,.12); --green-border:rgba(52,211,153,.22); --green-hi:rgba(52,211,153,.35);
+  --red:#FB7185; --yellow:#F5C451; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(52,211,153,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(52,211,153,.20),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* HERO */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);color:var(--green);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--green)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* CARD */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;margin:0 0 20px;max-width:62ch}
+
+/* NUM SECTION */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,var(--green),#10B981)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* CONTENT */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+
+/* CODE BLOCK */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
+  background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(52,211,153,.16);border-color:var(--green-border);color:var(--green)}
+.code-btn.primary{background:rgba(52,211,153,.16);border-color:var(--green-border);color:var(--green)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+.code-prop{color:#93C5FD}
+.code-sel{color:#34D399}
+.code-prop-name{color:#93C5FD}
+.code-val{color:#ECC48D}
+.code-brace{color:#A78BFA}
+
+/* POSITION GRID */
+.pos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:14px 0}
+.pos-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:11px;padding:13px 15px}
+.pos-name{font-family:var(--font-mono);font-size:13px;color:var(--green);font-weight:600;margin-bottom:4px}
+.pos-desc{font-size:13px;color:var(--text-mut);line-height:1.5}
+
+/* INLINE PREVIEW BOX */
+.preview-box{margin-top:14px;border:1px solid var(--border);border-radius:13px;overflow:hidden;background:#fff}
+.preview-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.preview-body{padding:0;background:#0a0814;position:relative;min-height:380px;overflow:hidden}
+.preview-hint{padding:8px 12px;background:rgba(52,211,153,.08);border-top:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--green);text-align:center;letter-spacing:.06em}
+
+.demo-navbar{position:absolute;top:0;left:0;right:0;height:54px;background:#0C0B13;border-bottom:1px solid #1f2937;
+  display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:30;
+  font-family:system-ui,sans-serif}
+.demo-logo{font-family:var(--font-head);font-weight:700;color:#34D399;font-size:17px;display:flex;align-items:center;gap:8px}
+.demo-logo-dot{width:8px;height:8px;border-radius:50%;background:#34D399;box-shadow:0 0 10px #34D399}
+.demo-links{display:flex;gap:18px}
+.demo-links a{color:#C7CDE0;font-size:13.5px;font-weight:500}
+.demo-links a:hover{color:#34D399}
+
+.demo-hero{position:relative;margin-top:0;height:380px;background:
+  linear-gradient(135deg,#0E0D16 0%,#1B1926 50%,#0E0D16 100%),
+  radial-gradient(circle at 30% 40%,rgba(52,211,153,.25),transparent 50%);
+  background-blend-mode:screen;overflow:hidden}
+.demo-hero::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 75% 30%,rgba(167,139,250,.3),transparent 45%),
+             radial-gradient(circle at 20% 80%,rgba(103,232,249,.18),transparent 50%)}
+.demo-overlay{position:absolute;inset:0;background:linear-gradient(180deg,
+  rgba(9,8,15,.3) 0%,rgba(9,8,15,.7) 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:0 24px}
+.demo-title{font-family:var(--font-head);font-weight:700;font-size:24px;color:#EEEBF6;margin-bottom:8px}
+.demo-sub{color:#C7CDE0;font-size:14px;margin-bottom:18px}
+.demo-btn{background:linear-gradient(145deg,#34D399,#10B981);color:#06120B;border:0;padding:9px 22px;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer}
+
+/* FAB */
+.fab{position:fixed;bottom:22px;right:22px;z-index:50;background:none;border:0;padding:0;
+  cursor:pointer;transition:all .25s}
+.fab-btn{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(145deg,#34D399,#10B981);box-shadow:0 8px 24px -6px rgba(52,211,153,.5);
+  transition:all .25s}
+.fab:hover .fab-btn{transform:scale(1.08)}
+.fab-btn svg{width:24px;height:24px}
+
+/* PLAYGROUND PANEL */
+.backdrop{position:fixed;inset:0;z-index:60;background:rgba(4,3,8,.62);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .35s ease}
+.backdrop.show{opacity:1;pointer-events:auto}
+
+.panel{position:fixed;z-index:70;top:0;right:0;height:100vh;width:min(660px,94vw);
+  background:var(--bg-s2);border-left:1px solid var(--border);
+  box-shadow:-20px 0 60px rgba(0,0,0,.5);
+  transform:translateX(106%);transition:transform .4s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.panel.show{transform:translateX(0)}
+@media(max-width:768px){
+  .panel{top:0;left:0;right:0;bottom:0;width:100%;height:100vh;transform:translateY(100%);border-left:none}
+  .panel.show{transform:translateY(0)}
+}
+.panel-head{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;background:var(--bg-s4);border-bottom:1px solid var(--border)}
+.panel-tabs{display:flex;gap:4px}
+.ptab{padding:6px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;
+  font-family:var(--font-body);background:transparent;color:var(--text-mut);border:1px solid transparent;
+  transition:all .15s}
+.ptab.active{background:var(--accent-soft);color:#CBBEFB;border-color:var(--accent-border)}
+.ptab:hover:not(.active){color:var(--text-sec)}
+.panel-close{width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;
+  color:#A6A3B6;cursor:pointer;transition:all .15s}
+.panel-close:hover{background:rgba(255,255,255,.1);color:#fff}
+.panel-close svg{width:18px;height:18px}
+
+.panel-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.editor-area{flex:1;position:relative;overflow:hidden}
+.edit-area{position:absolute;inset:0;padding:12px 16px;background:var(--bg-s1);border:none;
+  color:var(--text-sec);font-family:var(--font-mono);font-size:13.5px;line-height:1.75;
+  resize:none;white-space:pre;tab-size:2;outline:none;display:none}
+.edit-area.active{display:block;overflow:auto}
+
+.panel-foot{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 12px;
+  background:var(--bg-s4);border-top:1px solid var(--border)}
+.run-btn{margin-left:auto;padding:7px 18px;border-radius:10px;border:0;cursor:pointer;
+  background:linear-gradient(145deg,#34D399,#10B981);color:#06120B;font-family:var(--font-body);
+  font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;transition:all .2s}
+.run-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px -4px rgba(52,211,153,.5)}
+.run-btn svg{width:14px;height:14px}
+.out-tab{padding:6px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;
+  background:transparent;color:var(--text-mut);border:1px solid transparent;font-family:var(--font-body)}
+.out-tab.active{background:var(--accent-soft);color:#CBBEFB;border-color:var(--accent-border)}
+.clear-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text-mut);font-size:12px;cursor:pointer}
+.clear-btn:hover{color:var(--text-sec)}
+
+.output-panel{flex:1;overflow:auto;display:none;position:relative;background:var(--bg-s1)}
+.output-panel.active{display:block}
+#pgFrame{width:100%;height:100%;border:0;background:#fff}
+#pgConsole{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6;overflow:auto}
+.pg-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.pg-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.pg-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.pg-tag.warn{color:var(--yellow);background:rgba(245,196,81,.1)}
+.pg-tag.error{color:#FF8E8E;background:rgba(255,142,142,.1)}
+.pg-text{color:#C7CDE0}
+.pg-empty{color:var(--text-sub);font-size:13px;padding:20px;text-align:center}
+
+/* STEPS */
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#34D399,#10B981)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+
+/* RESOURCES */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;
+  border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(52,211,153,.08);border-color:var(--green-border)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* CTA */
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;
+  background:linear-gradient(145deg,#34D399,#10B981);color:#06120B;font-family:var(--font-body);
+  font-size:15px;font-weight:600;box-shadow:0 8px 24px -8px rgba(52,211,153,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(52,211,153,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 18 · LAYOUT</div>
+    <h1>Flujo y <span class="hl">posicionamiento</span></h1>
+    <p>Los elementos en CSS viven en un <strong>flujo</strong>: una corriente que los coloca uno tras otro. Pero a veces necesitas sacarlos de ahí — fijarlos arriba, superponerlos, mandarlos al fondo. Aquí ves cómo tomar ese control sin pelearte con la maquetación.</p>
+    <div class="meta-chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#5FD0E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>block vs inline</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>5 valores de position</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>~12 min de lectura</span>
+    </div>
+  </div>
+
+  <!-- 01 · FLUJO NORMAL -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span><span class="num-title">El flujo normal: block, inline e inline-block</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Tres comportamientos, tres misiones</h3>
+        <p>Por defecto, cada elemento tiene un <strong>display</strong> que decide cómo se coloca en la página. Lo entiendes en 30 segundos con esta tabla mental:</p>
+        <div class="pos-grid">
+          <div class="pos-card">
+            <div class="pos-name">block</div>
+            <div class="pos-desc">Ocupa todo el ancho. Comienza en nueva línea. Acepta width, height, margin vertical. Ej: <code>div</code>, <code>p</code>, <code>h1</code>.</div>
+          </div>
+          <div class="pos-card">
+            <div class="pos-name">inline</div>
+            <div class="pos-desc">Solo ocupa su contenido. No fuerza salto de línea. No acepta width/height ni margin vertical. Ej: <code>span</code>, <code>a</code>, <code>strong</code>.</div>
+          </div>
+          <div class="pos-card">
+            <div class="pos-name">inline-block</div>
+            <div class="pos-desc">Como inline (sigue el flujo) pero acepta width, height y margin en los 4 lados. Ideal para botones, badges, iconos.</div>
+          </div>
+        </div>
+        <div class="code-block"><pre><code><span class="code-sel">.badge</span> <span class="code-brace">{</span>
+  <span class="code-prop-name">display</span>: <span class="code-val">inline-block</span>;
+  <span class="code-prop-name">padding</span>: <span class="code-val">4px 10px</span>;
+  <span class="code-prop-name">background</span>: <span class="code-val">#34D399</span>;
+<span class="code-brace">}</span></code></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 · POSITION -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span><span class="num-title">position: los 5 valores que te sacan del flujo</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <p>La propiedad <code>position</code> cambia la relación del elemento con el flujo y con sus padres. Los cinco valores, de menos a más intervención:</p>
+        <div class="pos-grid">
+          <div class="pos-card">
+            <div class="pos-name">static</div>
+            <div class="pos-desc">El valor por defecto. Sigue el flujo normal. Ignora top/right/bottom/left.</div>
+          </div>
+          <div class="pos-card">
+            <div class="pos-name">relative</div>
+            <div class="pos-desc">Permite desplazar con top/left etc. <strong>Sin sacar del flujo</strong> — su hueco se reserva.</div>
+          </div>
+          <div class="pos-card">
+            <div class="pos-name">absolute</div>
+            <div class="pos-desc">Saca del flujo. Se posiciona respecto al ancestro <em>posicionado</em> más cercano (no static).</div>
+          </div>
+          <div class="pos-card">
+            <div class="pos-name">fixed</div>
+            <div class="pos-desc">Saca del flujo y se pega a la <strong>ventana del navegador</strong>. No se mueve al hacer scroll.</div>
+          </div>
+          <div class="pos-card">
+            <div class="pos-name">sticky</div>
+            <div class="pos-desc">Híbrido: relative hasta que el scroll lo activa, y entonces se vuelve fixed dentro de su contenedor.</div>
+          </div>
+        </div>
+        <div class="code-block"><pre><code><span class="code-sel">.navbar</span> <span class="code-brace">{</span> <span class="code-prop-name">position</span>: <span class="code-val">fixed</span>; <span class="code-prop-name">top</span>: <span class="code-val">0</span>; <span class="code-prop-name">left</span>: <span class="code-val">0</span>; <span class="code-prop-name">right</span>: <span class="code-val">0</span>; <span class="code-prop-name">z-index</span>: <span class="code-val">30</span>; <span class="code-brace">}</span>
+<span class="code-sel">.badge</span>  <span class="code-brace">{</span> <span class="code-prop-name">position</span>: <span class="code-val">absolute</span>; <span class="code-prop-name">top</span>: <span class="code-val">8px</span>; <span class="code-prop-name">right</span>: <span class="code-val">8px</span>; <span class="code-brace">}</span>
+<span class="code-sel">.seccion-h2</span> <span class="code-brace">{</span> <span class="code-prop-name">position</span>: <span class="code-val">sticky</span>; <span class="code-prop-name">top</span>: <span class="code-val">0</span>; <span class="code-brace">}</span></code></pre></div>
+      </div>
+      <div class="content-block">
+        <h3><code>z-index</code> y contextos de apilamiento</h3>
+        <p><code>z-index</code> decide qué elemento va delante cuando se superponen. Solo funciona con elementos <em>posicionados</em> (no static) o con flex/grid items. Un elemento con <code>z-index</code> crea un <strong>contexto de apilamiento</strong>: sus hijos se apilan entre sí, no con el resto.</p>
+        <p>Regla práctica: navbar arriba (z grande), modales aún más arriba (z más grande), y nunca uses valores absurdos como 9999 — usa una escala de 10, 20, 30, 100.</p>
+      </div>
+      <div class="content-block">
+        <h3>float y clear (histórico, aún aparece en código viejo)</h3>
+        <p>Antes de flexbox, <code>float</code> era la única forma de poner elementos uno al lado del otro. Hoy se evita para layout, pero sigue vivo para cosas como <em>imagen con texto alrededor</em>. Si ves <code>float: left</code> en código moderno, casi siempre hay una forma mejor con flex o grid.</p>
+        <div class="code-block"><pre><code><span class="code-sel">img.avatar</span> <span class="code-brace">{</span> <span class="code-prop-name">float</span>: <span class="code-val">left</span>; <span class="code-prop-name">margin-right</span>: <span class="code-val">12px</span>; <span class="code-brace">}</span>
+<span class="code-sel">.clearfix::after</span> <span class="code-brace">{</span> <span class="code-prop-name">content</span>: <span class="code-val">""</span>; <span class="code-prop-name">display</span>: <span class="code-val">block</span>; <span class="code-prop-name">clear</span>: <span class="code-val">both</span>; <span class="code-brace">}</span></code></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 · TU PRIMER MOMENTO -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span><span class="num-title">Tu primer momento: navbar fixed + hero con overlay</span>
+    </div>
+    <div class="card">
+      <p>Esta preview es una composición real: una <strong>navbar fija</strong> en la parte superior, y debajo un <strong>hero</strong> con un degradado y un overlay oscuro que mejora la legibilidad del texto. Es el patrón más usado en landings y portfolio.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>CSS · posición + z-index</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runHero()">Aplicar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-sel">.navbar</span> <span class="code-brace">{</span> <span class="code-prop-name">position</span>: <span class="code-val">fixed</span>; <span class="code-prop-name">top</span>: <span class="code-val">0</span>; <span class="code-prop-name">z-index</span>: <span class="code-val">30</span>; <span class="code-brace">}</span>
+<span class="code-sel">.hero</span>   <span class="code-brace">{</span> <span class="code-prop-name">position</span>: <span class="code-val">relative</span>; <span class="code-prop-name">min-height</span>: <span class="code-val">100vh</span>; <span class="code-brace">}</span>
+<span class="code-sel">.overlay</span><span class="code-brace">{</span> <span class="code-prop-name">position</span>: <span class="code-val">absolute</span>; <span class="code-prop-name">inset</span>: <span class="code-val">0</span>; <span class="code-prop-name">z-index</span>: <span class="code-val">10</span>; <span class="code-brace">}</span>
+<span class="code-sel">.contenido</span> <span class="code-brace">{</span> <span class="code-prop-name">position</span>: <span class="code-val">relative</span>; <span class="code-prop-name">z-index</span>: <span class="code-val">20</span>; <span class="code-brace">}</span></code></pre>
+      </div>
+      <div class="preview-box">
+        <div class="preview-head">Vista previa · navbar fixed + hero overlay</div>
+        <div class="preview-body">
+          <div class="demo-navbar">
+            <div class="demo-logo"><span class="demo-logo-dot"></span>studio</div>
+            <nav class="demo-links">
+              <a href="#">Inicio</a>
+              <a href="#">Trabajo</a>
+              <a href="#">Contacto</a>
+            </nav>
+          </div>
+          <div class="demo-hero">
+            <div class="demo-overlay">
+              <div class="demo-title">Diseña sin miedo al scroll</div>
+              <div class="demo-sub">position: fixed deja la navbar siempre visible</div>
+              <button class="demo-btn">Empezar</button>
+            </div>
+          </div>
+        </div>
+        <div class="preview-hint">↓ scroll real no aplica aquí, pero la navbar queda fija con <code>z-index: 30</code> y el overlay (z=10) se queda bajo el contenido (z=20)</div>
+      </div>
+      <div class="content-block" style="margin-top:18px">
+        <h3>3 trucos de posicionamiento profesionales</h3>
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">1</span>
+            <div class="step-body">
+              <h4>Añade <code>padding-top</code> al body</h4>
+              <p>Una navbar <code>fixed</code> sale del flujo. Compensa con <code>padding-top</code> en <code>body</code> igual a la altura de la navbar, o el contenido inicial quedará oculto.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">2</span>
+            <div class="step-body">
+              <h4>Usa <code>inset: 0</code> en lugar de top/right/bottom/left</h4>
+              <p>El shorthand <code>inset: 0</code> equivale a poner los cuatro lados a 0. Más limpio para overlays y elementos que cubren todo el padre.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">3</span>
+            <div class="step-body">
+              <h4>Reserva <code>z-index</code> en decenas</h4>
+              <p>Usa 10, 20, 30, 40... así siempre puedes intercalar un valor entre dos existentes sin renumerar todo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 · RECURSOS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span><span class="num-title">Recursos para tu aventura</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/CSS/position" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN — position</div>
+        <div class="res-desc">Los cinco valores (static, relative, absolute, fixed, sticky) con ejemplos visuales.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/CSS/z-index" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN — z-index y contextos de apilamiento</div>
+        <div class="res-desc">Cómo funciona el orden en el eje Z, contextos de apilamiento y errores comunes.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Learn/CSS/CSS_layout/Normal_Flow" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN — Flujo normal y posicionamiento</div>
+        <div class="res-desc">Explicación completa del flujo por defecto, block vs inline, y cuándo romperlo.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <div class="cta-label">Ahora sí controlas el plano</div>
+    <h2>El siguiente paso: alinear en una sola dimensión</h2>
+    <p>Ya puedes colocar y superponer. Lo siguiente es el arma definitiva de layout: <strong>Flexbox</strong>. Una línea de CSS y dejas de pelearte con floats y márgenes.</p>
+    <a class="cta-btn" href="M19_flexbox.html">
+      MÓDULO 19 · Flexbox
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="openPlayground()">
+  <div class="fab-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#06120B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+  </div>
+</button>
+
+<!-- BACKDROP -->
+<div class="backdrop" id="backdrop" onclick="closePlayground()"></div>
+
+<!-- PLAYGROUND PANEL -->
+<div class="panel" id="panel">
+  <div class="panel-head">
+    <div class="panel-tabs">
+      <button class="ptab active" onclick="setTab('html')">HTML</button>
+      <button class="ptab" onclick="setTab('css')">CSS</button>
+      <button class="ptab" onclick="setTab('js')">JS</button>
+    </div>
+    <button class="panel-close" onclick="closePlayground()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="panel-body">
+    <div class="editor-area">
+      <textarea class="edit-area active" id="taHtml" spellcheck="false"></textarea>
+      <textarea class="edit-area" id="taCss" spellcheck="false"></textarea>
+      <textarea class="edit-area" id="taJs" spellcheck="false"></textarea>
+    </div>
+    <div class="panel-foot">
+      <button class="out-tab active" onclick="setOutTab('preview')">Vista</button>
+      <button class="out-tab" onclick="setOutTab('console')">Consola</button>
+      <button class="clear-btn" onclick="clearConsole()">Limpiar</button>
+      <button class="run-btn" onclick="runPlayground()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Ejecutar
+      </button>
+    </div>
+    <div class="output-panel active" id="previewPanel" style="min-height:200px">
+      <iframe id="pgFrame" sandbox="allow-scripts" title="Vista previa"></iframe>
+    </div>
+    <div class="output-panel" id="consolePanel" style="min-height:200px">
+      <div id="pgConsole"><div class="pg-empty">La consola está vacía. Pulsa Ejecutar para ver la salida.</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+// ═══ INLINE HERO DEMO (visual) ═══
+function runHero(){
+  // The demo is already in the markup — Ejecutar simply highlights the running config
+  var btns = document.querySelectorAll('.preview-box .code-btn');
+  btns.forEach(function(b){
+    b.textContent = '✓ activo';
+  });
+  setTimeout(function(){
+    btns.forEach(function(b){ b.textContent = 'Aplicar'; });
+  }, 900);
+}
+
+// ═══ PLAYGROUND ═══
+var pgState={tab:'html',outTab:'preview',pgConsole:[]};
+var defaultCode={
+  html:'<header class="navbar">\n  <div class="logo">studio</div>\n  <nav>\n    <a href="#">Inicio</a>\n    <a href="#">Trabajo</a>\n    <a href="#">Contacto</a>\n  </nav>\n</header>\n\n<section class="hero">\n  <div class="overlay"></div>\n  <div class="contenido">\n    <h1>Diseña sin miedo al scroll</h1>\n    <p>position: fixed deja la navbar siempre visible.</p>\n  </div>\n</section>\n\n<div style="height:1500px;background:linear-gradient(#1B1926,#0E0D16)"></div>',
+  css:'* { box-sizing: border-box; margin: 0; padding: 0; }\nbody { font-family: system-ui; color: #EEEBF6; background: #09080F; }\n\n.navbar {\n  position: fixed; top: 0; left: 0; right: 0;\n  z-index: 30; height: 56px;\n  background: #0C0B13; border-bottom: 1px solid #1f2937;\n  display: flex; align-items: center; justify-content: space-between;\n  padding: 0 24px;\n}\n.logo { color: #34D399; font-weight: 700; }\nnav a { color: #C7CDE0; margin-left: 18px; text-decoration: none; }\nnav a:hover { color: #34D399; }\n\n.hero {\n  position: relative;\n  min-height: 100vh;\n  padding-top: 56px; /* compensa la navbar fija */\n  background: radial-gradient(circle at 30% 40%, #1B1926, #0E0D16);\n  display: flex; align-items: center; justify-content: center;\n  text-align: center; padding-left: 24px; padding-right: 24px;\n}\n.overlay {\n  position: absolute; inset: 0;\n  z-index: 10;\n  background: linear-gradient(180deg, rgba(9,8,15,.2), rgba(9,8,15,.7));\n}\n.contenido { position: relative; z-index: 20; }\nh1 { font-size: 2.2rem; margin-bottom: 8px; }',
+  js:'// Mira cómo la navbar se queda fija al hacer scroll (no cabe en el iframe, pero prueba con scrollbars).\nconsole.log("navbar top:", document.querySelector(".navbar").getBoundingClientRect().top);'
+};
+
+function openPlayground(){
+  if(!document.getElementById('taHtml').value)document.getElementById('taHtml').value=defaultCode.html;
+  if(!document.getElementById('taCss').value)document.getElementById('taCss').value=defaultCode.css;
+  if(!document.getElementById('taJs').value)document.getElementById('taJs').value=defaultCode.js;
+  document.getElementById('backdrop').classList.add('show');
+  document.getElementById('panel').classList.add('show');
+  document.getElementById('fab').style.opacity='0';document.getElementById('fab').style.pointerEvents='none';
+  runPlayground();
+}
+function closePlayground(){
+  document.getElementById('backdrop').classList.remove('show');
+  document.getElementById('panel').classList.remove('show');
+  document.getElementById('fab').style.opacity='1';document.getElementById('fab').style.pointerEvents='auto';
+}
+function setTab(tab){
+  pgState.tab=tab;
+  document.querySelectorAll('.ptab').forEach(function(t,i){t.classList.toggle('active',['html','css','js'][i]===tab)});
+  document.querySelectorAll('.edit-area').forEach(function(a){a.classList.remove('active')});
+  var id={html:'taHtml',css:'taCss',js:'taJs'}[tab];
+  document.getElementById(id).classList.add('active');
+}
+function setOutTab(tab){
+  pgState.outTab=tab;
+  document.querySelectorAll('.out-tab').forEach(function(t,i){t.classList.toggle('active',['preview','console'][i]===tab)});
+  document.getElementById('previewPanel').classList.toggle('active',tab==='preview');
+  document.getElementById('consolePanel').classList.toggle('active',tab==='console');
+}
+function clearConsole(){pgState.pgConsole=[];renderConsole()}
+function renderConsole(){
+  var c=document.getElementById('pgConsole');
+  if(!pgState.pgConsole.length){c.innerHTML='<div class="pg-empty">La consola está vacía. Pulsa Ejecutar para ver la salida.</div>';return}
+  c.innerHTML='';
+  pgState.pgConsole.forEach(function(l){
+    var line=document.createElement('div');line.className='pg-line';
+    var tag=document.createElement('span');tag.className='pg-tag '+(l.level||'log');tag.textContent=l.level||'log';
+    var txt=document.createElement('span');txt.className='pg-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);c.appendChild(line);
+  });
+}
+function runPlayground(){
+  pgState.pgConsole=[];
+  var html=document.getElementById('taHtml').value;
+  var css=document.getElementById('taCss').value;
+  var js=document.getElementById('taJs').value;
+  var src='<!DOCTYPE html><html><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+
+    '<scr'+'ipt>(function(){var send=function(level,args){try{parent.postMessage({__pg:true,level:level,text:args.map(function(a){try{return typeof a==="string"?a:JSON.stringify(a)}catch(e){return String(a)}}).join(" ")},"*")}catch(e){}};var _l=console.log,_w=console.warn,_e=console.error;console.log=function(){send("log",[].slice.call(arguments));_l.apply(console,arguments)};console.warn=function(){send("warn",[].slice.call(arguments));_w.apply(console,arguments)};console.error=function(){send("error",[].slice.call(arguments));_e.apply(console,arguments)};window.onerror=function(m){send("error",[m]);return false};})();<\\/scr'+'ipt>'+
+    '<scr'+'ipt>try{'+js+'}catch(e){console.error((e.name||"Error")+": "+e.message)}<\\/scr'+'ipt>'+
+    '</body></html>';
+  var frame=document.getElementById('pgFrame');
+  frame.srcdoc=src;
+  renderConsole();
+}
+window.addEventListener('message',function(e){
+  if(e&&e.data&&e.data.__pg){
+    pgState.pgConsole.push({level:e.data.level,text:e.data.text});
+    renderConsole();
+  }
+});
+</script>
+</body>
+</html>

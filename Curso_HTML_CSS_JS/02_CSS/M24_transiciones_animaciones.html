@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M24 · Transiciones y animaciones — Curso HTML+CSS+JS</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --green:#34D399; --green-soft:rgba(52,211,153,.12); --green-border:rgba(52,211,153,.22); --green-hi:rgba(52,211,153,.35);
+  --red:#FB7185; --yellow:#F5C451; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(52,211,153,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(52,211,153,.20),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* HERO */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);color:var(--green);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--green)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* CARD */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;font-size:clamp(21px,3vw,27px);
+  color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;margin:0 0 20px;max-width:62ch}
+
+/* NUM SECTION */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,var(--green),#10B981)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* CONTENT */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+
+/* CODE BLOCK */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
+  background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(52,211,153,.16);border-color:var(--green-border);color:var(--green)}
+.code-btn.primary{background:rgba(52,211,153,.16);border-color:var(--green-border);color:var(--green)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+.code-prop{color:#93C5FD}
+.code-sel{color:#34D399}
+.code-prop-name{color:#93C5FD}
+.code-val{color:#ECC48D}
+.code-brace{color:#A78BFA}
+
+/* OUTPUT */
+.output-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;overflow:hidden;display:none}
+.output-block.show{display:block}
+.output-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.output-body{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6}
+.out-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.out-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.out-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.out-tag.alert{color:#C4B5FD;background:rgba(196,181,253,.1)}
+.out-tag.error{color:#FF8E8E;background:rgba(255,142,142,.1)}
+.out-text{color:#C7CDE0}
+
+/* SELECTORS GRID */
+.sel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:16px}
+.sel-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:13px;padding:15px 17px}
+.sel-card-name{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:4px}
+.sel-card-code{font-family:var(--font-mono);font-size:13px;color:var(--green);background:rgba(52,211,153,.08);padding:4px 8px;border-radius:6px;display:inline-block;margin-bottom:6px}
+.sel-card-desc{font-size:13.5px;color:var(--text-mut);line-height:1.55}
+
+/* INLINE PREVIEW BOX */
+.preview-box{margin-top:14px;border:1px solid var(--border);border-radius:13px;overflow:hidden;background:#fff}
+.preview-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.preview-body{padding:24px;display:flex;align-items:center;justify-content:center;min-height:120px;background:#f8fafc}
+#inlinePreview{padding:14px 28px;border-radius:10px;border:2px solid #34D399;background:#10B981;color:#fff;font-family:system-ui,sans-serif;font-size:16px;font-weight:600}
+
+/* FAB */
+.fab{position:fixed;bottom:22px;right:22px;z-index:50;background:none;border:0;padding:0;
+  cursor:pointer;transition:all .25s}
+.fab-btn{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(145deg,#34D399,#10B981);box-shadow:0 8px 24px -6px rgba(52,211,153,.5);
+  transition:all .25s}
+.fab:hover .fab-btn{transform:scale(1.08)}
+.fab-btn svg{width:24px;height:24px}
+
+/* PLAYGROUND PANEL */
+.backdrop{position:fixed;inset:0;z-index:60;background:rgba(4,3,8,.62);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .35s ease}
+.backdrop.show{opacity:1;pointer-events:auto}
+
+.panel{position:fixed;z-index:70;top:0;right:0;height:100vh;width:min(660px,94vw);
+  background:var(--bg-s2);border-left:1px solid var(--border);
+  box-shadow:-20px 0 60px rgba(0,0,0,.5);
+  transform:translateX(106%);transition:transform .4s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.panel.show{transform:translateX(0)}
+@media(max-width:768px){
+  .panel{top:0;left:0;right:0;bottom:0;width:100%;height:100vh;transform:translateY(100%);border-left:none}
+  .panel.show{transform:translateY(0)}
+}
+.panel-head{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;background:var(--bg-s4);border-bottom:1px solid var(--border)}
+.panel-tabs{display:flex;gap:4px}
+.ptab{padding:6px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;
+  font-family:var(--font-body);background:transparent;color:var(--text-mut);border:1px solid transparent;
+  transition:all .15s}
+.ptab.active{background:var(--accent-soft);color:#CBBEFB;border-color:var(--accent-border)}
+.ptab:hover:not(.active){color:var(--text-sec)}
+.panel-close{width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;
+  color:#A6A3B6;cursor:pointer;transition:all .15s}
+.panel-close:hover{background:rgba(255,255,255,.1);color:#fff}
+.panel-close svg{width:18px;height:18px}
+
+.panel-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.editor-area{flex:1;position:relative;overflow:hidden}
+.edit-area{position:absolute;inset:0;padding:12px 16px;background:var(--bg-s1);border:none;
+  color:var(--text-sec);font-family:var(--font-mono);font-size:13.5px;line-height:1.75;
+  resize:none;white-space:pre;tab-size:2;outline:none;display:none}
+.edit-area.active{display:block;overflow:auto}
+.texthint{position:absolute;top:8px;right:12px;font-family:var(--font-mono);font-size:10px;
+  color:var(--text-sub);letter-spacing:.1em;text-transform:uppercase;pointer-events:none}
+
+.panel-foot{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 12px;
+  background:var(--bg-s4);border-top:1px solid var(--border)}
+.run-btn{margin-left:auto;padding:7px 18px;border-radius:10px;border:0;cursor:pointer;
+  background:linear-gradient(145deg,#34D399,#10B981);color:#06120B;font-family:var(--font-body);
+  font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;transition:all .2s}
+.run-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px -4px rgba(52,211,153,.5)}
+.run-btn svg{width:14px;height:14px}
+.out-tab{padding:6px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;
+  background:transparent;color:var(--text-mut);border:1px solid transparent;font-family:var(--font-body)}
+.out-tab.active{background:var(--accent-soft);color:#CBBEFB;border-color:var(--accent-border)}
+.clear-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text-mut);font-size:12px;cursor:pointer}
+.clear-btn:hover{color:var(--text-sec)}
+
+.output-panel{flex:1;overflow:auto;display:none;position:relative;background:var(--bg-s1)}
+.output-panel.active{display:block}
+#pgFrame{width:100%;height:100%;border:0;background:#fff}
+#pgConsole{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6;overflow:auto}
+.pg-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.pg-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.pg-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.pg-tag.warn{color:var(--yellow);background:rgba(245,196,81,.1)}
+.pg-tag.error{color:#FF8E8E;background:rgba(255,142,142,.1)}
+.pg-tag.alert{color:#C4B5FD;background:rgba(196,181,253,.1)}
+.pg-text{color:#C7CDE0}
+.pg-empty{color:var(--text-sub);font-size:13px;padding:20px;text-align:center}
+
+/* STEPS */
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#34D399,#10B981)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body a{color:var(--green);text-decoration:underline}
+
+/* RESOURCES */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;
+  border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(52,211,153,.08);border-color:var(--green-border)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* CTA */
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;
+  background:linear-gradient(145deg,#34D399,#10B981);color:#06120B;font-family:var(--font-body);
+  font-size:15px;font-weight:600;box-shadow:0 8px 24px -8px rgba(52,211,153,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(52,211,153,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 24 · ANIMACIÓN</div>
+    <h1>Transiciones y <span class="hl">animaciones</span></h1>
+    <p>Las transiciones dan un puente suave entre dos estados. Las animaciones son coreografías completas: definís un principio, un final y el navegador se encarga del viaje. Bien usadas, convierten una página en una experiencia.</p>
+    <div class="meta-chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#5FD0E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>Sin instalar nada</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>Pruébalo en el editor</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>~12 min de lectura</span>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">i</span><span class="num-title">La idea en una imagen</span>
+    </div>
+    <div class="card">
+      <p>Pensalo así: una <strong>transición</strong> es un puente que se levanta cuando pasás de A a B. Una <strong>animación</strong> es una coreografía con varios pasos. Y en ambos casos, el motor gráfico (GPU) puede ayudarte si elegís bien qué propiedades mover.</p>
+      <div class="sel-grid">
+        <div class="sel-card"><div class="sel-card-name">Transición</div><div class="sel-card-code">:hover { transform: scale(1.05) }</div><div class="sel-card-desc">Disparada por un cambio de estado. Dos puntos: inicio y fin. Interpolación suave entre ambos.</div></div>
+        <div class="sel-card"><div class="sel-card-name">Animación</div><div class="sel-card-code">@keyframes spin { to { transform: rotate(360deg) } }</div><div class="sel-card-desc">Definís una coreografía completa. Puede repetirse, pausarse o cambiar de dirección.</div></div>
+        <div class="sel-card"><div class="sel-card-name">Rendimiento</div><div class="sel-card-code">opacity · transform</div><div class="sel-card-desc">Solo estas dos propiedades se aceleran por GPU. Animá width/height y verás parpadeo.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">01</span><span class="num-title">transition: el puente entre dos estados</span>
+    </div>
+    <div class="card">
+      <p>Una transición se aplica a <strong>una propiedad</strong> y se dispara cuando esa propiedad cambia (por un <code>:hover</code>, una clase, un cambio de tema, etc.). La propiedad <code>transition</code> es un atajo de cuatro:</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>CSS</span>
+          
+        </div>
+        <pre><code>.btn <span class="code-brace">{</span>
+  <span class="code-prop-name">background</span>: <span class="code-val">#10B981</span>;
+  <span class="code-prop-name">color</span>: <span class="code-val">#fff</span>;
+  <span class="code-prop-name">padding</span>: <span class="code-val">12px 22px</span>;
+  <span class="code-prop-name">border-radius</span>: <span class="code-val">10px</span>;
+<span class="code-cmt">  /* transition: &lt;property&gt; &lt;duration&gt; &lt;timing-function&gt; &lt;delay&gt; */</span>
+  <span class="code-prop-name">transition</span>: <span class="code-val">background 0.25s ease,</span>
+              transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+<span class="code-brace">}</span>
+.<span class="code-prop-name">btn</span>: <span class="code-val">hover </span><span class="code-brace">{</span>
+  <span class="code-prop-name">background</span>: <span class="code-val">#34D399</span>;
+  <span class="code-prop-name">transform</span>: <span class="code-val">scale(1.05)</span>;
+<span class="code-brace">}</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Las cuatro partes del atajo</h3>
+        <p>La forma larga separa las cuatro piezas. Si una propiedad no está en <code>transition-property</code>, el cambio es <strong>instantáneo</strong>. <code>all</code> es cómodo pero peligroso, porque algunas propiedades (como <code>width</code>) son lentas de animar.</p>
+        <div class="code-block">
+        <div class="code-head">
+          <span>CSS</span>
+          
+        </div>
+        <pre><code>transition-property:        transform, background;
+transition-duration:        0.2s, 0.25s;
+transition-timing-function: ease, cubic-bezier(0.4, 0, 0.2, 1);
+transition-delay:           0s, 0.05s;</code></pre>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">02</span><span class="num-title">@keyframes: coreografías completas</span>
+    </div>
+    <div class="card">
+      <p>Las animaciones son para cuando necesitás <strong>más de dos estados</strong> o querés que la cosa se repita sola. Definís la coreografía con <code>@keyframes</code> y la activás con la propiedad <code>animation</code>.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>CSS</span>
+          
+        </div>
+        <pre><code><span class="code-cmt">/* 1) la coreografía */</span>
+<span class="code-kw">@keyframes</span> spin <span class="code-brace">{</span>
+  from <span class="code-brace">{</span> <span class="code-prop-name">transform</span>: <span class="code-val">rotate(0deg)</span>; <span class="code-brace">}</span>
+  to   <span class="code-brace">{</span> <span class="code-prop-name">transform</span>: <span class="code-val">rotate(360deg)</span>; <span class="code-brace">}</span>
+<span class="code-brace">}</span>
+
+<span class="code-cmt">/* 2) la activación sobre un elemento */</span>
+.spinner <span class="code-brace">{</span>
+  <span class="code-prop-name">width</span>: <span class="code-val">32px</span>;
+  <span class="code-prop-name">height</span>: <span class="code-val">32px</span>;
+  <span class="code-prop-name">border</span>: <span class="code-val">3px solid rgba(52, 211, 153, 0.2)</span>;
+  <span class="code-prop-name">border-top-color</span>: <span class="code-val">#34D399</span>;
+  <span class="code-prop-name">border-radius</span>: <span class="code-val">50%</span>;
+  <span class="code-prop-name">animation</span>: <span class="code-val">spin 1s linear infinite</span>;
+<span class="code-brace">}</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Propiedades del atajo <code>animation</code></h3>
+        <p>Orden canónico: <code>name duration timing-function delay iteration-count direction fill-mode play-state</code>. Las más usadas en la práctica:</p>
+        <div class="code-block">
+        <div class="code-head">
+          <span>CSS</span>
+          
+        </div>
+        <pre><code>animation-name:          spin;
+animation-duration:      1s;
+animation-iteration-count: infinite;       /* o un número entero */
+animation-direction:     normal | reverse | alternate | alternate-reverse;
+animation-fill-mode:     none | forwards | backwards | both;</code></pre>
+      </div>
+        <p><code>alternate</code> hace que la animación vaya y vuelva de forma continua (un péndulo, una respiración). <code>forwards</code> deja al elemento en el estado final — clave cuando animás "algo que entra".</p>
+      </div>
+      <div class="content-block">
+        <h3>Curvas de timing: <code>ease</code>, <code>cubic-bezier()</code>, <code>steps()</code></h3>
+        <p>La curva define el <em>ritmo</em> del cambio, no su velocidad total:</p>
+        <div class="code-block">
+        <div class="code-head">
+          <span>CSS</span>
+          
+        </div>
+        <pre><code>transition-timing-function: ease;                       /* default — arranque y fin suaves */
+transition-timing-function: linear;                     /* velocidad constante              */
+transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* curva "estándar" de Material     */
+transition-timing-function: steps(8, end);               /* saltos discretos (sprite sheets) */</code></pre>
+      </div>
+        <p><code>steps()</code> es el secreto de los spinners de "tic-tac" y de los sprites animados: en vez de interpolar, da saltos discretos. <code>cubic-bezier(0.4, 0, 0.2, 1)</code> es la curva de Material Design y se siente natural en casi cualquier UI.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">03</span><span class="num-title">Performance y accesibilidad de movimiento</span>
+    </div>
+    <div class="card">
+      <p>El navegador repinta la página en cada frame. Algunas propiedades son <strong>baratas</strong> de mover (la GPU las maneja en una capa aparte). Otras son <strong>caras</strong> (recalculan layout o repintan píxeles). Animar las baratas se siente como seda; animar las caras produce jank y parpadeo.</p>
+      <div class="sel-grid">
+        <div class="sel-card"><div class="sel-card-name">🟢 Animá tranquilo (GPU)</div><div class="sel-card-code">opacity · transform</div><div class="sel-card-desc">No producen layout ni repaint. El navegador sube el elemento a una capa en GPU y lo mueve entero.</div></div>
+        <div class="sel-card"><div class="sel-card-name">🔴 Evitá animar</div><div class="sel-card-code">width · height · top · left</div><div class="sel-card-desc">Disparan layout en cada frame. Una animación de 60fps se vuelve un arrastre. Usá transform en su lugar.</div></div>
+        <div class="sel-card"><div class="sel-card-name">🟡 Con cuidado</div><div class="sel-card-code">background · color · box-shadow</div><div class="sel-card-desc">No producen layout pero sí repaint. Para cambios cortos o sutiles andan bien; evitá animaciones largas.</div></div>
+      </div>
+      <div class="content-block">
+        <h3>Respetá al usuario: <code>prefers-reduced-motion</code></h3>
+        <p>Hay personas con desordenes vestibulares para las que una animación de medio segundo puede ser un problema serio. El sistema operativo expone una preferencia que CSS puede leer:</p>
+        <div class="code-block">
+        <div class="code-head">
+          <span>CSS</span>
+          
+        </div>
+        <pre><code>.spinner { animation: spin 1s linear infinite; }
+.btn     { transition: transform 0.2s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation: none; }
+  .btn     { transition-duration: 0.01ms; }
+}</code></pre>
+      </div>
+        <p>Si la persona activa "reducir movimiento" en su sistema, tus animaciones se apagan o se vuelven instantáneas. Un detalle pequeño que marca una diferencia enorme.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">04</span><span class="num-title">Tu primer momento: hover + spinner</span>
+    </div>
+    <div class="card">
+      <p>Cambiá los valores de la derecha, pulsá <strong>Ejecutar</strong> y mirá el resultado. Después abrí el playground completo con el FAB verde para combinar HTML, CSS y JS.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>CSS</span>
+          <div class="code-btns"><button class="code-btn primary" onclick="runIntro()">Ejecutar</button></div>
+        </div>
+        <pre><code>#inlinePreview <span class="code-brace">{</span>
+  <span class="code-prop-name">display</span>: <span class="code-val">inline-flex</span>;
+  <span class="code-prop-name">align-items</span>: <span class="code-val">center</span>;
+  <span class="code-prop-name">gap</span>: <span class="code-val">10px</span>;
+  <span class="code-prop-name">padding</span>: <span class="code-val">12px 22px</span>;
+  <span class="code-prop-name">border-radius</span>: <span class="code-val">10px</span>;
+  <span class="code-prop-name">background</span>: <span class="code-val">#10B981</span>;
+  <span class="code-prop-name">color</span>: <span class="code-val">#fff</span>;
+  <span class="code-prop-name">font-weight</span>: <span class="code-val">600</span>;
+  <span class="code-prop-name">cursor</span>: <span class="code-val">pointer</span>;
+  <span class="code-prop-name">transition</span>: <span class="code-val">transform 0.2s ease, background 0.25s ease</span>;
+<span class="code-brace">}</span>
+#<span class="code-prop-name">inlinePreview</span>: <span class="code-val">hover </span><span class="code-brace">{</span>
+  <span class="code-prop-name">transform</span>: <span class="code-val">scale(1.08)</span>;
+  <span class="code-prop-name">background</span>: <span class="code-val">#34D399</span>;
+<span class="code-brace">}</span>
+#spinnerDemo <span class="code-brace">{</span>
+  <span class="code-prop-name">display</span>: <span class="code-val">inline-block</span>;
+  <span class="code-prop-name">width</span>: <span class="code-val">22px</span>;
+  <span class="code-prop-name">height</span>: <span class="code-val">22px</span>;
+  <span class="code-prop-name">border</span>: <span class="code-val">3px solid rgba(52, 211, 153, 0.25)</span>;
+  <span class="code-prop-name">border-top-color</span>: <span class="code-val">#34D399</span>;
+  <span class="code-prop-name">border-radius</span>: <span class="code-val">50%</span>;
+  <span class="code-prop-name">animation</span>: <span class="code-val">spin 1s linear infinite</span>;
+<span class="code-brace">}</span>
+<span class="code-kw">@keyframes</span> spin <span class="code-brace">{</span>
+  to <span class="code-brace">{</span> <span class="code-prop-name">transform</span>: <span class="code-val">rotate(360deg)</span>; <span class="code-brace">}</span>
+<span class="code-brace">}</span></code></pre>
+      </div>
+      <div class="preview-box">
+        <div class="preview-head">Vista previa · pasá el mouse por encima</div>
+        <div class="preview-body" style="background:#f8fafc">
+          <div id="inlinePreview"><span id="spinnerDemo"></span> Cargando…</div>
+        </div>
+      </div>
+      <div class="content-block" style="margin-top:16px">
+        <h3>3 detalles que valen oro</h3>
+        <div class="steps">
+          <div class="step"><span class="step-num">1</span><div class="step-body"><h4>Listá las propiedades explícitamente</h4><p><code>transition: transform 0.2s, background 0.25s</code> es mejor que <code>transition: all 0.3s</code> — no animás por accidente algo caro.</p></div></div>
+          <div class="step"><span class="step-num">2</span><div class="step-body"><h4>transform &gt; width/height</h4><p>Para "agrandar" usá <code>transform: scale()</code>. Para "mover" usá <code>translate</code>. Nunca <code>width</code>, <code>height</code>, <code>top</code> o <code>left</code> en animaciones largas.</p></div></div>
+          <div class="step"><span class="step-num">3</span><div class="step-body"><h4>prefers-reduced-motion, siempre</h4><p>Una sola media query corta toda animación. Seis líneas que respetan a personas con sensibilidad vestibular. Cero costo, todos los beneficios.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">05</span><span class="num-title">Recursos para profundizar</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/CSS/transition" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · transition</div>
+        <div class="res-desc">Referencia completa de la propiedad y sus cuatro submódulos.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/CSS/@keyframes" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · @keyframes</div>
+        <div class="res-desc">La sintaxis para definir coreografías animadas.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/CSS/@media/prefers-reduced-motion" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · prefers-reduced-motion</div>
+        <div class="res-desc">La media query que respeta la preferencia de movimiento del usuario.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div class="cta-label">El movimiento bajo tu control</div>
+    <h2>Las animaciones son lenguaje, no decoración</h2>
+    <p>Ya sabés cuándo animar, cómo animar y cómo no romper el rendimiento. Ahora toca aprender a deformar el espacio: transformaciones 2D y 3D.</p>
+    <a class="cta-btn" href="M25_transformaciones.html">
+      MÓDULO 25 · Transformaciones
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="openPlayground()">
+  <div class="fab-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#06120B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+  </div>
+</button>
+
+<!-- BACKDROP -->
+<div class="backdrop" id="backdrop" onclick="closePlayground()"></div>
+
+<!-- PLAYGROUND PANEL -->
+<div class="panel" id="panel">
+  <div class="panel-head">
+    <div class="panel-tabs">
+      <button class="ptab active" onclick="setTab('html')">HTML</button>
+      <button class="ptab" onclick="setTab('css')">CSS</button>
+      <button class="ptab" onclick="setTab('js')">JS</button>
+    </div>
+    <button class="panel-close" onclick="closePlayground()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="panel-body">
+    <div class="editor-area">
+      <textarea class="edit-area active" id="taHtml" spellcheck="false"></textarea>
+      <textarea class="edit-area" id="taCss" spellcheck="false"></textarea>
+      <textarea class="edit-area" id="taJs" spellcheck="false"></textarea>
+    </div>
+    <div class="panel-foot">
+      <button class="out-tab active" onclick="setOutTab('preview')">Vista</button>
+      <button class="out-tab" onclick="setOutTab('console')">Consola</button>
+      <button class="clear-btn" onclick="clearConsole()">Limpiar</button>
+      <button class="run-btn" onclick="runPlayground()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Ejecutar
+      </button>
+    </div>
+    <div class="output-panel active" id="previewPanel" style="min-height:200px">
+      <iframe id="pgFrame" sandbox="allow-scripts" title="Vista previa"></iframe>
+    </div>
+    <div class="output-panel" id="consolePanel" style="min-height:200px">
+      <div id="pgConsole"><div class="pg-empty">La consola está vacía. Pulsa Ejecutar para ver la salida.</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+// ═══ INLINE CODE RUNNER (M15 intro snippet) ═══
+function runIntro(){
+  var css=document.querySelector('.code-block pre code').textContent;
+  // Extract the rule block from the visible code and reapply it live to #inlinePreview
+  // Simpler approach: apply a fixed set of properties matching the demo code
+  var el=document.getElementById('inlinePreview');
+  // Parse the declarations from the code block
+  var ruleText=css.replace(/^[^{]*\{/,'').replace(/\}[sS]*$/,'');
+  // Apply each declaration directly to the element
+  var decls=ruleText.split(';').map(function(s){return s.trim()}).filter(Boolean);
+  // Skip comment-only lines
+  decls.forEach(function(d){
+    if(d.indexOf('/*')>-1)return;
+    var idx=d.indexOf(':');
+    if(idx===-1)return;
+    var prop=d.substring(0,idx).trim();
+    var val=d.substring(idx+1).trim();
+    try{el.style.setProperty(prop,val)}catch(e){}
+  });
+}
+// Store the default preview style so we can reset
+var defaultInlineStyle='';
+window.addEventListener('load',function(){
+  var el=document.getElementById('inlinePreview');
+  defaultInlineStyle=el.getAttribute('style')||'';
+});
+
+// ═══ PLAYGROUND ═══
+var pgState={tab:'html',outTab:'preview',pgConsole:[]};
+var defaultCode={
+  html:'<button class="btn">Pulsame</button>
+<div class="spinner"></div>
+<p>Hover sobre el botón para ver la transición.</p>',
+  css:'body {
+  font-family: system-ui, sans-serif;
+  padding: 32px;
+  background: #f8fafc;
+  color: #1f2937;
+}
+
+.btn {
+  padding: 12px 22px;
+  border: 0;
+  border-radius: 10px;
+  background: #10B981;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.25s ease;
+}
+
+.btn:hover {
+  transform: scale(1.08);
+  background: #34D399;
+}
+
+.spinner {
+  margin-top: 18px;
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(52, 211, 153, 0.2);
+  border-top-color: #34D399;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition-duration: 0.01ms; }
+  .spinner { animation: none; }
+}',
+  js:'document.querySelector(".btn").addEventListener("click", function() {
+  console.log("¡Hola desde M24!");
+  console.warn("Probá prefers-reduced-motion en tu sistema");
+});'
+};
+var colorMap={log:'#93C5FD',warn:'#F5C451',error:'#FF8E8E',alert:'#C4B5FD'};
+var tagMap={log:'log',warn:'warn',error:'error',alert:'alert'};
+var fmt=function(v){if(typeof v==='string')return v;if(v===undefined)return 'undefined';if(v===null)return 'null';try{return JSON.stringify(v)}catch(e){return String(v)}};
+
+function openPlayground(){
+  if(!document.getElementById('taHtml').value)document.getElementById('taHtml').value=defaultCode.html;
+  if(!document.getElementById('taCss').value)document.getElementById('taCss').value=defaultCode.css;
+  if(!document.getElementById('taJs').value)document.getElementById('taJs').value=defaultCode.js;
+  document.getElementById('backdrop').classList.add('show');
+  document.getElementById('panel').classList.add('show');
+  document.getElementById('fab').style.opacity='0';document.getElementById('fab').style.pointerEvents='none';
+  runPlayground();
+}
+function closePlayground(){
+  document.getElementById('backdrop').classList.remove('show');
+  document.getElementById('panel').classList.remove('show');
+  document.getElementById('fab').style.opacity='1';document.getElementById('fab').style.pointerEvents='auto';
+}
+function setTab(tab){
+  pgState.tab=tab;
+  document.querySelectorAll('.ptab').forEach(function(t,i){t.classList.toggle('active',['html','css','js'][i]===tab)});
+  document.querySelectorAll('.edit-area').forEach(function(a){a.classList.remove('active')});
+  var id={html:'taHtml',css:'taCss',js:'taJs'}[tab];
+  document.getElementById(id).classList.add('active');
+}
+function setOutTab(tab){
+  pgState.outTab=tab;
+  document.querySelectorAll('.out-tab').forEach(function(t,i){t.classList.toggle('active',['preview','console'][i]===tab)});
+  document.getElementById('previewPanel').classList.toggle('active',tab==='preview');
+  document.getElementById('consolePanel').classList.toggle('active',tab==='console');
+}
+function clearConsole(){pgState.pgConsole=[];renderConsole()}
+function renderConsole(){
+  var c=document.getElementById('pgConsole');
+  if(!pgState.pgConsole.length){c.innerHTML='<div class="pg-empty">La consola está vacía. Pulsa Ejecutar para ver la salida.</div>';return}
+  c.innerHTML='';
+  pgState.pgConsole.forEach(function(l){
+    var line=document.createElement('div');line.className='pg-line';
+    var tag=document.createElement('span');tag.className='pg-tag '+(tagMap[l.level]||'log');tag.textContent=tagMap[l.level]||'log';
+    var txt=document.createElement('span');txt.className='pg-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);c.appendChild(line);
+  });
+}
+function runPlayground(){
+  pgState.pgConsole=[];
+  var html=document.getElementById('taHtml').value;
+  var css=document.getElementById('taCss').value;
+  var js=document.getElementById('taJs').value;
+  var src='<!DOCTYPE html><html><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+
+    '<scr'+'ipt>(function(){var send=function(level,args){try{parent.postMessage({__pg:true,level:level,text:args.map(function(a){try{return typeof a==="string"?a:JSON.stringify(a)}catch(e){return String(a)}}).join(" ")},"*")}catch(e){}};var _l=console.log,_w=console.warn,_e=console.error;console.log=function(){send("log",[].slice.call(arguments));_l.apply(console,arguments)};console.warn=function(){send("warn",[].slice.call(arguments));_w.apply(console,arguments)};console.error=function(){send("error",[].slice.call(arguments));_e.apply(console,arguments)};window.alert=function(){send("alert",[].slice.call(arguments))};window.onerror=function(m){send("error",[m]);return false};})();<\/scr'+'ipt>'+
+    '<scr'+'ipt>try{'+js+'}catch(e){console.error((e.name||"Error")+": "+e.message)}<\/scr'+'ipt>'+
+    '</body></html>';
+  var frame=document.getElementById('pgFrame');
+  frame.srcdoc=src;
+  renderConsole();
+}
+window.addEventListener('message',function(e){
+  if(e&&e.data&&e.data.__pg){
+    pgState.pgConsole.push({level:e.data.level,text:e.data.text});
+    renderConsole();
+  }
+});
+
+// Reset alert after inline runner
+var origAlert=window.alert;
+window.alert=function(msg){return origAlert.call(window,msg)};
+</script>
+</body>
+</html>

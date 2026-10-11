@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M09 · Formularios (parte 1) — Curso HTML+CSS+JS</title>
+<style>
+/* ═══ RESET ═══ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#110F18; --bg-s3:#15131F; --bg-s4:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --cyan:#67E8F9; --cyan-soft:rgba(95,208,224,.06); --cyan-border:rgba(95,208,224,.2);
+  --pink:#F9A8D4; --pink-soft:rgba(249,168,212,.06); --pink-border:rgba(249,168,212,.2);
+  --yellow:#F5C451; --green:#34D399; --red:#FB7185;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(95,208,224,.32);color:#06120B}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+/* ═══ BACKGROUND GLOW ═══ */
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(95,208,224,.20),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.10),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+/* ═══ LAYOUT ═══ */
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* ═══ HERO ═══ */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(95,208,224,.12);border:1px solid rgba(95,208,224,.32);color:#7FE0F0;
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--cyan)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* ═══ SECTION CARD ═══ */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+/* ═══ NUMBERED SECTION ═══ */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* ═══ CONTENT BLOCKS ═══ */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+.content-block strong{color:#EEEBF6}
+.content-block code{font-family:var(--font-mono);background:rgba(95,208,224,.08);
+  color:#7FE0F0;padding:1px 6px;border-radius:5px;font-size:13.5px}
+
+/* ═══ CODE BLOCK ═══ */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text-sec);font-family:var(--font-body);
+  font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+.code-btn.primary{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-tag{color:#67E8F9}
+.code-attr{color:#93C5FD}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+
+/* ═══ PREVIEW BLOCK ═══ */
+.preview-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;display:none}
+.preview-block.show{display:block}
+.preview-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;
+  text-transform:uppercase}
+.preview-frame{width:100%;border:0;background:#fff;display:block;min-height:120px}
+
+/* ═══ COMPARISON GRID ═══ */
+.cmp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:14px}
+.cmp-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:13px;padding:14px 16px}
+.cmp-card-name{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:4px}
+.cmp-card-name.block{color:#67E8F9}
+.cmp-card-name.inline{color:#F9A8D4}
+.cmp-card-name.void{color:#F5C451}
+.cmp-card-code{font-family:var(--font-mono);font-size:13px;color:var(--cyan);
+  background:rgba(95,208,224,.08);padding:4px 8px;border-radius:6px;display:inline-block;margin-bottom:6px}
+.cmp-card-desc{font-size:13.5px;color:var(--text-mut);line-height:1.55}
+
+/* ═══ STEP LIST ═══ */
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+kbd{font-family:var(--font-mono);background:rgba(255,255,255,.06);padding:2px 6px;border-radius:5px;
+  border:1px solid var(--border);font-size:12px;color:var(--text-sec)}
+
+/* ═══ RESOURCE LINKS ═══ */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(95,208,224,.08);border-color:var(--cyan-border)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* ═══ CTA ═══ */
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,#67E8F9,#22B8CF);color:#06120B;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(95,208,224,.5);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(95,208,224,.7)}
+.cta-btn svg{width:18px;height:18px}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 09 · INTERACCIÓN
+    </div>
+    <h1>Formularios <span class="hl">(parte 1)</span></h1>
+    <p>Hasta ahora el usuario solo leía. Con los formularios puede <strong>escribir, elegir y enviar datos</strong>. Aquí verás la etiqueta <code>&lt;form&gt;</code>, los tipos de <code>&lt;input&gt;</code>, los campos de texto largo, los selectores, los botones y cómo activar la validación nativa del navegador sin escribir una sola línea de JavaScript.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg>
+        &lt;form&gt; con action y method
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F9A8D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
+        Validación nativa (sin JS)
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg>
+        ~90 min de lectura
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 · EL FORMULARIO Y SUS DOS ATRIBUTOS CLAVE ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">&lt;form&gt; · action y method</span>
+    </div>
+    <div class="card">
+      <p>Un formulario es un <strong>envoltorio</strong> que agrupa campos y se encarga de enviarlos a algún sitio. Sin <code>&lt;form&gt;</code>, los inputs se ven pero no se envían a nada. Sus dos atributos esenciales son <code>action</code> (a dónde van los datos) y <code>method</code> (cómo viajan).</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · esqueleto de un formulario</span>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- action = URL que recibe los datos
+     method = cómo viajan: GET (en la URL) o POST (en el cuerpo) --&gt;</span>
+<span class="code-tag">&lt;form</span> <span class="code-attr">action</span>=<span class="code-str">"/registro"</span> <span class="code-attr">method</span>=<span class="code-str">"post"</span><span class="code-tag">&gt;</span>
+  <span class="code-cmt">&lt;!-- aquí van los campos --&gt;</span>
+  <span class="code-tag">&lt;button</span> <span class="code-attr">type</span>=<span class="code-str">"submit"</span><span class="code-tag">&gt;</span>Enviar<span class="code-tag">&lt;/button&gt;</span>
+<span class="code-tag">&lt;/form&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>GET vs POST, en una frase cada uno</h3>
+        <p><strong>GET</strong> — los datos se ven en la URL. Úsalo para búsquedas y filtros (compartibles, cacheables, no sensibles). <strong>POST</strong> — los datos van en el cuerpo de la petición. Úsalo para registros, login, pagos, subida de archivos. Nunca envíes contraseñas con GET.</p>
+      </div>
+      <div class="cmp-grid">
+        <div class="cmp-card">
+          <div class="cmp-card-name block">GET</div>
+          <div class="cmp-card-code">?nombre=Ana&edad=30</div>
+          <div class="cmp-card-desc">Datos en la URL. Visible en el historial y al compartir el enlace. Limitado a ~2000 caracteres.</div>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-card-name inline">POST</div>
+          <div class="cmp-card-code">cuerpo de la petición</div>
+          <div class="cmp-card-desc">Datos ocultos en el cuerpo. Sin límite práctico. Obligatorio para datos sensibles o archivos.</div>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-card-name void">enctype</div>
+          <div class="cmp-card-code">multipart/form-data</div>
+          <div class="cmp-card-desc">Atributo extra necesario si subes archivos. Para texto normal basta con el valor por defecto.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 · TIPOS DE INPUT (TEXTO Y NÚMEROS) ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">Tipos de &lt;input&gt; (texto y números)</span>
+    </div>
+    <div class="card">
+      <p>El elemento <code>&lt;input&gt;</code> es <strong>un vacío</strong> (no tiene cierre) y cambia radicalmente su comportamiento según el atributo <code>type</code>. Aquí los cinco tipos que cubren el 80% de los formularios de texto y datos.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · inputs de texto y números</span>
+        </div>
+<pre><code><span class="code-tag">&lt;label</span> <span class="code-attr">for</span>=<span class="code-str">"nombre"</span><span class="code-tag">&gt;</span>Nombre<span class="code-tag">&lt;/label&gt;</span>
+<span class="code-tag">&lt;input</span> <span class="code-attr">id</span>=<span class="code-str">"nombre"</span> <span class="code-attr">type</span>=<span class="code-str">"text"</span> <span class="code-attr">name</span>=<span class="code-str">"nombre"</span> <span class="code-attr">required</span> <span class="code-attr">minlength</span>=<span class="code-str">"2"</span><span class="code-tag">&gt;</span>
+
+<span class="code-tag">&lt;label</span> <span class="code-attr">for</span>=<span class="code-str">"email"</span><span class="code-tag">&gt;</span>Email<span class="code-tag">&lt;/label&gt;</span>
+<span class="code-tag">&lt;input</span> <span class="code-attr">id</span>=<span class="code-str">"email"</span> <span class="code-attr">type</span>=<span class="code-str">"email"</span> <span class="code-attr">name</span>=<span class="code-str">"email"</span> <span class="code-attr">required</span><span class="code-tag">&gt;</span>
+
+<span class="code-tag">&lt;label</span> <span class="code-attr">for</span>=<span class="code-str">"password"</span><span class="code-tag">&gt;</span>Contraseña<span class="code-tag">&lt;/label&gt;</span>
+<span class="code-tag">&lt;input</span> <span class="code-attr">id</span>=<span class="code-str">"password"</span> <span class="code-attr">type</span>=<span class="code-str">"password"</span> <span class="code-attr">name</span>=<span class="code-str">"password"</span> <span class="code-attr">minlength</span>=<span class="code-str">"8"</span><span class="code-tag">&gt;</span>
+
+<span class="code-tag">&lt;label</span> <span class="code-attr">for</span>=<span class="code-str">"edad"</span><span class="code-tag">&gt;</span>Edad<span class="code-tag">&lt;/label&gt;</span>
+<span class="code-tag">&lt;input</span> <span class="code-attr">id</span>=<span class="code-str">"edad"</span> <span class="code-attr">type</span>=<span class="code-str">"number"</span> <span class="code-attr">name</span>=<span class="code-str">"edad"</span> <span class="code-attr">min</span>=<span class="code-str">"18"</span> <span class="code-attr">max</span>=<span class="code-str">"99"</span><span class="code-tag">&gt;</span>
+
+<span class="code-tag">&lt;label</span> <span class="code-attr">for</span>=<span class="code-str">"nacimiento"</span><span class="code-tag">&gt;</span>Fecha de nacimiento<span class="code-tag">&lt;/label&gt;</span>
+<span class="code-tag">&lt;input</span> <span class="code-attr">id</span>=<span class="code-str">"nacimiento"</span> <span class="code-attr">type</span>=<span class="code-str">"date"</span> <span class="code-attr">name</span>=<span class="code-str">"nacimiento"</span><span class="code-tag">&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Qué hace cada <code>type</code> por ti</h3>
+        <p><strong>text</strong>: caja libre. <strong>email</strong>: en móvil aparece el teclado con <code>@</code>; en escritorio valida el formato al enviar. <strong>password</strong>: oculta lo escrito y desactiva el autocompletar visible. <strong>number</strong>: solo números, con flechas y validación de rango. <strong>date</strong>: abre un calendario nativo del sistema operativo.</p>
+        <p>El atributo <code>name</code> es el que forma el par <code>clave=valor</code> que se envía. <strong>Sin <code>name</code>, el campo no se envía aunque esté relleno.</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 · LABEL, TEXTAREA, SELECT, BUTTON ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">Label, textarea, select, button</span>
+    </div>
+    <div class="card">
+      <p>Además de los <code>&lt;input&gt;</code> cortos, hay cuatro elementos que necesitas para casi cualquier formulario real. El <code>&lt;label&gt;</code> es <strong>obligatorio por accesibilidad</strong> y el resto cubren los huecos que los inputs cortos no resuelven.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · label, textarea, select, button</span>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- label asociado por id (clic en el texto enfoca el input) --&gt;</span>
+<span class="code-tag">&lt;label</span> <span class="code-attr">for</span>=<span class="code-str">"bio"</span><span class="code-tag">&gt;</span>Cuéntanos sobre ti<span class="code-tag">&lt;/label&gt;</span>
+<span class="code-tag">&lt;textarea</span> <span class="code-attr">id</span>=<span class="code-str">"bio"</span> <span class="code-attr">name</span>=<span class="code-str">"bio"</span> <span class="code-attr">rows</span>=<span class="code-str">"4"</span> <span class="code-attr">maxlength</span>=<span class="code-str">"200"</span><span class="code-tag">&gt;&lt;/textarea&gt;</span>
+
+<span class="code-cmt">&lt;!-- select: lista desplegable. La opción "vacía" obliga a elegir --&gt;</span>
+<span class="code-tag">&lt;label</span> <span class="code-attr">for</span>=<span class="code-str">"pais"</span><span class="code-tag">&gt;</span>País<span class="code-tag">&lt;/label&gt;</span>
+<span class="code-tag">&lt;select</span> <span class="code-attr">id</span>=<span class="code-str">"pais"</span> <span class="code-attr">name</span>=<span class="code-str">"pais"</span> <span class="code-attr">required</span><span class="code-tag">&gt;</span>
+  <span class="code-tag">&lt;option</span> <span class="code-attr">value</span>=<span class="code-str">""</span><span class="code-tag">&gt;</span>— elige uno —<span class="code-tag">&lt;/option&gt;</span>
+  <span class="code-tag">&lt;option</span> <span class="code-attr">value</span>=<span class="code-str">"es"</span><span class="code-tag">&gt;</span>España<span class="code-tag">&lt;/option&gt;</span>
+  <span class="code-tag">&lt;option</span> <span class="code-attr">value</span>=<span class="code-str">"mx"</span><span class="code-tag">&gt;</span>México<span class="code-tag">&lt;/option&gt;</span>
+  <span class="code-tag">&lt;option</span> <span class="code-attr">value</span>=<span class="code-str">"ar"</span><span class="code-tag">&gt;</span>Argentina<span class="code-tag">&lt;/option&gt;</span>
+<span class="code-tag">&lt;/select&gt;</span>
+
+<span class="code-cmt">&lt;!-- button type=submit envía el formulario. type=reset lo limpia. --&gt;</span>
+<span class="code-tag">&lt;button</span> <span class="code-attr">type</span>=<span class="code-str">"submit"</span><span class="code-tag">&gt;</span>Registrar<span class="code-tag">&lt;/button&gt;</span>
+<span class="code-tag">&lt;button</span> <span class="code-attr">type</span>=<span class="code-str">"reset"</span><span class="code-tag">&gt;</span>Limpiar<span class="code-tag">&lt;/button&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>La regla de oro de <code>&lt;label&gt;</code></h3>
+        <p>El atributo <code>for</code> del <code>&lt;label&gt;</code> debe coincidir con el <code>id</code> del campo. Así, al hacer clic en el texto, el cursor salta al input, y los lectores de pantalla anuncian el campo correctamente. Si los ids no coinciden, el formulario "sigue funcionando", pero pierdes usabilidad y accesibilidad.</p>
+        <p>El <code>&lt;textarea&gt;</code> lleva contenido de cierre, no es void. Su tamaño se controla con <code>rows</code> y <code>cols</code>, pero lo habitual es dejarlo en CSS. El <code>&lt;select&gt;</code> siempre debe tener al menos un <code>&lt;option&gt;</code>; si quieres un "placeholder", añade una opción con <code>value=""</code> como la del ejemplo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 · VALIDACIÓN NATIVA ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">Validación nativa del navegador</span>
+    </div>
+    <div class="card">
+      <p>El navegador ya sabe validar formularios. Con solo añadir atributos, bloquea el envío y muestra mensajes contextuales. <strong>No necesitas JavaScript para el 90% de los casos</strong>. Estos son los cinco atributos de validación que más vas a usar.</p>
+      <div class="cmp-grid">
+        <div class="cmp-card">
+          <div class="cmp-card-name block">required</div>
+          <div class="cmp-card-code">required</div>
+          <div class="cmp-card-desc">El campo no puede estar vacío. Funciona con text, email, password, checkbox, radio, select, textarea, date, number.</div>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-card-name inline">pattern</div>
+          <div class="code-tag" style="font-size:13px;font-family:var(--font-mono)">pattern="(?=.*\d).{8,}"</div>
+          <div class="cmp-card-desc">Expresión regular que el valor debe cumplir. Útil para contraseñas, códigos postales, prefijos. Usa anclas implícitas.</div>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-card-name void">min / max</div>
+          <div class="code-tag" style="font-size:13px;font-family:var(--font-mono)">min="18" max="99"</div>
+          <div class="cmp-card-desc">Rango numérico o fecha mínima/máxima. Con <code>type="number"</code> valida números; con <code>type="date"</code>, fechas.</div>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-card-name block">minlength / maxlength</div>
+          <div class="code-tag" style="font-size:13px;font-family:var(--font-mono)">minlength="2" maxlength="200"</div>
+          <div class="cmp-card-desc">Longitud mínima y máxima de caracteres. En textarea <code>maxlength</code> además impide escribir más allá del límite.</div>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-card-name inline">type</div>
+          <div class="code-tag" style="font-size:13px;font-family:var(--font-mono)">type="email"</div>
+          <div class="cmp-card-desc">El propio <code>type</code> ya valida: email, url, number, date, tel, time. No hay que añadir nada más.</div>
+        </div>
+      </div>
+      <div class="code-block" style="margin-top:16px">
+        <div class="code-head">
+          <span>HTML · ejemplo combinado</span>
+        </div>
+<pre><code><span class="code-tag">&lt;label</span> <span class="code-attr">for</span>=<span class="code-str">"pass"</span><span class="code-tag">&gt;</span>Contraseña (8+, 1 mayúscula, 1 dígito)<span class="code-tag">&lt;/label&gt;</span>
+<span class="code-tag">&lt;input</span> <span class="code-attr">id</span>=<span class="code-str">"pass"</span>
+       <span class="code-attr">type</span>=<span class="code-str">"password"</span>
+       <span class="code-attr">name</span>=<span class="code-str">"password"</span>
+       <span class="code-attr">minlength</span>=<span class="code-str">"8"</span>
+       <span class="code-attr">pattern</span>=<span class="code-str">"(?=.*\d)(?=.*[A-Z]).{8,}"</span>
+       <span class="code-attr">required</span><span class="code-tag">&gt;</span></code></pre>
+      </div>
+      <p style="margin-top:14px">¿Quieres cambiar el mensaje que muestra el navegador? Más adelante (en el bloque de JavaScript) veremos <code>setCustomValidity()</code>. Por ahora, los mensajes en español del navegador son perfectamente válidos.</p>
+    </div>
+  </div>
+
+  <!-- ═══ 05 · CHECKBOX, RADIO, FIELDSET, LEGEND ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span>
+      <span class="num-title">Checkbox, radio, fieldset y legend</span>
+    </div>
+    <div class="card">
+      <p>Para elegir entre opciones hay dos tipos: <code>checkbox</code> (varias a la vez) y <code>radio</code> (solo una de un grupo). Para agruparlos visual y semánticamente, se envuelven en <code>&lt;fieldset&gt;</code> con un <code>&lt;legend&gt;</code> como título del grupo.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · agrupación con fieldset y legend</span>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- Grupo de radios: comparten el mismo "name" → solo se puede elegir uno --&gt;</span>
+<span class="code-tag">&lt;fieldset&gt;</span>
+  <span class="code-tag">&lt;legend&gt;</span>Tipo de cuenta<span class="code-tag">&lt;/legend&gt;</span>
+
+  <span class="code-tag">&lt;label&gt;</span>
+    <span class="code-tag">&lt;input</span> <span class="code-attr">type</span>=<span class="code-str">"radio"</span> <span class="code-attr">name</span>=<span class="code-str">"cuenta"</span> <span class="code-attr">value</span>=<span class="code-str">"personal"</span> <span class="code-attr">required</span><span class="code-tag">&gt;</span>
+    Personal
+  <span class="code-tag">&lt;/label&gt;</span>
+
+  <span class="code-tag">&lt;label&gt;</span>
+    <span class="code-tag">&lt;input</span> <span class="code-attr">type</span>=<span class="code-str">"radio"</span> <span class="code-attr">name</span>=<span class="code-str">"cuenta"</span> <span class="code-attr">value</span>=<span class="code-str">"empresa"</span><span class="code-tag">&gt;</span>
+    Empresa
+  <span class="code-tag">&lt;/label&gt;</span>
+<span class="code-tag">&lt;/fieldset&gt;</span>
+
+<span class="code-cmt">&lt;!-- Checkbox independiente: marca de aceptación --&gt;</span>
+<span class="code-tag">&lt;label&gt;</span>
+  <span class="code-tag">&lt;input</span> <span class="code-attr">type</span>=<span class="code-str">"checkbox"</span> <span class="code-attr">name</span>=<span class="code-str">"terminos"</span> <span class="code-attr">required</span><span class="code-tag">&gt;</span>
+  He leído y acepto los términos
+<span class="code-tag">&lt;/label&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Dos formas válidas de asociar label e input</h3>
+        <p><strong>Por atributo <code>for</code></strong> — el <code>&lt;label&gt;</code> y el <code>&lt;input&gt;</code> están separados, y el <code>for</code> apunta al <code>id</code>. Útil cuando el label va antes y necesitas estructura limpia.</p>
+        <p><strong>Anidando el input dentro del label</strong> — el <code>&lt;label&gt;</code> envuelve al <code>&lt;input&gt;</code> (como en el ejemplo de los radios). Más compacto y perfecto para radios y checkboxes cortos.</p>
+      </div>
+      <div class="content-block">
+        <h3>Por qué importa <code>&lt;fieldset&gt;</code></h3>
+        <p>Visualmente dibuja un borde alrededor del grupo. Semánticamente, comunica a los lectores de pantalla "estos campos van juntos". El <code>&lt;legend&gt;</code> actúa como el título de ese grupo, igual que un <code>&lt;h3&gt;</code> pero dentro de un formulario.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 06 · PRUÉBALO AQUÍ MISMO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span>
+      <span class="num-title">Pruébalo aquí mismo</span>
+    </div>
+    <div class="card">
+      <p>Ejecuta este ejemplo y verás un <strong>formulario de registro completo</strong>: nombre, email, contraseña, fieldset con radio, select de país, textarea con límite, checkbox de términos y botón de envío. Intenta enviarlo vacío — el navegador bloqueará el envío y mostrará los mensajes nativos. Eso es la validación nativa, en acción.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · registro.html</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runDemo()">Ejecutar</button>
+          </div>
+        </div>
+<pre><code><span class="code-tag">&lt;form</span> <span class="code-attr">action</span>=<span class="code-str">"#"</span> <span class="code-attr">method</span>=<span class="code-str">"post"</span> <span class="code-attr">style</span>=<span class="code-str">"max-width:520px;margin:0 auto;display:grid;gap:14px;font-family:system-ui,sans-serif"</span><span class="code-tag">&gt;</span>
+  <span class="code-tag">&lt;h2</span> <span class="code-attr">style</span>=<span class="code-str">"margin:0;font-family:system-ui"</span><span class="code-tag">&gt;</span>Registro de cuenta<span class="code-tag">&lt;/h2&gt;</span>
+
+  <span class="code-tag">&lt;label&gt;</span>Nombre<span class="code-tag">&lt;br&gt;</span><span class="code-tag">&lt;input</span> <span class="code-attr">type</span>=<span class="code-str">"text"</span> <span class="code-attr">name</span>=<span class="code-str">"nombre"</span> <span class="code-attr">minlength</span>=<span class="code-str">"2"</span> <span class="code-attr">required</span><span class="code-tag">&gt;&lt;/label&gt;</span>
+
+  <span class="code-tag">&lt;label&gt;</span>Email<span class="code-tag">&lt;br&gt;</span><span class="code-tag">&lt;input</span> <span class="code-attr">type</span>=<span class="code-str">"email"</span> <span class="code-attr">name</span>=<span class="code-str">"email"</span> <span class="code-attr">required</span><span class="code-tag">&gt;&lt;/label&gt;</span>
+
+  <span class="code-tag">&lt;label&gt;</span>Contraseña<span class="code-tag">&lt;br&gt;</span><span class="code-tag">&lt;input</span> <span class="code-attr">type</span>=<span class="code-str">"password"</span> <span class="code-attr">name</span>=<span class="code-str">"password"</span>
+                                  <span class="code-attr">minlength</span>=<span class="code-str">"8"</span>
+                                  <span class="code-attr">pattern</span>=<span class="code-str">"(?=.*\d)(?=.*[A-Z]).{8,}"</span>
+                                  <span class="code-attr">required</span><span class="code-tag">&gt;&lt;/label&gt;</span>
+
+  <span class="code-tag">&lt;fieldset</span> <span class="code-attr">style</span>=<span class="code-str">"border:1px solid #ccc;border-radius:8px;padding:12px"</span><span class="code-tag">&gt;</span>
+    <span class="code-tag">&lt;legend&gt;</span>Tipo de cuenta<span class="code-tag">&lt;/legend&gt;</span>
+    <span class="code-tag">&lt;label&gt;</span><span class="code-tag">&lt;input</span> <span class="code-attr">type</span>=<span class="code-str">"radio"</span> <span class="code-attr">name</span>=<span class="code-str">"cuenta"</span> <span class="code-attr">value</span>=<span class="code-str">"personal"</span> <span class="code-attr">required</span><span class="code-tag">&gt;</span> Personal<span class="code-tag">&lt;/label&gt;</span>
+    <span class="code-tag">&lt;label&gt;</span><span class="code-tag">&lt;input</span> <span class="code-attr">type</span>=<span class="code-str">"radio"</span> <span class="code-attr">name</span>=<span class="code-str">"cuenta"</span> <span class="code-attr">value</span>=<span class="code-str">"empresa"</span><span class="code-tag">&gt;</span> Empresa<span class="code-tag">&lt;/label&gt;</span>
+  <span class="code-tag">&lt;/fieldset&gt;</span>
+
+  <span class="code-tag">&lt;label&gt;</span>País<span class="code-tag">&lt;br&gt;</span>
+    <span class="code-tag">&lt;select</span> <span class="code-attr">name</span>=<span class="code-str">"pais"</span> <span class="code-attr">required</span><span class="code-tag">&gt;</span>
+      <span class="code-tag">&lt;option</span> <span class="code-attr">value</span>=<span class="code-str">""</span><span class="code-tag">&gt;</span>— elige uno —<span class="code-tag">&lt;/option&gt;</span>
+      <span class="code-tag">&lt;option</span> <span class="code-attr">value</span>=<span class="code-str">"es"</span><span class="code-tag">&gt;</span>España<span class="code-tag">&lt;/option&gt;</span>
+      <span class="code-tag">&lt;option</span> <span class="code-attr">value</span>=<span class="code-str">"mx"</span><span class="code-tag">&gt;</span>México<span class="code-tag">&lt;/option&gt;</span>
+      <span class="code-tag">&lt;option</span> <span class="code-attr">value</span>=<span class="code-str">"ar"</span><span class="code-tag">&gt;</span>Argentina<span class="code-tag">&lt;/option&gt;</span>
+    <span class="code-tag">&lt;/select&gt;</span>
+  <span class="code-tag">&lt;/label&gt;</span>
+
+  <span class="code-tag">&lt;label&gt;</span>Comentarios (máx. 200)<span class="code-tag">&lt;br&gt;</span>
+    <span class="code-tag">&lt;textarea</span> <span class="code-attr">name</span>=<span class="code-str">"comentarios"</span> <span class="code-attr">rows</span>=<span class="code-str">"3"</span> <span class="code-attr">maxlength</span>=<span class="code-str">"200"</span><span class="code-tag">&gt;&lt;/textarea&gt;</span>
+  <span class="code-tag">&lt;/label&gt;</span>
+
+  <span class="code-tag">&lt;label&gt;</span><span class="code-tag">&lt;input</span> <span class="code-attr">type</span>=<span class="code-str">"checkbox"</span> <span class="code-attr">name</span>=<span class="code-str">"terminos"</span> <span class="code-attr">required</span><span class="code-tag">&gt;</span> He leído los términos<span class="code-tag">&lt;/label&gt;</span>
+
+  <span class="code-tag">&lt;button</span> <span class="code-attr">type</span>=<span class="code-str">"submit"</span> <span class="code-attr">style</span>=<span class="code-str">"padding:10px 18px;border:0;border-radius:8px;background:#22B8CF;color:#06120B;font-weight:600;cursor:pointer"</span><span class="code-tag">&gt;</span>Registrar<span class="code-tag">&lt;/button&gt;</span>
+<span class="code-tag">&lt;/form&gt;</span></code></pre>
+      </div>
+      <div class="preview-block" id="preview">
+        <div class="preview-head">Vista previa renderizada</div>
+        <iframe class="preview-frame" id="previewFrame" sandbox="allow-same-origin" title="Vista previa"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 07 · RECURSOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">7</span>
+      <span class="num-title">Recursos para profundizar</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Learn/Forms" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Formularios web</div>
+          <div class="res-desc">La guía de aprendizaje completa: estructura, controles, envío y estilado de formularios. Punto de partida ideal.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Learn/Forms/Form_validation" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Validación de formularios</div>
+          <div class="res-desc">Atributos de validación nativa, mensajes del navegador, pseudoclases :valid/:invalid y Constraint Validation API.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/HTML/Element/form" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · &lt;form&gt; y elementos asociados</div>
+          <div class="res-desc">Referencia del elemento &lt;form&gt;, &lt;label&gt;, &lt;fieldset&gt;, &lt;legend&gt;, &lt;input&gt;, &lt;textarea&gt;, &lt;select&gt; y &lt;button&gt;.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="cta">
+    <div class="cta-label">Tu siguiente paso</div>
+    <h2>Ahora dales vida con JavaScript</h2>
+    <p>Ya sabes construir un formulario y validar campos sin escribir JS. En el siguiente módulo aprenderás a <strong>leer los datos, validar en vivo, mostrar mensajes personalizados y reaccionar a los eventos</strong> del usuario. La parte 2 convierte un formulario estático en una experiencia interactiva.</p>
+    <a class="cta-btn" href="M10_Formularios_2_Interactividad.html">
+      MÓDULO 10 · Formularios (parte 2) — Interactividad
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+// ═══ INLINE HTML RUNNER ═══
+function runDemo(){
+  var src = '<!DOCTYPE html>\n' +
+    '<html lang="es">\n' +
+    '  <head><meta charset="utf-8"><title>M09 demo</title></head>\n' +
+    '  <body style="font-family:system-ui,sans-serif;padding:24px;background:#f8fafc;color:#1f2937;max-width:560px;margin:0 auto;line-height:1.5">\n' +
+    '    <form action="#" method="post" style="display:grid;gap:14px">\n' +
+    '      <h2 style="margin:0;font-family:system-ui">Registro de cuenta</h2>\n' +
+    '      <p style="margin:0;color:#6b7280;font-size:14px">Pulsa "Registrar" sin rellenar para ver la validación nativa en acción.</p>\n' +
+    '      <label>Nombre<br><input type="text" name="nombre" minlength="2" required style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px"></label>\n' +
+    '      <label>Email<br><input type="email" name="email" required style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px"></label>\n' +
+    '      <label>Contraseña (8+, 1 mayúscula, 1 dígito)<br><input type="password" name="password" minlength="8" pattern="(?=.*\\d)(?=.*[A-Z]).{8,}" required style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px"></label>\n' +
+    '      <fieldset style="border:1px solid #cbd5e1;border-radius:8px;padding:12px">\n' +
+    '        <legend>Tipo de cuenta</legend>\n' +
+    '        <label><input type="radio" name="cuenta" value="personal" required> Personal</label><br>\n' +
+    '        <label><input type="radio" name="cuenta" value="empresa"> Empresa</label>\n' +
+    '      </fieldset>\n' +
+    '      <label>País<br><select name="pais" required style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px"><option value="">— elige uno —</option><option value="es">España</option><option value="mx">México</option><option value="ar">Argentina</option></select></label>\n' +
+    '      <label>Comentarios (máx. 200)<br><textarea name="comentarios" rows="3" maxlength="200" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px"></textarea></label>\n' +
+    '      <label><input type="checkbox" name="terminos" required> He leído y acepto los términos</label>\n' +
+    '      <button type="submit" style="padding:10px 18px;border:0;border-radius:8px;background:#22B8CF;color:#06120B;font-weight:600;cursor:pointer">Registrar</button>\n' +
+    '    </form>\n' +
+    '  </body>\n' +
+    '</html>';
+  var frame = document.getElementById('previewFrame');
+  var block = document.getElementById('preview');
+  block.classList.add('show');
+  frame.srcdoc = src;
+  frame.style.minHeight = '640px';
+}
+</script>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

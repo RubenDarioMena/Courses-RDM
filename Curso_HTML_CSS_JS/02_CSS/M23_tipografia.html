@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M23 · Tipografía — Curso HTML+CSS+JS</title>
+<style>*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg-base:#09080F;--bg-s1:#0C0B13;--bg-s2:#0E0D16;--bg-s3:#110F18;--bg-s4:#13111D;--bg-s5:#1B1926;--text-pri:#EEEBF6;--text-sec:#C7CDE0;--text-mut:#8B889C;--text-sub:#5E5C6E;--accent:#A78BFA;--accent-soft:rgba(139,92,246,.16);--accent-border:rgba(167,139,250,.35);--green:#34D399;--green-soft:rgba(52,211,153,.12);--green-border:rgba(52,211,153,.22);--green-hi:rgba(52,211,153,.35);--red:#FB7185;--yellow:#F5C451;--cyan:#67E8F9;--border:rgba(255,255,255,.07);--border-hi:rgba(255,255,255,.12);--font-head:'Space Grotesk',system-ui,sans-serif;--font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(52,211,153,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(900px 520px at 78% -10%,rgba(52,211,153,.20),transparent 60%),radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.11),transparent 55%),radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);color:var(--green);font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--green)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));border:1px solid var(--border);border-radius:18px;padding:clamp(20px,4vw,30px);box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);margin-bottom:clamp(24px,4vw,38px)}
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#06120B;background:linear-gradient(145deg,var(--green),#10B981)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;color:var(--text-mut);text-transform:uppercase}
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(52,211,153,.16);border-color:var(--green-border);color:var(--green)}
+.code-btn.primary{background:rgba(52,211,153,.16);border-color:var(--green-border);color:var(--green)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-sel{color:#34D399}
+.code-prop-name{color:#93C5FD}
+.code-val{color:#ECC48D}
+.code-brace{color:#A78BFA}
+.sel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px}
+.sel-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:13px;padding:15px 17px}
+.sel-card-name{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:4px}
+.sel-card-code{font-family:var(--font-mono);font-size:13px;color:var(--green);background:rgba(52,211,153,.08);padding:4px 8px;border-radius:6px;display:inline-block;margin-bottom:6px}
+.sel-card-desc{font-size:13.5px;color:var(--text-mut);line-height:1.55}
+.preview-box{margin-top:14px;border:1px solid var(--border);border-radius:13px;overflow:hidden;background:#fff}
+.preview-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.preview-body{padding:24px;background:#fff;max-height:560px;overflow:auto}
+#inlinePreview{font-family:system-ui,-apple-system,sans-serif;color:#0f172a;line-height:1.5}
+#inlinePreview .scale{display:flex;flex-direction:column;gap:10px;padding:0}
+#inlinePreview .scale .row{display:flex;align-items:baseline;gap:14px;padding:10px 12px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0}
+#inlinePreview .scale .tag{flex-shrink:0;width:50px;font-family:ui-monospace,'SF Mono',monospace;font-size:10.5px;color:#64748b;text-transform:uppercase;letter-spacing:.08em}
+#inlinePreview h1,#inlinePreview h2,#inlinePreview h3,#inlinePreview h4,#inlinePreview h5,#inlinePreview h6,#inlinePreview p,#inlinePreview .caption{margin:0}
+#inlinePreview h1{font-size:2.25rem;line-height:1.1;font-weight:700;letter-spacing:-.02em}
+#inlinePreview h2{font-size:1.875rem;line-height:1.15;font-weight:700;letter-spacing:-.015em}
+#inlinePreview h3{font-size:1.5rem;line-height:1.2;font-weight:600}
+#inlinePreview h4{font-size:1.25rem;line-height:1.25;font-weight:600}
+#inlinePreview h5{font-size:1.125rem;line-height:1.3;font-weight:600}
+#inlinePreview h6{font-size:1rem;line-height:1.4;font-weight:600;color:#475569}
+.fab{position:fixed;bottom:22px;right:22px;z-index:50;background:none;border:0;padding:0;cursor:pointer;transition:all .25s}
+.fab-btn{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#34D399,#10B981);box-shadow:0 8px 24px -6px rgba(52,211,153,.5);transition:all .25s}
+.fab:hover .fab-btn{transform:scale(1.08)}
+.fab-btn svg{width:24px;height:24px}
+.backdrop{position:fixed;inset:0;z-index:60;background:rgba(4,3,8,.62);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .35s ease}
+.backdrop.show{opacity:1;pointer-events:auto}
+.panel{position:fixed;z-index:70;top:0;right:0;height:100vh;width:min(660px,94vw);background:var(--bg-s2);border-left:1px solid var(--border);box-shadow:-20px 0 60px rgba(0,0,0,.5);transform:translateX(106%);transition:transform .4s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.panel.show{transform:translateX(0)}
+@media(max-width:768px){.panel{top:0;left:0;right:0;bottom:0;width:100%;height:100vh;transform:translateY(100%);border-left:none}.panel.show{transform:translateY(0)}}
+.panel-head{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:var(--bg-s4);border-bottom:1px solid var(--border)}
+.panel-tabs{display:flex;gap:4px}
+.ptab{padding:6px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--font-body);background:transparent;color:var(--text-mut);border:1px solid transparent;transition:all .15s}
+.ptab.active{background:var(--accent-soft);color:#CBBEFB;border-color:var(--accent-border)}
+.ptab:hover:not(.active){color:var(--text-sec)}
+.panel-close{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;color:#A6A3B6;cursor:pointer;transition:all .15s}
+.panel-close:hover{background:rgba(255,255,255,.1);color:#fff}
+.panel-close svg{width:18px;height:18px}
+.panel-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.editor-area{flex:1;position:relative;overflow:hidden}
+.edit-area{position:absolute;inset:0;padding:12px 16px;background:var(--bg-s1);border:none;color:var(--text-sec);font-family:var(--font-mono);font-size:13.5px;line-height:1.75;resize:none;white-space:pre;tab-size:2;outline:none;display:none}
+.edit-area.active{display:block;overflow:auto}
+.panel-foot{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--bg-s4);border-top:1px solid var(--border)}
+.run-btn{margin-left:auto;padding:7px 18px;border-radius:10px;border:0;cursor:pointer;background:linear-gradient(145deg,#34D399,#10B981);color:#06120B;font-family:var(--font-body);font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;transition:all .2s}
+.run-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px -4px rgba(52,211,153,.5)}
+.run-btn svg{width:14px;height:14px}
+.out-tab{padding:6px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;background:transparent;color:var(--text-mut);border:1px solid transparent;font-family:var(--font-body)}
+.out-tab.active{background:var(--accent-soft);color:#CBBEFB;border-color:var(--accent-border)}
+.clear-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text-mut);font-size:12px;cursor:pointer}
+.clear-btn:hover{color:var(--text-sec)}
+.output-panel{flex:1;overflow:auto;display:none;position:relative;background:var(--bg-s1)}
+.output-panel.active{display:block}
+#pgFrame{width:100%;height:100%;border:0;background:#fff}
+#pgConsole{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6;overflow:auto}
+.pg-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.pg-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.pg-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.pg-tag.warn{color:var(--yellow);background:rgba(245,196,81,.1)}
+.pg-tag.error{color:#FF8E8E;background:rgba(255,142,142,.1)}
+.pg-tag.alert{color:#C4B5FD;background:rgba(196,181,253,.1)}
+.pg-text{color:#C7CDE0}
+.pg-empty{color:var(--text-sub);font-size:13px;padding:20px;text-align:center}
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#06120B;background:linear-gradient(145deg,#34D399,#10B981)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(52,211,153,.08);border-color:var(--green-border)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-family:var(--font-head);font-weight:700;font-size:clamp(22px,3.5vw,30px);color:#F4F2FB;margin:0 0 14px;letter-spacing:-.015em}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;background:linear-gradient(145deg,#34D399,#10B981);color:#06120B;font-family:var(--font-body);font-size:15px;font-weight:600;box-shadow:0 8px 24px -8px rgba(52,211,153,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(52,211,153,.8)}
+.cta-btn svg{width:18px;height:18px}
+@media(max-width:640px){.step{flex-direction:column;gap:6px}}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="wrap">
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 23 · TIPOGRAFÍA</div>
+    <h1>Tipografía <span class="hl">web</span></h1>
+    <p>La tipografía es jerarquía, ritmo y legibilidad. Una página con buena tipografía se lee sola; una descuidada genera fricción. Vamos a controlar fuente, tamaño, peso, interlínea y las nuevas <code>text-wrap: balance</code> / <code>pretty</code>.</p>
+    <div class="meta-chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#5FD0E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>Sin instalar nada</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>Pruébalo en el editor</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>~9 min</span>
+    </div>
+  </div>
+
+  <!-- 01 · FONT-FAMILY Y TAMAÑO -->
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">1</span><span class="num-title">Familia, tamaño, peso, estilo</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3><code>font-family</code> con stack de fallback</h3>
+        <p>Nunca pongas una sola fuente: el navegador va bajando por la lista hasta encontrar una que tenga disponible. Termina siempre con una <strong>familia genérica</strong> (<code>sans-serif</code>, <code>serif</code>, <code>monospace</code>) para que el sistema elija algo legible si todo falla.</p>
+        <div class="code-block"><pre><code><span class="code-sel">body</span> <span class="code-brace">{</span>
+  <span class="code-prop-name">font-family</span>: <span class="code-val">"Inter", "Plus Jakarta Sans", system-ui, -apple-system, sans-serif</span>;
+<span class="code-brace">}</span>
+<span class="code-sel">code</span> <span class="code-brace">{</span>
+  <span class="code-prop-name">font-family</span>: <span class="code-val">"JetBrains Mono", ui-monospace, "SF Mono", monospace</span>;
+<span class="code-brace">}</span></code></pre></div>
+      </div>
+      <div class="content-block">
+        <h3>Tamaño (<code>font-size</code>), peso (<code>font-weight</code>), estilo (<code>font-style</code>)</h3>
+        <p>Tres propiedades ortogonales. <code>font-size</code> acepta <code>px</code>, <code>rem</code>, <code>em</code> y unidades fluidas (<code>clamp()</code>). <code>font-weight</code> es numérico (100-900) o por palabras (<code>normal</code>/<code>bold</code>). <code>font-style</code> es <code>normal</code> o <code>italic</code>. La shorthand <code>font</code> los une, pero requiere orden concreto.</p>
+        <div class="code-block"><pre><code><span class="code-sel">h1</span> <span class="code-brace">{</span>
+  <span class="code-prop-name">font-size</span>: <span class="code-val">clamp(2rem, 1.5rem + 2vw, 3rem)</span>; <span class="code-cmt">/* fluido */</span>
+  <span class="code-prop-name">font-weight</span>: <span class="code-val">700</span>;
+  <span class="code-prop-name">font-style</span>: <span class="code-val">normal</span>;
+<span class="code-brace">}</span>
+<span class="code-sel">.caption</span> <span class="code-brace">{</span>
+  <span class="code-prop-name">font</span>: <span class="code-val">italic 0.85rem/1.5 "Inter", sans-serif</span>; <span class="code-cmt">/* shorthand: style weight size/line-height family */</span>
+<span class="code-brace">}</span></code></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 · @FONT-FACE Y FONT-DISPLAY -->
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">2</span><span class="num-title">Fuentes propias con @font-face</span></div>
+    <div class="card">
+      <p>Si quieres usar una fuente que el usuario no tiene instalada (Inter, Roboto, tu fuente corporativa), la sirves tú. <code>@font-face</code> declara una familia y le pasa los archivos. <code>font-display</code> controla qué pasa mientras se carga.</p>
+      <div class="code-block"><pre><code><span class="code-sel">@font-face</span> <span class="code-brace">{</span>
+  <span class="code-prop-name">font-family</span>: <span class="code-val">"MiMarca"</span>;
+  <span class="code-prop-name">src</span>: <span class="code-val">url("/fonts/marca-regular.woff2") format("woff2")</span>;
+  <span class="code-prop-name">font-weight</span>: <span class="code-val">400</span>;
+  <span class="code-prop-name">font-style</span>: <span class="code-val">normal</span>;
+  <span class="code-prop-name">font-display</span>: <span class="code-val">swap</span>;   <span class="code-cmt">/* muestra fallback mientras carga */</span>
+<span class="code-brace">}</span>
+<span class="code-sel">.logo</span> <span class="code-brace">{</span> <span class="code-prop-name">font-family</span>: <span class="code-val">"MiMarca", sans-serif</span>; <span class="code-brace">}</span></code></pre></div>
+      <p>Valores típicos de <code>font-display</code>:</p>
+      <div class="sel-grid">
+        <div class="sel-card"><div class="sel-card-name"><code>swap</code></div><div class="sel-card-code">recomendado</div><div class="sel-card-desc">Muestra la fuente del sistema al instante y cambia cuando la tuya esté lista. Sin texto invisible.</div></div>
+        <div class="sel-card"><div class="sel-card-name"><code>fallback</code></div><div class="sel-card-code">híbrido</div><div class="sel-card-desc">Bloquea ~100ms; si no carga, usa fallback. Si llega tarde, no cambia.</div></div>
+        <div class="sel-card"><div class="sel-card-name"><code>optional</code></div><div class="sel-card-code">mobile-first</div><div class="sel-card-desc">El navegador decide: si la conexión es lenta, no muestra la fuente.</div></div>
+        <div class="sel-card"><div class="sel-card-name"><code>block</code> / <code>auto</code></div><div class="sel-card-code">evitar</div><div class="sel-card-desc"><code>block</code> oculta el texto hasta 3s ("FOIT"); <code>auto</code> queda a criterio del navegador.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 · RITMO Y ALINEACIÓN -->
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">3</span><span class="num-title">Ritmo, espaciado y text-wrap moderno</span></div>
+    <div class="card">
+      <div class="content-block">
+        <h3><code>line-height</code>, <code>letter-spacing</code>, <code>word-spacing</code></h3>
+        <p><strong>line-height</strong> (interlínea) controla el espacio vertical entre líneas. Sin unidad (<code>1.6</code>) es relativo al tamaño; con unidad (<code>24px</code>) es absoluto. Para cuerpo 1.5-1.7; para titulares 1.1-1.2. <strong>letter-spacing</strong> afina el aire entre letras (negativo en grandes, positivo en mayúsculas pequeñas). <strong>word-spacing</strong> solo entre palabras.</p>
+        <div class="code-block"><pre><code><span class="code-sel">p</span>     <span class="code-brace">{</span> <span class="code-prop-name">line-height</span>: <span class="code-val">1.7</span>; <span class="code-brace">}</span>
+<span class="code-sel">h1</span>    <span class="code-brace">{</span> <span class="code-prop-name">line-height</span>: <span class="code-val">1.1</span>; <span class="code-prop-name">letter-spacing</span>: <span class="code-val">-0.02em</span>; <span class="code-brace">}</span>
+<span class="code-sel">.eyebrow</span> <span class="code-brace">{</span>  <span class="code-cmt">/* "kicker" sobre un titular */</span>
+  <span class="code-prop-name">text-transform</span>: <span class="code-val">uppercase</span>;
+  <span class="code-prop-name">letter-spacing</span>: <span class="code-val">0.12em</span>;
+  <span class="code-prop-name">font-size</span>: <span class="code-val">0.75rem</span>;
+<span class="code-brace">}</span></code></pre></div>
+      </div>
+      <div class="content-block">
+        <h3><code>text-align</code>, <code>text-decoration</code>, <code>text-transform</code></h3>
+        <p>Las tres "decorativas": alineación (left/right/center/justify), decoración (subrayado, tachado, color y grosor) y transformación (uppercase/lowercase/capitalize). Para un look moderno, <code>text-decoration: underline wavy currentColor</code> queda muy limpio en enlaces.</p>
+        <div class="code-block"><pre><code><span class="code-sel">a</span> <span class="code-brace">{</span>
+  <span class="code-prop-name">color</span>: <span class="code-val">#10B981</span>;
+  <span class="code-prop-name">text-decoration</span>: <span class="code-val">underline wavy currentColor</span>;
+  <span class="code-prop-name">text-underline-offset</span>: <span class="code-val">3px</span>;
+<span class="code-brace">}</span>
+<span class="code-sel">.lead</span> <span class="code-brace">{</span> <span class="code-prop-name">text-align</span>: <span class="code-val">center</span>; <span class="code-prop-name">text-transform</span>: <span class="code-val">none</span>; <span class="code-brace">}</span></code></pre></div>
+      </div>
+      <div class="content-block">
+        <h3><code>text-wrap: balance</code> y <code>pretty</code> (lo nuevo)</h3>
+        <p>Estas propiedades de CSS Text Level 4 salvan del típico titular con una palabra suelta al final. <code>balance</code> equilibra el ancho de cada línea en bloques cortos (titulares, h1-h3). <code>pretty</code> evita huérfanas en la última línea del párrafo.</p>
+        <div class="code-block"><pre><code><span class="code-sel">h1, h2, h3</span> <span class="code-brace">{</span> <span class="code-prop-name">text-wrap</span>: <span class="code-val">balance</span>; <span class="code-brace">}</span>
+<span class="code-sel">p</span>          <span class="code-brace">{</span> <span class="code-prop-name">text-wrap</span>: <span class="code-val">pretty</span>;  <span class="code-brace">}</span>
+<span class="code-sel">.lead</span>      <span class="code-brace">{</span> <span class="code-prop-name">max-width</span>: <span class="code-val">55ch</span>;    <span class="code-brace">}</span>  <span class="code-cmt">/* longitud ideal de línea */</span></code></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 · TU PRIMER MOMENTO -->
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">4</span><span class="num-title">Tu primer momento: escala tipográfica</span></div>
+    <div class="card">
+      <p>Una <strong>escala tipográfica</strong> coherente es la diferencia entre un diseño que se siente "diseñado" y uno que se siente improvisado. Aquí ves h1-h6, párrafo y un <code>.caption</code> con la jerarquía aplicada. Cambia <code>font-size</code> del h1, el <code>line-height</code> del párrafo o el <code>font-style</code> del caption y pulsa <strong>Ejecutar</strong> para verlo en vivo.</p>
+      <div class="code-block">
+        <div class="code-head"><span>CSS · #inlinePreview</span><div class="code-btns"><button class="code-btn primary" onclick="runIntro()">Ejecutar</button></div></div>
+        <pre><code><span class="code-sel">#inlinePreview</span> <span class="code-brace">{</span>
+  <span class="code-prop-name">font-family</span>: <span class="code-val">"Georgia", serif</span>;
+  <span class="code-prop-name">font-size</span>: <span class="code-val">15px</span>;
+<span class="code-brace">}</span>
+<span class="code-sel">#inlinePreview h1</span> <span class="code-brace">{</span>
+  <span class="code-prop-name">font-size</span>: <span class="code-val">2.5rem</span>;
+  <span class="code-prop-name">letter-spacing</span>: <span class="code-val">-0.02em</span>;
+  <span class="code-prop-name">text-wrap</span>: <span class="code-val">balance</span>;
+<span class="code-brace">}</span>
+<span class="code-sel">#inlinePreview p</span> <span class="code-brace">{</span>
+  <span class="code-prop-name">line-height</span>: <span class="code-val">1.8</span>;
+  <span class="code-prop-name">text-wrap</span>: <span class="code-val">pretty</span>;
+<span class="code-brace">}</span>
+<span class="code-sel">#inlinePreview .caption</span> <span class="code-brace">{</span>
+  <span class="code-prop-name">font-style</span>: <span class="code-val">italic</span>;
+  <span class="code-prop-name">font-size</span>: <span class="code-val">0.85rem</span>;
+<span class="code-brace">}</span></code></pre>
+      </div>
+      <div class="preview-box">
+        <div class="preview-head">Vista previa · jerarquía tipográfica</div>
+        <div class="preview-body">
+          <div id="inlinePreview">
+            <div class="scale">
+              <div class="row"><span class="tag">h1</span><h1>Encabezado principal</h1></div>
+              <div class="row"><span class="tag">h2</span><h2>Encabezado de sección</h2></div>
+              <div class="row"><span class="tag">h3</span><h3>Subsección</h4></div>
+              <div class="row"><span class="tag">h4</span><h4>Apartado</h4></div>
+              <div class="row"><span class="tag">h5</span><h5>Subapartado</h5></div>
+              <div class="row"><span class="tag">h6</span><h6>Etiqueta pequeña</h6></div>
+              <div class="row"><span class="tag">p</span><p>Párrafo de cuerpo. Es donde vive la lectura: necesita line-height generoso y text-wrap: pretty para evitar la última línea con una sola palabra.</p></div>
+              <div class="row"><span class="tag">.cap</span><p class="caption">Pie de foto o nota al margen</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 · RECURSOS -->
+  <div class="num-section">
+    <div class="num-label"><span class="num-tag">5</span><span class="num-title">Recursos para profundizar</span></div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Learn/CSS/Styling_text" target="_blank" rel="noopener"><div><div class="res-name">MDN · Estilizar texto</div><div class="res-desc">La guía de MDN sobre tipografía web: fuentes, tamaño, peso, espaciado.</div></div><svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/CSS/font" target="_blank" rel="noopener"><div><div class="res-name">MDN · shorthand font</div><div class="res-desc">Orden de valores de la propiedad <code>font</code> shorthand con ejemplos.</div></div><svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
+      <a class="res-link" href="https://web.dev/learn/css/typography" target="_blank" rel="noopener"><div><div class="res-name">web.dev · Typography</div><div class="res-desc">Curso guiado de Google: jerarquía, escala modular y text-wrap moderno.</div></div><svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <div class="cta-label">Ya tienes voz, color y forma</div>
+    <h2>¿Listo para que las cosas se muevan?</h2>
+    <p>Hasta ahora todo es estático. El próximo módulo introduce <strong>transiciones</strong> y <strong>animaciones</strong>: que un botón cambie al hacer hover, que un spinner gire, que un mensaje aparezca con elegancia. CSS en movimiento.</p>
+    <a class="cta-btn" href="M24_transiciones_animaciones.html">
+      MÓDULO 24 · Transiciones y animaciones
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+
+<button class="fab" id="fab" onclick="openPlayground()"><div class="fab-btn"><svg viewBox="0 0 24 24" fill="none" stroke="#06120B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg></div></button>
+<div class="backdrop" id="backdrop" onclick="closePlayground()"></div>
+<div class="panel" id="panel">
+  <div class="panel-head">
+    <div class="panel-tabs"><button class="ptab active" onclick="setTab('html')">HTML</button><button class="ptab" onclick="setTab('css')">CSS</button><button class="ptab" onclick="setTab('js')">JS</button></div>
+    <button class="panel-close" onclick="closePlayground()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="panel-body">
+    <div class="editor-area"><textarea class="edit-area active" id="taHtml" spellcheck="false"></textarea><textarea class="edit-area" id="taCss" spellcheck="false"></textarea><textarea class="edit-area" id="taJs" spellcheck="false"></textarea></div>
+    <div class="panel-foot">
+      <button class="out-tab active" onclick="setOutTab('preview')">Vista</button>
+      <button class="out-tab" onclick="setOutTab('console')">Consola</button>
+      <button class="clear-btn" onclick="clearConsole()">Limpiar</button>
+      <button class="run-btn" onclick="runPlayground()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>Ejecutar</button>
+    </div>
+    <div class="output-panel active" id="previewPanel" style="min-height:200px"><iframe id="pgFrame" sandbox="allow-scripts" title="Vista previa"></iframe></div>
+    <div class="output-panel" id="consolePanel" style="min-height:200px"><div id="pgConsole"><div class="pg-empty">La consola está vacía. Pulsa Ejecutar para ver la salida.</div></div></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+function runIntro(){
+  var css=document.querySelector('.code-block pre code').textContent;
+  var preview=document.getElementById('inlinePreview');
+  // Reset inline styles on preview and its descendants
+  preview.removeAttribute('style');
+  preview.querySelectorAll('*').forEach(function(el){el.removeAttribute('style')});
+  var rules=css.split(/(?<=\})/);
+  rules.forEach(function(ruleText){
+    ruleText=ruleText.trim();
+    if(!ruleText)return;
+    var m=ruleText.match(/^([^{]+)\{([\s\S]*?)\}$/);
+    if(!m)return;
+    var sel=m[1].trim();
+    var declsBlock=m[2];
+    var target=document.querySelector(sel);
+    if(!target)return;
+    declsBlock.split(';').forEach(function(d){
+      d=d.replace(/\/\*[\s\S]*?\*\//g,'').trim();
+      if(!d)return;
+      var idx=d.indexOf(':');
+      if(idx===-1)return;
+      var prop=d.substring(0,idx).trim();
+      var val=d.substring(idx+1).trim();
+      try{target.style.setProperty(prop,val)}catch(e){}
+    });
+  });
+}
+var pgState={tab:'html',outTab:'preview',pgConsole:[]};
+var defaultCode={
+  html:'<article>\n  <p class="eyebrow">Tutorial</p>\n  <h1>Cómo tipografiar bien tu web</h1>\n  <p class="lead">Una jerarquía tipográfica clara guía la lectura y hace que tu contenido respire. <strong>Negritas</strong>, <em>énfasis</em> y <a href="#">enlaces con onda</a>.</p>\n  <h2>Escala modular</h2>\n  <p>Empieza por una base — 1rem para cuerpo — y multiplica por una ratio (1.2, 1.25, 1.333…) para titulares. El sistema hace el resto.</p>\n  <p class="caption">Pie de foto: recuerda respetar la longitud ideal de línea (~55-75 caracteres).</p>\n</article>',
+  css:'body{font-family:"Inter",system-ui,sans-serif;padding:32px;background:#f8fafc;color:#1e293b;line-height:1.6;max-width:60ch;margin:0 auto}\n.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.75rem;color:#10B981;font-weight:600;margin:0 0 8px}\nh1{font-size:clamp(2rem,1.5rem+2vw,3rem);line-height:1.1;letter-spacing:-.02em;text-wrap:balance;margin:0 0 14px}\nh2{font-size:1.5rem;line-height:1.2;text-wrap:balance;margin:24px 0 10px}\n.lead{font-size:1.125rem;color:#475569;margin-bottom:18px}\np{margin:0 0 14px}\na{color:#10B981;text-decoration:underline wavy currentColor;text-underline-offset:3px}\n.caption{font-size:.85rem;font-style:italic;color:#64748b;border-left:3px solid #cbd5e1;padding-left:12px;margin-top:20px}',
+  js:'console.log("Tipografía · juega con font-size, weight, letter-spacing…");'
+};
+var tagMap={log:'log',warn:'warn',error:'error',alert:'alert'};
+function openPlayground(){
+  if(!document.getElementById('taHtml').value)document.getElementById('taHtml').value=defaultCode.html;
+  if(!document.getElementById('taCss').value)document.getElementById('taCss').value=defaultCode.css;
+  if(!document.getElementById('taJs').value)document.getElementById('taJs').value=defaultCode.js;
+  document.getElementById('backdrop').classList.add('show');
+  document.getElementById('panel').classList.add('show');
+  document.getElementById('fab').style.opacity='0';document.getElementById('fab').style.pointerEvents='none';
+  runPlayground();
+}
+function closePlayground(){
+  document.getElementById('backdrop').classList.remove('show');
+  document.getElementById('panel').classList.remove('show');
+  document.getElementById('fab').style.opacity='1';document.getElementById('fab').style.pointerEvents='auto';
+}
+function setTab(tab){
+  pgState.tab=tab;
+  document.querySelectorAll('.ptab').forEach(function(t,i){t.classList.toggle('active',['html','css','js'][i]===tab)});
+  document.querySelectorAll('.edit-area').forEach(function(a){a.classList.remove('active')});
+  var id={html:'taHtml',css:'taCss',js:'taJs'}[tab];
+  document.getElementById(id).classList.add('active');
+}
+function setOutTab(tab){
+  pgState.outTab=tab;
+  document.querySelectorAll('.out-tab').forEach(function(t,i){t.classList.toggle('active',['preview','console'][i]===tab)});
+  document.getElementById('previewPanel').classList.toggle('active',tab==='preview');
+  document.getElementById('consolePanel').classList.toggle('active',tab==='console');
+}
+function clearConsole(){pgState.pgConsole=[];renderConsole()}
+function renderConsole(){
+  var c=document.getElementById('pgConsole');
+  if(!pgState.pgConsole.length){c.innerHTML='<div class="pg-empty">La consola está vacía. Pulsa Ejecutar para ver la salida.</div>';return}
+  c.innerHTML='';
+  pgState.pgConsole.forEach(function(l){
+    var line=document.createElement('div');line.className='pg-line';
+    var tag=document.createElement('span');tag.className='pg-tag '+(tagMap[l.level]||'log');tag.textContent=tagMap[l.level]||'log';
+    var txt=document.createElement('span');txt.className='pg-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);c.appendChild(line);
+  });
+}
+function runPlayground(){
+  pgState.pgConsole=[];
+  var html=document.getElementById('taHtml').value;
+  var css=document.getElementById('taCss').value;
+  var js=document.getElementById('taJs').value;
+  var src='<!DOCTYPE html><html><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+html+
+    '<scr'+'ipt>(function(){var send=function(level,args){try{parent.postMessage({__pg:true,level:level,text:args.map(function(a){try{return typeof a==="string"?a:JSON.stringify(a)}catch(e){return String(a)}}).join(" ")},"*")}catch(e){}};var _l=console.log,_w=console.warn,_e=console.error;console.log=function(){send("log",[].slice.call(arguments));_l.apply(console,arguments)};console.warn=function(){send("warn",[].slice.call(arguments));_w.apply(console,arguments)};console.error=function(){send("error",[].slice.call(arguments));_e.apply(console,arguments)};window.alert=function(){send("alert",[].slice.call(arguments))};window.onerror=function(m){send("error",[m]);return false};})();<\/scr'+'ipt>'+
+    '<scr'+'ipt>try{'+js+'}catch(e){console.error((e.name||"Error")+": "+e.message)}<\/scr'+'ipt>'+
+    '</body></html>';
+  var frame=document.getElementById('pgFrame');
+  frame.srcdoc=src;
+  renderConsole();
+}
+window.addEventListener('message',function(e){
+  if(e&&e.data&&e.data.__pg){
+    pgState.pgConsole.push({level:e.data.level,text:e.data.text});
+    renderConsole();
+  }
+});
+</script>
+</body>
+</html>

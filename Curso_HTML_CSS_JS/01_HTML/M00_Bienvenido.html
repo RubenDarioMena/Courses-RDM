@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M00 · Bienvenido — Curso HTML+CSS+JS</title>
+<style>
+/* ═══ RESET ═══ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#110F18; --bg-s3:#15131F; --bg-s4:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --cyan:#67E8F9; --cyan-soft:rgba(95,208,224,.06); --cyan-border:rgba(95,208,224,.2);
+  --pink:#F9A8D4; --pink-soft:rgba(249,168,212,.06); --pink-border:rgba(249,168,212,.2);
+  --yellow:#F5C451; --green:#34D399; --red:#FB7185;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+/* ═══ BACKGROUND GLOW ═══ */
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(139,92,246,.20),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(34,184,207,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+/* ═══ LAYOUT ═══ */
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* ═══ HERO ═══ */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.32);color:#C4B5FD;
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 10px var(--accent)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--accent)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* ═══ SECTION CARD ═══ */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+/* ═══ HOUSE METAPHOR CARDS ═══ */
+.metaphor{display:flex;flex-direction:column;gap:12px}
+.met-item{display:flex;gap:15px;align-items:center;border-radius:13px;padding:15px 17px}
+.met-item.html{background:var(--cyan-soft);border:1px solid var(--cyan-border)}
+.met-item.css{background:var(--pink-soft);border:1px solid var(--pink-border)}
+.met-item.js{background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2)}
+.met-icon{flex-shrink:0;width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center}
+.met-item.html .met-icon{background:rgba(95,208,224,.13);border:1px solid rgba(95,208,224,.25)}
+.met-item.css .met-icon{background:rgba(249,168,212,.12);border:1px solid rgba(249,168,212,.25)}
+.met-item.js .met-icon{background:rgba(139,92,246,.16);border:1px solid rgba(139,92,246,.3)}
+.met-icon svg{width:22px;height:22px}
+.met-title{font-family:var(--font-head);font-weight:600;font-size:16.5px;color:#EEEBF6}
+.met-title .tag-html{color:#7FE0F0}
+.met-title .tag-css{color:#F9A8D4}
+.met-title .tag-js{color:var(--accent)}
+.met-desc{color:#9A97AC;font-size:14.5px;line-height:1.55;margin-top:2px}
+
+/* ═══ NUMBERED SECTION ═══ */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* ═══ CONTENT BLOCKS ═══ */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+
+/* ═══ CODE BLOCK ═══ */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text-sec);font-family:var(--font-body);
+  font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(139,92,246,.16);border-color:var(--accent-border);color:#CBBEFB}
+.code-btn.primary{background:rgba(139,92,246,.16);border-color:var(--accent-border);color:#CBBEFB}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+
+/* ═══ OUTPUT BLOCK ═══ */
+.output-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;display:none}
+.output-block.show{display:block}
+.output-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;
+  text-transform:uppercase}
+.output-body{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6}
+.out-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.out-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.out-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.out-tag.alert{color:#C4B5FD;background:rgba(196,181,253,.1)}
+.out-text{color:#C7CDE0}
+
+/* ═══ STEP LIST ═══ */
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#A78BFA,#8B5CF6)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;
+  color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+
+/* ═══ RESOURCE LINKS ═══ */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* ═══ CTA ═══ */
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,#8B5CF6,#7C3AED);color:#fff;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(139,92,246,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(139,92,246,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:640px){
+  .met-item{flex-direction:column;text-align:center;gap:10px}
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 00 · INICIO AQUÍ
+    </div>
+    <h1>Bienvenido al universo de la <span class="hl">web</span></h1>
+    <p>Estás a punto de aprender a construir páginas web desde cero. Empezarás con HTML, seguirás con CSS para darles estilo, y terminarás con JavaScript para darles vida. Sin instalar nada, sin experiencia previa.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#5FD0E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+        Sin experiencia previa
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        Pruébalo sin salir de aquí
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ~10 min de lectura
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ METÁFORA DE LA CASA ═══ -->
+  <div class="card">
+    <span class="card-label">La idea en una imagen</span>
+    <h2>Construir una web es como construir una casa</h2>
+    <p>Hay tres capas, y cada lenguaje se encarga de una. Juntas forman cualquier página web que hayas visitado.</p>
+    <div class="metaphor">
+      <div class="met-item html">
+        <span class="met-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>
+        </span>
+        <div>
+          <div class="met-title"><span class="tag-html">HTML</span> es la estructura</div>
+          <div class="met-desc">Las paredes, el techo, las puertas. El esqueleto de la página.</div>
+        </div>
+      </div>
+      <div class="met-item css">
+        <span class="met-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F9A8D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+        </span>
+        <div>
+          <div class="met-title"><span class="tag-css">CSS</span> es la decoración</div>
+          <div class="met-desc">La pintura, los muebles, el estilo. Cómo se ve todo.</div>
+        </div>
+      </div>
+      <div class="met-item js">
+        <span class="met-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#C4B5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        </span>
+        <div>
+          <div class="met-title"><span class="tag-js">JavaScript</span> es la electricidad</div>
+          <div class="met-desc">La luz que se enciende, el timbre que suena. Lo que hace que la casa cobre vida.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 01 · EL NAVEGADOR ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">El navegador: tu lienzo</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>¿Qué es un navegador?</h3>
+        <p>Un navegador (Chrome, Firefox, Safari, Edge) es un programa que lee archivos HTML, CSS y JavaScript y los transforma en la página web que ves. Es tu intérprete: tú escribes el código, el navegador lo ejecuta.</p>
+      </div>
+      <div class="content-block">
+        <h3>De código a pantalla</h3>
+        <p>Cuando abres una página web, el navegador hace algo parecido a esto:</p>
+        <div class="steps">
+          <div class="step">
+            <span class="step-num"></span>
+            <div class="step-body">
+              <h4>Lee el HTML</h4>
+              <p>Descifra la estructura: qué va primero, qué es un título, qué es un párrafo.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num"></span>
+            <div class="step-body">
+              <h4>Aplica el CSS</h4>
+              <p>Decora: colores, tamaños, posiciones. Convierte el esqueleto en algo con estilo.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num"></span>
+            <div class="step-body">
+              <h4>Ejecuta el JavaScript</h4>
+              <p>Dale vida: botones que responden, datos que cambian, animaciones que se mueven.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 · TU PRIMER MOMENTO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">Tu primer momento de código</span>
+    </div>
+    <div class="card">
+      <p>No esperes hasta el final. Pruébalo ahora. Esto es JavaScript de verdad — pulsa <strong>Ejecutar</strong> y mira lo que pasa:</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>JavaScript</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runIntro()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-cmt">// Tu primera línea de JavaScript</span>
+<span class="code-fn">alert</span>(<span class="code-str">'¡Hola! Soy JavaScript.'</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'Y esto aparece en la consola.'</span>);</code></pre>
+      </div>
+      <div class="output-block" id="outIntro">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outIntroBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 · EDICIÓN EN VIVO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">Editar HTML en vivo</span>
+    </div>
+    <div class="card">
+      <p>El navegador tiene una herramienta secreta: las DevTools (Herramientas de Desarrollador). Te permiten ver y editar el código de cualquier página en tiempo real.</p>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num"></span>
+          <div class="step-body">
+            <h4>Abre las DevTools</h4>
+            <p>Haz clic derecho en cualquier parte de esta página → <strong>Inspeccionar</strong> (o pulsa <kbd style="font-family:var(--font-mono);background:rgba(255,255,255,.06);padding:2px 6px;border-radius:5px;border:1px solid var(--border);font-size:12px">F12</kbd> / <kbd style="font-family:var(--font-mono);background:rgba(255,255,255,.06);padding:2px 6px;border-radius:5px;border:1px solid var(--border);font-size:12px">Cmd+Option+I</kbd> en Mac).</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num"></span>
+          <div class="step-body">
+            <h4>Busca la pestaña "Elements" (Elementos)</h4>
+            <p>Verás el árbol HTML de esta página. Es como ver los planos de la casa.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num"></span>
+          <div class="step-body">
+            <h4>Doble clic en cualquier texto</h4>
+            <p>Edítalo. Pulsa Enter. ¡El texto de la página cambia al instante! Es temporal — al recargar vuelve, pero es tu primera edición de HTML.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 · RECURSOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">Recursos para tu aventura</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN Web Docs</div>
+          <div class="res-desc">La fuente de la verdad. La documentación oficial y más completa de la web.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://web.dev" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">web.dev</div>
+          <div class="res-desc">Guías modernas de Google sobre HTML, CSS y rendimiento web.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://www.freecodecamp.org" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">freeCodeCamp</div>
+          <div class="res-desc">Un currículo interactivo y gratuito para aprender a programar practicando.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="cta">
+    <div class="cta-label">Has dado el paso más importante</div>
+    <h2>¿Listo para tu primera página HTML?</h2>
+    <p>Ya conoces el terreno. Ahora toca escribir tus primeras etiquetas y construir tu primera página desde cero.</p>
+    <a class="cta-btn" href="M01_Primera_pagina.html">
+      MÓDULO 01 · Tu primera página HTML
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+// ═══ INLINE CODE RUNNER ═══
+function runIntro(){
+  var out = document.getElementById('outIntro');
+  var body = document.getElementById('outIntroBody');
+  body.innerHTML = '';
+  var logs = [];
+
+  // Capturar console.log
+  var origLog = console.log;
+  console.log = function(){
+    var args = Array.prototype.slice.call(arguments);
+    logs.push({level:'log', text: args.map(function(a){
+      return typeof a === 'string' ? a : JSON.stringify(a);
+    }).join(' ')});
+  };
+
+  // Capturar alert (no bloquea)
+  window.alert = function(msg){
+    logs.push({level:'alert', text: String(msg)});
+  };
+
+  try {
+    var fn = new Function('alert','console', "alert('¡Hola! Soy JavaScript.');\nconsole.log('Y esto aparece en la consola.');");
+    fn(window.alert, console);
+  } catch(e){
+    logs.push({level:'log', text: 'Error: ' + e.message});
+  } finally {
+    console.log = origLog;
+  }
+
+  if(logs.length === 0) logs.push({level:'log', text:'(sin salida visible)'});
+
+  logs.forEach(function(l){
+    var line = document.createElement('div');
+    line.className = 'out-line';
+    var tag = document.createElement('span');
+    tag.className = 'out-tag ' + l.level;
+    tag.textContent = l.level;
+    var text = document.createElement('span');
+    text.className = 'out-text';
+    text.textContent = l.text;
+    line.appendChild(tag);
+    line.appendChild(text);
+    body.appendChild(line);
+  });
+
+  out.classList.add('show');
+}
+</script>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M38 · Async JS, promesas y fetch — Curso HTML+CSS+JS</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --yellow:#F5C451; --yellow-soft:rgba(245,196,81,.12); --yellow-border:rgba(245,196,81,.22);
+  --red:#FB7185; --red-soft:rgba(251,113,133,.10); --red-border:rgba(251,113,133,.25);
+  --green:#34D399; --green-soft:rgba(52,211,153,.10); --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(245,196,81,.32);color:#06120B}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(245,196,81,.20),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.10),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(245,196,81,.12);border:1px solid rgba(245,196,81,.32);color:var(--yellow);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);
+  box-shadow:0 0 10px var(--yellow)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--yellow)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,var(--yellow),#EAB308)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+.content-block strong{color:#EEEBF6}
+.content-block code{font-family:var(--font-mono);background:rgba(245,196,81,.08);
+  color:#F5C451;padding:1px 6px;border-radius:5px;font-size:13.5px}
+
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-kw{color:#C4B5FD}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+
+/* STATE DIAGRAM */
+.state-diagram{display:flex;align-items:center;justify-content:center;gap:10px;
+  margin:16px 0;flex-wrap:wrap;padding:8px}
+.state-node{padding:10px 16px;border-radius:11px;font-family:var(--font-mono);
+  font-size:13px;font-weight:600;letter-spacing:.04em;border:1px solid var(--border);
+  background:rgba(255,255,255,.03);color:var(--text-sec)}
+.state-node.pending{background:rgba(255,255,255,.05);color:#C7CDE0}
+.state-node.fulfilled{background:rgba(52,211,153,.10);color:#34D399;border-color:rgba(52,211,153,.3)}
+.state-node.rejected{background:rgba(251,113,133,.10);color:#FB7185;border-color:rgba(251,113,133,.3)}
+.state-arrow{color:var(--text-sub);font-size:18px}
+
+/* DEMO */
+.demo-box{margin-top:14px;border:1px solid var(--border);border-radius:13px;overflow:hidden}
+.demo-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;
+  text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.demo-head .btns{display:flex;gap:6px;flex-wrap:wrap}
+.demo-head button{font-family:var(--font-body);font-size:11.5px;font-weight:600;
+  background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text-sec);
+  padding:4px 10px;border-radius:6px;cursor:pointer;transition:all .15s}
+.demo-head button:hover{background:rgba(245,196,81,.16);color:var(--yellow);border-color:var(--yellow-border)}
+.demo-body{background:#0a0913;padding:14px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.7;min-height:140px}
+.demo-line{display:flex;gap:8px;margin:2px 0;align-items:flex-start}
+.demo-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;text-transform:uppercase}
+.demo-tag.log{color:#82AAFF;background:rgba(130,170,255,.12)}
+.demo-tag.ok{color:#34D399;background:rgba(52,211,153,.12)}
+.demo-tag.err{color:#FF8E8E;background:rgba(255,142,142,.12)}
+.demo-text{color:#C7CDE0}
+.demo-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-top:8px}
+.demo-card{background:#15131F;border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-size:12px}
+.demo-card-name{color:var(--yellow);font-weight:600;font-size:12.5px;margin-bottom:2px}
+.demo-card-meta{color:var(--text-mut);font-size:11px}
+
+.cmp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+.cmp-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:13px;padding:14px 16px}
+.cmp-card-name{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:4px}
+.cmp-card-code{font-family:var(--font-mono);font-size:13px;color:var(--yellow);
+  background:rgba(245,196,81,.08);padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:6px}
+.cmp-card-desc{font-size:13.5px;color:var(--text-mut);line-height:1.55}
+
+.theory-box{background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(245,196,81,.06));
+  border:1px solid rgba(167,139,250,.25);border-radius:12px;padding:18px 20px;margin-top:14px}
+.theory-box h3{font-family:var(--font-head);font-weight:600;font-size:16px;color:#C4B5FD;margin-bottom:10px;display:flex;gap:8px;align-items:center}
+.theory-box h3 svg{width:18px;height:18px}
+.theory-box p{color:#A7A4B8;font-size:14.5px;line-height:1.6;margin-bottom:8px}
+.theory-box strong{color:#EEEBF6}
+.theory-box ul{margin:6px 0 0 18px;display:flex;flex-direction:column;gap:4px}
+.theory-box li{color:#A7A4B8;font-size:14px;line-height:1.55}
+
+.note-box{background:rgba(251,113,133,.06);border:1px solid rgba(251,113,133,.2);
+  border-radius:12px;padding:14px 16px;margin-top:14px;display:flex;gap:12px;align-items:flex-start}
+.note-box svg{flex-shrink:0;width:20px;height:20px;margin-top:2px}
+.note-box p{color:#A7A4B8;font-size:14.5px;line-height:1.6;margin:0}
+.note-box strong{color:var(--red)}
+
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(245,196,81,.08);border-color:var(--yellow-border)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,var(--yellow),#EAB308);color:#06120B;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(245,196,81,.5);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(245,196,81,.7)}
+.cta-btn svg{width:18px;height:18px}
+</style>
+
+<!-- ═══ JSON EMBEBIDO: datos del "API" mock ═══ -->
+<script type="application/json" id="api-users">
+{
+  "url": "/api/users",
+  "ok": true,
+  "status": 200,
+  "data": [
+    {"id": 1, "name": "Ana García", "role": "Frontend", "city": "Madrid"},
+    {"id": 2, "name": "Luis Pérez", "role": "Backend", "city": "Barcelona"},
+    {"id": 3, "name": "Marta López", "role": "Fullstack", "city": "Valencia"}
+  ]
+}
+</script>
+<script type="application/json" id="api-posts">
+{
+  "url": "/api/posts",
+  "ok": true,
+  "status": 200,
+  "data": [
+    {"id": 1, "title": "Aprendiendo async/await", "authorId": 1},
+    {"id": 2, "title": "Por qué CORS existe", "authorId": 2}
+  ]
+}
+</script>
+<script type="application/json" id="api-orders-404">
+{
+  "url": "/api/orders",
+  "ok": false,
+  "status": 404,
+  "statusText": "Not Found",
+  "data": null
+}
+</script>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 38 · ASÍNCRONO
+    </div>
+    <h1>Async: <span class="hl">promesas</span> y fetch</h1>
+    <p>Las llamadas a la red, los timers, la lectura de ficheros... nada de eso es instantáneo. Tu código tiene que <strong>esperar</strong>, pero sin bloquear la página. Aquí entran las promesas, <code>async/await</code> y el patrón <code>fetch</code>.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Event loop
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        async/await
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M3 12a9 9 0 0 1 18 0M21 12a9 9 0 0 1-18 0"/></svg>
+        fetch (mock sin red)
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 · EVENT LOOP ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">El event loop: por qué JS no se bloquea</span>
+    </div>
+    <div class="card">
+      <p>JS es <strong>single-threaded</strong>: solo ejecuta una cosa a la vez. Pero el navegador hace mucho a la vez: renderiza, escucha eventos, hace peticiones. El <strong>event loop</strong> es el bombero que organiza la cola: el código síncrono va primero, las microtareas de las promesas van después, las macrotareas (timers, I/O) van al final.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>JavaScript · orden de ejecución</span>
+        </div>
+<pre><code><span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'1 síncrono'</span>);
+
+<span class="code-fn">setTimeout</span>(() =&gt; <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'4 macrotarea (timer)'</span>), <span class="code-fn">0</span>);
+
+<span class="code-fn">Promise</span>.<span class="code-fn">resolve</span>().<span class="code-fn">then</span>(() =&gt; <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'3 microtarea'</span>));
+
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'2 síncrono'</span>);
+
+<span class="code-cmt">// Salida: 1, 2, 3, 4</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 · PROMESAS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">Promesas: el "esto después" tipado</span>
+    </div>
+    <div class="card">
+      <p>Una <strong>promesa</strong> es un objeto que representa un valor que <em>estará disponible</em> en el futuro. Tiene tres estados: <em>pendiente</em>, <em>cumplida</em> (con un valor) o <em>rechazada</em> (con un error). Una vez resuelta, no cambia.</p>
+      <div class="state-diagram">
+        <span class="state-node pending">pendiente</span>
+        <span class="state-arrow">→</span>
+        <span class="state-node fulfilled">cumplida ✓</span>
+        <span class="state-arrow">|</span>
+        <span class="state-node rejected">rechazada ✗</span>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>JavaScript · crear y consumir una promesa</span>
+        </div>
+<pre><code><span class="code-cmt">// Crear</span>
+<span class="code-kw">const</span> p = <span class="code-kw">new</span> <span class="code-fn">Promise</span>((resolve, reject) =&gt; {
+  <span class="code-fn">setTimeout</span>(() =&gt; {
+    <span class="code-fn">resolve</span>(<span class="code-str">'¡Listo!'</span>);    <span class="code-cmt">// o reject(new Error('falló'))</span>
+  }, <span class="code-fn">1000</span>);
+});
+
+<span class="code-cmt">// Consumir con .then/.catch/.finally</span>
+p
+  .<span class="code-fn">then</span>(valor =&gt; <span class="code-fn">console</span>.<span class="code-fn">log</span>(valor))
+  .<span class="code-fn">catch</span>(err =&gt; <span class="code-fn">console</span>.<span class="code-fn">error</span>(err))
+  .<span class="code-fn">finally</span>(() =&gt; <span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'terminó'</span>));</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 · ASYNC / AWAIT ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">async/await: promesas con sintaxis de función</span>
+    </div>
+    <div class="card">
+      <p><code>async</code> marca una función como asíncrona (siempre devuelve una promesa). <code>await</code> espera a que una promesa se resuelva, sin bloquear el hilo principal. El código se lee como si fuera síncrono, pero no lo es.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>JavaScript · async/await</span>
+        </div>
+<pre><code><span class="code-kw">async function</span> <span class="code-fn">cargarUsuario</span>(id) {
+  <span class="code-kw">try</span> {
+    <span class="code-kw">const</span> res = <span class="code-kw">await</span> <span class="code-fn">fetch</span>(<span class="code-str">`/api/users/<span class="code-str">${id}</span>`</span>);
+    <span class="code-kw">if</span> (!res.ok) <span class="code-kw">throw new</span> <span class="code-fn">Error</span>(<span class="code-str">'HTTP '</span> + res.status);
+    <span class="code-kw">const</span> user = <span class="code-kw">await</span> res.<span class="code-fn">json</span>();
+    <span class="code-kw">return</span> user;
+  } <span class="code-kw">catch</span> (e) {
+    <span class="code-fn">console</span>.<span class="code-fn">error</span>(<span class="code-str">'No pude cargar:'</span>, e.message);
+    <span class="code-kw">throw</span> e;  <span class="code-cmt">// re-lanza para que el caller decida</span>
+  }
+}</code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Combinadores: Promise.all, race, allSettled</h3>
+        <div class="cmp-grid">
+          <div class="cmp-card">
+            <div class="cmp-card-name">Promise.all</div>
+            <div class="cmp-card-code">Promise.all([p1, p2])</div>
+            <div class="cmp-card-desc">Espera a <strong>todas</strong>. Si <em>cualquiera</em> falla, todo falla. Para tareas en paralelo que se necesitan juntas.</div>
+          </div>
+          <div class="cmp-card">
+            <div class="cmp-card-name">Promise.race</div>
+            <div class="cmp-card-code">Promise.race([p1, p2])</div>
+            <div class="cmp-card-desc">Gana la <strong>primera que termine</strong> (éxito o error). Útil para timeouts: <code>race([fetch, timeout(5000)])</code>.</div>
+          </div>
+          <div class="cmp-card">
+            <div class="cmp-card-name">Promise.allSettled</div>
+            <div class="cmp-card-code">Promise.allSettled([...])</div>
+            <div class="cmp-card-desc">Espera a todas y devuelve <code>{status, value|reason}</code> por cada una. <strong>Nunca falla</strong>. Para tolerar fallos parciales.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 · FETCH ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">fetch: la API moderna para red</span>
+    </div>
+    <div class="card">
+      <p><code>fetch(url)</code> devuelve una promesa que se resuelve en un objeto <code>Response</code>. <strong>Punto crítico:</strong> <code>fetch</code> solo rechaza la promesa por errores de red, <strong>no por códigos HTTP 4xx/5xx</strong>. Por eso el patrón canónico es <code>if (!res.ok) throw new Error('HTTP ' + res.status)</code>.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>JavaScript · el patrón canónico</span>
+        </div>
+<pre><code><span class="code-kw">const</span> res = <span class="code-kw">await</span> <span class="code-fn">fetch</span>(<span class="code-str">'/api/users'</span>);
+<span class="code-kw">if</span> (!res.ok) <span class="code-kw">throw new</span> <span class="code-fn">Error</span>(<span class="code-str">'HTTP '</span> + res.status);
+<span class="code-kw">const</span> data = <span class="code-kw">await</span> res.<span class="code-fn">json</span>();   <span class="code-cmt">// otra promesa</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>POST con body JSON</h3>
+        <div class="code-block">
+          <div class="code-head">
+            <span>JavaScript · POST</span>
+          </div>
+<pre><code><span class="code-kw">const</span> res = <span class="code-kw">await</span> <span class="code-fn">fetch</span>(<span class="code-str">'/api/users'</span>, {
+  <span class="code-fn">method</span>: <span class="code-str">'POST'</span>,
+  <span class="code-fn">headers</span>: { <span class="code-str">'Content-Type'</span>: <span class="code-str">'application/json'</span> },
+  <span class="code-fn">body</span>: <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>({ name: <span class="code-str">'Ana'</span>, email: <span class="code-str">'a@x.com'</span> })
+});</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 05 · CAJA TEÓRICA: EN LA VIDA REAL ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span>
+      <span class="num-title">En la vida real (caja teórica)</span>
+    </div>
+    <div class="card">
+      <p>Este curso <strong>no usa red real</strong> por seguridad. Pero cuando salgas al mundo, estos son los conceptos que te encontrarás:</p>
+      <div class="theory-box">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#C4B5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          Conceptos de fetch en producción
+        </h3>
+        <ul>
+          <li><strong>CORS</strong> (Cross-Origin Resource Sharing): por seguridad, el navegador bloquea peticiones a otros dominios. El servidor debe enviar la cabecera <code>Access-Control-Allow-Origin</code> para permitirlo.</li>
+          <li><strong>Cabeceras</strong>: <code>Authorization: Bearer &lt;token&gt;</code> para autenticación, <code>Content-Type: application/json</code> para el cuerpo.</li>
+          <li><strong>OPTIONS preflight</strong>: las peticiones "complejas" (con cabeceras custom, no GET) hacen primero un OPTIONS que el servidor debe aprobar.</li>
+          <li><strong>Response.status</strong>: <code>200</code> OK, <code>201</code> creado, <code>400</code> error del cliente, <code>401</code> sin auth, <code>404</code> no existe, <code>500</code> error del servidor.</li>
+          <li><strong>El <code>if (!res.ok)</code> sigue siendo obligatorio</strong> aunque la promesa no haya rechazado.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 06 · TU PRIMER MOMENTO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span>
+      <span class="num-title">fakeFetch: la API mock del curso</span>
+    </div>
+    <div class="card">
+      <p>En este curso <code>fetch</code> está parcheado. Hay un <code>fakeFetch</code> que lee JSONs embebidos arriba en este mismo HTML, modela tanto éxito (200) como fallo (404) y errores de red. El patrón que escribes es el mismo que en producción.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>JavaScript · fakeFetch (definido al final de este HTML)</span>
+        </div>
+<pre><code><span class="code-kw">function</span> <span class="code-fn">fakeFetch</span>(url) {
+  <span class="code-cmt">// Busca un &lt;script type="application/json" id="..."&gt; que coincida con la URL</span>
+  <span class="code-kw">const</span> id = <span class="code-str">'api-'</span> + url.<span class="code-fn">replace</span>(<span class="code-str">'/api/'</span>, <span class="code-str">''</span>);
+  <span class="code-kw">const</span> raw = document.<span class="code-fn">getElementById</span>(id);
+  <span class="code-kw">if</span> (!raw) <span class="code-kw">return</span> <span class="code-fn">Promise</span>.<span class="code-fn">reject</span>(<span class="code-kw">new</span> <span class="code-fn">Error</span>(<span class="code-str">'Network error: 404'</span>));
+  <span class="code-kw">const</span> mock = <span class="code-fn">JSON</span>.<span class="code-fn">parse</span>(raw.textContent);
+  <span class="code-kw">return</span> <span class="code-fn">Promise</span>.<span class="code-fn">resolve</span>({
+    ok: mock.ok, status: mock.status, statusText: mock.statusText || <span class="code-str">'OK'</span>,
+    <span class="code-fn">json</span>: <span class="code-kw">async</span> () =&gt; mock.data,
+    <span class="code-fn">text</span>: <span class="code-kw">async</span> () =&gt; <span class="code-fn">JSON</span>.<span class="code-fn">stringify</span>(mock.data)
+  });
+}</code></pre>
+      </div>
+      <p>Ahora úsalo. Pulsa los botones y observa la salida:</p>
+      <div class="demo-box">
+        <div class="demo-head">
+          <span>Demo · fakeFetch en vivo</span>
+          <div class="btns">
+            <button onclick="runUsers()">GET /api/users</button>
+            <button onclick="runPosts()">GET /api/posts</button>
+            <button onclick="runAll()">Promise.all (paralelo)</button>
+            <button onclick="runSettled()">allSettled (tolerante)</button>
+            <button onclick="run404()">GET /api/orders (404)</button>
+            <button onclick="runNetErr()">GET /api/nope (network)</button>
+            <button onclick="clearDemo()">Limpiar</button>
+          </div>
+        </div>
+        <div class="demo-body" id="demoBody">
+          <div style="color:#5E5C6E;font-style:italic">Pulsa los botones para ejecutar cada escenario…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 07 · RECURSOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">7</span>
+      <span class="num-title">Recursos para profundizar</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Promise</div>
+          <div class="res-desc">Referencia completa: estados, métodos estáticos (all, race, allSettled), prototype (then, catch, finally).</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/API/Fetch_API" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Fetch API</div>
+          <div class="res-desc">La API de red moderna: Request, Response, Headers, Body, métodos.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://javascript.info/async-await" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">javascript.info · Async/await</div>
+          <div class="res-desc">Tutorial paso a paso: de callbacks a promesas a async/await, con ejercicios.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="cta">
+    <div class="cta-label">Tu siguiente paso</div>
+    <h2>Ahora a organizar el código</h2>
+    <p>Tu JS está funcionando. Pero si tu <code>&lt;script&gt;</code> empieza a tener 500 líneas, se vuelve spaghetti. El siguiente módulo te enseña a <strong>estructurar el código</strong> con namespaces, IIFE y ES Modules — incluso offline en <code>file://</code>.</p>
+    <a class="cta-btn" href="M39_Organizacion_codigo.html">
+      MÓDULO 39 · Organización de código
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+// ═══ FAKE FETCH: el mock del curso (lee JSONs embebidos arriba) ═══
+function fakeFetch(url){
+  var id = 'api-' + url.replace('/api/', '');
+  var raw = document.getElementById(id);
+  if(!raw) return Promise.reject(new Error('Network error: endpoint no encontrado (' + url + ')'));
+  try {
+    var mock = JSON.parse(raw.textContent);
+    return Promise.resolve({
+      ok: mock.ok, status: mock.status, statusText: mock.statusText || 'OK',
+      json: async function(){ return mock.data; },
+      text: async function(){ return JSON.stringify(mock.data); }
+    });
+  } catch(e){
+    return Promise.reject(new Error('Mock malformado: ' + e.message));
+  }
+}
+
+// El patrón canónico que el alumno escribe (en producción con fetch real, aquí con fakeFetch)
+async function cargarApi(url){
+  var res = await fakeFetch(url);
+  if(!res.ok) throw new Error('HTTP ' + res.status + ' ' + res.statusText);
+  return await res.json();
+}
+
+// ═══ DEMO ═══
+var demoEl;
+function logLine(level, text){
+  var line = document.createElement('div');
+  line.className = 'demo-line';
+  var tag = document.createElement('span');
+  tag.className = 'demo-tag ' + level;
+  tag.textContent = level;
+  var txt = document.createElement('span');
+  txt.className = 'demo-text';
+  txt.textContent = text;
+  line.appendChild(tag); line.appendChild(txt);
+  demoEl.appendChild(line);
+  demoEl.scrollTop = demoEl.scrollHeight;
+}
+function logOk(t){ logLine('ok', t); }
+function logLog(t){ logLine('log', t); }
+function logErr(t){ logLine('err', t); }
+function clearDemo(){
+  demoEl.innerHTML = '<div style="color:#5E5C6E;font-style:italic">Pulsa los botones para ejecutar cada escenario…</div>';
+}
+function renderUsers(arr){
+  var grid = document.createElement('div');
+  grid.className = 'demo-cards';
+  arr.forEach(function(u){
+    var c = document.createElement('div');
+    c.className = 'demo-card';
+    c.innerHTML = '<div class="demo-card-name">' + u.name + '</div><div class="demo-card-meta">' + u.role + ' · ' + u.city + '</div>';
+    grid.appendChild(c);
+  });
+  demoEl.appendChild(grid);
+  demoEl.scrollTop = demoEl.scrollHeight;
+}
+
+async function runUsers(){
+  try {
+    var data = await cargarApi('/api/users');
+    logOk('GET /api/users → ' + data.length + ' usuarios');
+    renderUsers(data);
+  } catch(e){ logErr('Error: ' + e.message); }
+}
+async function runPosts(){
+  try {
+    var data = await cargarApi('/api/posts');
+    logOk('GET /api/posts → ' + data.length + ' posts');
+    data.forEach(function(p){ logLog('  · ' + p.title + ' (autor #' + p.authorId + ')'); });
+  } catch(e){ logErr('Error: ' + e.message); }
+}
+async function runAll(){
+  try {
+    logLog('Promise.all([users, posts]) — lanzando en paralelo...');
+    var t0 = Date.now();
+    var results = await Promise.all([cargarApi('/api/users'), cargarApi('/api/posts')]);
+    logOk('Ambas resueltas en ' + (Date.now()-t0) + 'ms');
+    logLog('  · users: ' + results[0].length);
+    logLog('  · posts: ' + results[1].length);
+  } catch(e){ logErr('Error: ' + e.message); }
+}
+async function runSettled(){
+  try {
+    logLog('Promise.allSettled([users, orders]) — una fallará (orders es 404)...');
+    var results = await Promise.allSettled([cargarApi('/api/users'), cargarApi('/api/orders')]);
+    results.forEach(function(r, i){
+      if(r.status === 'fulfilled') logOk('  · [' + i + '] OK: ' + r.value.length + ' elementos');
+      else logErr('  · [' + i + '] Falló: ' + r.reason.message);
+    });
+    logLog('(allSettled nunca lanza, devuelve el estado de cada una)');
+  } catch(e){ logErr('Error inesperado: ' + e.message); }
+}
+async function run404(){
+  try {
+    var data = await cargarApi('/api/orders');
+    logOk('OK inesperado');
+  } catch(e){
+    logErr('catch → ' + e.message);
+    logLog('(esto es lo que pasa con un 404: el patrón if(!res.ok) lo atrapa)');
+  }
+}
+async function runNetErr(){
+  try {
+    var data = await cargarApi('/api/nope');
+    logOk('OK inesperado');
+  } catch(e){
+    logErr('catch → ' + e.message);
+    logLog('(esto es lo que pasa con un error de red: la promesa rechaza)');
+  }
+}
+document.addEventListener('DOMContentLoaded', function(){
+  demoEl = document.getElementById('demoBody');
+});
+</script>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

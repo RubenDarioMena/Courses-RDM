@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M40 · Clases y POO básica — Curso HTML+CSS+JS</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#0E0D16; --bg-s3:#110F18; --bg-s4:#13111D; --bg-s5:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --yellow:#F5C451; --yellow-soft:rgba(245,196,81,.12); --yellow-border:rgba(245,196,81,.22);
+  --red:#FB7185; --green:#34D399; --cyan:#67E8F9;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(139,92,246,.20),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(34,184,207,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* HERO */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(245,196,81,.12);border:1px solid rgba(245,196,81,.32);color:var(--yellow);
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--accent)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* CARD */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;font-size:clamp(21px,3vw,27px);
+  color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;margin:0 0 20px;max-width:62ch}
+
+/* NUM SECTION */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,var(--yellow),#EAB308)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* CONTENT */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:8px}
+.content-block strong{color:var(--text-pri)}
+.content-block ul{color:#A7A4B8;line-height:1.75;font-size:15.5px;max-width:60ch;margin:6px 0 8px 22px}
+.content-block li{margin:3px 0}
+
+/* CODE BLOCK */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
+  background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:var(--text-sec);font-family:var(--font-body);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(245,196,81,.16);border-color:var(--yellow-border);color:var(--yellow)}
+.code-btn.primary{background:rgba(245,196,81,.16);border-color:var(--yellow-border);color:var(--yellow)}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+.code-prop{color:#93C5FD}
+.code-num{color:#F5C451}
+
+/* OUTPUT */
+.output-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;overflow:hidden;display:none}
+.output-block.show{display:block}
+.output-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;text-transform:uppercase}
+.output-body{padding:12px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.6}
+.out-line{margin:3px 0;display:flex;gap:8px;align-items:flex-start}
+.out-tag{flex-shrink:0;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.out-tag.log{color:#93C5FD;background:rgba(147,197,253,.1)}
+.out-tag.alert{color:#C4B5FD;background:rgba(196,181,253,.1)}
+.out-tag.error{color:#FF8E8E;background:rgba(255,142,142,.1)}
+.out-text{color:#C7CDE0}
+
+/* HERO IMAGE */
+.idea-img{background:linear-gradient(135deg,rgba(245,196,81,.08),rgba(139,92,246,.05));
+  border:1px solid var(--border);border-radius:18px;padding:24px 20px;margin:0 0 clamp(24px,4vw,38px);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px}
+.idea-box{text-align:center;padding:14px 10px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);border-radius:12px}
+.idea-box .ibox-title{font-family:var(--font-head);font-weight:600;font-size:15px;color:var(--yellow);margin-bottom:4px}
+.idea-box .ibox-sub{font-size:12.5px;color:var(--text-mut);font-family:var(--font-mono)}
+
+/* PILLARS */
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:16px}
+.pillar{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:13px;padding:15px 17px}
+.pillar-name{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--yellow);margin-bottom:4px}
+.pillar-desc{font-size:13.5px;color:var(--text-mut);line-height:1.55}
+
+/* STEPS */
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#A78BFA,#8B5CF6)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body a{color:var(--accent);text-decoration:underline}
+.step-body code{font-family:var(--font-mono);font-size:13px;background:rgba(255,255,255,.05);
+  padding:1px 6px;border-radius:5px;color:var(--yellow)}
+
+/* RESOURCES */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;
+  border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:all .2s}
+.res-link:hover{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* CTA */
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:14px;
+  background:linear-gradient(145deg,#8B5CF6,#7C3AED);color:#fff;font-family:var(--font-body);
+  font-size:15px;font-weight:600;box-shadow:0 8px 24px -8px rgba(139,92,246,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(139,92,246,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span>MÓDULO 40 · CLASES</div>
+    <h1>Clases y <span class="hl">POO</span> básica</h1>
+    <p>Programación Orientada a Objetos suena a teoría, pero en JavaScript es solo una forma ordenada de fabricar cosas con una misma forma. Con <code>class</code> defines el molde; con <code>new</code> fabricas piezas que comparten comportamiento pero guardan su propio estado.</p>
+    <div class="meta-chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Molde + instancia</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>extends y super</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Privacidad con #</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>~10 min de lectura</span>
+    </div>
+  </div>
+
+  <!-- LA IDEA EN UNA IMAGEN -->
+  <div class="idea-img">
+    <div class="idea-box">
+      <div class="ibox-title">CLASE</div>
+      <div class="ibox-sub">el molde</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">CONSTRUCTOR</div>
+      <div class="ibox-sub">inicializa</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">MÉTODOS</div>
+      <div class="ibox-sub">comportamiento</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">EXTENDS</div>
+      <div class="ibox-sub">hereda</div>
+    </div>
+    <div class="idea-box">
+      <div class="ibox-title">#PRIVADO</div>
+      <div class="ibox-sub">encapsula</div>
+    </div>
+  </div>
+
+  <!-- 01 · CLASS BÁSICA -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span><span class="num-title">Anatomía de una clase</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>El molde y la pieza</h3>
+        <p>Una <strong>clase</strong> es una plantilla. Una <strong>instancia</strong> es una pieza fabricada con ella. El <code>constructor</code> se ejecuta automáticamente al hacer <code>new</code> y es donde preparas el estado inicial. Los <strong>métodos</strong> viven en el prototipo, así que no se duplican en cada instancia: ahorras memoria.</p>
+      </div>
+      <div class="content-block">
+        <h3>Class fields y métodos estáticos</h3>
+        <p>Los <strong>class fields</strong> son propiedades declaradas fuera del constructor (visibles en cada instancia). Los <strong>static</strong> pertenecen a la clase en sí, no a sus instancias: <code>Usuario.fromJSON()</code> sería un ejemplo típico, accesible sin hacer <code>new</code>.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>Producto · class básica</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runBasic()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-kw">class</span> <span class="code-fn">Producto</span> {
+  <span class="code-cmt">// class field público</span>
+  categoria = <span class="code-str">'general'</span>;
+
+  <span class="code-fn">constructor</span>(nombre, precio) {
+    <span class="code-kw">this</span>.nombre = nombre;
+    <span class="code-kw">this</span>.precio = precio;
+  }
+
+  <span class="code-cmt">// método de instancia</span>
+  <span class="code-fn">etiqueta</span>() {
+    <span class="code-kw">return</span> <span class="code-str">`${<span class="code-kw">this</span>.nombre} · $<span class="code-kw">this</span>.precio}`</span>;
+  }
+
+  <span class="code-cmt">// método estático: se llama desde la clase, no desde la instancia</span>
+  <span class="code-kw">static</span> <span class="code-fn">iva</span>(precio) {
+    <span class="code-kw">return</span> precio * <span class="code-num">0.21</span>;
+  }
+}
+
+<span class="code-kw">const</span> p = <span class="code-kw">new</span> <span class="code-fn">Producto</span>(<span class="code-str">'Café'</span>, <span class="code-num">3.5</span>);
+<span class="code-fn">alert</span>(p.<span class="code-fn">etiqueta</span>());            <span class="code-cmt">// Café · $3.5</span>
+<span class="code-fn">alert</span>(Producto.<span class="code-fn">iva</span>(<span class="code-num">100</span>));   <span class="code-cmt">// 21</span>
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(p.categoria);         <span class="code-cmt">// general</span></code></pre>
+      </div>
+      <div class="output-block" id="outBasic">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outBasicBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 · HERENCIA + PRIVADOS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span><span class="num-title">Herencia y privacidad real</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>extends y super()</h3>
+        <p>Una subclase hereda métodos y campos del padre. <code>super()</code> llama al constructor del padre y debe ir <em>antes</em> de tocar <code>this</code> en la hija. Para sobrescribir un método del padre, lo defines con el mismo nombre y, si quieres, llamas a <code>super.metodo()</code> para reutilizar la lógica original.</p>
+      </div>
+      <div class="content-block">
+        <h3>Privados con #</h3>
+        <p>El prefijo <code>#</code> declara un campo realmente <strong>privado</strong>: no se accede desde fuera, ni por accidente, ni por reflexión. Es la única privacidad real que ofrece JavaScript. Úsalo para encapsular invariantes (un saldo que no puede quedar negativo, un id que no debe reasignarse, etc.).</p>
+      </div>
+      <div class="pillars">
+        <div class="pillar">
+          <div class="pillar-name">Animal</div>
+          <div class="pillar-desc">Clase base con <code>nombre</code> y <code>hablar()</code> genérico. La raíz de la jerarquía.</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-name">Perro · Gato</div>
+          <div class="pillar-desc">Heredan con <code>extends</code>, sobrescriben <code>hablar()</code> y comparten el contrato del padre.</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-name">CuentaBancaria</div>
+          <div class="pillar-desc">Encapsula <code>#saldo</code>, expone un getter y valida invariantes con <code>throw</code>.</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>Jerarquía Animal + CuentaBancaria</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runOOP()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-kw">class</span> <span class="code-fn">Animal</span> {
+  <span class="code-fn">constructor</span>(nombre) { <span class="code-kw">this</span>.nombre = nombre; }
+  <span class="code-fn">hablar</span>() { <span class="code-kw">return</span> <span class="code-str">'...'</span>; }
+}
+
+<span class="code-kw">class</span> <span class="code-fn">Perro</span> <span class="code-kw">extends</span> Animal {
+  <span class="code-fn">hablar</span>() { <span class="code-kw">return</span> <span class="code-str">'Guau'</span>; }
+}
+
+<span class="code-kw">class</span> <span class="code-fn">Gato</span> <span class="code-kw">extends</span> Animal {
+  <span class="code-fn">hablar</span>() { <span class="code-kw">return</span> <span class="code-str">'Miau'</span>; }
+}
+
+<span class="code-kw">class</span> <span class="code-fn">CuentaBancaria</span> {
+  <span class="code-cmt">// campo privado real</span>
+  #saldo = <span class="code-num">0</span>;
+
+  <span class="code-fn">constructor</span>(titular, saldoInicial = <span class="code-num">0</span>) {
+    <span class="code-kw">this</span>.titular = titular;
+    <span class="code-kw">this</span>.#saldo = saldoInicial;
+  }
+
+  <span class="code-fn">depositar</span>(monto) {
+    <span class="code-kw">if</span> (monto &lt;= <span class="code-num">0</span>) <span class="code-kw">throw new</span> <span class="code-fn">Error</span>(<span class="code-str">'monto inválido'</span>);
+    <span class="code-kw">this</span>.#saldo += monto;
+  }
+
+  <span class="code-fn">retirar</span>(monto) {
+    <span class="code-kw">if</span> (monto &gt; <span class="code-kw">this</span>.#saldo) <span class="code-kw">throw new</span> <span class="code-fn">Error</span>(<span class="code-str">'saldo insuficiente'</span>);
+    <span class="code-kw">this</span>.#saldo -= monto;
+  }
+
+  <span class="code-cmt">// getter: saldo como propiedad, no como método</span>
+  <span class="code-kw">get</span> saldo() { <span class="code-kw">return</span> <span class="code-kw">this</span>.#saldo; }
+}
+
+<span class="code-cmt">// Uso</span>
+<span class="code-kw">const</span> rex = <span class="code-kw">new</span> <span class="code-fn">Perro</span>(<span class="code-str">'Rex'</span>);
+<span class="code-kw">const</span> mishi = <span class="code-kw">new</span> <span class="code-fn">Gato</span>(<span class="code-str">'Mishi'</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(rex.nombre, <span class="code-str">'→'</span>, rex.<span class="code-fn">hablar</span>());  <span class="code-cmt">// Rex → Guau</span>
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(mishi.nombre, <span class="code-str">'→'</span>, mishi.<span class="code-fn">hablar</span>()); <span class="code-cmt">// Mishi → Miau</span>
+
+<span class="code-kw">const</span> cta = <span class="code-kw">new</span> <span class="code-fn">CuentaBancaria</span>(<span class="code-str">'Ada'</span>, <span class="code-num">100</span>);
+cta.<span class="code-fn">depositar</span>(<span class="code-num">50</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'saldo:'</span>, cta.saldo);  <span class="code-cmt">// saldo: 150</span>
+
+<span class="code-cmt">// cadena de prototipos</span>
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(
+  rex <span class="code-kw">instanceof</span> Perro,  <span class="code-cmt">// true</span>
+  rex <span class="code-kw">instanceof</span> Animal  <span class="code-cmt">// true (hereda)</span>
+);
+<span class="code-cmt">// cta.#saldo  →  SyntaxError: privado, no se puede leer</span></code></pre>
+      </div>
+      <div class="output-block" id="outOOP">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outOOPBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 · CLASE vs FACTORY + PROTOTIPOS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span><span class="num-title">Clases vs factory functions</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Dos formas válidas de fabricar</h3>
+        <p>Una <strong>factory function</strong> es simplemente una función que devuelve un objeto. Tiene dos ventajas curiosas: no depende de <code>this</code> (más difícil de romper) y cierra sobre variables privadas del closure, sin necesidad del <code>#</code>.</p>
+      </div>
+      <div class="content-block">
+        <h3>El prototipo es lo que está debajo</h3>
+        <p>Por debajo, las clases en JavaScript son <strong>azúcar sintáctico</strong> sobre prototipos. Cuando haces <code>rex.hablar()</code>, el motor busca el método en la instancia, y si no está, sube por la cadena hasta <code>Perro.prototype</code>, después a <code>Animal.prototype</code>, y finalmente a <code>Object.prototype</code>. Esa cadena es la <strong>cadena de prototipos</strong>.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>Factory function equivalente</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runFactory()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-cmt">// Equivalente a CuentaBancaria, pero con closure</span>
+<span class="code-kw">function</span> <span class="code-fn">crearCuenta</span>(titular, saldoInicial = <span class="code-num">0</span>) {
+  <span class="code-kw">let</span> saldo = saldoInicial;  <span class="code-cmt">// privado por closure</span>
+
+  <span class="code-kw">return</span> {
+    titular,
+    <span class="code-fn">depositar</span>(m) { saldo += m; },
+    <span class="code-fn">retirar</span>(m) {
+      <span class="code-kw">if</span> (m &gt; saldo) <span class="code-kw">throw new</span> <span class="code-fn">Error</span>(<span class="code-str">'saldo insuficiente'</span>);
+      saldo -= m;
+    },
+    <span class="code-kw">get</span> saldo() { <span class="code-kw">return</span> saldo; }
+  };
+}
+
+<span class="code-kw">const</span> c = <span class="code-fn">crearCuenta</span>(<span class="code-str">'Ada'</span>, <span class="code-num">100</span>);
+c.<span class="code-fn">depositar</span>(<span class="code-num">25</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'factory saldo:'</span>, c.saldo); <span class="code-cmt">// factory saldo: 125</span>
+<span class="code-cmt">// c.saldo = 99999  →  no funciona: solo hay getter</span>
+
+<span class="code-cmt">// Trazando la cadena de prototipos</span>
+<span class="code-kw">const</span> rex2 = <span class="code-kw">new</span> <span class="code-fn">Perro</span>(<span class="code-str">'Rex'</span>);
+<span class="code-kw">let</span> proto = <span class="code-fn">Object</span>.<span class="code-fn">getPrototypeOf</span>(rex2);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'cadena:'</span>, proto === Perro.prototype);
+proto = <span class="code-fn">Object</span>.<span class="code-fn">getPrototypeOf</span>(proto);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'→ Perro → Animal:'</span>, proto === Animal.prototype);
+proto = <span class="code-fn">Object</span>.<span class="code-fn">getPrototypeOf</span>(proto);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'→ Animal → Object:'</span>, proto === <span class="code-fn">Object</span>.prototype);</code></pre>
+      </div>
+      <div class="output-block" id="outFactory">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outFactoryBody"></div>
+      </div>
+      <div class="content-block" style="margin-top:18px">
+        <h3>¿Cuándo usar cada uno?</h3>
+        <ul>
+          <li><strong>Clase</strong>: cuando hay una jerarquía clara y necesitas <code>instanceof</code> (p. ej. UI components, errores personalizados).</li>
+          <li><strong>Factory</strong>: cuando quieres composición sobre herencia, evitar <code>this</code>, o devolver distintos objetos según la entrada.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 · GETTERS Y SETTERS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span><span class="num-title">Getters, setters y validación</span>
+    </div>
+    <div class="card">
+      <div class="content-block">
+        <h3>Propiedades que se comportan como métodos</h3>
+        <p>Un <code>get</code> y un <code>set</code> te permiten exponer una propiedad que ejecuta lógica al leerla o al asignarla. Es perfecto para: <strong>validar</strong> valores antes de guardarlos, <strong>derivar</strong> un dato de otros (<code>area</code> a partir de <code>ancho</code> y <code>alto</code>), o <strong>proteger</strong> la API exponiendo solo lectura hacia fuera.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>Rectangulo con getter/setter</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runGetter()">Ejecutar</button>
+          </div>
+        </div>
+        <pre><code><span class="code-kw">class</span> <span class="code-fn">Rectangulo</span> {
+  #ancho;
+  #alto;
+
+  <span class="code-fn">constructor</span>(ancho, alto) {
+    <span class="code-kw">this</span>.#ancho = ancho;
+    <span class="code-kw">this</span>.#alto  = alto;
+  }
+
+  <span class="code-kw">get</span> area() { <span class="code-kw">return</span> <span class="code-kw">this</span>.#ancho * <span class="code-kw">this</span>.#alto; }
+
+  <span class="code-kw">set</span> ancho(v) {
+    <span class="code-kw">if</span> (v &lt;= <span class="code-num">0</span>) <span class="code-kw">throw new</span> <span class="code-fn">Error</span>(<span class="code-str">'ancho debe ser positivo'</span>);
+    <span class="code-kw">this</span>.#ancho = v;
+  }
+}
+
+<span class="code-kw">const</span> r = <span class="code-kw">new</span> <span class="code-fn">Rectangulo</span>(<span class="code-num">4</span>, <span class="code-num">3</span>);
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'area inicial:'</span>, r.area);  <span class="code-cmt">// area inicial: 12</span>
+r.ancho = <span class="code-num">5</span>;
+<span class="code-fn">console</span>.<span class="code-fn">log</span>(<span class="code-str">'area nueva:'</span>, r.area);    <span class="code-cmt">// area nueva: 15</span>
+<span class="code-cmt">// r.ancho = -1  →  Error: ancho debe ser positivo</span></code></pre>
+      </div>
+      <div class="output-block" id="outGetter">
+        <div class="output-head">Salida de la consola</div>
+        <div class="output-body" id="outGetterBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 · RECURSOS -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span><span class="num-title">Recursos para tu aventura</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Classes" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Classes</div>
+        <div class="res-desc">Referencia completa: class, constructor, métodos, herencia y campos privados.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Classes/Private_properties" target="_blank" rel="noopener">
+        <div><div class="res-name">MDN · Private properties (#)</div>
+        <div class="res-desc">Cómo funcionan los campos privados con prefijo <code>#</code> y por qué son la única privacidad real.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://javascript.info/class" target="_blank" rel="noopener">
+        <div><div class="res-name">javascript.info · Classes</div>
+        <div class="res-desc">Tutorial paso a paso con ejemplos claros: extends, super, overriding, static y más.</div></div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <div class="cta-label">Tu primer molde está listo</div>
+    <h2>¿Listo para convertir objetos en texto y vuelta atrás?</h2>
+    <p>Ya sabes fabricar instancias con estado encapsulado. Ahora vas a aprender el formato que usa todo Internet para mover datos: JSON.</p>
+    <a class="cta-btn" href="M41_JSON.html">
+      MÓDULO 41 · JSON
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+
+<script>
+"use strict";
+function runBasic(){
+  var out=document.getElementById('outBasic'),body=document.getElementById('outBasicBody');
+  body.innerHTML='';var logs=[];var origLog=console.log;
+  console.log=function(){var a=[].slice.call(arguments);logs.push({level:'log',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')})};
+  var al=function(msg){logs.push({level:'alert',text:String(msg)})};
+  try{
+    new Function('alert','console',"\n      class Producto {\n        categoria='general';\n        constructor(nombre,precio){this.nombre=nombre;this.precio=precio}\n        etiqueta(){return this.nombre+' · $'+this.precio}\n        static iva(precio){return precio*0.21}\n      }\n      const p=new Producto('Café',3.5);\n      alert(p.etiqueta());\n      alert('IVA de 100: '+Producto.iva(100));\n      console.log('categoria:',p.categoria);\n    ")(al,console);
+  }catch(e){logs.push({level:'error',text:e.message})}finally{console.log=origLog}
+  if(!logs.length)logs.push({level:'log',text:'(sin salida visible)'});
+  logs.forEach(function(l){
+    var line=document.createElement('div');line.className='out-line';
+    var tag=document.createElement('span');tag.className='out-tag '+l.level;tag.textContent=l.level;
+    var txt=document.createElement('span');txt.className='out-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);body.appendChild(line);
+  });
+  out.classList.add('show');
+}
+
+function runOOP(){
+  var out=document.getElementById('outOOP'),body=document.getElementById('outOOPBody');
+  body.innerHTML='';var logs=[];var origLog=console.log;
+  console.log=function(){var a=[].slice.call(arguments);logs.push({level:'log',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')})};
+  var al=function(msg){logs.push({level:'alert',text:String(msg)})};
+  try{
+    new Function('alert','console',"\n      class Animal{constructor(nombre){this.nombre=nombre}hablar(){return '...'}}\n      class Perro extends Animal{hablar(){return 'Guau'}}\n      class Gato extends Animal{hablar(){return 'Miau'}}\n      class CuentaBancaria{\n        #saldo=0;\n        constructor(titular,saldoInicial=0){this.titular=titular;this.#saldo=saldoInicial}\n        depositar(m){if(m<=0)throw new Error('monto inválido');this.#saldo+=m}\n        retirar(m){if(m>this.#saldo)throw new Error('saldo insuficiente');this.#saldo-=m}\n        get saldo(){return this.#saldo}\n      }\n      const rex=new Perro('Rex');\n      const mishi=new Gato('Mishi');\n      console.log(rex.nombre+' → '+rex.hablar());\n      console.log(mishi.nombre+' → '+mishi.hablar());\n      const cta=new CuentaBancaria('Ada',100);\n      cta.depositar(50);\n      console.log('saldo:',cta.saldo);\n      console.log('rex instanceof Perro:',rex instanceof Perro);\n      console.log('rex instanceof Animal:',rex instanceof Animal);\n    ")(al,console);
+  }catch(e){logs.push({level:'error',text:e.message})}finally{console.log=origLog}
+  if(!logs.length)logs.push({level:'log',text:'(sin salida visible)'});
+  logs.forEach(function(l){
+    var line=document.createElement('div');line.className='out-line';
+    var tag=document.createElement('span');tag.className='out-tag '+l.level;tag.textContent=l.level;
+    var txt=document.createElement('span');txt.className='out-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);body.appendChild(line);
+  });
+  out.classList.add('show');
+}
+
+function runFactory(){
+  var out=document.getElementById('outFactory'),body=document.getElementById('outFactoryBody');
+  body.innerHTML='';var logs=[];var origLog=console.log;
+  console.log=function(){var a=[].slice.call(arguments);logs.push({level:'log',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')})};
+  var al=function(msg){logs.push({level:'alert',text:String(msg)})};
+  try{
+    new Function('alert','console',"\n      function crearCuenta(titular,saldoInicial=0){\n        let saldo=saldoInicial;\n        return {\n          titular,\n          depositar(m){saldo+=m},\n          retirar(m){if(m>saldo)throw new Error('saldo insuficiente');saldo-=m},\n          get saldo(){return saldo}\n        };\n      }\n      const c=crearCuenta('Ada',100);\n      c.depositar(25);\n      console.log('factory saldo:',c.saldo);\n      class Animal{constructor(nombre){this.nombre=nombre}}\n      class Perro extends Animal{}\n      const rex2=new Perro('Rex');\n      const p1=Object.getPrototypeOf(rex2);\n      console.log('nivel 1 = Perro.prototype:',p1===Perro.prototype);\n      const p2=Object.getPrototypeOf(p1);\n      console.log('nivel 2 = Animal.prototype:',p2===Animal.prototype);\n      const p3=Object.getPrototypeOf(p2);\n      console.log('nivel 3 = Object.prototype:',p3===Object.prototype);\n    ")(al,console);
+  }catch(e){logs.push({level:'error',text:e.message})}finally{console.log=origLog}
+  if(!logs.length)logs.push({level:'log',text:'(sin salida visible)'});
+  logs.forEach(function(l){
+    var line=document.createElement('div');line.className='out-line';
+    var tag=document.createElement('span');tag.className='out-tag '+l.level;tag.textContent=l.level;
+    var txt=document.createElement('span');txt.className='out-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);body.appendChild(line);
+  });
+  out.classList.add('show');
+}
+
+function runGetter(){
+  var out=document.getElementById('outGetter'),body=document.getElementById('outGetterBody');
+  body.innerHTML='';var logs=[];var origLog=console.log;
+  console.log=function(){var a=[].slice.call(arguments);logs.push({level:'log',text:a.map(function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')})};
+  var al=function(msg){logs.push({level:'alert',text:String(msg)})};
+  try{
+    new Function('alert','console',"\n      class Rectangulo{\n        #ancho;#alto;\n        constructor(a,h){this.#ancho=a;this.#alto=h}\n        get area(){return this.#ancho*this.#alto}\n        set ancho(v){if(v<=0)throw new Error('ancho debe ser positivo');this.#ancho=v}\n      }\n      const r=new Rectangulo(4,3);\n      console.log('area inicial:',r.area);\n      r.ancho=5;\n      console.log('area nueva:',r.area);\n    ")(al,console);
+  }catch(e){logs.push({level:'error',text:e.message})}finally{console.log=origLog}
+  if(!logs.length)logs.push({level:'log',text:'(sin salida visible)'});
+  logs.forEach(function(l){
+    var line=document.createElement('div');line.className='out-line';
+    var tag=document.createElement('span');tag.className='out-tag '+l.level;tag.textContent=l.level;
+    var txt=document.createElement('span');txt.className='out-text';txt.textContent=l.text;
+    line.appendChild(tag);line.appendChild(txt);body.appendChild(line);
+  });
+  out.classList.add('show');
+}
+</script>
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

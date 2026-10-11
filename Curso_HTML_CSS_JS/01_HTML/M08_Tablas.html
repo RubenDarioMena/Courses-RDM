@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M08 · Tablas — Curso HTML+CSS+JS</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#110F18; --bg-s3:#15131F; --bg-s4:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --cyan:#67E8F9; --cyan-soft:rgba(95,208,224,.06); --cyan-border:rgba(95,208,224,.2);
+  --pink:#F9A8D4; --pink-soft:rgba(249,168,212,.06); --pink-border:rgba(249,168,212,.2);
+  --yellow:#F5C451; --green:#34D399; --red:#FB7185;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(95,208,224,.32);color:#06120B}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(95,208,224,.20),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.10),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(95,208,224,.12);border:1px solid rgba(95,208,224,.32);color:#7FE0F0;
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--cyan)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+.card-label{display:block;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.18em;color:var(--text-mut);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+.content-block strong{color:#EEEBF6}
+.content-block code{font-family:var(--font-mono);background:rgba(95,208,224,.08);
+  color:#7FE0F0;padding:1px 6px;border-radius:5px;font-size:13.5px}
+
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text-sec);font-family:var(--font-body);
+  font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+.code-btn.primary{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-tag{color:#67E8F9}
+.code-attr{color:#93C5FD}
+.code-str{color:#ECC48D}
+.code-kw{color:#C4B5FD}
+
+.preview-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;display:none}
+.preview-block.show{display:block}
+.preview-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;
+  text-transform:uppercase}
+.preview-frame{width:100%;border:0;background:#fff;display:block;min-height:120px}
+
+.note-box{background:rgba(251,113,133,.06);border:1px solid rgba(251,113,133,.2);
+  border-radius:12px;padding:14px 16px;margin-top:14px;display:flex;gap:12px;align-items:flex-start}
+.note-box svg{flex-shrink:0;width:20px;height:20px;margin-top:2px}
+.note-box p{color:#A7A4B8;font-size:14.5px;line-height:1.6;margin:0}
+.note-box strong{color:var(--red)}
+
+.cmp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+.cmp-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:13px;padding:14px 16px}
+.cmp-card-name{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:4px}
+.cmp-card-code{font-family:var(--font-mono);font-size:13px;color:var(--cyan);
+  background:rgba(95,208,224,.08);padding:4px 8px;border-radius:6px;display:inline-block;margin-bottom:6px}
+.cmp-card-desc{font-size:13.5px;color:var(--text-mut);line-height:1.55}
+
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(95,208,224,.08);border-color:var(--cyan-border)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,#67E8F9,#22B8CF);color:#06120B;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(95,208,224,.5);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(95,208,224,.7)}
+.cta-btn svg{width:18px;height:18px}
+
+@media(max-width:640px){.step{flex-direction:column;gap:6px}}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 08 · DATOS TABULARES
+    </div>
+    <h1>Tablas con <span class="hl">sentido</span></h1>
+    <p>Una tabla HTML no es para hacer el diseño de la página (eso es CSS). Una tabla es para <strong>datos tabulares</strong>: cosas que se organizan en filas y columnas con sentido. Con la estructura correcta, además, será accesible a lectores de pantalla.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+        Filas y columnas
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F9A8D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+        scope / colspan
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F5C451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg>
+        ~12 min de lectura
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 · ESTRUCTURA BÁSICA ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">La estructura mínima</span>
+    </div>
+    <div class="card">
+      <p>Tres etiquetas forman el esqueleto de cualquier tabla: <code>&lt;table&gt;</code> la envuelve, <code>&lt;tr&gt;</code> define cada fila, y dentro van celdas de cabecera <code>&lt;th&gt;</code> o celdas de datos <code>&lt;td&gt;</code>.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · tabla mínima</span>
+        </div>
+<pre><code><span class="code-tag">&lt;table&gt;</span>
+  <span class="code-tag">&lt;tr&gt;</span>
+    <span class="code-tag">&lt;th&gt;</span>Planeta<span class="code-tag">&lt;/th&gt;</span>
+    <span class="code-tag">&lt;th&gt;</span>Diámetro (km)<span class="code-tag">&lt;/th&gt;</span>
+  <span class="code-tag">&lt;/tr&gt;</span>
+  <span class="code-tag">&lt;tr&gt;</span>
+    <span class="code-tag">&lt;td&gt;</span>Mercurio<span class="code-tag">&lt;/td&gt;</span>
+    <span class="code-tag">&lt;td&gt;</span>4879<span class="code-tag">&lt;/td&gt;</span>
+  <span class="code-tag">&lt;/tr&gt;</span>
+  <span class="code-tag">&lt;tr&gt;</span>
+    <span class="code-tag">&lt;td&gt;</span>Venus<span class="code-tag">&lt;/td&gt;</span>
+    <span class="code-tag">&lt;td&gt;</span>12104<span class="code-tag">&lt;/td&gt;</span>
+  <span class="code-tag">&lt;/tr&gt;</span>
+<span class="code-tag">&lt;/table&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 · SEMÁNTICA DE TABLA ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">thead, tbody, tfoot y caption</span>
+    </div>
+    <div class="card">
+      <p>Una tabla bien hecha divide su contenido en <strong>tres zonas semánticas</strong>: la cabecera (<code>&lt;thead&gt;</code>), el cuerpo (<code>&lt;tbody&gt;</code>) y, opcionalmente, un pie de totales (<code>&lt;tfoot&gt;</code>). El navegador puede usarlos para scroll, impresión y accesibilidad.</p>
+      <div class="cmp-grid">
+        <div class="cmp-card">
+          <div class="cmp-card-name">&lt;caption&gt;</div>
+          <div class="cmp-card-code">título de tabla</div>
+          <div class="cmp-card-desc">El primer hijo de <code>&lt;table&gt;</code>. Describe de qué trata. Es lo que un lector de pantalla lee primero.</div>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-card-name">&lt;thead&gt;</div>
+          <div class="cmp-card-code">cabecera</div>
+          <div class="cmp-card-desc">Envuelve las filas de cabeceras de columna. El navegador puede repetirlo en cada página al imprimir.</div>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-card-name">&lt;tbody&gt;</div>
+          <div class="cmp-card-code">cuerpo</div>
+          <div class="cmp-card-desc">Envuelve todas las filas de datos. Es obligatorio, y es donde va la mayor parte del contenido.</div>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-card-name">&lt;tfoot&gt;</div>
+          <div class="cmp-card-code">pie de tabla</div>
+          <div class="cmp-card-desc">Para totales, sumarios o notas. Aparece <em>antes</em> del tbody en el código, pero se renderiza debajo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 · SCOPE Y ACCESIBILIDAD ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">scope: que las cabeceras se entiendan</span>
+    </div>
+    <div class="card">
+      <p>El atributo <code>scope</code> en <code>&lt;th&gt;</code> indica <strong>a qué se refiere esa cabecera</strong>: a una columna (<code>col</code>) o a una fila (<code>row</code>). Esto es lo que permite a un lector de pantalla anunciar "Diámetro: 4879" en lugar de solo "4879".</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · cabeceras con scope</span>
+        </div>
+<pre><code><span class="code-tag">&lt;thead&gt;</span>
+  <span class="code-tag">&lt;tr&gt;</span>
+    <span class="code-tag">&lt;th</span> <span class="code-attr">scope</span>=<span class="code-str">"col"</span><span class="code-tag">&gt;</span>Planeta<span class="code-tag">&lt;/th&gt;</span>
+    <span class="code-tag">&lt;th</span> <span class="code-attr">scope</span>=<span class="code-str">"col"</span><span class="code-tag">&gt;</span>Diámetro (km)<span class="code-tag">&lt;/th&gt;</span>
+  <span class="code-tag">&lt;/tr&gt;</span>
+<span class="code-tag">&lt;/thead&gt;</span>
+<span class="code-tag">&lt;tbody&gt;</span>
+  <span class="code-tag">&lt;tr&gt;</span>
+    <span class="code-tag">&lt;th</span> <span class="code-attr">scope</span>=<span class="code-str">"row"</span><span class="code-tag">&gt;</span>Mercurio<span class="code-tag">&lt;/th&gt;</span>
+    <span class="code-tag">&lt;td&gt;</span>4879<span class="code-tag">&lt;/td&gt;</span>
+  <span class="code-tag">&lt;/tr&gt;</span>
+<span class="code-tag">&lt;/tbody&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 · COMBINAR CELDAS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">Combinar celdas: colspan y rowspan</span>
+    </div>
+    <div class="card">
+      <p>A veces una celda ocupa <strong>varias columnas</strong> (<code>colspan</code>) o <strong>varias filas</strong> (<code>rowspan</code>). Es la forma correcta de hacer cabeceras de grupo o fusionar datos.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · colspan + rowspan</span>
+        </div>
+<pre><code><span class="code-tag">&lt;tr&gt;</span>
+  <span class="code-tag">&lt;th</span> <span class="code-attr">colspan</span>=<span class="code-str">"2"</span><span class="code-tag">&gt;</span>Planetas rocosos<span class="code-tag">&lt;/th&gt;</span>
+<span class="code-tag">&lt;/tr&gt;</span>
+<span class="code-tag">&lt;tr&gt;</span>
+  <span class="code-tag">&lt;th</span> <span class="code-attr">scope</span>=<span class="code-str">"row"</span><span class="code-tag">&gt;</span>Tierra<span class="code-tag">&lt;/th&gt;</span>
+  <span class="code-tag">&lt;td</span> <span class="code-attr">rowspan</span>=<span class="code-str">"2"</span><span class="code-tag">&gt;</span>Habitables<span class="code-tag">&lt;/td&gt;</span>
+<span class="code-tag">&lt;/tr&gt;</span>
+<span class="code-tag">&lt;tr&gt;</span>
+  <span class="code-tag">&lt;th</span> <span class="code-attr">scope</span>=<span class="code-str">"row"</span><span class="code-tag">&gt;</span>Marte<span class="code-tag">&lt;/th&gt;</span>
+<span class="code-tag">&lt;/tr&gt;</span></code></pre>
+      </div>
+      <div class="note-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#FB7185" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+        <p><strong>No uses tablas para el layout.</strong> Aunque en los 90 se hacía así, hoy es un antipatrón: confunde a los lectores de pantalla, rompe la responsividad y complica el CSS. Para el layout usa CSS Grid o Flexbox (lo verás en el Bloque II).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 05 · TU PRIMER MOMENTO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span>
+      <span class="num-title">Pruébalo aquí mismo</span>
+    </div>
+    <div class="card">
+      <p>Una tabla completa con <code>caption</code>, <code>thead</code>, <code>tbody</code>, <code>tfoot</code>, <code>scope</code> y un <code>colspan</code> para agrupar planetas. Pulsa <strong>Ejecutar</strong>.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · planetas.html</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runDemo()">Ejecutar</button>
+          </div>
+        </div>
+<pre><code><span class="code-tag">&lt;table&gt;</span>
+  <span class="code-tag">&lt;caption&gt;</span>Datos comparativos de los planetas del Sistema Solar<span class="code-tag">&lt;/caption&gt;</span>
+  <span class="code-tag">&lt;thead&gt;</span>
+    <span class="code-tag">&lt;tr&gt;</span>
+      <span class="code-tag">&lt;th</span> <span class="code-attr">scope</span>=<span class="code-str">"col"</span><span class="code-tag">&gt;</span>Planeta<span class="code-tag">&lt;/th&gt;</span>
+      <span class="code-tag">&lt;th</span> <span class="code-attr">scope</span>=<span class="code-str">"col"</span><span class="code-tag">&gt;</span>Diámetro (km)<span class="code-tag">&lt;/th&gt;</span>
+      <span class="code-tag">&lt;th</span> <span class="code-attr">scope</span>=<span class="code-str">"col"</span><span class="code-tag">&gt;</span>Distancia al Sol (UA)<span class="code-tag">&lt;/th&gt;</span>
+    <span class="code-tag">&lt;/tr&gt;</span>
+  <span class="code-tag">&lt;/thead&gt;</span>
+  <span class="code-tag">&lt;tbody&gt;</span>
+    <span class="code-tag">&lt;tr&gt;</span>
+      <span class="code-tag">&lt;th</span> <span class="code-attr">scope</span>=<span class="code-str">"row"</span><span class="code-tag">&gt;</span>Mercurio<span class="code-tag">&lt;/th&gt;</span>
+      <span class="code-tag">&lt;td&gt;</span>4879<span class="code-tag">&lt;/td&gt;</span>
+      <span class="code-tag">&lt;td&gt;</span>0.39<span class="code-tag">&lt;/td&gt;</span>
+    <span class="code-tag">&lt;/tr&gt;</span>
+    <span class="code-tag">&lt;tr&gt;</span>
+      <span class="code-tag">&lt;th</span> <span class="code-attr">scope</span>=<span class="code-str">"row"</span><span class="code-tag">&gt;</span>Venus<span class="code-tag">&lt;/th&gt;</span>
+      <span class="code-tag">&lt;td&gt;</span>12104<span class="code-tag">&lt;/td&gt;</span>
+      <span class="code-tag">&lt;td&gt;</span>0.72<span class="code-tag">&lt;/td&gt;</span>
+    <span class="code-tag">&lt;/tr&gt;</span>
+    <span class="code-tag">&lt;tr&gt;</span>
+      <span class="code-tag">&lt;th</span> <span class="code-attr">colspan</span>=<span class="code-str">"2"</span><span class="code-tag">&gt;</span>Planetas rocosos (interior)<span class="code-tag">&lt;/th&gt;</span>
+      <span class="code-tag">&lt;td&gt;</span>~1 UA<span class="code-tag">&lt;/td&gt;</span>
+    <span class="code-tag">&lt;/tr&gt;</span>
+  <span class="code-tag">&lt;/tbody&gt;</span>
+  <span class="code-tag">&lt;tfoot&gt;</span>
+    <span class="code-tag">&lt;tr&gt;</span>
+      <span class="code-tag">&lt;th</span> <span class="code-attr">scope</span>=<span class="code-str">"row"</span><span class="code-tag">&gt;</span>Total muestreado<span class="code-tag">&lt;/th&gt;</span>
+      <span class="code-tag">&lt;td</span> <span class="code-attr">colspan</span>=<span class="code-str">"2"</span><span class="code-tag">&gt;</span>3 entradas<span class="code-tag">&lt;/td&gt;</span>
+    <span class="code-tag">&lt;/tr&gt;</span>
+  <span class="code-tag">&lt;/tfoot&gt;</span>
+<span class="code-tag">&lt;/table&gt;</span></code></pre>
+      </div>
+      <div class="preview-block" id="preview">
+        <div class="preview-head">Vista previa renderizada</div>
+        <iframe class="preview-frame" id="previewFrame" sandbox="allow-same-origin" title="Vista previa"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 06 · RECURSOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span>
+      <span class="num-title">Recursos para profundizar</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Learn/HTML/Tables" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Tablas HTML</div>
+          <div class="res-desc">Tutorial completo: estructura, accesibilidad, caption, scope y estilo visual.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/th" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · &lt;th&gt; con scope</div>
+          <div class="res-desc">Referencia detallada del atributo scope, colspan y rowspan.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://web.dev/learn/html/tables" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">web.dev · Tables</div>
+          <div class="res-desc">Cuándo usar tablas (datos) y cuándo NO usarlas (layout) — la guía moderna.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="cta">
+    <div class="cta-label">Tu siguiente paso</div>
+    <h2>Ahora deja que el usuario hable contigo</h2>
+    <p>Hasta aquí tu página solo muestra. En el siguiente módulo entrarás en la <strong>parte interactiva</strong>: formularios. La forma estándar de recoger datos del usuario, con validación nativa del navegador y sin escribir una línea de JavaScript.</p>
+    <a class="cta-btn" href="M09_Formularios_1.html">
+      MÓDULO 09 · Formularios (parte 1)
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+function runDemo(){
+  var src = '<!DOCTYPE html>\n' +
+    '<html lang="es">\n' +
+    '  <head><meta charset="utf-8"><title>Planetas</title></head>\n' +
+    '  <body style="font-family:system-ui,sans-serif;padding:24px;background:%23f8fafc;color:%231f2937;max-width:680px;margin:0 auto;line-height:1.6">\n' +
+    '    <table style="width:100%;border-collapse:collapse;background:white;box-shadow:0 2px 8px rgba(0,0,0,0.08);border-radius:10px;overflow:hidden">\n' +
+    '      <caption style="padding:14px;background:%230e7490;color:white;font-weight:bold;text-align:left">Datos comparativos de los planetas del Sistema Solar</caption>\n' +
+    '      <thead style="background:%2306b6d4;color:white">\n' +
+    '        <tr><th scope="col" style="padding:10px;text-align:left">Planeta</th><th scope="col" style="padding:10px;text-align:left">Di&aacute;metro (km)</th><th scope="col" style="padding:10px;text-align:left">Distancia al Sol (UA)</th></tr>\n' +
+    '      </thead>\n' +
+    '      <tbody>\n' +
+    '        <tr style="border-top:1px solid %23e5e7eb"><th scope="row" style="padding:10px;text-align:left;font-weight:600">Mercurio</th><td style="padding:10px">4879</td><td style="padding:10px">0.39</td></tr>\n' +
+    '        <tr style="border-top:1px solid %23e5e7eb;background:%23f9fafb"><th scope="row" style="padding:10px;text-align:left;font-weight:600">Venus</th><td style="padding:10px">12104</td><td style="padding:10px">0.72</td></tr>\n' +
+    '        <tr style="border-top:1px solid %23e5e7eb"><th colspan="2" style="padding:10px;text-align:left;font-weight:600;font-style:italic;color:%236b7280">Planetas rocosos (interior)</th><td style="padding:10px">~1 UA</td></tr>\n' +
+    '      </tbody>\n' +
+    '      <tfoot style="background:%23f3f4f6;font-weight:600">\n' +
+    '        <tr><th scope="row" style="padding:10px;text-align:left">Total muestreado</th><td colspan="2" style="padding:10px">3 entradas</td></tr>\n' +
+    '      </tfoot>\n' +
+    '    </table>\n' +
+    '  </body>\n' +
+    '</html>';
+  var frame = document.getElementById('previewFrame');
+  var block = document.getElementById('preview');
+  block.classList.add('show');
+  frame.srcdoc = src;
+  frame.style.minHeight = '360px';
+}
+</script>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

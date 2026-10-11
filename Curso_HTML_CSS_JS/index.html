@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Indice del Curso HTML + CSS + JavaScript</title>
+  <style>
+    :root{
+      --bg:#09080f;
+      --panel:#14111e;
+      --panel-2:#1a1626;
+      --text:#f5f1ff;
+      --muted:#b4aec7;
+      --line:rgba(255,255,255,.08);
+      --html:#67e8f9;
+      --css:#34d399;
+      --js:#f5c451;
+      --accent:#a78bfa;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(103,232,249,.12), transparent 24%),
+        radial-gradient(circle at top right, rgba(167,139,250,.16), transparent 28%),
+        linear-gradient(180deg, #09080f 0%, #100d18 100%);
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{
+      width:min(1160px, calc(100% - 28px));
+      margin:0 auto;
+      padding:28px 0 60px;
+    }
+    .top{
+      display:flex;
+      flex-wrap:wrap;
+      gap:14px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:20px;
+    }
+    .back{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      min-height:42px;
+      padding:0 14px;
+      border-radius:12px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      color:var(--muted);
+      font-weight:700;
+    }
+    .hero{
+      padding:28px;
+      border-radius:28px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(26,22,38,.96), rgba(16,13,24,.96));
+      margin-bottom:22px;
+    }
+    .eyebrow{
+      color:var(--html);
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      font-weight:800;
+    }
+    h1{
+      margin:12px 0 10px;
+      font-size:clamp(2rem, 4vw, 3.6rem);
+      line-height:1;
+    }
+    .hero p{
+      margin:0;
+      color:var(--muted);
+      max-width:68ch;
+      line-height:1.7;
+    }
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:20px;
+    }
+    .button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:46px;
+      padding:0 16px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      font-weight:700;
+    }
+    .button.primary{
+      background:var(--accent);
+      border-color:transparent;
+      color:#140d22;
+    }
+    .modules{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+      gap:18px;
+    }
+    .group{
+      padding:22px;
+      border-radius:24px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(20,17,30,.98), rgba(12,10,18,.98));
+    }
+    .group h2{
+      margin:0 0 8px;
+      font-size:1.3rem;
+    }
+    .group p{
+      margin:0 0 14px;
+      color:var(--muted);
+      line-height:1.6;
+    }
+    .tag{
+      display:inline-block;
+      margin-bottom:10px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:.82rem;
+      font-weight:800;
+    }
+    .tag.html{background:rgba(103,232,249,.12); color:var(--html)}
+    .tag.css{background:rgba(52,211,153,.12); color:var(--css)}
+    .tag.js{background:rgba(245,196,81,.12); color:var(--js)}
+    ol{
+      margin:0;
+      padding-left:20px;
+    }
+    li{
+      margin:0 0 10px;
+      color:var(--muted);
+      line-height:1.55;
+    }
+    li a{
+      color:var(--text);
+      font-weight:700;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="top">
+      <a class="back" href="../">Volver a la biblioteca</a>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow">45 modulos autocontenidos</div>
+      <h1>Curso HTML + CSS + JavaScript</h1>
+      <p>Empieza por el modulo 00 y sigue en orden. Cada archivo abre directo en el navegador y no depende de instalacion, login ni servidor.</p>
+      <div class="actions">
+        <a class="button primary" href="./01_HTML/M00_Bienvenido.html">Empezar desde M00</a>
+        <a class="button" href="./README.md">Ver README</a>
+      </div>
+    </section>
+
+    <section class="modules">
+      <article class="group">
+        <span class="tag html">Bloque I · HTML</span>
+        <h2>Fundamentos y semantica</h2>
+        <p>Del documento basico a formularios, accesibilidad y APIs nativas.</p>
+        <ol>
+          <li><a href="./01_HTML/M00_Bienvenido.html">M00 · Bienvenido</a></li>
+          <li><a href="./01_HTML/M01_Primera_Pagina.html">M01 · Primera Pagina</a></li>
+          <li><a href="./01_HTML/M02_Sintaxis_Elementos.html">M02 · Sintaxis y Elementos</a></li>
+          <li><a href="./01_HTML/M03_Estructura_Semantica.html">M03 · Estructura Semantica</a></li>
+          <li><a href="./01_HTML/M04_Texto_Encabezados.html">M04 · Texto y Encabezados</a></li>
+          <li><a href="./01_HTML/M05_Enlaces_Navegacion.html">M05 · Enlaces y Navegacion</a></li>
+          <li><a href="./01_HTML/M06_Listas.html">M06 · Listas</a></li>
+          <li><a href="./01_HTML/M07_Imagenes_Multimedia.html">M07 · Imagenes y Multimedia</a></li>
+          <li><a href="./01_HTML/M08_Tablas.html">M08 · Tablas</a></li>
+          <li><a href="./01_HTML/M09_Formularios_1.html">M09 · Formularios 1</a></li>
+          <li><a href="./01_HTML/M10_Formularios_2_Interactividad.html">M10 · Formularios 2 e Interactividad</a></li>
+          <li><a href="./01_HTML/M11_Accesibilidad.html">M11 · Accesibilidad</a></li>
+          <li><a href="./01_HTML/M12_Metadatos_SEO_Social.html">M12 · Metadatos, SEO y Social</a></li>
+          <li><a href="./01_HTML/M13_APIs_HTML5.html">M13 · APIs HTML5</a></li>
+          <li><a href="./01_HTML/M14_Buenas_practicas.html">M14 · Buenas practicas</a></li>
+        </ol>
+      </article>
+
+      <article class="group">
+        <span class="tag css">Bloque II · CSS</span>
+        <h2>Layout, estilo y responsive</h2>
+        <p>Desde cascada y caja hasta Grid, animaciones y CSS moderno.</p>
+        <ol>
+          <li><a href="./02_CSS/M15_Que_es_CSS.html">M15 · Que es CSS</a></li>
+          <li><a href="./02_CSS/M16_cascada_especificidad_herencia.html">M16 · Cascada, especificidad y herencia</a></li>
+          <li><a href="./02_CSS/M17_modelo_caja.html">M17 · Modelo de caja</a></li>
+          <li><a href="./02_CSS/M18_flujo_posicionamiento.html">M18 · Flujo y posicionamiento</a></li>
+          <li><a href="./02_CSS/M19_flexbox.html">M19 · Flexbox</a></li>
+          <li><a href="./02_CSS/M20_grid.html">M20 · Grid</a></li>
+          <li><a href="./02_CSS/M21_diseno_responsivo.html">M21 · Diseno responsivo</a></li>
+          <li><a href="./02_CSS/M22_colores_fondos.html">M22 · Colores y fondos</a></li>
+          <li><a href="./02_CSS/M23_tipografia.html">M23 · Tipografia</a></li>
+          <li><a href="./02_CSS/M24_transiciones_animaciones.html">M24 · Transiciones y animaciones</a></li>
+          <li><a href="./02_CSS/M25_transformaciones.html">M25 · Transformaciones</a></li>
+          <li><a href="./02_CSS/M26_variables_pseudo.html">M26 · Variables y pseudo-clases</a></li>
+          <li><a href="./02_CSS/M27_CSS_moderno_arquitectura.html">M27 · CSS moderno y arquitectura</a></li>
+        </ol>
+      </article>
+
+      <article class="group">
+        <span class="tag js">Bloque III · JavaScript</span>
+        <h2>Interactividad y proyecto final</h2>
+        <p>El recorrido termina con DOM, async, localStorage, debugging y proyecto integrador.</p>
+        <ol>
+          <li><a href="./03_JS/M28_Que_es_JS.html">M28 · Que es JavaScript</a></li>
+          <li><a href="./03_JS/M29_Variables.html">M29 · Variables</a></li>
+          <li><a href="./03_JS/M30_Tipos_operadores.html">M30 · Tipos y operadores</a></li>
+          <li><a href="./03_JS/M31_Flujo_control.html">M31 · Flujo de control</a></li>
+          <li><a href="./03_JS/M32_Funciones.html">M32 · Funciones</a></li>
+          <li><a href="./03_JS/M33_Arrays.html">M33 · Arrays</a></li>
+          <li><a href="./03_JS/M34_Objetos_closures.html">M34 · Objetos y closures</a></li>
+          <li><a href="./03_JS/M35_Strings_templates.html">M35 · Strings y templates</a></li>
+          <li><a href="./03_JS/M36_DOM_eventos.html">M36 · DOM y eventos</a></li>
+          <li><a href="./03_JS/M37_Manejo_errores.html">M37 · Manejo de errores</a></li>
+          <li><a href="./03_JS/M38_Async_fetch.html">M38 · Async y fetch</a></li>
+          <li><a href="./03_JS/M39_Organizacion_codigo.html">M39 · Organizacion del codigo</a></li>
+          <li><a href="./03_JS/M40_Clases_POO.html">M40 · Clases y POO</a></li>
+          <li><a href="./03_JS/M41_JSON.html">M41 · JSON</a></li>
+          <li><a href="./03_JS/M42_localStorage.html">M42 · localStorage</a></li>
+          <li><a href="./03_JS/M43_Buenas_practicas_debug.html">M43 · Buenas practicas y debug</a></li>
+          <li><a href="./03_JS/M44_Proyecto_final.html">M44 · Proyecto final</a></li>
+        </ol>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

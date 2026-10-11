@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M05 · Enlaces y navegación — Curso HTML+CSS+JS</title>
+<style>
+/* ═══ RESET ═══ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#110F18; --bg-s3:#15131F; --bg-s4:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --cyan:#67E8F9; --cyan-soft:rgba(95,208,224,.06); --cyan-border:rgba(95,208,224,.2);
+  --pink:#F9A8D4; --pink-soft:rgba(249,168,212,.06); --pink-border:rgba(249,168,212,.2);
+  --yellow:#F5C451; --green:#34D399; --red:#FB7185;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+/* ═══ BACKGROUND GLOW ═══ */
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(34,184,207,.18),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+/* ═══ LAYOUT ═══ */
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+/* ═══ HERO ═══ */
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(95,208,224,.12);border:1px solid rgba(95,208,224,.32);color:#7FE0F0;
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--cyan)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+/* ═══ SECTION CARD ═══ */
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+/* ═══ NUMBERED SECTION ═══ */
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+/* ═══ CONTENT BLOCKS ═══ */
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+.content-block strong{color:#EEEBF6}
+.content-block ul{margin:8px 0 12px 18px;color:#A7A4B8;line-height:1.75;font-size:15px}
+.content-block li{margin-bottom:4px}
+.content-block li code{font-family:var(--font-mono);color:#7FE0F0}
+
+/* ═══ CODE BLOCK ═══ */
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+.code-btn{padding:6px 14px;border-radius:9px;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text-sec);font-family:var(--font-body);
+  font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.code-btn:hover{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+.code-btn.primary{background:rgba(95,208,224,.16);border-color:var(--cyan-border);color:#7FE0F0}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#7FE0F0}
+.code-tag{color:#7FE0F0}
+
+/* ═══ PREVIEW BLOCK (RENDERED HTML) ═══ */
+.preview-block{margin-top:12px;border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;display:none;background:#fff}
+.preview-block.show{display:block}
+.preview-head{padding:8px 16px;background:#100F18;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;color:var(--text-mut);letter-spacing:.12em;
+  text-transform:uppercase}
+.preview-frame{width:100%;min-height:140px;border:0;background:#fff}
+
+/* ═══ STEP LIST ═══ */
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;
+  color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body kbd{font-family:var(--font-mono);background:rgba(255,255,255,.06);padding:2px 6px;
+  border-radius:5px;border:1px solid var(--border);font-size:12px}
+.step-body strong{color:#EEEBF6}
+.step-body code{font-family:var(--font-mono);color:#7FE0F0}
+
+/* ═══ RESOURCE LINKS ═══ */
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(95,208,224,.08);border-color:rgba(95,208,224,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+/* ═══ CTA ═══ */
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,#22B8CF,#0EA5C7);color:#06120B;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(34,184,207,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(34,184,207,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 05 · ENLACES Y NAVEGACIÓN
+    </div>
+    <h1>La etiqueta que <span class="hl">inventó la web</span></h1>
+    <p>Un documento sin enlaces es solo papel. El elemento <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;a&gt;</code> convirtió documentos sueltos en una red: navegación interna, enlaces externos, correos, llamadas y descargas. En este módulo aprendes a dominarlo todo — incluido el detalle de seguridad que casi nadie explica y que te puede salvar de un ataque.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+        href, target, rel
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        Runner en vivo
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ~60 min de lectura
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 · LA ANATOMÍA DE <A> ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">La anatomía de &lt;a href&gt;</span>
+    </div>
+    <div class="card">
+      <p>El enlace es el elemento más poderoso de la web. Lo aprendes en cinco segundos y lo perfeccionas en cinco años. Todo empieza por su atributo estrella: <code style="font-family:var(--font-mono);color:#7FE0F0">href</code> — <em>hypertext reference</em>, la dirección de destino.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · anatomía del enlace</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"https://developer.mozilla.org"</span><span class="code-kw">&gt;</span>
+  Documentación MDN              <span class="code-cmt">&lt;!-- el texto visible que se clica --&gt;</span>
+<span class="code-kw">&lt;/a&gt;</span>
+   ↑                              ↑
+   <span class="code-fn">href</span> = destino (URL)            contenido = lo que ve el usuario</code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Las dos caras del enlace: absoluto vs relativo</h3>
+        <p>El <code>href</code> puede apuntar a otra web (URL absoluta) o a una página dentro de tu propio sitio (URL relativa). Saber cuándo usar cada una es lo que diferencia tu sitio sano de un sitio con enlaces rotos.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · absoluto vs relativo</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- Absoluto: protocolo + dominio completo --&gt;</span>
+<span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"https://developer.mozilla.org"</span><span class="code-kw">&gt;</span>MDN<span class="code-kw">&lt;/a&gt;</span>
+
+<span class="code-cmt">&lt;!-- Relativo: ruta dentro de tu propio sitio --&gt;</span>
+<span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"blog.html"</span><span class="code-kw">&gt;</span>Blog<span class="code-kw">&lt;/a&gt;</span>
+<span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"posts/pan.html"</span><span class="code-kw">&gt;</span>Pan<span class="code-kw">&lt;/a&gt;</span>
+<span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"../contacto.html"</span><span class="code-kw">&gt;</span>Contacto<span class="code-kw">&lt;/a&gt;</span>   <span class="code-cmt">&lt;!-- sube un nivel --&gt;</span>
+<span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"/"</span><span class="code-kw">&gt;</span>Inicio<span class="code-kw">&lt;/a&gt;</span>                 <span class="code-cmt">&lt;!-- raíz del sitio --&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <p>Si tu sitio cambia de dominio, los enlaces relativos <strong>siguen funcionando</strong>: solo cambian de contexto. Los absolutos apuntan siempre al mismo destino, vayas donde vayas. Por eso, enlaces internos — relativos; enlaces a otros sitios — absolutos.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 · ANCLAS Y NAVEGACIÓN INTERNA ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">Anclas: navegación interna</span>
+    </div>
+    <div class="card">
+      <p>¿Quieres que al pulsar un enlace el navegador salte a una sección de la <strong>misma página</strong>? Para eso existen las anclas: enlaces que apuntan a un <code>id</code> del documento mediante el símbolo <code>#</code>.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · anclas con #id</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- Índice de navegación interna --&gt;</span>
+<span class="code-kw">&lt;nav&gt;</span>
+  <span class="code-kw">&lt;ul&gt;</span>
+    <span class="code-kw">&lt;li&gt;&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#seccion-1"</span><span class="code-kw">&gt;</span>Introducción<span class="code-kw">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="code-kw">&lt;li&gt;&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#seccion-2"</span><span class="code-kw">&gt;</span>Desarrollo<span class="code-kw">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="code-kw">&lt;li&gt;&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#seccion-3"</span><span class="code-kw">&gt;</span>Conclusión<span class="code-kw">&lt;/a&gt;&lt;/li&gt;</span>
+  <span class="code-kw">&lt;/ul&gt;</span>
+<span class="code-kw">&lt;/nav&gt;</span>
+
+<span class="code-cmt">&lt;!-- El destino: cualquier etiqueta con ese id --&gt;</span>
+<span class="code-kw">&lt;section</span> <span class="code-fn">id</span>=<span class="code-str">"seccion-1"</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;h2&gt;</span>Introducción<span class="code-kw">&lt;/h2&gt;</span>
+  <span class="code-kw">&lt;p&gt;</span>Bienvenido a este artículo...<span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;/section&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Reglas de las anclas</h3>
+        <ul>
+          <li>El <code>href</code> usa <code>#</code> + el valor exacto del <code>id</code> de destino.</li>
+          <li>Los <code>id</code> son <strong>únicos</strong> en la página: si se repiten, el navegador solo salta al primero.</li>
+          <li>Puedes enlazar a una sección de otra página: <code>&lt;a href="blog.html#pan"&gt;</code>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 · TARGET Y REL: SEGURIDAD ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">target="_blank" y rel: la pareja inseparable</span>
+    </div>
+    <div class="card">
+      <p>Hay una pareja de atributos que <strong>siempre</strong> van juntos cuando abres un enlace en una pestaña nueva. Olvidar el segundo es uno de los errores de seguridad más comunes en HTML. Vamos a ver por qué.</p>
+      <div class="content-block">
+        <h3><code>target="_blank"</code> — abre en una pestaña nueva</h3>
+        <p>El atributo <code>target</code> dice dónde se abre el enlace. El valor <code>_blank</code> significa "una pestaña nueva o ventana nueva". El usuario no abandona tu página.</p>
+      </div>
+      <div class="content-block">
+        <h3><code>rel="noopener noreferrer"</code> — el guardaespaldas</h3>
+        <p>Sin <code>rel="noopener noreferrer"</code>, la página nueva <strong>puede acceder al objeto <code>window.opener</code> de tu página original</strong>. Una página maliciosa podría, en algunos navegadores antiguos, redirigir tu pestaña a una web de phishing sin que el usuario lo note. <strong>Siempre</strong> acompaña <code>target="_blank"</code> con este <code>rel</code>.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · enlace externo seguro</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- CORRECTO: target + rel juntos. Siempre. --&gt;</span>
+<span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"https://developer.mozilla.org"</span>
+   <span class="code-fn">target</span>=<span class="code-str">"_blank"</span>
+   <span class="code-fn">rel</span>=<span class="code-str">"noopener noreferrer"</span><span class="code-kw">&gt;</span>
+  Documentación MDN
+<span class="code-kw">&lt;/a&gt;</span>
+
+<span class="code-cmt">&lt;!-- MAL: target sin rel. Riesgo de seguridad. --&gt;</span>
+<span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"externo.html"</span> <span class="code-fn">target</span>=<span class="code-str">"_blank"</span><span class="code-kw">&gt;</span>Peligroso<span class="code-kw">&lt;/a&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>¿Qué hace cada valor de <code>rel</code>?</h3>
+        <ul>
+          <li><code>noopener</code> — la página nueva no puede acceder a <code>window.opener</code> de tu página.</li>
+          <li><code>noreferrer</code> — no envía la URL de origen al sitio de destino (extra de privacidad).</li>
+          <li><code>nofollow</code> — le dices a los buscadores: "no sigas este enlace" (útil para enlaces patrocinados).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 · ESQUEMAS ESPECIALES ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">Esquemas especiales: mailto, tel, download</span>
+    </div>
+    <div class="card">
+      <p>El atributo <code>href</code> no solo apunta a URLs http. Hay esquemas especiales que disparan otras apps del sistema — el correo, el teléfono, o una descarga directa. Conocerlos te ahorra componentes de JavaScript enteros.</p>
+      <div class="content-block">
+        <h3>Los cuatro esquemas que más usarás</h3>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · esquemas especiales</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- Mailto: abre la app de correo con destinatario precargado --&gt;</span>
+<span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"mailto:tucorreo@ejemplo.com"</span><span class="code-kw">&gt;</span>Escríbeme<span class="code-kw">&lt;/a&gt;</span>
+
+<span class="code-cmt">&lt;!-- Mailto con asunto y cuerpo del mensaje --&gt;</span>
+<span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"mailto:hola@ejemplo.com?subject=Hola%20Rubén&amp;body=¿Cómo%20estás?"</span><span class="code-kw">&gt;</span>
+  Contacto
+<span class="code-kw">&lt;/a&gt;</span>
+
+<span class="code-cmt">&lt;!-- Tel: en móvil, abre el marcador con el número --&gt;</span>
+<span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"tel:+34123456789"</span><span class="code-kw">&gt;</span>Llamar<span class="code-kw">&lt;/a&gt;</span>
+
+<span class="code-cmt">&lt;!-- Download: fuerza la descarga en vez de abrir --&gt;</span>
+<span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"documento.pdf"</span> <span class="code-fn">download</span><span class="code-kw">&gt;</span>Descargar PDF<span class="code-kw">&lt;/a&gt;</span>
+
+<span class="code-cmt">&lt;!-- Download con nombre personalizado --&gt;</span>
+<span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"reporte.pdf"</span> <span class="code-fn">download</span>=<span class="code-str">"mi-reporte.pdf"</span><span class="code-kw">&gt;</span>Descargar<span class="code-kw">&lt;/a&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Detalles que casi nadie explica</h3>
+        <ul>
+          <li><code>mailto:</code> acepta <code>?</code> para parámetros como <code>subject</code>, <code>body</code> y <code>cc</code> — entre los destinatarios van comas.</li>
+          <li>Los espacios en <code>mailto:</code> y <code>tel:</code> deben codificarse como <code>%20</code> en los parámetros.</li>
+          <li><code>tel:</code> solo funciona en dispositivos con app telefónica; en escritorio, no hace nada (a veces muestra un diálogo raro).</li>
+          <li><code>download</code> solo funciona para archivos del <strong>mismo origen</strong> — si lo apuntas a un dominio distinto, el navegador puede ignorarlo.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 05 · ACCESIBILIDAD DEL TEXTO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span>
+      <span class="num-title">El texto del enlace: accesibilidad</span>
+    </div>
+    <div class="card">
+      <p>Un enlace que dice "haz clic aquí" es invisible para los lectores de pantalla. Cuando un usuario navega por_voice lee los enlaces uno a uno, sin contexto. Tu texto del enlace debe tener <strong>sentido por sí solo</strong>, fuera de la frase que lo rodea.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · texto accesible vs no</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- MAL: "aquí" no describe el destino --&gt;</span>
+Para más información, haz clic <span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"/docs"</span><span class="code-kw">&gt;</span>aquí<span class="code-kw">&lt;/a&gt;</span>.
+
+<span class="code-cmt">&lt;!-- CORRECTO: el texto describe a dónde vas --&gt;</span>
+Lee la <span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"/docs"</span><span class="code-kw">&gt;</span>documentación completa<span class="code-kw">&lt;/a&gt;</span>.
+
+<span class="code-cmt">&lt;!-- TRAMPA: la URL no es texto accesible --&gt;</span>
+Visita <span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"https://mdn.dev"</span><span class="code-kw">&gt;</span>https://mdn.dev<span class="code-kw">&lt;/a&gt;</span>.
+
+<span class="code-cmt">&lt;-- MEJOR: texto humano + URL visible --&gt;</span>
+Visita <span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"https://mdn.dev"</span><span class="code-kw">&gt;</span>MDN<span class="code-kw">&lt;/a&gt;</span>.</code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Cuando el diseño no deja texto claro: <code>aria-label</code></h3>
+        <p>A veces el diseño solo deja sitio para un icono. En ese caso, añade el atributo <code>aria-label="..."</code> con la descripción para el lector de pantalla.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · aria-label en enlaces con icono</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#"</span> <span class="code-fn">aria-label</span>=<span class="code-str">"Ir al inicio"</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;svg&gt;</span>...icono de casa...<span class="code-kw">&lt;/svg&gt;</span>
+<span class="code-kw">&lt;/a&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 06 · EJERCICIO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span>
+      <span class="num-title">Tu ejercicio: índice con enlaces</span>
+    </div>
+    <div class="card">
+      <p>Vas a construir una página con un índice que salta a tres secciones internas, un enlace externo seguro, un <code style="font-family:var(--font-mono);color:#7FE0F0">mailto</code> y un <code style="font-family:var(--font-mono);color:#7FE0F0">tel</code>. Lo que veías en cualquier blog con índice de contenidos — pero tuyo.</p>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-body">
+            <h4>Crea <code>enlaces.html</code> con la estructura mínima</h4>
+            <p>El molde del M01: <code>&lt;!DOCTYPE html&gt;</code>, <code>&lt;html lang="es"&gt;</code>, <code>&lt;head&gt;</code> y <code>&lt;body&gt;</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-body">
+            <h4>Un <code>&lt;nav&gt;</code> como índice interno</h4>
+            <p>Tres enlaces con <code>href="#seccion-1"</code>, <code>"#seccion-2"</code> y <code>"#seccion-3"</code>. Mételos dentro de una <code>&lt;ul&gt;</code> con tres <code>&lt;li&gt;</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-body">
+            <h4>Tres <code>&lt;section id="..."&gt;</code> con contenido</h4>
+            <p>Cada una con un <code>&lt;h2&gt;</code> y un párrafo explicativo. Comprueba que al pulsar los enlaces del índice el navegador salta a la sección.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <div class="step-body">
+            <h4>Un enlace externo seguro</h4>
+            <p>Un enlace a <code>https://developer.mozilla.org</code> con <code>target="_blank"</code> y <code>rel="noopener noreferrer"</code>. Comprueba que se abre en pestaña nueva.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">5</span>
+          <div class="step-body">
+            <h4>Enlaces <code>mailto:</code> y <code>tel:</code></h4>
+            <p>Un <code>&lt;a href="mailto:tucorreo@ejemplo.com"&gt;</code> que abra la app de correo y un <code>&lt;a href="tel:+34123456789"&gt;</code> que abra el marcador. Comprueba el comportamiento en tu sistema.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 07 · RUNNER EN VIVO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">7</span>
+      <span class="num-title">Pruébalo aquí mismo</span>
+    </div>
+    <div class="card">
+      <p>Pulsa <strong>Ejecutar</strong> para ver una página completa con índice interno, secciones, un enlace externo seguro y un enlace de contacto. Todo funcional.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · enlaces.html</span>
+          <div class="code-btns">
+            <button class="code-btn primary" onclick="runHTML()">Ejecutar</button>
+          </div>
+        </div>
+<pre><code><span class="code-kw">&lt;nav&gt;</span>
+  <span class="code-kw">&lt;ul&gt;</span>
+    <span class="code-kw">&lt;li&gt;&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#seccion-1"</span><span class="code-kw">&gt;</span>Inicio<span class="code-kw">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="code-kw">&lt;li&gt;&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#seccion-2"</span><span class="code-kw">&gt;</span>Artículos<span class="code-kw">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="code-kw">&lt;li&gt;&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"#seccion-3"</span><span class="code-kw">&gt;</span>Contacto<span class="code-kw">&lt;/a&gt;&lt;/li&gt;</span>
+  <span class="code-kw">&lt;/ul&gt;</span>
+<span class="code-kw">&lt;/nav&gt;</span>
+
+<span class="code-kw">&lt;section</span> <span class="code-fn">id</span>=<span class="code-str">"seccion-1"</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;h2&gt;</span>Inicio<span class="code-kw">&lt;/h2&gt;</span>
+  <span class="code-kw">&lt;p&gt;</span>Bienvenido a mi página de ejemplo...<span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;/section&gt;</span>
+
+<span class="code-kw">&lt;section</span> <span class="code-fn">id</span>=<span class="code-str">"seccion-2"</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;h2&gt;</span>Artículos<span class="code-kw">&lt;/h2&gt;</span>
+  <span class="code-kw">&lt;p&gt;</span>Aquí van mis publicaciones.<span class="code-kw">&lt;/p&gt;</span>
+  <span class="code-kw">&lt;p&gt;</span>Más info en <span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"https://developer.mozilla.org"</span>
+     <span class="code-fn">target</span>=<span class="code-str">"_blank"</span> <span class="code-fn">rel</span>=<span class="code-str">"noopener noreferrer"</span><span class="code-kw">&gt;</span>
+     Documentación MDN<span class="code-kw">&lt;/a&gt;</span>.<span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;/section&gt;</span>
+
+<span class="code-kw">&lt;section</span> <span class="code-fn">id</span>=<span class="code-str">"seccion-3"</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;h2&gt;</span>Contacto<span class="code-kw">&lt;/h2&gt;</span>
+  <span class="code-kw">&lt;p&gt;</span>
+    <span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"mailto:hola@ejemplo.com"</span><span class="code-kw">&gt;</span>Escríbeme<span class="code-kw">&lt;/a&gt;</span> ·
+    <span class="code-kw">&lt;a</span> <span class="code-fn">href</span>=<span class="code-str">"tel:+34123456789"</span><span class="code-kw">&gt;</span>Llamar<span class="code-kw">&lt;/a&gt;</span>
+  <span class="code-kw">&lt;/p&gt;</span>
+<span class="code-kw">&lt;/section&gt;</span></code></pre>
+      </div>
+      <div class="preview-block" id="previewHTML">
+        <div class="preview-head">Vista previa renderizada</div>
+        <iframe class="preview-frame" id="previewFrame" sandbox="allow-same-origin" title="Vista previa"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 08 · RECURSOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">8</span>
+      <span class="num-title">Recursos</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Learn/HTML/Introduction_to_HTML/Creating_hyperlinks" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · Creando enlaces</div>
+          <div class="res-desc">Cómo crear hipervínculos, URLs absolutas vs relativas y buenas prácticas.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://web.dev/learn/html/links" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">web.dev · Links</div>
+          <div class="res-desc">Guía moderna sobre enlaces accesibles, texto descriptivo y navegación.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/HTML/Element/a" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · El elemento &lt;a&gt;</div>
+          <div class="res-desc">Referencia completa del ancla, todos sus atributos: href, target, rel, download.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="cta">
+    <div class="cta-label">Tu siguiente paso</div>
+    <h2>Ya dominas el HTML — hora del CSS</h2>
+    <p>Has escrito el esqueleto, lo has organizado semánticamente y lo has conectado con enlaces. El bloque de HTML está completo. Ahora viene la piel: el CSS que lo convierte en algo con estilo, color y diseño.</p>
+    <a class="cta-btn" href="../02_CSS/M01_Intro_CSS.html">
+      BLOQUE CSS · Introducción al CSS
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+// ═══ INLINE HTML RUNNER ═══
+function runHTML(){
+  var src = '<!DOCTYPE html>\n' +
+    '<html lang="es">\n' +
+    '  <head>\n' +
+    '    <meta charset="utf-8">\n' +
+    '    <title>Enlaces</title>\n' +
+    '  </head>\n' +
+    '  <body style="font-family:system-ui,sans-serif;line-height:1.6;color:#111;margin:0;padding:20px;max-width:600px">\n' +
+    '    <nav style="background:#f4f4f4;padding:12px 18px;border-radius:8px;margin-bottom:22px">\n' +
+    '      <ul style="list-style:none;margin:0;padding:0;display:flex;gap:18px">\n' +
+    '        <li><a href="#seccion-1">Inicio</a></li>\n' +
+    '        <li><a href="#seccion-2">Art\u00edculos</a></li>\n' +
+    '        <li><a href="#seccion-3">Contacto</a></li>\n' +
+    '      </ul>\n' +
+    '    </nav>\n' +
+    '    <section id="seccion-1" style="margin-bottom:26px;padding-bottom:18px;border-bottom:1px dashed #ccc">\n' +
+    '      <h2 style="margin:0 0 8px">Inicio</h2>\n' +
+    '      <p style="margin:0">Bienvenido a mi p\u00e1gina de ejemplo. Pulsa los enlaces del \u00edndice para navegar.</p>\n' +
+    '    </section>\n' +
+    '    <section id="seccion-2" style="margin-bottom:26px;padding-bottom:18px;border-bottom:1px dashed #ccc">\n' +
+    '      <h2 style="margin:0 0 8px">Art\u00edculos</h2>\n' +
+    '      <p style="margin:0 0 8px">Aqu\u00ed van mis publicaciones.</p>\n' +
+    '      <p style="margin:0">M\u00e1s info en <a href="https://developer.mozilla.org" target="_blank" rel="noopener noreferrer">Documentaci\u00f3n MDN</a> (se abre en pesta\u00f1a nueva).</p>\n' +
+    '    </section>\n' +
+    '    <section id="seccion-3">\n' +
+    '      <h2 style="margin:0 0 8px">Contacto</h2>\n' +
+    '      <p style="margin:0">\n' +
+    '        <a href="mailto:hola@ejemplo.com">Escr\u00edbeme</a> \u00b7\n' +
+    '        <a href="tel:+34123456789">Llamar</a>\n' +
+    '      </p>\n' +
+    '    </section>\n' +
+    '  </body>\n' +
+    '</html>';
+  var frame = document.getElementById('previewFrame');
+  var block = document.getElementById('previewHTML');
+  block.classList.add('show');
+  frame.srcdoc = src;
+  frame.style.minHeight = '420px';
+}
+</script>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

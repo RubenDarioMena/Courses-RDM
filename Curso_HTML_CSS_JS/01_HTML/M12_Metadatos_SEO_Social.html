@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M12 · Metadatos, SEO y social sharing — Curso HTML+CSS+JS</title>
+<style>
+/* ═══ RESET ═══ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#09080F; --bg-s1:#0C0B13; --bg-s2:#110F18; --bg-s3:#15131F; --bg-s4:#1B1926;
+  --text-pri:#EEEBF6; --text-sec:#C7CDE0; --text-mut:#8B889C; --text-sub:#5E5C6E;
+  --accent:#A78BFA; --accent-soft:rgba(139,92,246,.16); --accent-border:rgba(167,139,250,.35);
+  --cyan:#67E8F9; --cyan-soft:rgba(95,208,224,.06); --cyan-border:rgba(95,208,224,.2);
+  --pink:#F9A8D4; --pink-soft:rgba(249,168,212,.06); --pink-border:rgba(249,168,212,.2);
+  --yellow:#F5C451; --green:#34D399; --red:#FB7185;
+  --border:rgba(255,255,255,.07); --border-hi:rgba(255,255,255,.12);
+  --font-head:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono','Fira Code',monospace;
+}
+body{background:var(--bg-base);color:var(--text-sec);font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
+::selection{background:rgba(167,139,250,.32);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+a{color:inherit;text-decoration:none}
+
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 520px at 78% -10%,rgba(34,184,207,.18),transparent 60%),
+  radial-gradient(720px 520px at -5% 95%,rgba(139,92,246,.11),transparent 55%),
+  radial-gradient(620px 440px at 105% 60%,rgba(236,91,158,.07),transparent 60%)}
+
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;
+  padding:clamp(30px,6vw,68px) clamp(16px,4vw,32px) 130px}
+
+.hero{margin-bottom:clamp(34px,5vw,52px)}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:6px 13px;border-radius:999px;
+  background:rgba(95,208,224,.12);border:1px solid rgba(95,208,224,.32);color:#7FE0F0;
+  font-size:12px;font-weight:600;letter-spacing:.16em;font-family:var(--font-mono)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan)}
+h1{font-family:var(--font-head);font-size:clamp(34px,8vw,60px);line-height:1.03;
+  font-weight:700;color:#F4F2FB;margin:20px 0 0;letter-spacing:-.025em}
+h1 .hl{color:var(--cyan)}
+.hero p{color:#A7A4B8;font-size:clamp(16px,2.3vw,19px);line-height:1.65;
+  margin:20px 0 0;max-width:60ch}
+.meta-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);color:#9A97AC;
+  font-size:13px;font-weight:500}
+.chip svg{width:14px;height:14px;flex-shrink:0}
+
+.card{background:linear-gradient(180deg,var(--bg-s3),var(--bg-s2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:clamp(20px,4vw,30px);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 50px -34px rgba(0,0,0,.9);
+  margin-bottom:clamp(24px,4vw,38px)}
+h2{font-family:var(--font-head);font-weight:700;
+  font-size:clamp(21px,3vw,27px);color:#F4F2FB;margin:0 0 6px;letter-spacing:-.015em}
+.card>p{color:#A7A4B8;font-size:clamp(15px,1.6vw,16.5px);line-height:1.7;
+  margin:0 0 20px;max-width:62ch}
+
+.num-section{margin-bottom:clamp(24px,4vw,38px)}
+.num-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.num-tag{font-family:var(--font-head);font-weight:700;font-size:14px;width:30px;
+  height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.num-title{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
+  color:var(--text-mut);text-transform:uppercase}
+
+.content-block{margin-bottom:18px}
+.content-block h3{font-family:var(--font-head);font-weight:600;font-size:18px;
+  color:var(--text-pri);margin-bottom:8px}
+.content-block p{color:#A7A4B8;line-height:1.7;font-size:15.5px;max-width:60ch;margin-bottom:12px}
+.content-block strong{color:#EEEBF6}
+
+.code-block{background:var(--bg-s1);border:1px solid var(--border);border-radius:13px;
+  overflow:hidden;margin:14px 0}
+.code-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#100F18;border-bottom:1px solid var(--border)}
+.code-head span{font-family:var(--font-mono);font-size:11px;color:var(--text-mut);
+  letter-spacing:.12em;text-transform:uppercase}
+.code-btns{display:flex;gap:8px}
+pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--font-mono);
+  font-size:13.5px;line-height:1.75;color:#C7CDE0}
+.code-cmt{color:#5C6A75;font-style:italic}
+.code-fn{color:#82AAFF}
+.code-str{color:#ECC48D}
+.code-kw{color:#7FE0F0}
+.code-tag{color:#7FE0F0}
+
+/* TAG PILLS to differentiate meta layers */
+.tag-pill{display:inline-block;font-family:var(--font-mono);font-size:11px;
+  padding:3px 9px;border-radius:6px;margin-bottom:10px;font-weight:600;letter-spacing:.06em}
+.tag-seo{color:#7FE0F0;background:rgba(95,208,224,.12)}
+.tag-og{color:#34D399;background:rgba(52,211,153,.12)}
+.tag-tw{color:#C7CDE0;background:rgba(199,205,224,.12)}
+.tag-ld{color:#A78BFA;background:rgba(167,139,250,.12)}
+
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{flex-shrink:0;font-family:var(--font-head);font-weight:700;font-size:14px;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:#06120B;background:linear-gradient(145deg,#67E8F9,#22B8CF)}
+.step-body h4{font-family:var(--font-head);font-weight:600;font-size:15.5px;
+  color:var(--text-pri);margin-bottom:3px}
+.step-body p{color:#9A97AC;font-size:14.5px;line-height:1.6}
+.step-body kbd{font-family:var(--font-mono);background:rgba(255,255,255,.06);padding:2px 6px;
+  border-radius:5px;border:1px solid var(--border);font-size:12px}
+.step-body strong{color:#EEEBF6}
+
+.resources{display:flex;flex-direction:column;gap:12px}
+.res-link{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 17px;border-radius:13px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.res-link:hover{background:rgba(95,208,224,.08);border-color:rgba(95,208,224,.25)}
+.res-name{font-family:var(--font-head);font-weight:700;font-size:16px;color:#EEEBF6}
+.res-desc{font-size:13.5px;color:var(--text-mut);margin-top:2px}
+.res-arrow{width:15px;height:15px;flex-shrink:0;opacity:.5}
+
+.cta{text-align:center;padding:clamp(30px,5vw,50px) 20px}
+.cta-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;
+  color:var(--text-mut);text-transform:uppercase;margin-bottom:10px}
+.cta h2{font-size:clamp(22px,3.5vw,30px);margin-bottom:14px}
+.cta p{color:#A7A4B8;font-size:16px;line-height:1.6;max-width:50ch;margin:0 auto 24px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;
+  border-radius:14px;background:linear-gradient(145deg,#22B8CF,#0EA5C7);color:#06120B;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  box-shadow:0 8px 24px -8px rgba(34,184,207,.6);transition:all .25s;cursor:pointer}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(34,184,207,.8)}
+.cta-btn svg{width:18px;height:18px}
+
+@media(max-width:640px){
+  .step{flex-direction:column;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>MÓDULO 12 · METADATOS, SEO Y SOCIAL SHARING
+    </div>
+    <h1>Haz que te <span class="hl">encuentren</span></h1>
+    <p>El <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;head&gt;</code> no solo habla con el navegador: habla con Google, Facebook, Twitter y cualquier red que comparta tu enlace. Aquí aprendes a controlar todas esas conversaciones con etiquetas que viven fuera del <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;body&gt;</code>.</p>
+    <div class="meta-chips">
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+        SEO + Open Graph + JSON-LD
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        Validable en Facebook Debugger
+      </span>
+      <span class="chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ~60 min de lectura
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 · SEO BÁSICO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">1</span>
+      <span class="num-title">SEO básico: title y description</span>
+    </div>
+    <div class="card">
+      <p>Dos etiquetas deciden cómo aparece tu página en Google: el <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;title&gt;</code> (línea azul, clickeable) y <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;meta name="description"&gt;</code> (resumen debajo). Optimízalas y ya superas a la mitad de webs del mundo.</p>
+      <span class="tag-pill tag-seo">SEO</span>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · SEO básico</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;title&gt;</span>Café Andante — Cafetería de especialidad en Madrid<span class="code-kw">&lt;/title&gt;</span>
+<span class="code-kw">&lt;meta</span> <span class="code-fn">name</span>=<span class="code-str">"description"</span>
+  <span class="code-fn">content</span>=<span class="code-str">"Café Andante: cafetería de especialidad en Madrid. Espresso, V60 y repostería casera desde 2015."</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;link</span> <span class="code-fn">rel</span>=<span class="code-str">"canonical"</span> <span class="code-fn">href</span>=<span class="code-str">"https://cafeandante.example.com/"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;meta</span> <span class="code-fn">name</span>=<span class="code-str">"robots"</span> <span class="code-fn">content</span>=<span class="code-str">"index, follow"</span><span class="code-kw">&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <h3>Por qué importa canonical</h3>
+        <p><code style="font-family:var(--font-mono);color:#7FE0F0">rel="canonical"</code> dice "esta es la URL oficial de la página". Si alguien copia tu contenido o accede con parámetros (<code style="font-family:var(--font-mono);color:#7FE0F0">?utm=…</code>), Google sabe cuál es la original y no te penaliza por contenido duplicado.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 · OPEN GRAPH ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">2</span>
+      <span class="num-title">Open Graph: tarjetas en redes</span>
+    </div>
+    <div class="card">
+      <p>Cuando pegas un enlace en Facebook, LinkedIn o WhatsApp, las redes leen las etiquetas <code style="font-family:var(--font-mono);color:#7FE0F0">og:</code> y dibujan la tarjeta con imagen, título y descripción. Sin ellas, verás un enlace plano sin previsualización.</p>
+      <span class="tag-pill tag-og">OPEN GRAPH · FACEBOOK / LINKEDIN</span>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · Open Graph</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;meta</span> <span class="code-fn">property</span>=<span class="code-str">"og:title"</span> <span class="code-fn">content</span>=<span class="code-str">"Café Andante"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;meta</span> <span class="code-fn">property</span>=<span class="code-str">"og:description"</span> <span class="code-fn">content</span>=<span class="code-str">"Cafetería de especialidad en Madrid."</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;meta</span> <span class="code-fn">property</span>=<span class="code-str">"og:image"</span> <span class="code-fn">content</span>=<span class="code-str">"https://cafeandante.example.com/og-image.jpg"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;meta</span> <span class="code-fn">property</span>=<span class="code-str">"og:url"</span> <span class="code-fn">content</span>=<span class="code-str">"https://cafeandante.example.com/"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;meta</span> <span class="code-fn">property</span>=<span class="code-str">"og:type"</span> <span class="code-fn">content</span>=<span class="code-str">"website"</span><span class="code-kw">&gt;</span></code></pre>
+      </div>
+      <div class="content-block">
+        <p>Consejo práctico: la imagen de <code style="font-family:var(--font-mono);color:#7FE0F0">og:image</code> debe medir <strong>1200×630 px</strong>. Es el formato que mejor encaja en las tres redes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 · TWITTER CARDS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">3</span>
+      <span class="num-title">Twitter Cards</span>
+    </div>
+    <div class="card">
+      <p>Twitter usa su propio dialecto (<code style="font-family:var(--font-mono);color:#7FE0F0">twitter:</code>) pero lee <code style="font-family:var(--font-mono);color:#7FE0F0">og:</code> como fallback. Lo mínimo: declarar el tipo de tarjeta y reutilizar la imagen.</p>
+      <span class="tag-pill tag-tw">TWITTER / X</span>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · Twitter Cards</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;meta</span> <span class="code-fn">name</span>=<span class="code-str">"twitter:card"</span> <span class="code-fn">content</span>=<span class="code-str">"summary_large_image"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;meta</span> <span class="code-fn">name</span>=<span class="code-str">"twitter:title"</span> <span class="code-fn">content</span>=<span class="code-str">"Café Andante"</span><span class="code-kw">&gt;</span>
+<span class="code-kw">&lt;meta</span> <span class="code-fn">name</span>=<span class="code-str">"twitter:image"</span> <span class="code-fn">content</span>=<span class="code-str">"https://cafeandante.example.com/og-image.jpg"</span><span class="code-kw">&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 · JSON-LD ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">4</span>
+      <span class="num-title">JSON-LD / Schema.org: datos estructurados</span>
+    </div>
+    <div class="card">
+      <p>JSON-LD es un bloque <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;script&gt;</code> en el <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;head&gt;</code> que describe tu entidad en lenguaje máquina. Google lo lee para mostrar "rich snippets": estrellas, horarios, dirección, teléfono.</p>
+      <span class="tag-pill tag-ld">JSON-LD · SCHEMA.ORG</span>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · JSON-LD</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-kw">&lt;script</span> <span class="code-fn">type</span>=<span class="code-str">"application/ld+json"</span><span class="code-kw">&gt;</span>
+{
+  <span class="code-str">"@context"</span>: <span class="code-str">"https://schema.org"</span>,
+  <span class="code-str">"@type"</span>: <span class="code-str">"CafeOrCoffeeShop"</span>,
+  <span class="code-str">"name"</span>: <span class="code-str">"Café Andante"</span>,
+  <span class="code-str">"address"</span>: {
+    <span class="code-str">"@type"</span>: <span class="code-str">"PostalAddress"</span>,
+    <span class="code-str">"streetAddress"</span>: <span class="code-str">"Calle Mayor 12"</span>,
+    <span class="code-str">"addressLocality"</span>: <span class="code-str">"Madrid"</span>,
+    <span class="code-str">"postalCode"</span>: <span class="code-str">"28013"</span>
+  },
+  <span class="code-str">"telephone"</span>: <span class="code-str">"+34 910 000 000"</span>
+}
+<span class="code-kw">&lt;/script&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 05 · FAVICON, THEME-COLOR, MANIFEST ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">5</span>
+      <span class="num-title">favicon, theme-color y manifest PWA</span>
+    </div>
+    <div class="card">
+      <p>Tres metadatos que cuidan el detalle visual: el icono de la pestaña, el color de la barra del móvil y el manifiesto que convierte tu web en instalable.</p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>HTML · identidad visual</span>
+          <div class="code-btns"></div>
+        </div>
+<pre><code><span class="code-cmt">&lt;!-- Icono de la pestaña --&gt;</span>
+<span class="code-kw">&lt;link</span> <span class="code-fn">rel</span>=<span class="code-str">"icon"</span> <span class="code-fn">href</span>=<span class="code-str">"/favicon.svg"</span> <span class="code-fn">type</span>=<span class="code-str">"image/svg+xml"</span><span class="code-kw">&gt;</span>
+
+<span class="code-cmt">&lt;!-- Color de la barra superior en móvil --&gt;</span>
+<span class="code-kw">&lt;meta</span> <span class="code-fn">name</span>=<span class="code-str">"theme-color"</span> <span class="code-fn">content</span>=<span class="code-str">"#A78BFA"</span><span class="code-kw">&gt;</span>
+
+<span class="code-cmt">&lt;!-- Manifest PWA (instalable en móvil/escritorio) --&gt;</span>
+<span class="code-kw">&lt;link</span> <span class="code-fn">rel</span>=<span class="code-str">"manifest"</span> <span class="code-fn">href</span>=<span class="code-str">"/manifest.webmanifest"</span><span class="code-kw">&gt;</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 06 · EJERCICIO ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">6</span>
+      <span class="num-title">Ejercicio: SEO completo para una cafetería</span>
+    </div>
+    <div class="card">
+      <p>Vas a crear <code style="font-family:var(--font-mono);color:#7FE0F0">seo-meta.html</code> para una cafetería ficticia, "Café Andante", con todas las capas de metadatos activas y validables.</p>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-body">
+            <h4>Crea la base</h4>
+            <p>Un <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;head&gt;</code> vacío (solo charset y viewport) y un <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;body&gt;</code> con un <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;h1&gt;</code> y un <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;p&gt;</code> breves sobre la cafetería.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-body">
+            <h4>SEO básico</h4>
+            <p>Añade <code style="font-family:var(--font-mono);color:#7FE0F0">title</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">description</code>, <code style="font-family:var(--font-mono);color:#7FE0F0">canonical</code> y <code style="font-family:var(--font-mono);color:#7FE0F0">robots</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-body">
+            <h4>Open Graph completo</h4>
+            <p>Las cinco etiquetas <code style="font-family:var(--font-mono);color:#7FE0F0">og:</code>: title, description, image, url, type.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <div class="step-body">
+            <h4>Twitter Card</h4>
+            <p>Tipo <code style="font-family:var(--font-mono);color:#7FE0F0">summary_large_image</code>, reusando imagen y título.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">5</span>
+          <div class="step-body">
+            <h4>JSON-LD + favicon + theme-color</h4>
+            <p><code style="font-family:var(--font-mono);color:#7FE0F0">@type: "CafeOrCoffeeShop"</code>, name, address, telephone. Añade <code style="font-family:var(--font-mono);color:#7FE0F0">favicon</code> y <code style="font-family:var(--font-mono);color:#7FE0F0">theme-color content="#A78BFA"</code>. Valida con Facebook Debugger y validator.schema.org.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 07 · RECURSOS ═══ -->
+  <div class="num-section">
+    <div class="num-label">
+      <span class="num-tag">7</span>
+      <span class="num-title">Recursos</span>
+    </div>
+    <div class="resources">
+      <a class="res-link" href="https://developer.mozilla.org/es/docs/Web/HTML/Element/meta" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">MDN · &lt;meta&gt;</div>
+          <div class="res-desc">Todos los atributos y casos de uso del elemento meta.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://web.dev/learn/html/metadata" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">web.dev · Discoverable</div>
+          <div class="res-desc">Metadatos, SEO y social sharing explicados por Google.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://ogp.me/" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">OGP · Open Graph protocol</div>
+          <div class="res-desc">Especificación oficial de las etiquetas og:.</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+      <a class="res-link" href="https://schema.org/" target="_blank" rel="noopener">
+        <div>
+          <div class="res-name">Schema.org</div>
+          <div class="res-desc">El vocabulario de tipos para JSON-LD (LocalBusiness, Person, …).</div>
+        </div>
+        <svg class="res-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="cta">
+    <div class="cta-label">Tu siguiente paso</div>
+    <h2>Toca las APIs nativas del navegador</h2>
+    <p>Ya controlas lo que el navegador dice al mundo. En el siguiente módulo le pediremos que dibuje: el <code style="font-family:var(--font-mono);color:#7FE0F0">&lt;canvas&gt;</code> y una mirada conceptual a Geolocation, Drag &amp; Drop, Fullscreen y Visibility.</p>
+    <a class="cta-btn" href="M13_APIs_HTML5.html">
+      MÓDULO 13 · APIs HTML5
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<script type="module" src="../playground-codemirror.js"></script>
+</body>
+</html>

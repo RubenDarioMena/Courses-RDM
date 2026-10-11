@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 03: Creando tus Propias Herramientas</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <!-- CodeMirror Editor -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/css/css.min.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        pre, code { font-family: 'Fira Code', monospace; }
+        /* Smooth transitions */
+        body, h1, h2, p, li, strong, a, div, button, svg, pre {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        .accordion { cursor: pointer; width: 100%; text-align: left; border: none; outline: none; transition: background-color 0.4s ease; position: relative; }
+        .accordion:after { content: '\002B'; font-size: 1.5em; position: absolute; right: 1.5rem; top: 50%; transform: translateY(-50%); transition: transform 0.3s ease; }
+        .accordion.active:after { content: "\2212"; transform: translateY(-50%) rotate(180deg); }
+        .panel { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+        .gemini-explanation-box { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+        .CodeMirror { height: 100%; font-size: 16px; }
+        .tab.active { background-color: #4f46e5; color: white; }
+        /* Layout variables */
+        :root { 
+            --editor-width-desktop: 45vw; /* editor slightly less than half */
+            --main-open-width-desktop: 50vw; /* course content exactly half */
+        }
+
+        /* Desktop: when editor is open, allocate space without crushing text */
+        @media (min-width: 768px) {
+            body.editor-open #main-content { 
+                width: var(--main-open-width-desktop);
+                max-width: var(--main-open-width-desktop) !important;
+                margin-left: 0; /* align to left when editor is open */
+                margin-right: auto;
+                padding-right: 0;
+            }
+            /* Force editor panel width to be a bit less than half */
+            #editor-panel { width: var(--editor-width-desktop) !important; }
+        }
+        
+        #darkModeToggle { transition: right 0.3s ease-in-out; }
+        @media (min-width: 768px) {
+            body.editor-open #darkModeToggle { right: calc(var(--editor-width-desktop) + 1rem); }
+        }
+        
+        @media (max-width: 767px) {
+            body.editor-open #darkModeToggle { display: none; }
+        }
+        /* Improve wrapping inside CodeMirror when enabled */
+        .CodeMirror pre { word-break: break-word; }
+        .CodeMirror-wrap pre { white-space: pre-wrap; word-break: break-word; }
+        
+        /* Basic Syntax Highlighting Styles (match 01_Fundamentos.html) */
+        .code-comment { color: #6a9955; }
+        .code-string { color: #ce9178; }
+        .code-keyword { color: #569cd6; }
+        .code-number  { color: #b5cea8; }
+        .code-variable{ color: #9cdcfe; }
+        .code-function{ color: #c586c0; }
+
+        /* Mobile portrait: keep close button visible and simplify header */
+        @media (max-width: 767px) and (orientation: portrait) {
+            #layout-group { display: none !important; }
+            #run-code-btn span { display: none; }
+            #editor-header { flex-wrap: wrap; padding-right: 2.5rem; }
+            #close-editor-btn { position: absolute; right: 0.5rem; top: 0.5rem; z-index: 20; }
+        }
+
+        /* Small-height landscape (phones turned sideways): use full-screen overlay and simplify header */
+        @media (orientation: landscape) and (max-height: 500px) {
+            #editor-panel {
+                top: 0 !important; right: 0 !important; bottom: 0 !important; left: 0 !important;
+                width: 100% !important; height: 100% !important;
+                background-color: rgba(0,0,0,0.5) !important;
+            }
+            body.editor-open #darkModeToggle { display: none !important; }
+            #layout-group { display: none !important; }
+            #run-code-btn span { display: none; }
+            #editor-header { flex-wrap: wrap; padding-right: 2.5rem; }
+            #close-editor-btn { position: absolute; right: 0.5rem; top: 0.5rem; z-index: 20; }
+        }
+    </style>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased transition-all duration-300">
+
+    <!-- Dark Mode Toggle Button -->
+    <div id="darkModeToggle" class="fixed top-4 right-4 z-50">
+        <button class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900 focus:ring-indigo-500">
+            <svg id="sunIcon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <svg id="moonIcon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        </button>
+    </div>
+
+    <!-- Main Content Container -->
+    <div id="main-content" class="container mx-auto lg:max-w-[60%] px-4 sm:px-6 lg:px-8 py-12 sm:py-16 transition-all duration-300">
+        
+        <header class="text-center mb-10">
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white">Módulo 03: Creando tus Propias Herramientas <span class="text-4xl">🛠️</span></h1>
+        </header>
+
+        <main class="space-y-4">
+             <p class="text-lg text-center mb-8">¡Bienvenido al Módulo 3! Ya sabes guardar datos y hacer que tu código tome decisiones. Ahora, subiremos de nivel. Vamos a aprender a crear nuestros propios "mini-programas" dentro del programa principal. Se llaman <strong>funciones</strong>, y son, sin duda, la herramienta más poderosa que tendrás como programador. Son como crear tus propios hechizos personalizados: los defines una vez y los usas mil veces. ¡Vamos a ello!</p>
+
+<!-- Lección 1 -->
+<details class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <summary class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 1: Las Mil y Una Formas de Crear una Función 📜</summary>
+        <div class="panel px-6 py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+            <p>Una función es un bloque de código reutilizable que realiza una tarea específica. Imagina que es una receta de cocina: la escribes una vez ("Receta para hacer un pastel") y puedes seguirla siempre que quieras un pastel, sin tener que reinventar los pasos cada vez. En JavaScript, hay dos formas principales de escribir estas "recetas".</p>
+
+            <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">1. Declaración de Función: El método clásico</h3>
+            <p>Esta es la forma más tradicional. Es como presentar a un personaje al principio de una película. Le dices a JavaScript: "Oye, va a existir una función llamada 'saludar'".</p>
+            <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code><span class="code-comment">// Declaramos la función 'saludar'</span>
+<span class="code-keyword">function</span> <span class="code-function">saludar</span>(<span class="code-variable">nombre</span>) {
+<span class="code-function">alert</span>(<span class="code-string">¡Hola, ${<span class="code-variable">nombre</span>}! Un gusto conocerte.</span>);
+}
+
+<span class="code-comment">// Ahora podemos usarla (llamarla) cuantas veces queramos</span>
+<span class="code-function">saludar</span>(<span class="code-string">'Ana'</span>);
+<span class="code-function">saludar</span>(<span class="code-string">'Carlos'</span>);</code></pre>
+
+            <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400 mt-6">2. Expresión de Función: El método moderno</h3>
+            <p>Aquí, creamos una función y la guardamos dentro de una variable, como si fuera un número o un texto. Es como si un personaje apareciera de repente en la trama y dijera: "Por cierto, soy el mago y me llamo 'despedir'".</p>
+            <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code><span class="code-comment">// Creamos una función anónima y la asignamos a la variable 'despedir'</span>
+<span class="code-keyword">const</span> <span class="code-variable">despedir</span> = <span class="code-keyword">function</span>(<span class="code-variable">nombre</span>) {
+<span class="code-function">alert</span>(<span class="code-string">¡Hasta luego, ${<span class="code-variable">nombre</span>}!</span>);
+};
+
+<span class="code-comment">// La usamos a través de la variable</span>
+<span class="code-function">despedir</span>(<span class="code-string">'Ana'</span>);</code></pre>
+
+            <aside class="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-md">
+                <h4 class="font-bold text-lg mb-2">La Diferencia Clave: Hoisting (Elevación) 🚀</h4>
+                <p>Imagina que el motor de JavaScript lee tu código en dos pasadas. En la primera, busca todas las <strong>Declaraciones de Función</strong> (las del método clásico) y las "eleva" al principio de todo. Por eso, puedes llamar a una función declarada ¡incluso ANTES de haberla escrito en el código!</p>
+                <p class="mt-2">Las <strong>Expresiones de Función</strong> no se elevan. Viven donde las escribes. Si intentas llamarla antes, JavaScript te dará un error porque la "caja" (la variable) existe, pero la "receta" (la función) aún no está dentro.</p>
+                <p class="mt-2 font-semibold">Regla simple:</strong> Para empezar, no te compliques. Pero es vital saber que esta diferencia existe.</p>
+            </aside>
+
+            <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code><span class="code-comment">// ¡La magia del Hoisting en acción!</span>
+<span class="code-function">diHola</span>(); <span class="code-comment">// Funciona perfectamente, aunque la función está definida más abajo.</span>
+
+<span class="code-keyword">function</span> <span class="code-function">diHola</span>() {
+<span class="code-function">alert</span>(<span class="code-string">'¡Hola!'</span>);
+}
+
+<span class="code-comment">// ¡Aquí no hay magia!</span>
+<span class="code-comment">// diAdios(); // Si descomentas esta línea, tendrás un ReferenceError.</span>
+
+<span class="code-keyword">const</span> <span class="code-variable">diAdios</span> = <span class="code-keyword">function</span>() {
+<span class="code-function">alert</span>(<span class="code-string">'¡Adiós!'</span>);
+};</code></pre>
+
+            <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400 mt-6">3. Funciones Flecha: La versión corta y cool 😎</h3>
+            <p>Las funciones flecha son una forma más moderna y compacta de escribir <strong>Expresiones de Función</strong>. ¡Son geniales!</p>
+            <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code><span class="code-comment">// Expresión de Función clásica</span>
+<span class="code-keyword">const</span> <span class="code-variable">sumarClasico</span> = <span class="code-keyword">function</span>(<span class="code-variable">a</span>, <span class="code-variable">b</span>) {
+<span class="code-keyword">return</span> <span class="code-variable">a</span> + <span class="code-variable">b</span>;
+};
+
+<span class="code-comment">// ¡La misma función, pero en modo flecha!</span>
+<span class="code-keyword">const</span> <span class="code-variable">sumarFlecha</span> = (<span class="code-variable">a</span>, <span class="code-variable">b</span>) => <span class="code-variable">a</span> + <span class="code-variable">b</span>;
+
+<span class="code-comment">// Si solo tiene una línea, ¡las llaves {} y el 'return' son implícitos!</span>
+<span class="code-function">alert</span>(<span class="code-function">sumarFlecha</span>(<span class="code-number">5</span>, <span class="code-number">3</span>)); <span class="code-comment">// Muestra 8</span>
+
+<span class="code-comment">// Si solo tienes un parámetro, los paréntesis son opcionales</span>
+<span class="code-keyword">const</span> <span class="code-variable">cuadrado</span> = <span class="code-variable">numero</span> => <span class="code-variable">numero</span> * <span class="code-variable">numero</span>;
+
+<span class="code-comment">// Si no tienes parámetros, necesitas paréntesis vacíos</span>
+<span class="code-keyword">const</span> <span class="code-variable">saludoRandom</span> = () => <span class="code-function">alert</span>(<span class="code-string">'¡Hey!'</span>);</code></pre>
+        </div>
+</details>
+
+<!-- Lección 2 -->
+<details class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <summary class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 2: Pasando Ingredientes a tus Funciones 🥕</summary>
+    <div class="panel px-6 py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+        <p>Una receta no es muy útil si siempre usa los mismos ingredientes. ¡Queremos poder decirle: "hoy haz el pastel con chocolate" y mañana "hazlo con vainilla"! Para eso sirven los parámetros y argumentos.</p>
+
+        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Parámetros vs. Argumentos: La Lista y la Compra</h3>
+        <p>
+            <strong>Parámetro:</strong> Es el nombre del ingrediente que pones en la lista de tu receta. Es una variable local de la función. "Necesitaré algo llamado <code>sabor</code> y algo llamado <code>cobertura</code>".
+        </p>
+        <p>
+            <strong>Argumento:</strong> Es el ingrediente real que le das a la receta cuando la preparas. "Ok, para <code>sabor</code> te doy 'chocolate' y para <code>cobertura</code> te doy 'chispas'".
+        </p>
+        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code><span class="code-comment">// 'sabor' y 'cobertura' son los PARÁMETROS</span>
+<span class="code-keyword">function</span> <span class="code-function">hornearPastel</span>(<span class="code-variable">sabor</span>, <span class="code-variable">cobertura</span>) {
+<span class="code-function">console</span>.<span class="code-function">log</span>(<span class="code-string">Horneando un delicioso pastel de ${sabor} con cobertura de ${cobertura}.</span>);
+}
+
+<span class="code-comment">// 'chocolate' y 'chispas' son los ARGUMENTOS</span>
+<span class="code-function">hornearPastel</span>(<span class="code-string">'chocolate'</span>, <span class="code-string">'chispas'</span>);</code></pre>
+
+        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400 mt-6">Valores por Defecto: El "por si acaso"</h3>
+        <p>¿Qué pasa si te olvidas de pasar un ingrediente? Por defecto, JavaScript lo considera <code>undefined</code>. Para evitar problemas, podemos especificar un ingrediente "por si acaso" directamente en la lista.</p>
+        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code><span class="code-keyword">function</span> <span class="code-function">pedirCafe</span>(<span class="code-variable">tipo</span>, <span class="code-variable">azucar</span> = <span class="code-string">'normal'</span>) {
+<span class="code-function">alert</span>(<span class="code-string">Un café ${tipo} con azúcar ${azucar}, por favor.</span>);
+}
+
+<span class="code-function">pedirCafe</span>(<span class="code-string">'espresso'</span>); <span class="code-comment">// Muestra "Un café espresso con azúcar normal, por favor."</span>
+<span class="code-function">pedirCafe</span>(<span class="code-string">'latte'</span>, <span class="code-string">'morena'</span>); <span class="code-comment">// Muestra "Un café latte con azúcar morena, por favor."</span></code></pre>
+
+        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400 mt-6">Parámetros Rest (...): La bolsa de ingredientes sin fondo</h3>
+        <p>A veces no sabes cuántos ingredientes te van a dar. ¿Uno? ¿Cinco? ¿Mil? Los parámetros "Rest" (que se escriben con tres puntos ...) agrupan todos los argumentos extra en un verdadero array. ¡Son súper útiles!</p>
+        <div class="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-md">
+            <p><strong>Pro Tip:</strong> Antes existía algo llamado <code>arguments</code>, que era un "objeto parecido a un array" pero no un array de verdad. Era más torpe y no tenía los métodos útiles como <code>.map()</code> o <code>.filter()</code>. Hoy en día, <strong>siempre deberías preferir los parámetros Rest (...)</strong>. Es más limpio y poderoso.</p>
+        </div>
+        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code><span class="code-comment">// 'chef' es el primer parámetro, '...ingredientes' es el RESTO en un array</span>
+<span class="code-keyword">function</span> <span class="code-function">crearEnsalada</span>(<span class="code-variable">chef</span>, ...<span class="code-variable">ingredientes</span>) {
+<span class="code-function">alert</span>(<span class="code-string">El chef ${chef} va a usar:</span>);
+<span class="code-comment">// Como 'ingredientes' es un array, podemos usar un forEach!</span>
+<span class="code-variable">ingredientes</span>.<span class="code-function">forEach</span>(<span class="code-variable">ingrediente</span> => {
+<span class="code-function">alert</span>(<span class="code-string">- ${ingrediente}</span>);
+});
+
+<span class="code-function">crearEnsalada</span>(<span class="code-string">'Ana'</span>, <span class="code-string">'lechuga'</span>, <span class="code-string">'tomate'</span>, <span class="code-string">'pepino'</span>, <span class="code-string">'zanahoria'</span>);</code></pre>
+    </div>
+</details>
+
+<!-- Lección 3 -->
+<details class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <summary class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 3: Lo que la Función se Llevó (y te Devolvió) 📤</summary>
+    <div class="panel px-6 py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+        <p>Las funciones no solo hacen cosas, ¡también pueden devolverte un resultado! Piensa en una calculadora: le das números (argumentos) y te devuelve (retorna) una respuesta. Para esto, usamos la palabra clave <code>return</code>.</p>
+
+        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">La magia del return</h3>
+        <p>Cuando JavaScript ve un <code>return</code> dentro de una función, hace dos cosas:</p>
+        <ul class="list-disc list-inside space-y-2">
+            <li><strong>Detiene la ejecución</strong> de la función inmediatamente. Cualquier código que haya después del <code>return</code> es ignorado.</li>
+            <li><strong>Devuelve el valor</strong> que le indiques al lugar desde donde se llamó la función.</li>
+        </ul>
+        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code><span class="code-keyword">function</span> <span class="code-function">calcularAreaCirculo</span>(<span class="code-variable">radio</span>) {
+<span class="code-keyword">if</span> (<span class="code-variable">radio</span> < <span class="code-number">0</span>) {
+<span class="code-keyword">return</span> <span class="code-string">'Error: el radio no puede ser negativo.'</span>; <span class="code-comment">// Detiene la función aquí</span>
+}
+<span class="code-keyword">const</span> <span class="code-variable">area</span> = <span class="code-number">3.14159</span> * (<span class="code-variable">radio</span> ** <span class="code-number">2</span>);
+<span class="code-keyword">return</span> <span class="code-variable">area</span>; <span class="code-comment">// Devuelve el resultado del cálculo</span>
+<span class="code-function">console</span>.<span class="code-function">log</span>(<span class="code-string">'Este mensaje nunca se mostrará'</span>);
+}
+
+<span class="code-keyword">let</span> <span class="code-variable">resultado</span> = <span class="code-function">calcularAreaCirculo</span>(<span class="code-number">10</span>);
+<span class="code-function">alert</span>(<span class="code-string">El área es: ${resultado}</span>); <span class="code-comment">// El valor de 'area' se guardó en 'resultado'</span>
+
+<span class="code-keyword">let</span> <span class="code-variable">resultadoMalo</span> = <span class="code-function">calcularAreaCirculo</span>(-<span class="code-number">5</span>);
+<span class="code-function">alert</span>(<span class="code-variable">resultadoMalo</span>); <span class="code-comment">// Muestra el mensaje de error</span></code></pre>
+
+        <div class="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-md">
+            <p><strong>¿Y si no hay return?</strong></p>
+            <p>Una función que no devuelve nada explícitamente, o que tiene un <code>return;</code> vacío, devuelve <code>undefined</code> por defecto. Es como preguntarle algo a alguien y que se encoja de hombros.</p>
+        </div>
+    </div>
+</details>
+
+<!-- Lección 4 -->
+<details class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <summary class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 4: Scope, o "¿Dónde Diablos Viven mis Variables?" 🏡</summary>
+    <div class="panel px-6 py-6 border-t border-gray-200 dark:border-gray-700 space-y-4 text-lg">
+        <p>El <strong>Scope</strong> (o ámbito) es el conjunto de reglas que determinan desde dónde puedes ver o acceder a una variable. Es como la visibilidad en una casa: hay cosas en el salón (globales) que todos ven, y cosas en tu habitación (locales) que solo tú puedes ver.</p>
+
+        <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Variables Locales vs. Globales</h3>
+        <p>
+            <strong>Variables Locales:</strong> Viven y mueren dentro de una función. Nadie fuera de la función sabe que existen. Son los secretos de la función.
+        </p>
+        <p>
+            <strong>Variables Globales:</strong> Se declaran fuera de cualquier función. Son como el WiFi de la casa: accesibles desde cualquier habitación (función).
+        </p>
+        <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><code><span class="code-keyword">const</span> <span class="code-variable">wifiPassword</span> = <span class="code-string">'SuperSecret123'</span>; <span class="code-comment">// Variable Global</span>
+
+<span class="code-keyword">function</span> <span class="code-function">conectarDispositivo</span>() {
+<span class="code-keyword">const</span> <span class="code-variable">nombreDispositivo</span> = <span class="code-string">'Mi Laptop'</span>; <span class="code-comment">// Variable Local</span>
+<span class="code-function">console</span>.<span class="code-function">log</span>(<span class="code-string">Conectando ${nombreDispositivo} usando la clave: ${wifiPassword}</span>); <span class="code-comment">// Puede ver ambas!</span>
+}
+
+<span class="code-function">conectarDispositivo</span>();
+
+<span class="code-comment">// console.log(nombreDispositivo); // ¡ERROR! No puedes ver una variable local desde fuera.</span>
+<span class="code-function">console</span>.<span class="code-function">log</span>(<span class="code-string">La clave global es: ${wifiPassword}</span>); <span class="code-comment">// Esto sí funciona.</span></code></pre>
+    </div>
+</details>
+
+<!-- Lección 5: Ejercicios Prácticos -->
+<details class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <summary class="accordion text-xl font-bold p-6 text-gray-900 dark:text-white">Lección 5: ¡Pon a Prueba tus Superpoderes! 🏋️‍♂️</summary>
+    <div class="panel px-6 py-6 border-t border-gray-200 dark:border-gray-700 space-y-6 text-lg">
+        <p class="text-center font-semibold text-lg">¡Es hora de poner en práctica todo lo que has aprendido sobre funciones! Resuelve estos ejercicios para consolidar tu conocimiento. ¡No te preocupes, las soluciones están al final! 😉</p>
+
+        <div>
+            <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Ejercicio 1: La Función Detective 🔍</h3>
+            <p>Crea una función llamada <code>investigarCaso</code> que tome 3 parámetros: <code>sospechoso</code>, <code>arma</code> y <code>lugar</code>. La función debe usar una plantilla literal para devolver un mensaje como: "El detective encontró a Juan con un cuchillo en la cocina". Prueba la función con diferentes valores.</p>
+            <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md mt-2">
+                <h4 class="font-semibold mb-2">Pista:</h4>
+                <pre class="text-sm"><code><span class="code-keyword">function</span> <span class="code-function">investigarCaso</span>(<span class="code-variable">sospechoso</span>, <span class="code-variable">arma</span>, <span class="code-variable">lugar</span>) {
+    <span class="code-keyword">return</span> <span class="code-string">`El detective encontró a ${sospechoso} con ${arma} en ${lugar}`</span>;
+}
+
+<span class="code-comment">// Prueba tu función:</span>
+<span class="code-function">alert</span>(<span class="code-function">investigarCaso</span>(<span class="code-string">'Ana'</span>, <span class="code-string">'un libro'</span>, <span class="code-string">'la biblioteca'</span>));</code></pre>
+            </div>
+        </div>
+
+        <div>
+            <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Ejercicio 2: Calculadora Personalizada 🧮</h3>
+            <p>Crea una función flecha llamada <code>calcular</code> que tome 3 parámetros: <code>num1</code>, <code>num2</code> y <code>operacion</code>. Dependiendo del valor de <code>operacion</code> ('suma', 'resta', 'multiplicacion', 'division'), debe realizar la operación correspondiente y devolver el resultado. ¡Incluye validación para la división por cero!</p>
+            <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md mt-2">
+                <h4 class="font-semibold mb-2">Pista:</h4>
+                <pre class="text-sm"><code><span class="code-keyword">const</span> <span class="code-variable">calcular</span> = (<span class="code-variable">num1</span>, <span class="code-variable">num2</span>, <span class="code-variable">operacion</span>) => {
+    <span class="code-keyword">if</span> (<span class="code-variable">operacion</span> === <span class="code-string">'suma'</span>) {
+        <span class="code-keyword">return</span> <span class="code-variable">num1</span> + <span class="code-variable">num2</span>;
+    } <span class="code-keyword">else if</span> (<span class="code-variable">operacion</span> === <span class="code-string">'resta'</span>) {
+        <span class="code-keyword">return</span> <span class="code-variable">num1</span> - <span class="code-variable">num2</span>;
+    } <span class="code-comment">// ... completar las demás operaciones</span>
+};
+
+<span class="code-comment">// Prueba tu función:</span>
+<span class="code-function">alert</span>(<span class="code-function">calcular</span>(<span class="code-number">10</span>, <span class="code-number">5</span>, <span class="code-string">'suma'</span>)); <span class="code-comment">// Debería mostrar 15</span></code></pre>
+            </div>
+        </div>
+
+        <div>
+            <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Ejercicio 3: El Chef Maestro 👨‍🍳</h3>
+            <p>Crea una función llamada <code>prepararReceta</code> que tome el nombre del chef como primer parámetro, y luego use parámetros rest (...) para recibir una lista de ingredientes. La función debe devolver un mensaje que liste todos los ingredientes que el chef va a usar. ¡Usa un bucle para mostrar la lista!</p>
+            <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md mt-2">
+                <h4 class="font-semibold mb-2">Pista:</h4>
+                <pre class="text-sm"><code><span class="code-keyword">function</span> <span class="code-function">prepararReceta</span>(<span class="code-variable">chef</span>, ...<span class="code-variable">ingredientes</span>) {
+    <span class="code-keyword">let</span> <span class="code-variable">mensaje</span> = <span class="code-string">`El chef ${chef} va a cocinar con:\n`</span>;
+    <span class="code-variable">ingredientes</span>.<span class="code-function">forEach</span>(<span class="code-variable">ingrediente</span> => {
+        <span class="code-variable">mensaje</span> += <span class="code-string">`- ${ingrediente}\n`</span>;
+    });
+    <span class="code-keyword">return</span> <span class="code-variable">mensaje</span>;
+}
+
+<span class="code-comment">// Prueba tu función:</span>
+<span class="code-function">alert</span>(<span class="code-function">prepararReceta</span>(<span class="code-string">'Gordon Ramsay'</span>, <span class="code-string">'carne'</span>, <span class="code-string">'papas'</span>, <span class="code-string">'especias secretas'</span>));</code></pre>
+            </div>
+        </div>
+
+        <div>
+            <h3 class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">Ejercicio 4: Analizador de Texto 📝</h3>
+            <p>Crea una función flecha llamada <code>analizarTexto</code> que tome un texto y devuelva un objeto con información: la longitud del texto, la cantidad de palabras, y si contiene la palabra "JavaScript". ¡Demuestra que entiendes el scope usando variables locales!</p>
+            <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md mt-2">
+                <h4 class="font-semibold mb-2">Pista:</h4>
+                <pre class="text-sm"><code><span class="code-keyword">const</span> <span class="code-variable">analizarTexto</span> = (<span class="code-variable">texto</span>) => {
+    <span class="code-keyword">const</span> <span class="code-variable">longitud</span> = <span class="code-variable">texto</span>.<span class="code-property">length</span>;
+    <span class="code-keyword">const</span> <span class="code-variable">palabras</span> = <span class="code-variable">texto</span>.<span class="code-function">split</span>(<span class="code-string">' '</span>).<span class="code-property">length</span>;
+    <span class="code-keyword">const</span> <span class="code-variable">tieneJS</span> = <span class="code-variable">texto</span>.<span class="code-function">includes</span>(<span class="code-string">'JavaScript'</span>);
+    
+    <span class="code-keyword">return</span> {
+        longitud: <span class="code-variable">longitud</span>,
+        palabras: <span class="code-variable">palabras</span>,
+        tieneJavaScript: <span class="code-variable">tieneJS</span>
+    };
+};
+
+<span class="code-comment">// Prueba tu función:</span>
+<span class="code-keyword">const</span> <span class="code-variable">resultado</span> = <span class="code-function">analizarTexto</span>(<span class="code-string">'Me encanta JavaScript'</span>);
+<span class="code-function">alert</span>(<span class="code-string">`Longitud: ${resultado.longitud}, Palabras: ${resultado.palabras}, ¿Tiene JS? ${resultado.tieneJavaScript}`</span>);</code></pre>
+            </div>
+        </div>
+
+        <div class="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-md mt-6">
+            <h4 class="font-bold text-lg mb-3">🎯 Consejos para Resolver los Ejercicios:</h4>
+            <ul class="list-disc list-inside space-y-2">
+                <li><strong>Lee cuidadosamente</strong> cada ejercicio antes de empezar a escribir código</li>
+                <li><strong>Prueba tu código</strong> con diferentes valores para asegurarte de que funciona correctamente</li>
+                <li><strong>Usa console.log()</strong> para depurar si algo no funciona como esperabas</li>
+                <li><strong>Experimenta</strong> con diferentes formas de resolver cada problema (declaración de función, expresión de función, función flecha)</li>
+                <li><strong>No te preocupes por los errores</strong>, ¡son parte del aprendizaje!</li>
+            </ul>
+        </div>
+
+        <div class="bg-green-100 dark:bg-green-900 p-4 rounded-md mt-4">
+            <h4 class="font-bold text-lg mb-3">💡 Recuerda lo que has aprendido:</h4>
+            <ul class="list-disc list-inside space-y-1">
+                <li>Las <strong>funciones</strong> son bloques de código reutilizables</li>
+                <li>Los <strong>parámetros</strong> son las variables locales de la función</li>
+                <li>Los <strong>argumentos</strong> son los valores que pasas cuando llamas a la función</li>
+                <li><strong>return</strong> detiene la función y devuelve un valor</li>
+                <li>El <strong>scope</strong> determina dónde viven las variables</li>
+                <li>Las <strong>funciones flecha</strong> son una sintaxis más moderna y concisa</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+    <!-- Code Editor FAB -->
+    <button id="editor-fab" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 z-40">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+    </button>
+    
+    <!-- Code Editor Panel -->
+    <div id="editor-panel" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40 md:inset-auto md:top-0 md:right-0 md:w-1/2 md:h-full md:bg-transparent">
+        <div class="flex flex-col h-full bg-gray-800 shadow-2xl">
+            <!-- Editor Header -->
+            <header class="flex-shrink-0 bg-gray-900 p-2 flex items-center justify-between border-b border-gray-700 text-sm">
+                <div id="editor-tabs" class="flex items-center space-x-1">
+                    <button data-mode="xml" class="tab active px-3 py-1 rounded-md">HTML</button>
+                    <button data-mode="css" class="tab px-3 py-1 rounded-md">CSS</button>
+                    <button data-mode="javascript" class="tab px-3 py-1 rounded-md">JS</button>
+                </div>
+                <div class="flex items-center space-x-2">
+                     <div class="flex items-center space-x-1 bg-gray-700 rounded-md p-1">
+                        <button id="layout-editor-full" title="Editor a pantalla completa" class="p-1 rounded-md hover:bg-gray-600"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10V4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6M3 14v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6"/></svg></button>
+                        <button id="layout-split" title="Vista dividida" class="p-1 rounded-md hover:bg-gray-600 bg-gray-600"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"></line><line x1="3" y1="12" x2="21" y2="12"></line></svg></button>
+                        <button id="layout-preview-full" title="Preview a pantalla completa" class="p-1 rounded-md hover:bg-gray-600"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6M14 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg></button>
+                    </div>
+                    <button id="run-code-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-md flex items-center space-x-2"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg><span>Ejecutar</span></button>
+                    <button id="close-editor-btn" class="text-gray-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                </div>
+            </header>
+
+            <!-- Editor Content -->
+            <div id="editor-content" class="flex-grow min-h-0 relative">
+                 <div data-mode="xml" class="w-full h-full"><textarea class="editor-instance"></textarea></div>
+                 <div data-mode="css" class="w-full h-full hidden"><textarea class="editor-instance"></textarea></div>
+                 <div data-mode="javascript" class="w-full h-full hidden"><textarea class="editor-instance"></textarea></div>
+            </div>
+
+            <!-- Output Area -->
+            <div id="output-area" class="flex-shrink-0 border-t border-gray-700 flex flex-col">
+                <div id="output-tabs" class="flex-shrink-0 flex items-center space-x-1 p-2 bg-gray-900">
+                     <button data-mode="preview" class="tab active px-3 py-1 rounded-md text-sm">Preview</button>
+                     <button data-mode="console" class="tab px-3 py-1 rounded-md text-sm">Consola</button>
+                </div>
+                <div id="output-content" class="flex-grow min-h-0 relative bg-white dark:bg-gray-900">
+                    <iframe id="preview-frame" data-mode="preview" class="w-full h-full border-0"></iframe>
+                    <pre id="console-output" data-mode="console" class="w-full h-full p-4 bg-gray-900 text-gray-100 overflow-y-auto text-sm whitespace-pre-wrap hidden"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const editorState = {
+                editors: {},
+                activeEditor: 'xml',
+                code: {
+                    xml: '<h1>¡Hola, Mundo!</h1>\n<p>Escribe tu HTML aquí.</p>\n<button onclick="saludar()">Haz Clic</button>',
+                    css: 'body {\n  font-family: sans-serif;\n  padding: 1rem;\n  background-color: #f0f0f0;\n}\n\nbutton {\n  padding: 8px 16px;\n  border-radius: 5px;\n  cursor: pointer;\n}',
+                    javascript: 'function saludar() {\n  alert("¡Funciona desde JS!");\n  console.log("Botón presionado a las", new Date().toLocaleTimeString());\n}'
+                },
+                isInitialized: false
+            };
+
+            const uiElements = {
+                fab: document.getElementById('editor-fab'),
+                panel: document.getElementById('editor-panel'),
+                closeBtn: document.getElementById('close-editor-btn'),
+                runBtn: document.getElementById('run-code-btn'),
+                editorTabs: document.getElementById('editor-tabs'),
+                editorContent: document.getElementById('editor-content'),
+                outputTabs: document.getElementById('output-tabs'),
+                outputContent: document.getElementById('output-content'),
+                previewFrame: document.getElementById('preview-frame'),
+                consoleOutput: document.getElementById('console-output'),
+                layoutEditorFull: document.getElementById('layout-editor-full'),
+                layoutSplit: document.getElementById('layout-split'),
+                layoutPreviewFull: document.getElementById('layout-preview-full'),
+                editorContentArea: document.getElementById('editor-content'),
+                outputArea: document.getElementById('output-area')
+            };
+
+            const initializeEditors = () => {
+                if (editorState.isInitialized) return;
+                document.querySelectorAll('.editor-instance').forEach(textarea => {
+                    const mode = textarea.parentElement.dataset.mode;
+                    const editor = CodeMirror.fromTextArea(textarea, {
+                        lineNumbers: true,
+                        theme: 'dracula',
+                        mode: mode,
+                        indentUnit: 2,
+                        lineWrapping: true
+                    });
+                    editor.setValue(editorState.code[mode]);
+                    editor.on('change', (instance) => {
+                        editorState.code[mode] = instance.getValue();
+                    });
+                    editorState.editors[mode] = editor;
+                });
+                editorState.isInitialized = true;
+                setTimeout(() => Object.values(editorState.editors).forEach(e => e.refresh()), 50);
+            };
+
+            const openEditor = () => {
+                uiElements.panel.classList.remove('hidden');
+                document.body.classList.add('editor-open');
+                initializeEditors();
+                // Ensure split view (50/50) on first open for better UX
+                setLayout('split');
+            };
+
+            const closeEditor = () => {
+                uiElements.panel.classList.add('hidden');
+                document.body.classList.remove('editor-open');
+            };
+
+            const runCode = () => {
+                const { xml, css, javascript } = editorState.code;
+                const source = `
+                    <html>
+                        <head><style>${css}</style></head>
+                        <body>
+                            ${xml}
+                            <script>
+                                // --- Console Interceptor ---
+                                const originalConsoleLog = console.log;
+                                const originalConsoleError = console.error;
+                                const originalConsoleWarn = console.warn;
+                                const sendToParent = (level, ...args) => {
+                                    try {
+                                        const serialized = args.map(arg => {
+                                            try { return (typeof arg === 'string') ? arg : JSON.stringify(arg, null, 2); } catch { return String(arg); }
+                                        });
+                                        window.parent.postMessage({ type: 'console', level, args: serialized }, '*');
+                                    } catch(_){}
+                                };
+                                console.log = (...args) => { sendToParent('log', ...args); originalConsoleLog.apply(console, args); };
+                                console.warn = (...args) => { sendToParent('warn', ...args); originalConsoleWarn.apply(console, args); };
+                                console.error = (...args) => { sendToParent('error', ...args); originalConsoleError.apply(console, args); };
+                                window.addEventListener('error', (e) => {
+                                    sendToParent('error', e.message, e.filename + ':' + e.lineno + ':' + e.colno);
+                                });
+                                window.addEventListener('unhandledrejection', (e) => {
+                                    sendToParent('error', 'Unhandled promise rejection:', e.reason);
+                                });
+                                try {
+                                    ${javascript}
+                                } catch (e) {
+                                    console.error('❌ Error:', e.message);
+                                }
+                            <\/script>
+                        </body>
+                    </html>`;
+                uiElements.previewFrame.srcdoc = source;
+                uiElements.consoleOutput.textContent = '';
+            };
+            
+            window.addEventListener('message', (event) => {
+                if (event.data && event.data.type === 'console') {
+                    const level = event.data.level ? String(event.data.level).toUpperCase() : 'LOG';
+                    uiElements.consoleOutput.textContent += `[${level}] ${event.data.args.join(' ')}\n`;
+                }
+            });
+
+            const switchTab = (tabsContainer, contentContainer, newMode) => {
+                tabsContainer.querySelector('.active').classList.remove('active');
+                tabsContainer.querySelector(`[data-mode="${newMode}"]`).classList.add('active');
+                
+                Array.from(contentContainer.children).forEach(child => {
+                    child.classList.toggle('hidden', child.dataset.mode !== newMode);
+                });
+
+                if(editorState.editors[newMode]) {
+                    editorState.editors[newMode].focus();
+                    editorState.editors[newMode].refresh();
+                }
+            };
+
+            const setLayout = (layout) => {
+                const { editorContentArea, outputArea } = uiElements;
+                editorContentArea.style.transition = 'height 0.3s ease';
+                outputArea.style.transition = 'height 0.3s ease';
+                
+                let editorHeight = '50%';
+                let outputHeight = '50%';
+
+                if (layout === 'editor-full') { editorHeight = '100%'; outputHeight = '0%'; }
+                if (layout === 'preview-full') { editorHeight = '0%'; outputHeight = '100%'; }
+                
+                editorContentArea.style.height = editorHeight;
+                outputArea.style.height = outputHeight;
+
+                document.querySelectorAll('#layout-editor-full, #layout-split, #layout-preview-full').forEach(btn => btn.classList.remove('bg-gray-600'));
+                document.getElementById(`layout-${layout}`).classList.add('bg-gray-600');
+            };
+
+
+            uiElements.fab.addEventListener('click', openEditor);
+            uiElements.closeBtn.addEventListener('click', closeEditor);
+            uiElements.runBtn.addEventListener('click', runCode);
+            uiElements.editorTabs.addEventListener('click', (e) => e.target.dataset.mode && switchTab(uiElements.editorTabs, uiElements.editorContent, e.target.dataset.mode));
+            uiElements.outputTabs.addEventListener('click', (e) => e.target.dataset.mode && switchTab(uiElements.outputTabs, uiElements.outputContent, e.target.dataset.mode));
+            
+            uiElements.layoutEditorFull.addEventListener('click', () => setLayout('editor-full'));
+            uiElements.layoutSplit.addEventListener('click', () => setLayout('split'));
+            uiElements.layoutPreviewFull.addEventListener('click', () => setLayout('preview-full'));
+        });
+
+         // --- Dark Mode & Accordion Logic (Simplified, kept outside main logic) ---
+        document.addEventListener('DOMContentLoaded', () => {
+             const darkModeToggle = document.getElementById('darkModeToggle');
+             const sunIcon = darkModeToggle.querySelector('#sunIcon');
+             const moonIcon = darkModeToggle.querySelector('#moonIcon');
+             const html = document.documentElement;
+             const setTheme = (theme) => {
+                 if (theme === 'dark') { html.classList.add('dark'); sunIcon.classList.add('hidden'); moonIcon.classList.remove('hidden'); localStorage.setItem('theme', 'dark'); } 
+                 else { html.classList.remove('dark'); sunIcon.classList.remove('hidden'); moonIcon.classList.add('hidden'); localStorage.setItem('theme', 'light'); }
+             };
+             darkModeToggle.addEventListener('click', () => { setTheme(localStorage.getItem('theme') === 'light' ? 'dark' : 'light'); });
+             const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+             setTheme(savedTheme);
+
+             // Accordion behavior (match other pages)
+             const accordions = document.getElementsByClassName('accordion');
+             for (let i = 0; i < accordions.length; i++) {
+                 accordions[i].addEventListener('click', function() {
+                     this.classList.toggle('active');
+                     const panel = this.nextElementSibling;
+                     if (panel.style.maxHeight) {
+                         panel.style.maxHeight = null;
+                     } else {
+                         panel.style.maxHeight = panel.scrollHeight + 'px';
+                     }
+                 });
+             }
+        });
+
+    </script>
+</body>
+</html>
