@@ -5,6 +5,10 @@ Repositorio: https://github.com/RubenDarioMena/Courses-RDM
 
 Arena es una fábrica 2D persistente para aprender programación investigando. JavaScript controla las máquinas; PostgreSQL consulta la producción y administra pedidos. La portada y los cursos HTML anteriores se conservan.
 
+## Diseño del producto
+
+Decisiones, arquitectura, estado actual, límites y propuestas futuras: [Documento de diseño de Arena](docs/ARENA_DISENO.md).
+
 ## Desarrollo
 
 Node.js 22 o posterior:

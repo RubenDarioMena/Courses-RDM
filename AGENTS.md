@@ -22,4 +22,4 @@ Preview: http://localhost:4173/arena/ . Para comprobar el paquete: `npm run prev
 
 Repositorio autorizado: `RubenDarioMena/Courses-RDM`. Conservar el sitio Netlify `rubenmena-cursos` y su dominio. Los pushes a `main` compilan y publican automáticamente; el usuario autorizó esa publicación dentro del alcance de la tarea. No migrar a otro alojamiento sin necesidad.
 
-Ver README.md y docs/CLOUD_HANDOFF.md para arquitectura, límites y continuidad.
+Ver README.md, docs/ARENA_DISENO.md y docs/CLOUD_HANDOFF.md para diseño, arquitectura, límites y continuidad.
