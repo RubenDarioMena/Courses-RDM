@@ -164,6 +164,8 @@ No hay login, sincronización remota, IA en el juego, lenguaje alternativo ni ed
 
 ## Posibilidades a futuro
 
+Para retomar específicamente la campaña, consultar la [nota de Astra para la próxima sesión](NOTA_ASTRA_CAMPANA.md), que desarrolla una propuesta pedagógica a partir de este diseño.
+
 Estas son extensiones propuestas durante la conversación o derivadas directamente de las decisiones aceptadas. Deben evaluarse con un prototipo y no se consideran alcance comprometido:
 
 ### Próxima etapa: que programar explique y cambie más

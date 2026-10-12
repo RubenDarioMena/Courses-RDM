@@ -2,6 +2,10 @@
 
 Decisiones del usuario al 11 de octubre de 2026: reiniciar únicamente Arena como fábrica 2D limpia con PixiJS, JavaScript principal y PostgreSQL para datos. Ordenador con teclado y ratón, cámara sin personaje, construcción y programación, mundo persistente e introducción mínima omisible. Python y el antiguo SVG ya no son requisitos. No tocar el diseño de la portada ni los cursos existentes.
 
+## Próxima sesión: campaña
+
+Rubén pidió preparar la continuidad para la futura campaña. Leer primero [Nota de Astra para la campaña](NOTA_ASTRA_CAMPANA.md): contiene la evaluación del prototipo, las tensiones pedagógicas y una propuesta de primer arco. Sus propuestas nuevas todavía no son decisiones aprobadas.
+
 ## Estado
 
 Primera versión jugable implementada: línea cobre/placas/circuitos, cinco componentes construibles, transporte continuo, inspector, editores, control de tiempo, seguimiento básico de JavaScript y PostgreSQL real en worker. Pedidos SQL entregables desde JavaScript con materiales reales. Guardado local, exportación e importación con copia de PostgreSQL y tablas propias. Sin login, IA, energía, economía, campaña extensa ni soporte móvil.
