@@ -1,28 +1,25 @@
-# Cursos y Arena
+# Cursos y Arena Factory
 
-Trabaja en el proyecto de cursos; este no es FlowLife. La portada y los cursos HTML existentes deben seguir funcionando.
+Trabaja en Arena dentro del proyecto de cursos. La portada y los cursos HTML existentes deben seguir funcionando; su rediseño queda fuera del alcance actual.
 
-Decisiones aceptadas:
+## Decisiones aceptadas
 
-- Arena es una plataforma de ejercicios para Python, JavaScript/Web y SQL. Python es el primer curso implementado; los demás están planificados.
-- Gráficos SVG programáticos en 2D con perspectiva isométrica. Three.js se evaluará más adelante.
-- Enseñar con ejercicio guiado, práctica, reto y misión independiente. Introducir cada concepto antes de exigirlo. La escena debe representar los valores reales del programa, también cuando la solución sea incorrecta.
-- IA opcional con BYOK. Las misiones curadas deben funcionar sin credenciales. No persistir claves en archivos, localStorage, exportaciones, logs ni repositorios.
-- Mantener textos y feedback en español.
-- Repositorio autorizado: `RubenDarioMena/Courses-RDM`. El usuario autorizó subir las fuentes y conectar el proyecto existente `rubenmena-cursos` de Netlify para publicar automáticamente cada push a la rama de producción. Conservar ese sitio y su dominio. Los pushes a producción publican la web; realizarlos dentro del alcance autorizado de la tarea.
+- Arena se reinició como un juego de fábrica 2D para ordenador, teclado y ratón. Cámara libre, sin personaje.
+- PixiJS para el mundo; gráficos programáticos modulares, estilo limpio, piso azul y acentos de neón. Assets ilustrados opcionales más adelante.
+- JavaScript es el lenguaje de control inicial. PostgreSQL real, mediante PGlite en un worker, administra datos y pedidos. Otros lenguajes y HTML/CSS se consideran después.
+- Fábrica persistente, construcción libre y programación. Introducción mínima y omisible para estudiantes capaces de investigar.
+- La simulación es independiente del renderizado. Los materiales deben conservarse y moverse de forma continua, también con programas incorrectos. Pausa y avance manual actúan sobre el mismo estado.
+- Textos, documentación y errores en español; mensajes y código legibles en un portátil.
+- Sin login por ahora. Guardado local y archivo de sesión portable que incluye fábrica, código, progreso y base de datos con tablas propias.
+- No ejecutar automáticamente el JavaScript importado. El worker es un entorno educativo para código del propio alumno, no un sandbox de seguridad para código de terceros.
+- La versión anterior de Python/SVG permanece en el historial Git (commit e66c3ad). No recuperar su currículo como requisito de la nueva Arena.
+- No copiar ni modificar los contenidos de midudev.
 
-Comandos (Node >=22, Python 3 para pruebas):
+## Desarrollo y publicación
 
-```sh
-npm run dev
-npm test
-npm run build
-```
+Node.js >=22; `npm ci`, `npm run dev`, `npm test`, `npm run build`.
+Preview: http://localhost:4173/arena/ . Para comprobar el paquete: `npm run preview` después de compilar (con otro PORT si está activo el servidor de desarrollo).
 
-Preview: http://localhost:4173/arena/ . El servidor local implementa el mismo endpoint BYOK que la función de Netlify. La primera ejecución de Python requiere `cdn.jsdelivr.net`.
+Repositorio autorizado: `RubenDarioMena/Courses-RDM`. Conservar el sitio Netlify `rubenmena-cursos` y su dominio. Los pushes a `main` compilan y publican automáticamente; el usuario autorizó esa publicación dentro del alcance de la tarea. No migrar a otro alojamiento sin necesidad.
 
-No copiar ni modificar los contenidos de midudev. Se usa únicamente su progresión general como referencia, con ejercicios y gráficos originales.
-
-El ejecutor Python es acotado para este currículo; no tratarlo como sandbox de seguridad. Añadir nuevas capacidades mediante una ampliación deliberada del currículo y del adaptador, con pruebas adecuadas. La IA genera datos de misiones, no HTML/JavaScript ejecutable para la página.
-
-Ver `README.md` y `docs/CLOUD_HANDOFF.md` para arquitectura y continuidad.
+Ver README.md y docs/CLOUD_HANDOFF.md para arquitectura, límites y continuidad.

@@ -1,40 +1,25 @@
-# Continuar Arena en Codex Cloud
+# Continuar Arena Factory
 
-Estado al 11 de octubre de 2026: fuentes subidas a https://github.com/RubenDarioMena/Courses-RDM y proyecto existente `rubenmena-cursos` de Netlify conectado. El primer despliegue desde GitHub fue publicado correctamente (commit `d39a550`). URL: https://rubenmena-cursos.netlify.app/arena/ . Cada push a `main` compila y publica el sitio y la función BYOK. Las 12 pruebas comprueban, entre otros casos, las 40 soluciones del currículo; se comprobó también una compilación desde las fuentes versionadas, sin metadatos Git en los archivos públicos.
+Decisiones del usuario al 11 de octubre de 2026: reiniciar únicamente Arena como fábrica 2D limpia con PixiJS, JavaScript principal y PostgreSQL para datos. Ordenador con teclado y ratón, cámara sin personaje, construcción y programación, mundo persistente e introducción mínima omisible. Python y el antiguo SVG ya no son requisitos. No tocar el diseño de la portada ni los cursos existentes.
 
-## Lo que hay que conectar
+## Estado
 
-1. Usar el repositorio `RubenDarioMena/Courses-RDM`. Excluir `dist/`, `.env*`, dependencias y credenciales. Los cambios locales no llegan a la nube automáticamente: deben subirse con Git.
-2. Conectar GitHub con la cuenta que se use en Codex Cloud y dar acceso a ese repositorio concreto.
-3. En ChatGPT web o desktop, elegir **Work in → Cloud → Select environment → Create environment**, seleccionar el repositorio y **Get started**. Revisar la preparación y publicar el entorno. También está disponible desde **Settings → Codex Cloud → Environments**.
-4. Pedir Node.js 22+ y Python 3. Comprobar `npm test` y `npm run build`. El preview se inicia con `npm run dev`; si se necesita acceso desde un navegador remoto, usar el mecanismo de preview/forwarding del entorno, no asumir que localhost de la VM es localhost del portátil.
-5. Habilitar los destinos de red que correspondan. Para el runtime de Python: `cdn.jsdelivr.net`. Para consultar fuentes: GitHub y documentación oficial. Para probar BYOK: `api.openai.com` y un modelo/clave de pruebas propios. Estas últimas credenciales son opcionales para desarrollar el resto del curso.
-6. Netlify ya está conectado al repositorio y conserva el dominio actual. La configuración está en `netlify.toml`: Node.js 22, `npm run build`, carpeta pública `dist` y funciones `netlify/functions`. Un push a `main` publica automáticamente.
+Primera versión jugable implementada: línea cobre/placas/circuitos, cinco componentes construibles, transporte continuo, inspector, editores, control de tiempo, seguimiento básico de JavaScript y PostgreSQL real en worker. Pedidos SQL entregables desde JavaScript con materiales reales. Guardado local, exportación e importación con copia de PostgreSQL y tablas propias. Sin login, IA, energía, economía, campaña extensa ni soporte móvil.
 
-Las tareas del entorno publicado pueden seguir trabajando con el portátil dormido. Cada tarea tiene su propio espacio; conservar los cambios importantes en Git. El usuario autorizó publicación automática de `main`: un push a esa rama puede cambiar el sitio público.
+## Entorno
 
-## Accesos opcionales
+Repositorio: RubenDarioMena/Courses-RDM. Node 22+. Ejecutar `npm ci`, `npm test`, `npm run build`. Preview con `npm run dev` en 4173; paquete con `PORT=4174 npm run preview`. La interfaz está en /arena/. PixiJS, PGlite y sus binarios se empaquetan con Vite. Google Fonts es opcional y tiene fallback.
 
-- **Netlify:** conexión del repositorio o acceso de despliegue cuando se vaya a publicar. No hace falta para editar y probar localmente. No poner tokens de Netlify en el repositorio.
-- **API de IA:** BYOK del alumno es independiente del acceso del agente para desarrollar. Una clave de pruebas solo hace falta para verificar una generación real. Si se facilita al entorno cloud, usar sus controles de secretos para el destino autorizado, nunca el chat o el código.
-- **Base de datos:** no se necesita para este prototipo. El futuro curso SQL puede usar un motor dentro del navegador con datos de ejercicios.
+## Publicación
 
-## Prompt para retomar
+Conservar Netlify `rubenmena-cursos` y https://rubenmena-cursos.netlify.app/arena/. Los pushes a main publican automáticamente. El usuario autorizó subir fuentes y publicar dentro del alcance del trabajo. No crear otro sitio ni cambiar dominio. La portada y todos los cursos anteriores se copian al build.
 
-> Continúa Arena en este repositorio. Lee AGENTS.md, README.md y docs/CLOUD_HANDOFF.md. Tenemos Python como primer curso, con 40 misiones, Pyodide real y SVG isométrico. JavaScript/Web y SQL son próximos cursos. La IA es opcional con BYOK. Revisa los tests y el preview antes de ampliar. Prioriza mejorar la enseñanza guiada y añadir funciones/diccionarios con retos visuales. Mantén las claves fuera de archivos y progreso. Ten en cuenta que los pushes a main publican automáticamente en Netlify.
+## Puntos a cuidar
 
-## Pendientes conocidos
-
-- Probar generación con una API key real; el contrato del endpoint se prueba sin consumo de API.
-- Ampliar Python con funciones y diccionarios.
-- Añadir runtimes, currículo y escenas de JavaScript/Web y SQL.
-- Evaluar nuevos escenarios SVG (taller y mensajes) y, posteriormente, Three.js si aporta al aprendizaje.
-- Decidir si las variantes de IA y el progreso necesitan sincronización entre dispositivos.
-
-Fuentes oficiales consultadas:
-
-- https://learn.chatgpt.com/docs/cloud
-- https://learn.chatgpt.com/docs/environments/cloud-environments
-- https://developers.openai.com/api/docs/guides/structured-outputs
-- https://docs.netlify.com/build/functions/api
-- https://pyodide.org/en/stable/usage/webworker.html
+- Separar reglas del mundo, ejecución y dibujo. Comprobar conservación de materiales y continuidad al guardar durante una entrega.
+- Los avances manuales son pasos del reloj de simulación, no un depurador completo. Las funciones síncronas no se instrumentan por línea; un worker bloqueado se termina.
+- El worker ejecuta código del propio alumno; no garantiza aislamiento de seguridad para programas ajenos. Nunca ejecutar automáticamente código importado.
+- Las tablas inventario, maquinas y produccion reflejan el mundo; las consultas refrescan esas proyecciones. Pedidos y tablas del alumno se conservan.
+- Mantener texto legible, errores con contexto e instrucciones consultables. Los retos futuros deben admitir estrategias distintas.
+- Las sesiones antiguas de Python no son compatibles con este mundo. Se mantiene la versión anterior recuperable en Git: e66c3ad.
+- La autenticación y sincronización remota quedan para una decisión posterior; no inventar límites de planes gratuitos sin verificarlos.

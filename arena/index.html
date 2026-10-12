@@ -1,58 +1,374 @@
 <!doctype html>
 <html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#090d16">
-  <meta name="description" content="Aprende a programar resolviendo misiones. Arena Python: ejercicios guiados, retos y mundos SVG que responden a tu código.">
-  <title>Arena · Aprende haciendo</title>
-  <link rel="stylesheet" href="assets/arena.css">
-</head>
-<body>
-  <a class="skip" href="#editor">Ir al editor</a>
-  <header class="topbar">
-    <a class="brand" href="../"><span class="brand-mark" aria-hidden="true">⌘</span> cursos<span class="brand-divider">/</span><strong>arena</strong></a>
-    <nav class="course-nav" aria-label="Cursos de Arena">
-      <button class="course-tab active" aria-current="page" data-course="python"><span class="language-dot"></span>Python</button>
-      <button class="course-tab" data-course="web">JavaScript / Web <span class="soon">Próximamente</span></button>
-      <button class="course-tab" data-course="sql">SQL <span class="soon">Próximamente</span></button>
-    </nav>
-    <button class="quiet" id="ai-settings"><span aria-hidden="true">✧</span> IA opcional</button>
-  </header>
-  <div class="workspace">
-    <aside class="sidebar" aria-label="Ruta de aprendizaje">
-      <div class="route-intro"><span class="eyebrow">TU PRIMERA EXPEDICIÓN</span><h1>Base Aurora<span>.</span></h1><p>Una línea. Un cambio en el mundo.</p></div>
-      <div class="route-progress"><span id="progress-label">0 de 40 misiones</span><span id="progress-percent">0%</span><div class="progress-track"><div id="progress-fill"></div></div></div>
-      <nav id="topics" aria-label="Temas de Python"></nav>
-      <div class="route-footer"><span class="tiny-dot"></span>Tu progreso se guarda en este navegador.<button class="text-button" id="export-progress">Exportar progreso</button><button class="text-button" id="import-progress">Importar progreso</button><input type="file" id="progress-file" accept="application/json,.json" hidden></div>
-    </aside>
-    <main>
-      <div class="mission-heading"><div><span class="eyebrow" id="mission-kicker"></span><h2 id="mission-title"></h2></div><span class="level-chip" id="mission-level"></span></div>
-      <div class="exercise-switcher" id="exercise-switcher" aria-label="Ejercicios del tema"></div>
-      <section class="brief" aria-labelledby="brief-title"><div class="brief-icon" aria-hidden="true">↗</div><div><h3 id="brief-title">Tu misión</h3><p id="mission-description"></p><div id="concept" class="concept"></div><div id="guide" class="guide"></div></div></section>
-      <div class="lab-grid">
-        <section class="editor-panel" aria-label="Editor Python">
-          <div class="panel-bar"><span><span class="file-dot"></span>main.py</span><button class="text-button" id="reset-code">Reiniciar código</button></div>
-          <div class="code-editor"><pre id="line-numbers" aria-hidden="true">1</pre><textarea id="editor" aria-label="Código Python" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea></div>
-          <div class="input-panel" id="input-panel" hidden><label for="program-input">Entradas para <code>input()</code> <small>Una respuesta por línea</small></label><textarea id="program-input" rows="2" aria-label="Respuestas para input"></textarea></div>
-          <div class="editor-actions"><button class="primary" id="run"><span aria-hidden="true">▶</span> Ejecutar <kbd>⌘ ↵</kbd></button><button class="quiet" id="hint">Una pista</button><button class="text-button" id="solution">Ver solución</button></div>
-          <div id="hint-content" class="hint-content" hidden></div>
-          <details id="solution-content" class="solution-content"><summary>Solución de referencia</summary><pre id="solution-code"></pre><button class="text-button" id="load-solution">Probar esta solución</button></details>
-        </section>
-        <section class="world-panel" aria-label="Resultado visual">
-          <div class="panel-bar"><span><span class="live-dot"></span>BASE AURORA <span class="muted">/ simulación</span></span><span class="view-label">SVG · 2D</span></div>
-          <div id="scene" class="scene"></div>
-          <div class="scene-caption"><span id="scene-description">Tu código pone en marcha la estación.</span><span id="scene-mode">Estado inicial</span></div>
-          <div class="replay"><button class="quiet" id="replay" disabled aria-label="Reproducir ejecución">▶</button><input id="timeline" type="range" min="0" max="0" value="0" aria-label="Paso de la ejecución" disabled><span id="step-label">Ejecuta para explorar</span></div>
-          <div class="variables" id="variables" aria-label="Variables observadas"></div>
-        </section>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b1522" />
+    <meta
+      name="description"
+      content="Construye, programa y comprende una fábrica viva. JavaScript y PostgreSQL en tu navegador."
+    />
+    <title>Arena — Fábrica de código</title>
+    <link rel="stylesheet" href="./assets/arena.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="../" aria-label="Cursos, inicio"
+        ><span class="brand-mark">a<span>·</span></span
+        ><span
+          >arena<span class="brand-divider">/</span><small>FACTORY</small></span
+        ></a
+      ><span class="workspace-name"
+        ><span class="status-dot"></span> Mi primera fábrica
+        <span class="local-tag">LOCAL</span></span
+      >
+      <div class="top-actions">
+        <span id="save-state">Guardado en este navegador</span
+        ><button id="download" class="quiet">
+          ↓ <span>Descargar sesión</span></button
+        ><button
+          id="import"
+          class="icon-button"
+          title="Importar sesión"
+          aria-label="Importar sesión"
+        >
+          ↥</button
+        ><button
+          id="help"
+          class="icon-button"
+          title="Guía de la fábrica"
+          aria-label="Abrir guía"
+        >
+          ?
+        </button>
       </div>
-      <section class="results-panel" aria-label="Resultados de ejecución"><div class="results-heading"><h3 id="result-heading">La estación está esperando</h3><span id="runtime-status" class="runtime-status">Python se carga al ejecutar</span></div><div id="feedback" role="status" aria-live="polite">Completa la misión y ejecuta tu código. Puedes experimentar todas las veces que quieras.</div><div id="test-results"></div><details id="console-panel"><summary>Salida de Python</summary><pre id="console-output">La salida de print() aparecerá aquí.</pre></details></section>
-      <footer class="mission-footer"><button class="quiet" id="generate"><span aria-hidden="true">✧</span> Generar otro con mi IA</button><span id="next-description">Practica a tu ritmo.</span><button class="primary" id="next">Siguiente misión <span aria-hidden="true">→</span></button></footer>
-      <p class="source-note">Ruta inspirada en el <a href="https://github.com/midudev/curso-python" target="_blank" rel="noopener noreferrer">curso de Python de midudev</a>. Misiones y gráficos originales de Arena.</p>
+    </header>
+    <main id="workspace">
+      <div id="world"></div>
+      <div id="loading">Preparando tu fábrica…</div>
+      <div class="sector-caption">
+        <span class="eyebrow">TU ESPACIO PARA EXPERIMENTAR</span>
+        <h1>Pequeñas instrucciones.<br />Grandes sistemas.</h1>
+      </div>
+      <div class="world-stats">
+        <div>
+          <span class="resource copper">◆</span><strong id="copper">0</strong
+          ><small>cobre</small>
+        </div>
+        <div>
+          <span class="resource plate">▰</span><strong id="plates">0</strong
+          ><small>placas</small>
+        </div>
+        <div>
+          <span class="resource circuit">▣</span><strong id="circuits">0</strong
+          ><small>circuitos</small>
+        </div>
+        <span class="stats-note">en almacenes</span>
+      </div>
+      <section
+        class="workbench"
+        id="workbench"
+        aria-label="Panel de programación"
+      >
+        <div class="panel-handle" id="panel-handle">
+          <div>
+            <span class="terminal-icon">⌘</span
+            ><strong>Centro de control</strong
+            ><span class="handle-dots">⠿</span>
+          </div>
+          <button
+            id="collapse"
+            class="icon-button"
+            title="Plegar panel"
+            aria-label="Plegar panel"
+          >
+            −
+          </button>
+        </div>
+        <div class="panel-body">
+          <div class="mission">
+            <div class="mission-label">
+              <span class="eyebrow">OBJETIVO ABIERTO · 01</span
+              ><span id="mission-count">0 / 8</span>
+            </div>
+            <h2>Del mineral a la idea.</h2>
+            <p id="mission-description">
+              Pon la línea en marcha y fabrica 8 circuitos. La estrategia es
+              tuya.
+            </p>
+            <div class="mission-track"><i id="mission-progress"></i></div>
+            <button id="hint" class="text-button">
+              Una orientación <span>↗</span>
+            </button>
+            <p id="hint-text" hidden>
+              El extractor produce cobre; el fundidor lo convierte en placas. El
+              ensamblador necesita dos placas por circuito. Activa las tres
+              máquinas y observa dónde se acumula material.
+            </p>
+          </div>
+          <div class="tabs" role="tablist">
+            <button
+              id="tab-code"
+              role="tab"
+              aria-selected="true"
+              class="active"
+            >
+              JS <span>Programa</span></button
+            ><button id="tab-sql" role="tab" aria-selected="false">
+              SQL <span>Datos</span></button
+            ><button id="tab-guide" role="tab" aria-selected="false">
+              ↗ <span>Referencia</span>
+            </button>
+          </div>
+          <div id="code-pane" class="pane">
+            <div class="filebar">
+              <span><i></i> control.js</span><span>JavaScript</span>
+            </div>
+            <div
+              id="code-editor"
+              class="editor"
+              aria-label="Editor JavaScript"
+            ></div>
+            <div class="execution-bar">
+              <button id="run" class="primary">▶ Ejecutar</button
+              ><button
+                id="stop"
+                class="secondary"
+                disabled
+                title="Detener el programa"
+              >
+                ■ Detener</button
+              ><span id="run-status">Listo para probar</span>
+            </div>
+          </div>
+          <div id="sql-pane" class="pane" hidden>
+            <div class="filebar">
+              <span><i class="purple"></i> consulta.sql</span
+              ><span>PostgreSQL</span>
+            </div>
+            <div id="sql-editor" class="editor"></div>
+            <div class="execution-bar">
+              <button id="query" class="primary">▶ Consultar</button
+              ><span id="db-status">Se inicia al abrir Datos</span>
+            </div>
+            <p class="sql-note">
+              Inventario, producción y máquinas: instantánea al consultar.
+              Pedidos y tus propias tablas: editables y guardados.
+            </p>
+            <div id="sql-results" tabindex="0" aria-label="Resultado SQL"></div>
+          </div>
+          <div id="guide-pane" class="pane guide" hidden>
+            <h3>Tu fábrica, tus reglas.</h3>
+            <p>
+              Selecciona una herramienta abajo y haz clic en el terreno.
+              <kbd>R</kbd> gira la salida; <kbd>Esc</kbd> vuelve a seleccionar.
+              Arrastra el terreno para mover la cámara.
+            </p>
+            <h4>Controlar con JavaScript</h4>
+            <p>
+              Las órdenes son asíncronas: usa <code>await</code> para
+              observarlas en orden. Las cintas y almacenes funcionan al
+              construirlos; las otras máquinas necesitan activación.
+            </p>
+            <dl>
+              <dt>await fabrica.activar("fundidor_1")</dt>
+              <dd>
+                Enciende una máquina. <code>desactivar(id)</code> la detiene
+                conservando sus materiales.
+              </dd>
+              <dt>await fabrica.esperar(3)</dt>
+              <dd>
+                Espera 3 segundos de la simulación. Puedes usarlo dentro de un
+                bucle.
+              </dd>
+              <dt>await fabrica.inventario("circuito")</dt>
+              <dd>Devuelve la cantidad total guardada en almacenes.</dd>
+              <dt>await fabrica.maquinas()</dt>
+              <dd>
+                Devuelve las máquinas con sus identificadores, tipos y estados.
+              </dd>
+              <dt>await fabrica.velocidad(2)</dt>
+              <dd>Cambia la velocidad a 0.5, 1 o 2.</dd>
+              <dt>await fabrica.entregar(1)</dt>
+              <dd>
+                Entrega un pedido de SQL usando existencias reales. Si falta
+                material, explica cuánto necesitas.
+              </dd>
+              <dt>console.log("Tu mensaje")</dt>
+              <dd>Muestra un mensaje en el registro.</dd>
+            </dl>
+            <h4>Datos de la fábrica</h4>
+            <p>
+              <code>inventario(almacen, material, cantidad)</code><br /><code
+                >maquinas(id, tipo, activa, producidas)</code
+              ><br /><code
+                >produccion(id, segundo, maquina, material, cantidad)</code
+              ><br /><code>pedidos(id, material, cantidad, entregado)</code>
+            </p>
+            <p>
+              Las primeras tres tablas se reconstruyen desde la simulación antes
+              de cada consulta. El historial conserva los últimos 2.000 eventos.
+              Crea pedidos con SQL y complétalos con
+              <code>await fabrica.entregar(id)</code>. La entrega descuenta los
+              materiales de tus almacenes.
+            </p>
+            <pre>
+INSERT INTO pedidos (material, cantidad)
+VALUES ('circuito', 20);</pre
+            >
+            <h4>Más allá de la introducción</h4>
+            <p>
+              Construye una segunda línea. Guarda placas antes de ensamblarlas.
+              Consulta dónde está el cuello de botella. Usa condiciones y bucles
+              para detener la producción al alcanzar tu objetivo.
+            </p>
+          </div>
+          <div class="console">
+            <div class="console-heading">
+              <span><span class="status-dot"></span> Registro de actividad</span
+              ><button id="clear-log" class="text-button">Limpiar</button>
+            </div>
+            <div id="logs" role="log" aria-live="polite">
+              <p class="log-info">
+                La línea está preparada. Tú decides cuándo empieza.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <aside id="inspector" hidden>
+        <div class="inspector-title">
+          <span class="eyebrow">INSPECCIONAR</span
+          ><button
+            id="close-inspector"
+            class="icon-button"
+            aria-label="Cerrar inspector"
+          >
+            ×
+          </button>
+        </div>
+        <h2 id="node-name"></h2>
+        <code id="node-id"></code>
+        <p id="node-description"></p>
+        <div class="node-state">
+          <span class="status-dot"></span><span id="node-state"></span>
+        </div>
+        <div id="node-stock"></div>
+        <div class="inspector-actions">
+          <button id="toggle-node" class="secondary">Activar</button
+          ><button id="rotate-node" class="secondary">↻ Girar</button>
+        </div>
+        <p class="inspector-help">
+          La flecha indica la salida. Conecta la siguiente pieza en la celda
+          contigua.
+        </p>
+      </aside>
+      <div class="camera-tools">
+        <button id="zoom-in" aria-label="Acercar cámara">+</button
+        ><span id="zoom-value">100%</span
+        ><button id="zoom-out" aria-label="Alejar cámara">−</button
+        ><button
+          id="center"
+          aria-label="Centrar fábrica"
+          title="Centrar fábrica"
+        >
+          ⌖
+        </button>
+      </div>
+      <div id="build-tip" hidden></div>
+      <footer class="bottom-dock">
+        <div class="build-tools" aria-label="Construcción">
+          <button
+            class="build-tool active"
+            data-tool="select"
+            title="Seleccionar (Esc)"
+          >
+            <span>↖</span><small>Seleccionar</small><kbd>Esc</kbd></button
+          ><i class="dock-divider"></i
+          ><button class="build-tool" data-tool="extractor">
+            <span class="teal">◈</span><small>Extractor</small
+            ><kbd>1</kbd></button
+          ><button class="build-tool" data-tool="cinta">
+            <span>»</span><small>Cinta</small><kbd>2</kbd></button
+          ><button class="build-tool" data-tool="fundidor">
+            <span class="orange">▥</span><small>Fundidor</small
+            ><kbd>3</kbd></button
+          ><button class="build-tool" data-tool="ensamblador">
+            <span class="lavender">▣</span><small>Ensamblador</small
+            ><kbd>4</kbd></button
+          ><button class="build-tool" data-tool="almacen">
+            <span class="green">▤</span><small>Almacén</small
+            ><kbd>5</kbd></button
+          ><i class="dock-divider"></i
+          ><button class="build-tool" data-tool="remove">
+            <span>⌫</span><small>Desmontar</small><kbd>6</kbd>
+          </button>
+        </div>
+        <div class="simulation-controls">
+          <button id="pause" class="play-button" aria-label="Pausar simulación">
+            Ⅱ</button
+          ><button
+            id="step"
+            title="Pausar y avanzar medio segundo"
+            aria-label="Avanzar medio segundo"
+          >
+            ▹│</button
+          ><button id="speed" title="Cambiar velocidad">1×</button>
+          <div>
+            <span id="sim-status">SIMULACIÓN ACTIVA</span
+            ><small id="sim-clock">00:00</small>
+          </div>
+        </div>
+      </footer>
+      <div id="toast" role="status" hidden></div>
     </main>
-  </div>
-  <dialog id="ai-dialog" aria-labelledby="ai-title"><form id="ai-form"><div class="dialog-heading"><span class="eyebrow">BRING YOUR OWN KEY</span><button class="quiet" type="button" id="close-ai" aria-label="Cerrar">×</button></div><h2 id="ai-title">Más retos, con tu IA.</h2><p>Las 40 misiones funcionan sin IA. Para generar variantes, conecta una clave de tu cuenta de OpenAI. Cada generación consume saldo de esa cuenta.</p><p id="ai-service-status" class="privacy-note"></p><label for="api-key">Tu API key</label><input id="api-key" type="password" autocomplete="off" placeholder="Pega tu clave de API"><label for="ai-model">Modelo de tu cuenta</label><input id="ai-model" type="text" placeholder="ID de un modelo con Structured Outputs" required><label for="ai-difficulty">Tipo de variante</label><select id="ai-difficulty"><option value="same">Practicar este nivel</option><option value="harder">Subir dificultad usando lo aprendido</option></select><p class="privacy-note">La clave se conserva en memoria mientras esta pestaña está abierta. Se envía a la función de este sitio para consultar OpenAI; no se guarda en el progreso ni en el servidor de la aplicación.</p><div class="dialog-actions"><button class="quiet" type="button" id="forget-key">Desconectar</button><button class="primary" id="connect-ai" type="submit">Conectar</button></div><p id="ai-message" role="status"></p></form></dialog>
-  <script type="module" src="app.js"></script>
-</body>
+    <dialog id="welcome">
+      <form method="dialog">
+        <span class="eyebrow">BIENVENIDO A ARENA / FACTORY</span>
+        <h2>Aprende haciendo<br />que las cosas pasen<span>.</span></h2>
+        <p>
+          Una fábrica, código real y espacio para equivocarte. Empieza con esta
+          línea o construye la tuya.
+        </p>
+        <div class="welcome-steps">
+          <div>
+            <b>01</b
+            ><span
+              ><strong>Programa</strong>Activa las máquinas desde
+              JavaScript.</span
+            >
+          </div>
+          <div>
+            <b>02</b
+            ><span
+              ><strong>Observa</strong>Sigue cada pieza. Pausa y avanza a tu
+              ritmo.</span
+            >
+          </div>
+          <div>
+            <b>03</b
+            ><span
+              ><strong>Investiga</strong>Consulta los datos con SQL y amplía la
+              fábrica.</span
+            >
+          </div>
+        </div>
+        <p class="local-notice">
+          Tu sesión se guarda en este navegador. Descárgala para continuar en
+          otro ordenador.
+        </p>
+        <div class="welcome-actions">
+          <button class="primary" value="start">Entrar a la fábrica →</button
+          ><button class="text-button" value="skip">Omitir introducción</button>
+        </div>
+      </form>
+    </dialog>
+    <input
+      id="import-file"
+      type="file"
+      accept=".json,application/json"
+      hidden
+    />
+    <script type="module" src="./app.js"></script>
+  </body>
 </html>
