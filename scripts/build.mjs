@@ -2,6 +2,7 @@ import { cp, mkdir, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { build } from "vite";
+import { prepareCadSources } from "./cad-sources.mjs";
 const root = fileURLToPath(new URL("../", import.meta.url));
 const destination = path.join(root, "dist");
 await rm(destination, { recursive: true, force: true });
@@ -33,5 +34,7 @@ for (const item of [
     recursive: true,
     filter: publishable,
   });
-await build();
-console.log("Arena Factory y cursos existentes preparados en dist/.");
+await build({ configFile: path.join(root, "vite.config.mjs") });
+await build({ configFile: path.join(root, "vite.cad.config.mjs") });
+await prepareCadSources(root, path.join(destination, "cad/licenses/source"));
+console.log("Arena Factory, CAD y cursos existentes preparados en dist/.");

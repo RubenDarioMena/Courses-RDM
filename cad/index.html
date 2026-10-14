@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Editor de piezas 3D en tu navegador. Geometría OpenCascade, medidas en milímetros, archivos STEP y STL. Sin cuenta." />
+  <meta name="theme-color" content="#101721" />
+  <title>Taller CAD · Editor de piezas 3D</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Volver a Cursos"><span class="brand-mark" aria-hidden="true">◈</span><span>TALLER<span class="brand-cad">CAD</span></span></a>
+      <div class="document-name"><input id="document-name" aria-label="Nombre del proyecto" maxlength="100" value="Soporte de ejemplo" /><span class="local-badge"><i></i> LOCAL</span></div>
+      <nav class="file-actions" aria-label="Proyecto">
+        <button id="new-project" class="button subtle" data-edit>Nuevo</button>
+        <button id="open-project" class="button subtle" data-edit>Abrir</button>
+        <button id="save-project" class="button" data-edit>Guardar archivo</button>
+        <button id="export-button" class="button primary" data-edit>Exportar <span aria-hidden="true">↗</span></button>
+      </nav>
+    </header>
+    <div class="toolbar" role="toolbar" aria-label="Herramientas de modelado">
+      <div class="tool-group"><button id="undo" title="Deshacer (Ctrl+Z)" aria-label="Deshacer" disabled>↶</button><button id="redo" title="Rehacer (Ctrl+Y)" aria-label="Rehacer" disabled>↷</button></div>
+      <div class="tool-group"><button data-create="box" data-edit><span class="tool-icon">▱</span>Bloque</button><button data-create="cylinder" data-edit><span class="tool-icon">◉</span>Cilindro</button><button data-create="sphere" data-edit><span class="tool-icon">◌</span>Esfera</button><button id="sketch-button" data-edit><span class="tool-icon">⌁</span>Dibujar perfil</button></div>
+      <div class="tool-group"><button id="boolean-button" data-edit><span class="tool-icon">⊖</span>Combinar</button><button id="fillet-button" data-edit><span class="tool-icon">◜</span>Redondear</button><button id="transform-button" data-edit><span class="tool-icon">✥</span>Mover / girar</button></div>
+      <span class="toolbar-spacer"></span><button id="help-button" class="help-button">? <span>Ayuda</span></button>
+    </div>
+    <main class="workspace">
+      <aside class="model-panel" aria-label="Piezas e historial de operaciones">
+        <div class="panel-heading"><h1>Proyecto</h1><span id="object-count">0 piezas</span></div>
+        <div class="tree-label">PIEZAS Y OPERACIONES</div>
+        <div id="object-list" class="object-list"></div>
+        <div id="empty-tree" class="empty-tree" hidden>Crea un bloque o dibuja el perfil de tu primera pieza.</div>
+        <button id="recover-project" class="button subtle" hidden>Descargar copia anterior</button>
+        <div class="panel-bottom"><span class="unit-symbol">mm</span><div>Medidas reales<span>Milímetros · sólidos 3D</span></div><a href="./legal.html" title="Licencias de software">Licencias</a></div>
+      </aside>
+      <section id="viewport" class="viewport" aria-label="Espacio de trabajo 3D">
+        <div class="viewport-title"><span>ESPACIO DE TRABAJO</span><strong id="selection-label">Soporte de ejemplo</strong></div>
+        <nav class="view-controls" aria-label="Vistas de cámara"><button data-view="iso" title="Vista isométrica">3D</button><button data-view="top">Superior</button><button data-view="front">Frontal</button><button data-view="right">Derecha</button><button id="fit-view" title="Encuadrar (F)">Encuadrar</button></nav>
+        <div class="axis-key" aria-hidden="true"><span class="axis-x">X</span><span class="axis-y">Y</span><span class="axis-z">Z</span></div>
+        <div id="viewport-empty" class="viewport-empty" hidden><span>◈</span><h2>Tu siguiente pieza empieza aquí</h2><p>Añade un sólido o dibuja un perfil para extruirlo.</p><button id="load-example" class="button" data-edit>Cargar ejemplo</button></div>
+        <div class="viewport-hint">Arrastrar: girar <span>·</span> Botón derecho: desplazar <span>·</span> Rueda: zoom <span>·</span> Ctrl + clic: seleccionar varias</div>
+        <button id="grid-toggle" class="grid-toggle" title="Mostrar u ocultar cuadrícula" aria-pressed="true">▦ Cuadrícula</button>
+        <div id="loading-overlay" class="loading-overlay"><div class="loading-card"><span class="spinner"></span><h2 id="loading-title">Preparando OpenCascade</h2><p id="loading-detail">El motor CAD se carga en tu navegador. La primera descarga puede tardar.</p><button id="cancel-operation" class="button subtle" hidden>Cancelar operación</button></div></div>
+      </section>
+      <aside class="inspector" aria-label="Propiedades de la pieza"><div class="panel-heading"><h2>Propiedades</h2><span id="inspector-kind">SELECCIÓN</span></div><div id="inspector-content" class="inspector-content"></div></aside>
+    </main>
+    <footer class="statusbar"><span id="engine-status"><i class="status-dot"></i>Cargando motor…</span><span id="message" role="status" aria-live="polite">Todo el diseño permanece en tu navegador.</span><span id="save-status">Sin cuenta · guardado local</span></footer>
+  </div>
+  <input id="file-input" type="file" accept=".json,.cad,.step,.stp,.stl" hidden />
+  <dialog id="tool-dialog"><form id="tool-form"><div class="dialog-heading"><h2 id="tool-title"></h2><button type="button" class="close-dialog" aria-label="Cerrar">×</button></div><div id="tool-fields"></div><p id="tool-note" class="dialog-note"></p><div class="dialog-actions"><button type="button" class="button close-dialog">Cancelar</button><button type="submit" class="button primary">Aplicar</button></div></form></dialog>
+  <dialog id="export-dialog"><div class="dialog-heading"><h2>Exportar piezas</h2><button class="close-dialog" aria-label="Cerrar">×</button></div><p>Se exportan las piezas visibles. El archivo del proyecto conserva todas las operaciones editables.</p><div class="export-options"><button data-export="step"><strong>STEP <span>↗</span></strong><span>Sólidos exactos para otros programas CAD</span></button><button data-export="stl"><strong>STL <span>↗</span></strong><span>Malla para impresión 3D · medidas en mm</span></button></div></dialog>
+  <dialog id="help-dialog"><div class="dialog-heading"><h2>Un taller, seis herramientas</h2><button class="close-dialog" aria-label="Cerrar">×</button></div><p>Trabaja en milímetros. Selecciona una pieza en el lienzo o en la lista y cambia sus medidas en Propiedades.</p><ol><li>Crea un <strong>bloque, cilindro o esfera</strong>, o dibuja un perfil y extrúyelo.</li><li>Usa <strong>Combinar</strong> para unir piezas, restar una de otra o conservar su intersección.</li><li>Prueba <strong>Redondear</strong> o <strong>Mover / girar</strong>. Las operaciones anteriores se conservan para editar sus medidas.</li><li>Descarga tu proyecto con <strong>Guardar archivo</strong>. Abrir admite proyectos, STEP y STL.</li></ol><p><kbd>Ctrl</kbd> + <kbd>Z</kbd> deshace · <kbd>Ctrl</kbd> + <kbd>Y</kbd> rehace · <kbd>F</kbd> encuadra · <kbd>Supr</kbd> elimina la selección.</p><p>Sin login ni servidor de geometría. El proyecto se guarda también en este navegador; descarga un archivo para llevarlo a otro equipo.</p><a href="./legal.html">OpenCascade y licencias →</a></dialog>
+  <dialog id="sketch-dialog" class="sketch-dialog"><div class="dialog-heading"><h2>Dibujar perfil · plano XY</h2><button class="close-dialog" aria-label="Cerrar">×</button></div><p>Haz clic para colocar vértices en la cuadrícula (5 mm). Cierra el perfil sobre el primer punto o con el botón. Se extruirá en Z.</p><div id="sketch-canvas-wrap"><canvas id="sketch-canvas" width="640" height="360" aria-label="Dibujo de perfil con clics en cuadrícula"></canvas><span id="sketch-coordinates">X: 0 · Y: 0 mm</span></div><div class="sketch-fields"><button id="sketch-rectangle" class="button">Rectángulo 40 × 30</button><button id="sketch-clear" class="button subtle">Borrar puntos</button><label>Altura de extrusión <input id="sketch-height" type="number" min="0.1" max="10000" step="any" value="15" required /> mm</label></div><div class="dialog-actions"><span id="sketch-status">0 vértices</span><button id="sketch-create" class="button primary" disabled>Cerrar y extruir</button></div></dialog>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

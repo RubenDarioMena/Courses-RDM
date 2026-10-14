@@ -15,6 +15,7 @@ const types = {
   ".css": "text/css; charset=utf-8",
   ".py": "text/plain; charset=utf-8",
   ".md": "text/plain; charset=utf-8",
+  ".txt": "text/plain; charset=utf-8",
   ".png": "image/png",
   ".svg": "image/svg+xml",
   ".json": "application/json",
@@ -22,6 +23,7 @@ const types = {
 };
 const publicRoots = [
   "arena",
+  "cad",
   "Curso_HTML_CSS_JS",
   "Curso_bug_tool_project",
   "Design_System",
@@ -34,64 +36,102 @@ const publicFiles = [
   "bugtool1.png",
   "bugtool2.png",
 ];
-const vite = staticOnly
-  ? null
-  : await createServer({ server: { middlewareMode: true }, appType: "mpa" });
-http
-  .createServer(async (req, res) => {
-    if (
-      vite &&
-      (req.url.startsWith("/arena/") ||
-        req.url.startsWith("/@") ||
-        req.url.startsWith("/node_modules/"))
-    ) {
-      vite.middlewares(req, res, () => {
-        res.writeHead(404);
-        res.end("No encontrado");
-      });
-      return;
-    }
+let arenaVite = null;
+let cadVite = null;
+const server = http.createServer(async (req, res) => {
+  const pathname = new URL(req.url, `http://localhost:${port}`).pathname;
+  if (pathname === "/cad") {
+    res.writeHead(302, { Location: "/cad/" });
+    res.end();
+    return;
+  }
+  // Each app has its own base, dependency graph and HMR endpoint. Vite emits
+  // /cad/@vite/client and /arena/@vite/client, including worker asset URLs.
+  let vite = pathname.startsWith("/cad/") ? cadVite : arenaVite;
+  const unbasedViteRequest =
+    pathname.startsWith("/@") || pathname.startsWith("/node_modules/");
+  if (unbasedViteRequest && req.headers.referer) {
     try {
-      const url = new URL(req.url, `http://localhost:${port}`);
-      if (!["GET", "HEAD"].includes(req.method)) {
-        res.writeHead(405);
-        res.end();
-        return;
-      }
-      const relative =
-        decodeURIComponent(url.pathname).replace(/^\/+/, "") || "index.html";
-      if (
-        !publicRoots.includes(relative.split("/")[0]) &&
-        !publicFiles.includes(relative)
-      ) {
-        res.writeHead(404);
-        res.end("No encontrado");
-        return;
-      }
-      let target = path.resolve(root, relative);
-      if (
-        !target.startsWith(root) ||
-        relative
-          .split("/")
-          .some((part) => part.startsWith(".") || part === "..")
-      ) {
-        res.writeHead(403);
-        res.end();
-        return;
-      }
-      if ((await stat(target)).isDirectory())
-        target = path.join(target, "index.html");
-      res.writeHead(200, {
-        "Content-Type":
-          types[path.extname(target)] ?? "application/octet-stream",
-        "Cache-Control": "no-store",
-      });
-      res.end(req.method === "HEAD" ? "" : await readFile(target));
+      if (new URL(req.headers.referer).pathname.startsWith("/cad/"))
+        vite = cadVite;
     } catch {
+      // Keep the legacy Arena fallback for an invalid Referer.
+    }
+  }
+  if (
+    vite &&
+    (pathname.startsWith("/arena/") ||
+      pathname.startsWith("/cad/") ||
+      unbasedViteRequest)
+  ) {
+    vite.middlewares(req, res, () => {
       res.writeHead(404);
       res.end("No encontrado");
+    });
+    return;
+  }
+  try {
+    const url = new URL(req.url, `http://localhost:${port}`);
+    if (!["GET", "HEAD"].includes(req.method)) {
+      res.writeHead(405);
+      res.end();
+      return;
     }
-  })
-  .listen(port, "127.0.0.1", () =>
-    console.log(`Arena local: http://localhost:${port}/arena/`),
-  );
+    const relative =
+      decodeURIComponent(url.pathname).replace(/^\/+/, "") || "index.html";
+    if (
+      !publicRoots.includes(relative.split("/")[0]) &&
+      !publicFiles.includes(relative)
+    ) {
+      res.writeHead(404);
+      res.end("No encontrado");
+      return;
+    }
+    let target = path.resolve(root, relative);
+    if (
+      !target.startsWith(root) ||
+      relative
+        .split("/")
+        .some((part) => part.startsWith(".") || part === "..")
+    ) {
+      res.writeHead(403);
+      res.end();
+      return;
+    }
+    if ((await stat(target)).isDirectory())
+      target = path.join(target, "index.html");
+    res.writeHead(200, {
+      "Content-Type":
+        types[path.extname(target)] ?? "application/octet-stream",
+      "Cache-Control": "no-store",
+    });
+    res.end(req.method === "HEAD" ? "" : await readFile(target));
+  } catch {
+    res.writeHead(404);
+    res.end("No encontrado");
+  }
+});
+if (!staticOnly) {
+  arenaVite = await createServer({
+    configFile: path.join(root, "vite.config.mjs"),
+    server: { middlewareMode: true, hmr: { server, path: "__hmr" } },
+    appType: "mpa",
+  });
+  cadVite = await createServer({
+    configFile: path.join(root, "vite.cad.config.mjs"),
+    server: { middlewareMode: true, hmr: { server, path: "__hmr" } },
+    appType: "mpa",
+  });
+}
+server.listen(port, "127.0.0.1", () =>
+  console.log(
+    `Arena: http://localhost:${port}/arena/\nCAD: http://localhost:${port}/cad/`,
+  ),
+);
+
+async function close() {
+  await Promise.all([arenaVite?.close(), cadVite?.close()]);
+  server.close();
+}
+process.once("SIGINT", close);
+process.once("SIGTERM", close);

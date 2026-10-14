@@ -1,0 +1,63 @@
+name: CAD en navegadores Windows
+
+on:
+  push:
+    branches: [main]
+    paths: ['cad/**', 'tests/**', 'scripts/**', 'package.json', 'package-lock.json', 'vite*.mjs', 'playwright.cad.config.mjs', '.github/workflows/cad-windows.yml']
+  pull_request:
+    paths: ['cad/**', 'tests/**', 'scripts/**', 'package.json', 'package-lock.json', 'vite*.mjs', 'playwright.cad.config.mjs', '.github/workflows/cad-windows.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cad-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browsers:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Verificar modelo y núcleo WASM
+        run: npm test
+      - name: Compilar el sitio completo
+        run: npm run build
+      - name: Instalar Firefox de Playwright
+        id: browser-ready
+        run: npx playwright install firefox
+      # Chrome y Microsoft Edge vienen instalados en el runner Windows.
+      # Se ejecutan consecutivamente, con un worker, sin requerir una cuenta.
+      - name: Chrome en Windows
+        if: ${{ !cancelled() && steps.browser-ready.outcome == 'success' }}
+        env:
+          CAD_TEST_PROJECT: chrome
+        run: npm run test:cad:browser -- --project=chrome
+      - name: Microsoft Edge en Windows
+        if: ${{ !cancelled() && steps.browser-ready.outcome == 'success' }}
+        env:
+          CAD_TEST_PROJECT: msedge
+        run: npm run test:cad:browser -- --project=msedge
+      - name: Firefox en Windows
+        if: ${{ !cancelled() && steps.browser-ready.outcome == 'success' }}
+        env:
+          CAD_TEST_PROJECT: firefox
+        run: npm run test:cad:browser -- --project=firefox
+      - name: Conservar informes, descargas y evidencias de fallos
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: cad-windows-browsers
+          path: artifacts/cad-browser/
+          if-no-files-found: ignore
+          retention-days: 14

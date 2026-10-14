@@ -9,3 +9,6 @@ __pycache__/
 artifacts/
 .~*
 ~$*
+.cad-source-cache/
+playwright-report/
+test-results/
