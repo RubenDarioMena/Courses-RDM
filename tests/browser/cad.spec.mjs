@@ -7,15 +7,35 @@ const editedVolume = 80 * 40 * 8 - Math.PI * 6 ** 2 * 8;
 
 // Un fallo JavaScript de la página debe fallar aunque su interfaz parezca lista.
 const test = base.extend({
-  runtimeErrors: [async ({ page }, use) => {
+  runtimeErrors: [async ({ page, browser }, use, testInfo) => {
     const errors = [];
+    const consoleMessages = [];
+    const requests = [];
     page.on('pageerror', (error) => errors.push(error.message));
+    page.on('console', (entry) => {
+      if (['error','warning'].includes(entry.type())) consoleMessages.push({ type: entry.type(), message: entry.text() });
+    });
+    page.on('requestfailed', (request) => requests.push({ url: request.url(), failure: request.failure() }));
+    page.on('response', (response) => {
+      if (response.status() >= 400) requests.push({ url: response.url(), status: response.status() });
+    });
     await use(errors);
+    let state;
+    try { state = await page.evaluate(() => ({ engine: document.querySelector('#engine-status')?.textContent, title: document.querySelector('#loading-title')?.textContent, detail: document.querySelector('#loading-detail')?.textContent, message: document.querySelector('#message')?.textContent })); } catch { state = 'Página cerrada'; }
+    await testInfo.attach('diagnostico-navegador', { body: Buffer.from(JSON.stringify({ browser: browser.version(), state, errors, consoleMessages, requests },null,2)), contentType: 'application/json' });
     expect(errors, 'La aplicación no debe producir excepciones sin manejar.').toEqual([]);
   }, { auto: true }],
 });
 
 async function ready(page) {
+  await page.waitForFunction(() =>
+    document.querySelector('#engine-status')?.textContent.includes('OpenCascade · listo') ||
+    document.querySelector('#loading-title')?.textContent === 'No se pudo iniciar el editor',
+  undefined, { timeout: 90_000 });
+  const startupError = await page.locator('#loading-title').textContent();
+  if (startupError === 'No se pudo iniciar el editor') {
+    throw new Error(`No se pudo iniciar el CAD: ${await page.locator('#loading-detail').textContent()}`);
+  }
   await expect(page.locator('#engine-status')).toContainText('OpenCascade · listo');
   await expect(page.locator('#loading-overlay')).toBeHidden();
   await expect(page.locator('#new-project')).toBeEnabled();

@@ -17,10 +17,16 @@ concurrency:
 
 jobs:
   browsers:
+    name: Windows · ${{ matrix.browser }}
     runs-on: windows-latest
     timeout-minutes: 30
     env:
       CI: 'true'
+      CAD_TEST_PROJECT: ${{ matrix.browser }}
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, msedge, firefox]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -34,30 +40,17 @@ jobs:
       - name: Compilar el sitio completo
         run: npm run build
       - name: Instalar Firefox de Playwright
-        id: browser-ready
+        if: matrix.browser == 'firefox'
         run: npx playwright install firefox
       # Chrome y Microsoft Edge vienen instalados en el runner Windows.
       # Se ejecutan consecutivamente, con un worker, sin requerir una cuenta.
-      - name: Chrome en Windows
-        if: ${{ !cancelled() && steps.browser-ready.outcome == 'success' }}
-        env:
-          CAD_TEST_PROJECT: chrome
-        run: npm run test:cad:browser -- --project=chrome
-      - name: Microsoft Edge en Windows
-        if: ${{ !cancelled() && steps.browser-ready.outcome == 'success' }}
-        env:
-          CAD_TEST_PROJECT: msedge
-        run: npm run test:cad:browser -- --project=msedge
-      - name: Firefox en Windows
-        if: ${{ !cancelled() && steps.browser-ready.outcome == 'success' }}
-        env:
-          CAD_TEST_PROJECT: firefox
-        run: npm run test:cad:browser -- --project=firefox
+      - name: Probar ${{ matrix.browser }} en Windows
+        run: npm run test:cad:browser -- --project=${{ matrix.browser }}
       - name: Conservar informes, descargas y evidencias de fallos
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: cad-windows-browsers
+          name: cad-windows-${{ matrix.browser }}
           path: artifacts/cad-browser/
           if-no-files-found: ignore
           retention-days: 14

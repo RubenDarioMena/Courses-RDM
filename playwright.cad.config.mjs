@@ -15,10 +15,12 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   retries: 0,
+  maxFailures: isCI ? 1 : 0,
   forbidOnly: isCI,
   outputDir: `artifacts/cad-browser/results-${runName}`,
   reporter: [
     ['list'],
+    ...(isCI ? [['github']] : []),
     ['html', { outputFolder: `artifacts/cad-browser/report-${runName}`, open: 'never' }],
   ],
   use: {
