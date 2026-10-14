@@ -52,6 +52,26 @@ La compilación existente copia los cursos, construye Arena con `vite.config.mjs
 
 El sitio conserva la configuración y el dominio Netlify existentes. `/cad/*` recibe encabezados de seguridad básicos independientes de `/arena/*`. No se exige aislamiento entre orígenes en esta base porque el módulo de un solo hilo no lo necesita.
 
+### Comprobaciones de navegador
+
+Después de compilar, `npm run test:cad:browser` comprueba el paquete publicado en `dist/`. En Windows deben estar instalados Chrome, Edge y Firefox de Playwright (`npx playwright install firefox`). La configuración levanta un servidor estático de pruebas en el puerto 4183; no requiere cuenta ni credenciales del sitio.
+
+`.github/workflows/cad-windows.yml` ejecuta los tres navegadores en máquinas Windows independientes, con un solo recorrido activo por navegador. Cada suite comprueba carga del motor, edición de dependencias, deshacer/rehacer, extrusión, errores sin pérdida del estado, guardado portable, persistencia, STEP/STL y recuperación de un proyecto local inválido. Los artefactos contienen capturas del editor, archivos de intercambio y diagnósticos. Ante un fallo conservan también la traza de red y DOM; la grabación continua de vídeo y capturas de traza están desactivadas para reducir la carga del entorno sin GPU física.
+
+### Entrega comprobada el 14 de octubre de 2026
+
+Versión pública: [Taller CAD](https://rubenmena-cursos.netlify.app/cad/). El [informe Windows de la entrega](https://github.com/RubenDarioMena/Courses-RDM/actions/runs/38561070173) corresponde al commit `6b92ea2cf8f0bcaa426b680fcb859ee885563021` y terminó sin fallos ni reintentos. Se verificó el paquete compilado en máquinas virtuales de GitHub Actions con Windows Server 2025, versión `10.0.26100`, y renderizado por software. Estos resultados no son mediciones de rendimiento de un ordenador Windows con GPU física.
+
+| Navegador comprobado | Resultado |
+| --- | --- |
+| Google Chrome `154.0.8037.58` | 7 recorridos aprobados |
+| Microsoft Edge `153.0.4234.48` | 7 recorridos aprobados |
+| Firefox de Playwright `157.0` | 7 recorridos aprobados |
+
+También pasaron las 35 pruebas de `npm test`: 15 del documento CAD, 11 del núcleo WASM real y 9 de Arena. `npm run build` completó el sitio en los tres trabajos Windows. La comprobación pública adicional confirmó carga del motor, representación del sólido y volumen exacto del soporte de ejemplo. Se conservaron capturas y archivos STEP, STL y JSON de las suites Windows.
+
+La primera entrega cubre las herramientas descritas arriba. Siguen pendientes el solver de restricciones, referencias estables a caras/aristas, operaciones avanzadas y ensamblajes. Las pruebas actuales usan piezas acotadas; continuar con modelos grandes y mediciones de memoria antes de ampliar los límites de documentos.
+
 ## Fuentes, licencias y reproducción
 
 Las copias de licencias y la procedencia están en `/cad/legal.html` y `/cad/licenses/SOURCES.txt`.
@@ -84,7 +104,7 @@ La LGPL exige conservar avisos y licencia, facilitar el código fuente correspon
 
 ## Siguientes etapas
 
-1. Probar la base en Windows con Chrome, Edge y Firefox: creación, edición, deshacer, intercambio, persistencia, modelos grandes y recuperación de errores. Medir carga del kernel, memoria, teselación y duración de las operaciones.
+1. Ampliar la cobertura Windows con modelos grandes y GPUs físicas. Medir carga del kernel, memoria, teselación y duración de las operaciones; conservar los recorridos actuales de Chrome, Edge y Firefox.
 2. Añadir croquis con planos de trabajo, cotas y un solver de restricciones. Resolver referencias estables a caras y aristas antes de construir una cadena amplia de funciones paramétricas.
 3. Ampliar herramientas con revolución, barrido, loft, vaciado, patrones y selección de aristas para redondeos/chaflanes.
 4. Incorporar cuerpos y ensamblajes, transformaciones de componentes y estructuras STEP/XDE con nombres, colores y metadatos.

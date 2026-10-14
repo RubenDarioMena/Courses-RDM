@@ -17,6 +17,14 @@ Trabaja en Arena dentro del proyecto de cursos. La portada y los cursos HTML exi
 
 ## Desarrollo y publicación
 
+### Taller CAD
+
+Se inició un editor independiente de piezas 3D en `/cad/`, con OpenCascade.js `opencascade.full` en un worker y Three.js para representar los resultados. El objetivo son los navegadores de Windows, sin login ni servidor de geometría. Leer `docs/CAD_WEB.md` antes de continuar este módulo. No dedicar esta etapa a controles específicos de macOS.
+
+La primera base incluye primitivas, extrusiones de perfiles poligonales, booleanas, redondeos, transformaciones, proyectos JSON portables e intercambio STEP/STL. Mantener la geometría BRep separada del render, recuperar el último estado válido ante errores y conservar fuentes/avisos de las bibliotecas al distribuir WASM. STL se conserva como malla; las operaciones sobre sólidos requieren BRep. La distribución `full` no equivale a toda la API C++ de OCCT ni a la aplicación FreeCAD.
+
+Conservar las rutas y el funcionamiento de Arena, portada y cursos. Las pruebas Windows usan Chrome, Edge y Firefox en `.github/workflows/cad-windows.yml`; `npm run test:cad:browser` comprueba el paquete compilado.
+
 ### Continuidad del diseño
 
 Las decisiones anteriores describen la base implementada en PixiJS. Para la evolución de Arena, leer `docs/CODEMAGEDDON_GDD.md` y `docs/CODEMAGEDDON_ARTE.md` (13 de octubre de 2026): robots y sensores, principiantes con microtutoriales y conceptos desbloqueables, y Godot como dirección objetivo pendiente de prueba técnica. La recomendación es GDScript interno y JavaScript del jugador. No confundir esta documentación con una migración ya realizada ni recuperar propuestas anteriores que contradigan las decisiones recientes. Se mantienen los límites de conservación de materiales, importación sin autoejecución y continuidad del sitio/cursos.

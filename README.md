@@ -5,6 +5,8 @@ Repositorio: https://github.com/RubenDarioMena/Courses-RDM
 
 Arena es una fábrica 2D persistente para aprender programación investigando. JavaScript controla las máquinas; PostgreSQL consulta la producción y administra pedidos. La portada y los cursos HTML anteriores se conservan.
 
+Taller CAD está disponible en [rubenmena-cursos.netlify.app/cad/](https://rubenmena-cursos.netlify.app/cad/): editor independiente de piezas 3D, sin login, basado en la distribución completa de OpenCascade.js en un worker. Permite crear sólidos, extruir perfiles, combinar, redondear, transformar y abrir/exportar STEP y STL. Conserva el documento paramétrico localmente y en un archivo JSON portable. [Arquitectura, alcance y continuidad de CAD](docs/CAD_WEB.md).
+
 ## Diseño del producto
 
 Diseño de la siguiente etapa: [GDD inicial de Codemageddon](docs/CODEMAGEDDON_GDD.md), con robots programables, sensores, pruebas de movimiento y Godot como dirección objetivo pendiente de validación. [Guía de arte y diseño paramétrico](docs/CODEMAGEDDON_ARTE.md).
@@ -23,6 +25,8 @@ npm run build
 ```
 
 Preview: http://localhost:4173/arena/ . `npm run preview` sirve el paquete dist; usa `PORT=4174 npm run preview` si el puerto de desarrollo está ocupado.
+
+Taller CAD: http://localhost:4173/cad/ . Las pruebas de navegador se ejecutan con `npm run test:cad:browser` después de compilar; en Windows requieren Chrome, Edge y `npx playwright install firefox`. GitHub Actions verifica los tres navegadores en trabajos independientes.
 
 Vite compila Arena y empaqueta PixiJS, CodeMirror, el runtime JavaScript y PGlite. PostgreSQL se carga al abrir Datos, entregar un pedido o descargar una sesión; no hay CDN de ejecución ni backend obligatorio. Las fuentes tipográficas usan Google Fonts con fallback local.
 
