@@ -10,7 +10,9 @@ const chromiumOptions = isCI ? {
 export default defineConfig({
   testDir: './tests/browser',
   testMatch: 'cad.spec.mjs',
-  timeout: 90_000,
+  // Un recorrido de archivos incluye dos cargas frías del WASM completo.
+  // Los límites individuales de arranque y de operaciones se mantienen.
+  timeout: isCI ? 180_000 : 90_000,
   expect: { timeout: 90_000 },
   fullyParallel: false,
   workers: 1,
