@@ -1,10 +1,25 @@
 # Continuar Arena Factory
 
-Decisiones del usuario al 11 de octubre de 2026: reiniciar únicamente Arena como fábrica 2D limpia con PixiJS, JavaScript principal y PostgreSQL para datos. Ordenador con teclado y ratón, cámara sin personaje, construcción y programación, mundo persistente e introducción mínima omisible. Python y el antiguo SVG ya no son requisitos. No tocar el diseño de la portada ni los cursos existentes.
+## Dirección vigente del diseño — 13 de octubre de 2026
 
-## Próxima sesión: campaña
+Leer primero [Codemageddon — GDD inicial](CODEMAGEDDON_GDD.md) y su [guía de arte y diseño paramétrico](CODEMAGEDDON_ARTE.md). Recogen la conversación más reciente y distinguen acuerdos, propuestas y pruebas pendientes. Este trabajo produjo documentación; no migró ni modificó el juego.
 
-Rubén pidió preparar la continuidad para la futura campaña. Leer primero [Nota de Astra para la campaña](NOTA_ASTRA_CAMPANA.md): contiene la evaluación del prototipo, las tensiones pedagógicas y una propuesta de primer arco. Sus propuestas nuevas todavía no son decisiones aprobadas.
+- Programar es el núcleo; modo sin código aplazado. Público principiante, microtutoriales y conceptos desbloqueables.
+- Inicio con minilínea, pocos robots y presupuesto adicional; circuitos y piezas compradas permiten construir más robots. Proveedores con existencias y precios estables.
+- Robots inicialmente manuales; un robot programable primero, copia de rutinas y luego grupos. Sensor básico de movimiento incluido.
+- Errores físicos visibles: viajes vacíos, materiales caídos y posibles daños, poco frecuentes al principio. No corregir automáticamente toda orden del jugador.
+- Comparar navegación por destino y movimiento por pasos antes de elegir. Construcción instantánea en preparación y breve espera automática durante la partida. Pausa para pensar y programar.
+- Ayuda al pasar el mouse por funciones y resaltar en el mundo la entidad referenciada por el cursor de texto.
+- Godot es la dirección preferida al considerar 3D, mezcla de estilos y VFX. Recomendación: GDScript interno y JavaScript del jugador, elegido frente a Python por menor esfuerzo estimado. Integración, versión y migración no están validadas.
+- Próximo paso recomendado: prueba mínima Godot web/nativa con ejecución cancelable de JavaScript, PostgreSQL real, persistencia y un modelo animado. El arte se diseña para Compatibility y se prueba en navegador.
+
+## Base implementada
+
+Decisiones que dieron lugar al prototipo actual: Arena como fábrica 2D limpia con PixiJS, JavaScript principal y PostgreSQL para datos. Ordenador con teclado y ratón, cámara sin personaje, construcción y programación, mundo persistente e introducción mínima omisible. Python y el antiguo SVG no son requisitos. No tocar el diseño de la portada ni los cursos existentes.
+
+## Antecedente de campaña
+
+La [Nota de Astra para la campaña](NOTA_ASTRA_CAMPANA.md) conserva una evaluación del prototipo y una propuesta anterior de primer arco. Es antecedente; no reemplaza el GDD reciente ni sus decisiones sobre robots y aprendizaje.
 
 ## Estado
 

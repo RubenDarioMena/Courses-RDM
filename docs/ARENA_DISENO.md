@@ -1,5 +1,7 @@
 # Documento de diseño — Arena Factory
 
+> Este documento describe la base PixiJS y las propuestas anteriores. Para la dirección futura acordada y discutida el 12–13 de octubre de 2026, consultar [Codemageddon — GDD inicial](CODEMAGEDDON_GDD.md). Las decisiones recientes sobre público principiante, microtutoriales, robots, errores físicos y evaluación de Godot prevalecen al planificar la siguiente etapa. No están implementadas en el prototipo actual.
+
 **Estado:** primera versión jugable, publicada.  
 **Repositorio:** `RubenDarioMena/Courses-RDM`.  
 **Versión de referencia:** `720ec1d`, publicada en [Arena Factory](https://rubenmena-cursos.netlify.app/arena/).  

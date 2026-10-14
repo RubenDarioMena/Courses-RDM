@@ -7,7 +7,9 @@ Arena es una fábrica 2D persistente para aprender programación investigando. J
 
 ## Diseño del producto
 
-Decisiones, arquitectura, estado actual, límites y propuestas futuras: [Documento de diseño de Arena](docs/ARENA_DISENO.md).
+Diseño de la siguiente etapa: [GDD inicial de Codemageddon](docs/CODEMAGEDDON_GDD.md), con robots programables, sensores, pruebas de movimiento y Godot como dirección objetivo pendiente de validación. [Guía de arte y diseño paramétrico](docs/CODEMAGEDDON_ARTE.md).
+
+El juego implementado sigue siendo Arena con PixiJS: [diseño y arquitectura del prototipo actual](docs/ARENA_DISENO.md). El nuevo GDD no implica que se haya realizado una migración.
 
 ## Desarrollo
 

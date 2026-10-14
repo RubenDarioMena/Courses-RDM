@@ -1,5 +1,7 @@
 # Nota de Astra para la próxima sesión: campaña de Arena
 
+> Antecedente del 12 de octubre. Para continuar tras la conversación de Codemageddon, leer primero el [GDD del 13 de octubre](CODEMAGEDDON_GDD.md). Esta propuesta de campaña no es el siguiente trabajo automáticamente aprobado.
+
 Escrita el 12 de octubre de 2026, a petición de Rubén. Leer junto con [el documento de diseño](ARENA_DISENO.md) al retomar el trabajo de campaña.
 
 Esta nota expresa una evaluación y una propuesta de trabajo. Las ideas nuevas de campaña todavía no son decisiones aprobadas ni funcionalidades implementadas. Rubén pidió dejar la continuidad preparada para cuando tenga tiempo; esta nota no inicia una automatización ni autoriza trabajo en segundo plano.
