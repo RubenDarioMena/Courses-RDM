@@ -39,8 +39,6 @@ jobs:
         run: npm test
       - name: Compilar el sitio completo
         run: npm run build
-      - name: Instalar grabación de evidencias
-        run: npx playwright install ffmpeg
       - name: Instalar Firefox de Playwright
         if: matrix.browser == 'firefox'
         run: npx playwright install firefox

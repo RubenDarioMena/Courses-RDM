@@ -71,7 +71,7 @@ async function saveDownload(page, testInfo, click, name) {
   return { download, path, data: await readFile(path) };
 }
 
-test('el editor carga OpenCascade sin cuenta y conserva la portada y Arena', async ({ page, request, context }) => {
+test('el editor carga OpenCascade sin cuenta y conserva la portada y Arena', async ({ page, request, context }, testInfo) => {
   await openEditor(page);
   await expect(page).toHaveTitle(/Taller CAD/);
   await expect(page.locator('#object-list .object-select')).toHaveCount(3);
@@ -80,6 +80,7 @@ test('el editor carga OpenCascade sin cuenta y conserva la portada y Arena', asy
   expect(await context.cookies()).toEqual([]);
   await selectSupport(page);
   expect(await selectedVolume(page)).toBeCloseTo(initialVolume, 1);
+  await page.screenshot({ path: testInfo.outputPath('editor-windows.png') });
   for (const path of ['/', '/arena/']) {
     const response = await request.get(path);
     expect(response.status(), `${path} debe seguir disponible.`).toBe(200);

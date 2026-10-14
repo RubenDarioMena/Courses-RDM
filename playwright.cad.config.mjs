@@ -29,9 +29,9 @@ export default defineConfig({
     baseURL,
     viewport: { width: 1440, height: 1000 },
     acceptDownloads: true,
-    trace: 'retain-on-failure',
+    trace: { mode: 'retain-on-failure', screenshots: false, snapshots: true, sources: true },
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    video: 'off',
     navigationTimeout: 30_000,
   },
   projects: [
