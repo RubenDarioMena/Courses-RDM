@@ -335,15 +335,16 @@ export class CadViewport {
     if (!points.length) { this.render(); return; }
     const world = points.map((point) => new THREE.Vector3(...onPlane(this.sketchPlane, ...point)));
     if (profile.closed) world.push(world[0].clone());
-    const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(world), new THREE.LineBasicMaterial({ color: '#9bf4cf', depthTest: false }));
+    // El croquis se dibuja después de las piezas transparentes, incluso si la pieza está seleccionada.
+    const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(world), new THREE.LineBasicMaterial({ color: '#ffcf79', transparent: true, opacity: 1, depthTest: false }));
     line.renderOrder = 4; this.sketchDrawing.add(line);
     const handles = profile.circle ? [profile.circle.center, [profile.circle.center[0] + profile.circle.radius, profile.circle.center[1]]] : profile.points || [];
-    const dots = new THREE.Points(new THREE.BufferGeometry().setFromPoints(handles.map((point) => new THREE.Vector3(...onPlane(this.sketchPlane, ...point)))), new THREE.PointsMaterial({ color: '#e1fff2', size: 7, sizeAttenuation: false, depthTest: false }));
+    const dots = new THREE.Points(new THREE.BufferGeometry().setFromPoints(handles.map((point) => new THREE.Vector3(...onPlane(this.sketchPlane, ...point)))), new THREE.PointsMaterial({ color: '#ffe2a9', transparent: true, opacity: 1, size: 7, sizeAttenuation: false, depthTest: false }));
     dots.renderOrder = 5; this.sketchDrawing.add(dots);
     if (profile.closed && points.length > 2 && height > 0) {
       const shape = new THREE.Shape(points.map(([x, y]) => new THREE.Vector2(x, y)));
       const geometry = new THREE.ExtrudeGeometry(shape, { depth: height * (reverse ? -1 : 1), bevelEnabled: false, steps: 1 });
-      const mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: '#8de6c0', transparent: true, opacity: 0.15, side: THREE.DoubleSide, depthWrite: false }));
+      const mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: '#ffc66e', transparent: true, opacity: 0.15, side: THREE.DoubleSide, depthWrite: false }));
       mesh.applyMatrix4(this.planeMatrix(this.sketchPlane)); this.sketchDrawing.add(mesh);
     }
     this.render();
