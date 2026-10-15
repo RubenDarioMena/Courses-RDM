@@ -25,6 +25,8 @@ La primera base incluye primitivas, extrusiones de perfiles poligonales, boolean
 
 Conservar las rutas y el funcionamiento de Arena, portada y cursos. Las pruebas Windows usan Chrome, Edge y Firefox en `.github/workflows/cad-windows.yml`; `npm run test:cad:browser` comprueba el paquete compilado.
 
+La manipulación directa usa previsualización Three.js y un único commit OCCT al terminar el gesto. Conservar identidad y dependencias al transformar piezas. Los croquis aceptan planos de origen y caras BRep planas; círculos exactos, polígonos y operaciones de añadir/cortar. El apoyo por índice de cara aún no resuelve la identificación topológica general; documentar ese límite y preservar el último estado válido. La caché Vite de CAD está separada en `node_modules/.vite-cad`.
+
 ### Continuidad del diseño
 
 Las decisiones anteriores describen la base implementada en PixiJS. Para la evolución de Arena, leer `docs/CODEMAGEDDON_GDD.md` y `docs/CODEMAGEDDON_ARTE.md` (13 de octubre de 2026): robots y sensores, principiantes con microtutoriales y conceptos desbloqueables, y Godot como dirección objetivo pendiente de prueba técnica. La recomendación es GDScript interno y JavaScript del jugador. No confundir esta documentación con una migración ya realizada ni recuperar propuestas anteriores que contradigan las decisiones recientes. Se mantienen los límites de conservación de materiales, importación sin autoejecución y continuidad del sitio/cursos.

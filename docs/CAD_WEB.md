@@ -31,6 +31,20 @@ Límites iniciales del documento: 100 operaciones, perfiles de hasta 1.024 punto
 
 Los resultados de una operación CAD dependen de la geometría y las tolerancias. Un radio de redondeo incompatible o un perfil inválido deben producir un error legible y preservar el último proyecto válido. La base de operaciones no sustituye todavía a un croquis con cotas, restricciones y grados de libertad.
 
+### Manipulación directa y croquis sobre planos
+
+La entrega `9efde1d` añade movimiento libre agarrando la superficie, ejes y planos de traslación, y anillos de rotación mediante `TransformControls`. Los gestos usan una previsualización local de Three.js; al soltar el ratón se aplica una sola operación paramétrica con geometría OCCT. Esc cancela el gesto sin modificar el documento. Ajustar activa pasos de 1 mm y 15°. Los atajos son G para mover y R para girar; Seleccionar recupera la navegación habitual de cámara.
+
+Al trasladar primitivas se actualizan sus coordenadas. Cuando se necesita una transformación de un sólido compuesto, el nodo original se conserva oculto y el resultado mantiene su identificador, para no romper referencias posteriores. Los gestos sucesivos editan ese mismo nodo de transformación. El pivote visual es el centro de la caja envolvente de la pieza; los parámetros guardados siguen describiendo la transformación rígida respecto al origen global.
+
+`Dibujar perfil` permite elegir XY/XZ/YZ o una cara BRep plana. El motor entrega rangos de triángulos por cara y marcos exactos de origen y ejes U/V, con normal exterior. La cámara se coloca perpendicularmente al plano y el usuario dibuja directamente sobre el modelo. Hay rectángulos, cuadrados manteniendo Mayús, círculos exactos y contornos de líneas conectadas. Se pueden arrastrar vértices, centros y radios antes de aplicar; los perfiles existentes se reabren con Editar perfil. El contorno se extruye como sólido nuevo, se añade a una pieza o se resta de ella; la profundidad y el sentido se ajustan en el panel.
+
+El documento versión 1 acepta de forma opcional `plane`, `support`, `profile` y `reverse` en extrusiones; los proyectos anteriores siguen siendo válidos. `support` introduce una dependencia a la pieza de apoyo, por lo que el plano se vuelve a resolver al cambiar sus medidas o colocación. Una circunferencia se conserva como centro/radio y OCCT construye un cilindro exacto, sin aproximarla por un polígono en el sólido. La malla de visualización sí es una aproximación.
+
+La referencia de cara inicial usa su índice y el número de caras del sólido. Se rechaza la reconstrucción si cambia ese número o la cara deja de ser plana. Esto todavía no resuelve el problema general de identificación topológica: una modificación que reordene caras manteniendo su número puede requerir redefinir el apoyo. No se admiten apoyos sobre superficies curvas ni sobre STL. Se necesita un contorno cerrado por operación; no hay todavía solver, cotas persistentes ni perfiles con islas interiores.
+
+La [verificación Windows de esta entrega](https://github.com/RubenDarioMena/Courses-RDM/actions/runs/38689684969) terminó con 33 recorridos aprobados, 11 en cada navegador, sin reintentos ni fallos. Incluye agarrar/mover/girar, cancelar con Esc, dibujar en XZ/YZ y cortar desde un círculo sobre una cara. Pasaron también 39 pruebas del proyecto (15 de documento CAD, 12 de OCCT, 3 de colocación y 9 de Arena) y la compilación completa en los tres trabajos Windows. Se comprobó manualmente además el cambio de radio por arrastre y la reconstrucción del corte dependiente.
+
 ## Desarrollo y despliegue
 
 Requisitos de la aplicación: Node.js 22 o superior.
@@ -40,7 +54,7 @@ npm ci
 npm run dev
 ```
 
-Abrir `http://localhost:4173/cad/`. Arena sigue en `http://localhost:4173/arena/`. `PORT=4180 npm run dev` permite elegir otro puerto. El servidor mantiene dos instancias Vite con bases, cachés y endpoints HMR separados; las rutas de cursos se sirven como antes.
+Abrir `http://localhost:4173/cad/`. Arena sigue en `http://localhost:4173/arena/`. `PORT=4180 npm run dev` permite elegir otro puerto. El servidor mantiene dos instancias Vite con bases y endpoints HMR separados; CAD usa `node_modules/.vite-cad` para evitar colisiones en la caché de dependencias. Las rutas de cursos se sirven como antes.
 
 ```sh
 npm test

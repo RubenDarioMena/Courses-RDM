@@ -7,6 +7,8 @@ Arena es una fábrica 2D persistente para aprender programación investigando. J
 
 Taller CAD está disponible en [rubenmena-cursos.netlify.app/cad/](https://rubenmena-cursos.netlify.app/cad/): editor independiente de piezas 3D, sin login, basado en la distribución completa de OpenCascade.js en un worker. Permite crear sólidos, extruir perfiles, combinar, redondear, transformar y abrir/exportar STEP y STL. Conserva el documento paramétrico localmente y en un archivo JSON portable. [Arquitectura, alcance y continuidad de CAD](docs/CAD_WEB.md).
 
+Interacción CAD: G activa movimiento libre y por ejes; R muestra anillos de giro. Dibujar perfil permite elegir XY/XZ/YZ o una cara plana y crear rectángulos/cuadrados, círculos y contornos de líneas para extruir, añadir o cortar. Los vértices y radios se ajustan con el ratón; cada gesto conserva deshacer/rehacer.
+
 ## Diseño del producto
 
 Diseño de la siguiente etapa: [GDD inicial de Codemageddon](docs/CODEMAGEDDON_GDD.md), con robots programables, sensores, pruebas de movimiento y Godot como dirección objetivo pendiente de validación. [Guía de arte y diseño paramétrico](docs/CODEMAGEDDON_ARTE.md).
