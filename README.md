@@ -9,6 +9,8 @@ Taller CAD está disponible en [rubenmena-cursos.netlify.app/cad/](https://ruben
 
 Interacción CAD: G activa movimiento libre y por ejes; R muestra anillos de giro. Dibujar perfil permite elegir XY/XZ/YZ o una cara plana y crear rectángulos/cuadrados, círculos y contornos de líneas para extruir, añadir o cortar. Los vértices y radios se ajustan con el ratón; cada gesto conserva deshacer/rehacer.
 
+[Documentos CAD de progreso y planificación](docs/cad/README.md): informe de entrega, base de producto/desarrollo y propuesta de separación a un proyecto independiente. Los documentos de planificación son provisionales y están pendientes de revisión con el usuario.
+
 ## Diseño del producto
 
 Diseño de la siguiente etapa: [GDD inicial de Codemageddon](docs/CODEMAGEDDON_GDD.md), con robots programables, sensores, pruebas de movimiento y Godot como dirección objetivo pendiente de validación. [Guía de arte y diseño paramétrico](docs/CODEMAGEDDON_ARTE.md).

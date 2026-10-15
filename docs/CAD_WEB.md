@@ -45,6 +45,8 @@ La referencia de cara inicial usa su índice y el número de caras del sólido. 
 
 La [verificación Windows de esta entrega](https://github.com/RubenDarioMena/Courses-RDM/actions/runs/38689684969) terminó con 33 recorridos aprobados, 11 en cada navegador, sin reintentos ni fallos. Incluye agarrar/mover/girar, cancelar con Esc, dibujar en XZ/YZ y cortar desde un círculo sobre una cara. Pasaron también 39 pruebas del proyecto (15 de documento CAD, 12 de OCCT, 3 de colocación y 9 de Arena) y la compilación completa en los tres trabajos Windows. Se comprobó manualmente además el cambio de radio por arrastre y la reconstrucción del corte dependiente.
 
+La [revisión final `5b532fe`](https://github.com/RubenDarioMena/Courses-RDM/actions/runs/38725415196) volvió a aprobar los 33 recorridos y las 39 pruebas, con los ajustes de contraste del croquis. El informe de cierre y los borradores para la futura planificación se encuentran en [docs/cad](cad/README.md); sus propuestas siguen pendientes de revisión con el usuario.
+
 ## Desarrollo y despliegue
 
 Requisitos de la aplicación: Node.js 22 o superior.
