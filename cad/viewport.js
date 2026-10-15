@@ -302,15 +302,18 @@ export class CadViewport {
     this.sketchPlane = plane;
     this.onSketchPointer = onPointer;
     this.oldCamera = { position: this.camera.position.clone(), up: this.camera.up.clone(), target: this.controls.target.clone() };
+    this.mainGridVisible = this.grid.visible;
+    this.grid.visible = false;
     const target = focus ? new THREE.Vector3(...focus) : new THREE.Vector3(...plane.origin);
     const normal = new THREE.Vector3(...cross(plane.u, plane.v));
     this.camera.position.copy(target).addScaledVector(normal, Math.max(100, this.camera.position.distanceTo(this.controls.target)));
     this.camera.up.set(...plane.v); this.controls.target.copy(target); this.controls.update();
     const grid = new THREE.GridHelper(400, 80, '#557f8c', '#2c414d');
+    grid.material.depthTest = false; grid.material.transparent = true; grid.material.opacity = 0.5; grid.renderOrder = 2;
     grid.rotation.x = Math.PI / 2; grid.updateMatrix();
     const group = new THREE.Group(); group.add(grid); group.applyMatrix4(this.planeMatrix(plane));
     this.decoration.add(group);
-    this.parts.traverse((item) => { if (item.isMesh) { item.material.transparent = true; item.material.opacity = 0.32; } });
+    this.parts.traverse((item) => { if (item.isMesh) { item.material.transparent = true; item.material.opacity = 0.32; item.material.depthWrite = false; item.material.side = THREE.FrontSide; } });
     this.render();
   }
 
@@ -349,7 +352,8 @@ export class CadViewport {
   endSketch() {
     this.sketchPlane = null; this.onSketchPointer = null;
     this.clearGroup(this.sketchDrawing);
-    this.parts.traverse((item) => { if (item.isMesh) { item.material.transparent = false; item.material.opacity = 1; } });
+    this.parts.traverse((item) => { if (item.isMesh) { item.material.transparent = false; item.material.opacity = 1; item.material.depthWrite = true; item.material.side = THREE.DoubleSide; } });
+    if (this.mainGridVisible !== undefined) this.grid.visible = this.mainGridVisible;
     if (this.oldCamera) {
       this.camera.position.copy(this.oldCamera.position); this.camera.up.copy(this.oldCamera.up); this.controls.target.copy(this.oldCamera.target); this.controls.update(); this.oldCamera = null;
     }

@@ -119,7 +119,7 @@ La LGPL exige conservar avisos y licencia, facilitar el código fuente correspon
 ## Siguientes etapas
 
 1. Ampliar la cobertura Windows con modelos grandes y GPUs físicas. Medir carga del kernel, memoria, teselación y duración de las operaciones; conservar los recorridos actuales de Chrome, Edge y Firefox.
-2. Añadir croquis con planos de trabajo, cotas y un solver de restricciones. Resolver referencias estables a caras y aristas antes de construir una cadena amplia de funciones paramétricas.
+2. Añadir cotas y un solver de restricciones a los croquis actuales. Resolver referencias estables a caras y aristas antes de construir una cadena amplia de funciones paramétricas.
 3. Ampliar herramientas con revolución, barrido, loft, vaciado, patrones y selección de aristas para redondeos/chaflanes.
 4. Incorporar cuerpos y ensamblajes, transformaciones de componentes y estructuras STEP/XDE con nombres, colores y metadatos.
 5. Incorporar diagnóstico de geometría, tolerancias y reparación de importaciones; después planos 2D y documentación de fabricación.
