@@ -1,4 +1,5 @@
 import { CadViewport } from './viewport.js';
+import { CadInteractions } from './interactions.js';
 import { createDocument, createExampleDocument, validateDocument, addObject, updateObject, removeObject, cloneDocument, serializeDocument, parseDocument, CadHistory, DOCUMENT_LIMITS } from './document.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -34,6 +35,7 @@ let selection = new Set();
 let geometry = { meshes: [] };
 let busy = true;
 let viewport;
+let interactions;
 let engine;
 let toolAction = null;
 let operationToken = 0;
@@ -99,14 +101,22 @@ class EngineClient {
 
 function setBusy(value, title = 'Calculando la pieza', detail = 'OpenCascade está reconstruyendo los sólidos con tus medidas.') {
   busy = value;
-  $$('[data-edit], #inspector-content input, #inspector-content button, .object-select, .visibility-button').forEach((element) => { element.disabled = value; });
-  $('#document-name').disabled = value;
-  $('#undo').disabled = value || !history.canUndo;
-  $('#redo').disabled = value || !history.canRedo;
+  syncControls();
+  viewport?.setBlocked(value);
   $('#loading-overlay').hidden = !value;
   $('#loading-title').textContent = title;
   $('#loading-detail').textContent = detail;
   $('#cancel-operation').hidden = !value || title === 'Preparando OpenCascade';
+}
+
+function syncControls() {
+  const locked = busy || interactions?.locked;
+  $$('[data-edit], #inspector-content input, #inspector-content button, #inspector-content select, .object-select, .visibility-button, [data-interaction], #transform-snap, [data-plane], #pick-face').forEach((element) => { element.disabled = Boolean(locked); });
+  $('#document-name').disabled = Boolean(locked);
+  $('#undo').disabled = locked || !history.canUndo;
+  $('#redo').disabled = locked || !history.canRedo;
+  $$('#sketch-panel button, #sketch-panel input, #sketch-panel select').forEach((element) => { element.disabled = busy; });
+  if (interactions?.session && !busy) { interactions.session.draw(); $('#sketch-effect').disabled = Boolean(interactions.session.object); }
 }
 
 function saveLocal() {
@@ -121,7 +131,7 @@ function saveLocal() {
 }
 
 function select(id, multiple = false) {
-  if (busy) return;
+  if (busy || interactions?.locked) return;
   if (!multiple) selection.clear();
   if (id) {
     if (multiple && selection.has(id)) selection.delete(id);
@@ -150,12 +160,13 @@ function renderPanels() {
   const inspector = $('#inspector-content');
   if (selection.size !== 1) {
     inspector.innerHTML = `<div class="inspector-empty"><span class="large-icon">${selection.size ? '⊖' : '◈'}</span><h3>${selection.size ? 'Combina tus piezas' : 'Diseña con medidas'}</h3><p>${selection.size ? 'Usa Combinar para unir, restar o intersectar las piezas seleccionadas.' : 'Selecciona una pieza para cambiar sus dimensiones. También puedes editar las operaciones anteriores de la lista.'}</p><p>Los sólidos se calculan con OpenCascade. Todas las distancias están en milímetros.</p></div>`;
+    syncControls();
     return;
   }
   const dimensions = Object.keys(object.params).filter((key) => ['width', 'depth', 'height', 'radius'].includes(key));
   const position = Object.keys(object.params).filter((key) => ['x', 'y', 'z', 'rx', 'ry', 'rz'].includes(key));
-  const field = (key) => `<div class="field-row"><label for="param-${key}">${object.type === 'transform' && ['x','y','z'].includes(key) ? `Desplazamiento ${key.toUpperCase()}` : fieldNames[key]}</label><div class="number-unit"><input id="param-${key}" name="${key}" type="number" step="any" value="${object.params[key]}" ${dimensions.includes(key) ? `min="${DOCUMENT_LIMITS.minimumDimension}" max="${DOCUMENT_LIMITS.dimension}"` : 'min="-1000000" max="1000000"'} required ${busy ? 'disabled' : ''} /><span>${key.startsWith('r') && key !== 'radius' ? '°' : 'mm'}</span></div></div>`;
-  const references = object.type === 'boolean' ? [object.params.left, object.params.right] : object.params.source ? [object.params.source] : [];
+  const field = (key) => `<div class="field-row"><label for="param-${key}">${object.type === 'transform' && ['x','y','z'].includes(key) ? `Desplazamiento ${key.toUpperCase()}` : object.type === 'extrusion' && key === 'height' ? 'Profundidad' : fieldNames[key]}</label><div class="number-unit"><input id="param-${key}" name="${key}" type="number" step="any" value="${object.params[key]}" ${dimensions.includes(key) ? `min="${DOCUMENT_LIMITS.minimumDimension}" max="${DOCUMENT_LIMITS.dimension}"` : 'min="-1000000" max="1000000"'} required ${busy ? 'disabled' : ''} /><span>${key.startsWith('r') && key !== 'radius' ? '°' : 'mm'}</span></div></div>`;
+  const references = object.type === 'boolean' ? [object.params.left, object.params.right] : object.params.source ? [object.params.source] : object.params.support ? [object.params.support.source] : [];
   const volume = geometry.meshes.find((mesh) => mesh.id === object.id)?.volume;
   inspector.innerHTML = `<form id="properties-form"><div class="section-label">PIEZA</div><input name="name" class="field-input name-field" aria-label="Nombre de la pieza" maxlength="100" value="${escape(object.name)}" required ${busy ? 'disabled' : ''}/>${dimensions.length ? `<div class="section-label">DIMENSIONES</div>${dimensions.map(field).join('')}` : ''}${position.length ? `<div class="section-label">${object.type === 'transform' ? 'DESPLAZAMIENTO Y ROTACIÓN' : 'POSICIÓN'}</div>${position.map(field).join('')}` : ''}${object.type === 'boolean' ? `<div class="section-label">OPERACIÓN</div><select name="operation" aria-label="Tipo de combinación" ${busy ? 'disabled' : ''}>${[['cut','Restar B a A'],['fuse','Unir A y B'],['common','Intersección']].map(([value,label]) => `<option value="${value}" ${object.params.operation === value ? 'selected' : ''}>${label}</option>`).join('')}</select>` : ''}<div class="section-label">APARIENCIA</div><div class="field-row"><label for="piece-color">Color</label><input type="color" id="piece-color" name="color" value="${object.color}" ${busy ? 'disabled' : ''}/></div><button class="button primary" type="submit" ${busy ? 'disabled' : ''}>Aplicar cambios</button></form>${references.length ? `<div class="section-label">PIEZAS DE ORIGEN</div><div class="dependency-list">${references.map((id) => escape(project.objects.find((item) => item.id === id)?.name ?? id)).join('<br>')}</div><p class="inspector-note">Puedes cambiar las medidas de las piezas de origen. Esta operación se reconstruirá automáticamente.</p>` : ''}${object.type === 'extrusion' ? '<div class="inspector-actions"><button id="edit-profile" class="button">Editar perfil</button></div>' : ''}${Number.isFinite(volume) ? `<div class="stats-card"><span>VOLUMEN DEL SÓLIDO</span><strong>${new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 }).format(volume)} <small>mm³</small></strong></div>` : ''}<div class="inspector-actions"><button id="delete-piece" class="button subtle danger" ${busy ? 'disabled' : ''}>Eliminar operación</button></div>`;
   $('#properties-form').onsubmit = (event) => {
@@ -174,6 +185,7 @@ function renderPanels() {
   }
   $('#delete-piece').onclick = deleteSelected;
   if ($('#edit-profile')) $('#edit-profile').onclick = () => openSketch(object);
+  syncControls();
 }
 
 async function applyDocument(candidate, text, { fit = false, commit = true } = {}) {
@@ -205,7 +217,7 @@ async function applyDocument(candidate, text, { fit = false, commit = true } = {
 }
 
 async function mutate(change, text = 'Proyecto actualizado.', options = {}) {
-  if (busy) return false;
+  if (busy || (interactions?.drawing && !options.fromSketch) || interactions?.dragging) return false;
   const candidate = cloneDocument(project);
   try { change(candidate); return await applyDocument(candidate, text, options); }
   catch (error) { message(error.message, true); return false; }
@@ -374,74 +386,19 @@ $$('[data-view]').forEach((button) => button.onclick = () => viewport?.view(butt
 $('#fit-view').onclick = () => viewport?.fit();
 $('#grid-toggle').onclick = () => $('#grid-toggle').setAttribute('aria-pressed', String(viewport.toggleGrid()));
 document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !$('dialog[open]') && !busy && interactions?.escape()) { event.preventDefault(); return; }
   if (event.target.matches('input,select,textarea') || $('dialog[open]') || busy) return;
+  if (interactions?.locked) return;
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') { event.preventDefault(); navigateHistory(event.shiftKey ? 'redo' : 'undo'); }
   else if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'y') { event.preventDefault(); navigateHistory('redo'); }
   else if (event.key.toLowerCase() === 'f') viewport?.fit();
+  else if (event.key.toLowerCase() === 'g') interactions?.setMode('translate');
+  else if (event.key.toLowerCase() === 'r') interactions?.setMode('rotate');
   else if (event.key === 'Delete') { event.preventDefault(); deleteSelected(); }
   else if (event.key === 'Escape') select(null);
 });
 
-let sketchPoints = [];
-let sketchObject = null;
-const sketchCanvas = $('#sketch-canvas');
-$('#sketch-height').min = String(DOCUMENT_LIMITS.minimumDimension);
-$('#sketch-height').max = String(DOCUMENT_LIMITS.dimension);
-const sketchContext = sketchCanvas.getContext('2d');
-const sketchScale = 5;
-const sketchOrigin = [160, 260];
-function drawSketch() {
-  const context = sketchContext;
-  context.clearRect(0, 0, 640, 360);
-  context.lineWidth = 1;
-  for (let x = sketchOrigin[0] % 25; x < 640; x += 25) { context.strokeStyle = '#26384b'; context.beginPath(); context.moveTo(x,0); context.lineTo(x,360); context.stroke(); }
-  for (let y = sketchOrigin[1] % 25; y < 360; y += 25) { context.strokeStyle = '#26384b'; context.beginPath(); context.moveTo(0,y); context.lineTo(640,y); context.stroke(); }
-  context.strokeStyle = '#577b93'; context.beginPath(); context.moveTo(sketchOrigin[0],0); context.lineTo(sketchOrigin[0],360); context.moveTo(0,sketchOrigin[1]); context.lineTo(640,sketchOrigin[1]); context.stroke();
-  context.fillStyle = '#86a5bd'; context.font = '11px Segoe UI, sans-serif'; context.fillText('0', sketchOrigin[0] - 12, sketchOrigin[1] + 14); context.fillText('X →', 598, sketchOrigin[1] + 16); context.fillText('Y ↑', sketchOrigin[0] + 8, 20);
-  if (sketchPoints.length) {
-    context.beginPath();
-    sketchPoints.forEach(([x,y], index) => { const px = sketchOrigin[0] + x * sketchScale; const py = sketchOrigin[1] - y * sketchScale; index ? context.lineTo(px,py) : context.moveTo(px,py); });
-    if (sketchPoints.length > 2) { context.closePath(); context.fillStyle = '#8de6c022'; context.fill(); }
-    context.strokeStyle = '#8de6c0'; context.lineWidth = 2; context.stroke();
-    sketchPoints.forEach(([x,y], index) => { const px = sketchOrigin[0] + x * sketchScale; const py = sketchOrigin[1] - y * sketchScale; context.fillStyle = index === 0 ? '#ffffff' : '#8de6c0'; context.beginPath(); context.arc(px,py,4,0,Math.PI*2); context.fill(); context.fillStyle = '#acc7d5'; context.fillText(`${x}, ${y}`,px+7,py-8); });
-  }
-  $('#sketch-status').textContent = `${sketchPoints.length} vértices · cuadrícula de 5 mm`;
-  $('#sketch-create').disabled = sketchPoints.length < 3;
-}
-function openSketch(object = null) {
-  if (busy) return;
-  sketchObject = object;
-  sketchPoints = object ? structuredClone(object.params.points) : [];
-  $('#sketch-height').value = object?.params.height ?? 15;
-  $('#sketch-dialog').showModal(); drawSketch();
-}
-$('#sketch-button').onclick = () => openSketch();
-function sketchCoordinate(event) {
-  const rect = sketchCanvas.getBoundingClientRect();
-  const px = (event.clientX - rect.left) / rect.width * 640;
-  const py = (event.clientY - rect.top) / rect.height * 360;
-  return [Math.round((px - sketchOrigin[0]) / sketchScale / 5) * 5, Math.round((sketchOrigin[1] - py) / sketchScale / 5) * 5];
-}
-sketchCanvas.onpointermove = (event) => { const [x,y] = sketchCoordinate(event); $('#sketch-coordinates').textContent = `X: ${x} · Y: ${y} mm`; };
-sketchCanvas.onclick = (event) => {
-  const point = sketchCoordinate(event);
-  if (sketchPoints.length > 2 && point[0] === sketchPoints[0][0] && point[1] === sketchPoints[0][1]) { $('#sketch-create').focus(); return; }
-  if (sketchPoints.some(([x,y]) => x === point[0] && y === point[1])) return;
-  sketchPoints.push(point); drawSketch();
-};
-$('#sketch-rectangle').onclick = () => { sketchPoints = [[0,0],[40,0],[40,30],[0,30]]; drawSketch(); };
-$('#sketch-clear').onclick = () => { sketchPoints = []; drawSketch(); };
-$('#sketch-create').onclick = async () => {
-  const input = $('#sketch-height'); if (!input.reportValidity()) return;
-  const height = Number(input.value);
-  $('#sketch-dialog').close();
-  let id = sketchObject?.id;
-  const applied = await mutate((candidate) => {
-    if (id) updateObject(candidate, id, { params: { height, points: sketchPoints } });
-    else id = addObject(candidate, { type: 'extrusion', name: 'Perfil extruido', params: { points: sketchPoints, height } }).id;
-  }, 'Perfil extruido.', { fit: true });
-  if (applied) select(id);
-};
+function openSketch(object) { interactions?.editSketch(object); }
 
 $('#cancel-operation').onclick = async () => {
   ++operationToken;
@@ -455,6 +412,7 @@ $('#cancel-operation').onclick = async () => {
 async function start() {
   try {
     viewport = new CadViewport($('#viewport'), select);
+    interactions = new CadInteractions(viewport, { project: () => project, geometry: () => geometry, selection: () => selection, busy: () => busy, mutate, select, message, syncControls });
     engine = new EngineClient();
     renderPanels();
     setBusy(true, 'Preparando OpenCascade', 'El motor CAD se carga en tu navegador. La primera descarga puede tardar.');

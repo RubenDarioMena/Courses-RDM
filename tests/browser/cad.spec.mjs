@@ -115,9 +115,10 @@ test('un perfil de 40 × 30 extruido 12 mm produce un sólido de 14400 mm³', as
   await expect(page.locator('#message')).toContainText('Proyecto nuevo.');
   await ready(page);
   await page.locator('#sketch-button').click();
-  await expect(page.locator('#sketch-dialog')).toBeVisible();
-  await page.locator('#sketch-rectangle').click();
-  await expect(page.locator('#sketch-status')).toContainText('4 vértices');
+  await expect(page.locator('#plane-picker')).toBeVisible();
+  await page.locator('[data-plane="XY"]').click();
+  await page.locator('#sketch-preset').click();
+  await expect(page.locator('#sketch-status')).toContainText('Contorno cerrado');
   await page.locator('#sketch-height').fill('12');
   await page.locator('#sketch-create').click();
   await expect(page.locator('#message')).toHaveText('Perfil extruido.');
@@ -127,6 +128,112 @@ test('un perfil de 40 × 30 extruido 12 mm produce un sólido de 14400 mm³', as
   expect(saved.objects).toHaveLength(1);
   expect(saved.objects[0].type).toBe('extrusion');
   expect(saved.objects[0].params).toMatchObject({ points: [[0, 0], [40, 0], [40, 30], [0, 30]], height: 12 });
+});
+
+async function canvasCenter(page) {
+  const box = await page.locator('#viewport > canvas').boundingBox();
+  return { x: box.x + box.width / 2, y: box.y + box.height / 2, height: box.height };
+}
+async function drag(page, from, to) {
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  await page.mouse.move(to.x, to.y, { steps: 12 });
+  await page.mouse.up();
+}
+
+test('agarrar, mover por X y girar con anillos guardan un cambio por gesto y Esc cancela', async ({ page }, testInfo) => {
+  await openEditor(page); await selectSupport(page);
+  const original = await storedDocument(page);
+  await page.locator('[data-view="top"]').click();
+  await page.locator('[data-interaction="translate"]').click();
+  const c = await canvasCenter(page);
+  await drag(page, { x: c.x - 150, y: c.y + 100 }, { x: c.x - 110, y: c.y + 140 });
+  await expect(page.locator('#message')).toHaveText('Posición y giro actualizados con el ratón.'); await ready(page);
+  const moved = await storedDocument(page);
+  expect(moved.objects).toHaveLength(4);
+  expect(moved.objects.find((object) => object.id === 'soporte').type).toBe('transform');
+  expect(await selectedVolume(page)).toBeCloseTo(initialVolume, 1);
+  await page.locator('#undo').click(); await ready(page);
+  expect(await storedDocument(page)).toEqual(original);
+  const axis = c.height * 0.105;
+  await drag(page, { x: c.x + axis, y: c.y }, { x: c.x + axis + 55, y: c.y });
+  await expect(page.locator('#message')).toHaveText('Posición y giro actualizados con el ratón.'); await ready(page);
+  const byAxis = (await storedDocument(page)).objects.find((object) => object.id === 'soporte').params;
+  expect(Math.abs(byAxis.x)).toBeGreaterThan(1);
+  expect(Math.abs(byAxis.y)).toBeLessThan(0.001); expect(Math.abs(byAxis.z)).toBeLessThan(0.001);
+  await page.locator('#undo').click(); await ready(page);
+  await page.locator('[data-interaction="rotate"]').click();
+  const diagonal = c.height * 0.1009375 / Math.SQRT2;
+  await drag(page, { x: c.x + diagonal, y: c.y + diagonal }, { x: c.x - diagonal, y: c.y + diagonal });
+  await expect(page.locator('#message')).toHaveText('Posición y giro actualizados con el ratón.'); await ready(page);
+  const rotated = await storedDocument(page);
+  expect(Math.abs(rotated.objects.find((object) => object.id === 'soporte').params.rz)).toBeGreaterThan(10);
+  expect(await selectedVolume(page)).toBeCloseTo(initialVolume, 1);
+  await page.screenshot({ path: testInfo.outputPath('giro-con-raton.png') });
+  await page.locator('#undo').click(); await ready(page);
+  await page.locator('[data-interaction="translate"]').click();
+  await page.mouse.move(c.x - 150, c.y + 100); await page.mouse.down(); await page.mouse.move(c.x - 110, c.y + 140, { steps: 6 });
+  await page.keyboard.press('Escape'); await page.mouse.up();
+  expect(await storedDocument(page)).toEqual(original);
+  await expect(page.locator('#message')).toHaveText('Movimiento cancelado.');
+});
+
+test('dibujar un rectángulo con el ratón en XZ produce una extrusión orientada', async ({ page }) => {
+  await openEditor(page); await page.locator('#new-project').click(); await ready(page);
+  await page.locator('#sketch-button').click(); await page.locator('[data-plane="XZ"]').click();
+  const c = await canvasCenter(page);
+  await drag(page, { x: c.x - 100, y: c.y - 80 }, { x: c.x + 100, y: c.y + 80 });
+  await expect(page.locator('#sketch-status')).toHaveText('Contorno cerrado');
+  await page.locator('#sketch-height').fill('7'); await page.locator('#sketch-create').click(); await ready(page);
+  const object = (await storedDocument(page)).objects[0];
+  expect(object.params.plane).toEqual({ origin: [0, 0, 0], u: [1, 0, 0], v: [0, 0, 1] });
+  const width = Math.abs(object.params.points[1][0] - object.params.points[0][0]);
+  const depth = Math.abs(object.params.points[2][1] - object.params.points[1][1]);
+  expect(await selectedVolume(page)).toBeCloseTo(width * depth * 7, 1);
+});
+
+test('un círculo dibujado en una cara plana corta el sólido y se edita con el ratón', async ({ page }, testInfo) => {
+  await openEditor(page);
+  await page.locator('[data-view="top"]').click();
+  await page.locator('#sketch-button').click(); await page.locator('#pick-face').click();
+  let c = await canvasCenter(page);
+  await page.mouse.click(c.x - 140, c.y + 100);
+  await expect(page.locator('#sketch-plane-name')).toContainText('Cara de Soporte');
+  await expect(page.locator('#sketch-effect')).toHaveValue('cut');
+  await page.locator('#sketch-circle').click();
+  c = await canvasCenter(page);
+  await drag(page, { x: c.x - 140, y: c.y + 100 }, { x: c.x - 110, y: c.y + 100 });
+  await expect(page.locator('#sketch-status')).toHaveText('Contorno cerrado');
+  await page.locator('#sketch-height').fill('12');
+  await page.screenshot({ path: testInfo.outputPath('croquis-sobre-cara.png') });
+  await page.locator('#sketch-create').click(); await ready(page);
+  const doc = await storedDocument(page);
+  const profile = doc.objects.find((object) => object.type === 'extrusion');
+  expect(profile.params.support.source).toBe('soporte');
+  expect(profile.params.profile.type).toBe('circle');
+  const radius = profile.params.profile.radius;
+  expect(await selectedVolume(page)).toBeCloseTo(initialVolume - Math.PI * radius ** 2 * 8, 1);
+  await page.locator(`.object-select[data-id="${profile.id}"]`).click(); await page.locator('#edit-profile').click();
+  await expect(page.locator('#sketch-effect')).toBeDisabled();
+  await page.locator('#sketch-height').fill('3'); await page.locator('#sketch-create').click(); await ready(page);
+  await page.locator(`.object-select[data-id="${doc.objects.at(-1).id}"]`).click();
+  expect(await selectedVolume(page)).toBeCloseTo(initialVolume - Math.PI * radius ** 2 * 3, 1);
+});
+
+test('líneas conectadas cierran un perfil en YZ y su extrusión conserva el área dibujada', async ({ page }) => {
+  await openEditor(page); await page.locator('#new-project').click(); await ready(page);
+  await page.locator('#sketch-button').click(); await page.locator('[data-plane="YZ"]').click(); await page.locator('#sketch-lines').click();
+  const c = await canvasCenter(page);
+  const points = [[-100, 100], [80, 100], [80, 0], [0, -60], [-100, 0], [-100, 100]];
+  for (const [x, y] of points) await page.mouse.click(c.x + x, c.y + y);
+  await expect(page.locator('#sketch-status')).toHaveText('Contorno cerrado');
+  await page.locator('#sketch-height').fill('9'); await page.locator('#sketch-create').click(); await ready(page);
+  const object = (await storedDocument(page)).objects[0];
+  expect(object.params.plane).toEqual({ origin: [0, 0, 0], u: [0, 1, 0], v: [0, 0, 1] });
+  expect(object.params.points).toHaveLength(5);
+  const p = object.params.points;
+  const area = Math.abs(p.reduce((sum, point, i) => sum + point[0] * p[(i + 1) % p.length][1] - point[1] * p[(i + 1) % p.length][0], 0)) / 2;
+  expect(await selectedVolume(page)).toBeCloseTo(area * 9, 1);
 });
 
 test('un redondeo imposible conserva el proyecto y permite continuar editando', async ({ page }) => {
@@ -145,7 +252,7 @@ test('un redondeo imposible conserva el proyecto y permite continuar editando', 
   await selectSupport(page);
   expect(await selectedVolume(page)).toBeCloseTo(initialVolume, 1);
   await page.locator('#sketch-button').click();
-  await expect(page.locator('#sketch-dialog')).toBeVisible();
+  await expect(page.locator('#plane-picker')).toBeVisible();
 });
 
 test('descarga STEP, STL y proyecto portable, vuelve a abrirlo y conserva el guardado al recargar', async ({ page }, testInfo) => {
@@ -195,7 +302,8 @@ test('descarga STEP, STL y proyecto portable, vuelve a abrirlo y conserva el gua
 test('reabre STEP y un STL exportado de miles de triángulos sin reconstruir caras por triángulo', async ({ page }, testInfo) => {
   await openEditor(page);
   await page.locator('#sketch-button').click();
-  await page.locator('#sketch-rectangle').click();
+  await page.locator('[data-plane="XY"]').click();
+  await page.locator('#sketch-preset').click();
   await page.locator('#sketch-height').fill('12');
   await page.locator('#sketch-create').click();
   await expect(page.locator('#message')).toHaveText('Perfil extruido.');

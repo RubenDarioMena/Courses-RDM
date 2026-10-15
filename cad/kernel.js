@@ -1,5 +1,6 @@
 // OpenCascade conserva la geometría BRep. Estas mallas solo son su representación.
 // Este módulo no interpreta ni ejecuta código procedente de documentos importados.
+import { cross, onPlane, extrusionPlane } from './planes.js';
 export const KERNEL_CAPABILITIES = Object.freeze({
   engine: 'OpenCascade.js',
   version: '2.0.0-beta.b5ff984',
@@ -78,6 +79,7 @@ function pointCoordinates(params) {
 }
 
 function dependencyIds(object) {
+  if (object.type === 'extrusion' && object.params.support) return [object.params.support.source];
   if (object.type === 'boolean') return [object.params.left, object.params.right];
   if (object.type === 'transform' || object.type === 'fillet') return [object.params.source];
   return [];
@@ -211,14 +213,23 @@ class CadKernel {
           shape = resultOf(new oc.BRepPrimAPI_MakeSphere_5(origin(), positive(p.radius, 'El radio')));
           break;
         case 'extrusion': {
+          const support = p.support ? this.supportPlane(dependencies[0], p.support) : null;
+          const plane = extrusionPlane(p, support);
+          const normal = cross(plane.u, plane.v).map((value) => value * (p.reverse ? -1 : 1));
+          const height = positive(p.height, 'La altura');
+          if (p.profile?.type === 'circle') {
+            const center = onPlane(plane, ...p.profile.center);
+            const axes = own(new oc.gp_Ax2_2(own(new oc.gp_Pnt_3(...center)), own(new oc.gp_Dir_4(...normal)), own(new oc.gp_Dir_4(...plane.u))));
+            shape = resultOf(new oc.BRepPrimAPI_MakeCylinder_3(axes, positive(p.profile.radius, 'El radio'), height));
+            break;
+          }
           if (!Array.isArray(p.points) || p.points.length < 3 || p.points.length > 1024) {
             throw new Error('El croquis necesita entre 3 y 1024 puntos.');
           }
           const polygon = own(new oc.BRepBuilderAPI_MakePolygon_1());
-          const [x, y, z] = pointCoordinates(p);
           for (const pair of p.points) {
             if (!Array.isArray(pair) || pair.length !== 2) throw new Error('Cada punto del croquis necesita dos coordenadas.');
-            polygon.Add_1(own(new oc.gp_Pnt_3(x + number(pair[0], 'X del croquis'), y + number(pair[1], 'Y del croquis'), z)));
+            polygon.Add_1(own(new oc.gp_Pnt_3(...onPlane(plane, number(pair[0], 'U del croquis'), number(pair[1], 'V del croquis')))));
           }
           polygon.Close();
           if (!polygon.IsDone()) throw new Error('No se pudo cerrar el croquis.');
@@ -226,7 +237,7 @@ class CadKernel {
           const faceBuilder = own(new oc.BRepBuilderAPI_MakeFace_15(wire, true));
           if (!faceBuilder.IsDone()) throw new Error('El croquis no define una superficie plana válida.');
           const face = own(faceBuilder.Face());
-          shape = resultOf(new oc.BRepPrimAPI_MakePrism_1(face, own(new oc.gp_Vec_4(0, 0, positive(p.height, 'La altura'))), true, true));
+          shape = resultOf(new oc.BRepPrimAPI_MakePrism_1(face, own(new oc.gp_Vec_4(...normal.map((value) => value * height))), true, true));
           break;
         }
         case 'boolean': {
@@ -350,6 +361,29 @@ class CadKernel {
     });
   }
 
+  facePlane(face) {
+    const oc = this.oc;
+    return withResources((r) => {
+      const surface = r.own(new oc.BRepAdaptor_Surface_2(face, true));
+      if (!enumEquals(surface.GetType(), oc.GeomAbs_SurfaceType.GeomAbs_Plane)) return null;
+      const plane = r.own(surface.Plane());
+      const axes = r.own(plane.Position());
+      const origin = coords(r.own(axes.Location()));
+      const u = coords(r.own(axes.XDirection()));
+      const v = coords(r.own(axes.YDirection()));
+      if (enumEquals(face.Orientation_1(), oc.TopAbs_Orientation.TopAbs_REVERSED)) v.forEach((value, i) => { v[i] = -value; });
+      return { origin, u, v };
+    });
+  }
+
+  supportPlane(entry, support) {
+    if (entry.isMesh) throw new Error('Una malla STL no contiene caras planas BRep para apoyar un croquis.');
+    const mesh = entry.mesh || (entry.mesh = this.tessellate(entry.shape, false));
+    const face = mesh.faces.find((face) => face.index === support.face);
+    if (mesh.faceCount !== support.faceCount || !face?.plane) throw new Error('La cara de apoyo ha cambiado. Vuelve a seleccionar un plano para este perfil.');
+    return face.plane;
+  }
+
   tessellate(shape, isMesh = false) {
     const oc = this.oc;
     const properties = this.shapeProperties(shape, isMesh);
@@ -362,6 +396,7 @@ class CadKernel {
       const positions = [];
       const normals = [];
       const indices = [];
+      const faces = [];
       let faceCount = 0;
       while (explorer.More()) {
         withResources((faceResources) => {
@@ -377,6 +412,7 @@ class CadKernel {
           const transformation = own(location.Transformation());
           const reversed = enumEquals(face.Orientation_1(), oc.TopAbs_Orientation.TopAbs_REVERSED);
           const offset = positions.length / 3;
+          const start = indices.length;
           triangulation.ComputeNormals();
           for (let index = 1; index <= triangulation.NbNodes(); index++) {
             withResources((nodeResources) => {
@@ -397,11 +433,12 @@ class CadKernel {
             triangle.delete();
             indices.push(a, reversed ? c : b, reversed ? b : c);
           }
-          faceCount++;
+          faces.push({ index: faceCount, start, count: indices.length - start, plane: isMesh ? null : this.facePlane(face) });
         });
+        faceCount++;
         explorer.Next();
       }
-      return { positions: new Float32Array(positions), normals: new Float32Array(normals), indices: new Uint32Array(indices), faceCount, ...properties };
+      return { positions: new Float32Array(positions), normals: new Float32Array(normals), indices: new Uint32Array(indices), faces, faceCount, ...properties };
     });
   }
 
@@ -414,7 +451,7 @@ class CadKernel {
       const mesh = entry.mesh;
       // El worker puede transferir estos buffers sin separar los almacenados en caché.
       return { id: object.id, positions: mesh.positions.slice(), normals: mesh.normals.slice(), indices: mesh.indices.slice(),
-        volume: mesh.volume, bounds: mesh.bounds, faceCount: mesh.faceCount, solidCount: mesh.solidCount, isMesh: entry.isMesh };
+        volume: mesh.volume, bounds: mesh.bounds, faces: mesh.faces, faceCount: mesh.faceCount, solidCount: mesh.solidCount, isMesh: entry.isMesh };
     });
     const visible = meshes.filter((mesh) => document.objects.find((object) => object.id === mesh.id).visible !== false);
     const boxes = visible.map((mesh) => mesh.bounds).filter(Boolean);

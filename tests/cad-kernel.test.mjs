@@ -3,6 +3,7 @@ import { after, before, test } from 'node:test';
 import { readFile } from 'node:fs/promises';
 import initOpenCascade from 'opencascade.js/dist/node.js';
 import { initKernel, KERNEL_CAPABILITIES } from '../cad/kernel.js';
+import { cross, WORK_PLANES } from '../cad/planes.js';
 
 let kernel;
 before(async () => {
@@ -17,6 +18,27 @@ const box = (id, params = {}, visible = true) => ({ id, name: id, type: 'box', p
 function close(actual, expected, tolerance = 1e-7) {
   assert.ok(Math.abs(actual - expected) < tolerance, `${actual} debería ser ${expected}`);
 }
+
+test('planos BRep y círculos exactos permiten extruir y cortar sobre una cara con dependencias', () => {
+  const base = box('base', {}, false);
+  const mesh = kernel.evaluateDocument(document([base])).meshes[0];
+  assert.equal(mesh.faces.filter((face) => face.plane).length, 6);
+  const top = mesh.faces.find((face) => cross(face.plane.u, face.plane.v)[2] > 0.99);
+  close(top.plane.origin[2], 10);
+  const profile = { id: 'perfil', type: 'extrusion', visible: false, params: { points: [], profile: { type: 'circle', center: [10, 15], radius: 3 }, height: 12, reverse: true, support: { source: 'base', face: top.index, faceCount: mesh.faceCount } } };
+  const doc = document([base, profile, { id: 'corte', type: 'boolean', params: { operation: 'cut', left: 'base', right: 'perfil' } }]);
+  const result = kernel.evaluateDocument(doc);
+  close(result.meshes[1].volume, Math.PI * 9 * 12);
+  close(result.meshes[2].volume, 6000 - Math.PI * 9 * 10);
+  base.params.height = 20;
+  const updated = kernel.evaluateDocument(doc);
+  close(updated.meshes[1].bounds.max[2], 20, 1e-6);
+  close(updated.meshes[2].volume, 12000 - Math.PI * 9 * 12);
+  const xz = kernel.evaluateDocument(document([{ id: 'xz', type: 'extrusion', params: { points: [[0, 0], [8, 0], [8, 5], [0, 5]], height: 6, plane: WORK_PLANES.XZ } }]));
+  close(xz.meshes[0].volume, 240);
+  assert.deepEqual(xz.meshes[0].bounds.min, [0, -6, 0]);
+  assert.deepEqual(xz.meshes[0].bounds.max, [8, 0, 5]);
+});
 
 test('el motor completo calcula sólidos y mallas BRep con normales orientadas', () => {
   const result = kernel.evaluateDocument(document([

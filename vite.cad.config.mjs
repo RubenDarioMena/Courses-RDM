@@ -3,6 +3,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   root: "cad",
   base: "/cad/",
+  cacheDir: "../node_modules/.vite-cad",
   assetsInclude: ["**/*.wasm"],
   build: {
     outDir: "../dist/cad",
@@ -11,5 +12,5 @@ export default defineConfig({
     chunkSizeWarningLimit: 1500,
   },
   worker: { format: "es" },
-  optimizeDeps: { exclude: ["opencascade.js"] },
+  optimizeDeps: { exclude: ["opencascade.js"], include: ["three", "three/addons/controls/OrbitControls.js", "three/addons/controls/TransformControls.js"] },
 });
