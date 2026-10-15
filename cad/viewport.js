@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { TransformControls } from 'three/addons/controls/TransformControls.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { WORK_PLANES, cross, onPlane } from './planes.js';
 
 export class CadViewport {
@@ -336,7 +339,8 @@ export class CadViewport {
     const world = points.map((point) => new THREE.Vector3(...onPlane(this.sketchPlane, ...point)));
     if (profile.closed) world.push(world[0].clone());
     // El croquis se dibuja después de las piezas transparentes, incluso si la pieza está seleccionada.
-    const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(world), new THREE.LineBasicMaterial({ color: '#ffcf79', transparent: true, opacity: 1, depthTest: false }));
+    const line = new Line2(new LineGeometry().setPositions(world.flatMap((point) => point.toArray())), new LineMaterial({ color: '#ee772b', linewidth: 3, transparent: true, opacity: 1, depthTest: false, depthWrite: false }));
+    line.material.resolution.set(this.container.clientWidth, this.container.clientHeight);
     line.renderOrder = 4; this.sketchDrawing.add(line);
     const handles = profile.circle ? [profile.circle.center, [profile.circle.center[0] + profile.circle.radius, profile.circle.center[1]]] : profile.points || [];
     const dots = new THREE.Points(new THREE.BufferGeometry().setFromPoints(handles.map((point) => new THREE.Vector3(...onPlane(this.sketchPlane, ...point)))), new THREE.PointsMaterial({ color: '#ffe2a9', transparent: true, opacity: 1, size: 7, sizeAttenuation: false, depthTest: false }));
